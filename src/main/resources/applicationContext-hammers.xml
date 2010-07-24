@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd"
+	default-autowire="byName">
+
+	<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="java:comp/env/jdbc/hammers"/>
+		<property name="proxyInterface" value="javax.sql.DataSource"/>
+	</bean>
+	
+	<tx:annotation-driven/>
+
+	<bean id="hibernateProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">false</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="annotatedClasses">
+			<list>
+				<value>uk.co.unclealex.hammers.calendar.model.Game</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="dateService" class="uk.co.unclealex.hammers.calendar.service.DateServiceImpl"/>
+	
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager"/>
+
+	<bean id="htmlDocumentService" class="uk.co.unclealex.hammers.calendar.html.HtmlDocumentServiceImpl"/>
+	
+	<bean id="urlExtractorService" class="uk.co.unclealex.hammers.calendar.html.UrlExtractorServiceImpl">
+		<property name="homePage" value="http://www.whufc.com/page/Home"/>
+	</bean>
+	
+	<bean id="fixtureTableExtractorService" class="uk.co.unclealex.hammers.calendar.html.JdomFixtureTableExtractorService"/>
+	
+	<bean id="ticketBuilderService" class="uk.co.unclealex.hammers.calendar.html.TicketBuilderServiceImpl">
+		<property name="ticketOfficeOpeningHour" value="9"/>
+	</bean>
+	
+	<bean id="onlineFixtureBuilderService" class="uk.co.unclealex.hammers.calendar.html.OnlineFixtureBuilderService"/>
+	<bean id="daoFixtureBuilderService" class="uk.co.unclealex.hammers.calendar.html.DaoFixtureBuilderService"/>
+	
+	<bean id="gameBuilderActionFactory" class="uk.co.unclealex.hammers.calendar.html.builder.SpringGameBuilderActionFactory"/>
+	<bean id="singleGameBuilderAction" class="uk.co.unclealex.hammers.calendar.html.builder.SingleGameBuilderAction"
+		scope="prototype"/>
+	
+	<bean id="monthBuilderAction" class="uk.co.unclealex.hammers.calendar.html.builder.MonthBuilderAction"
+		scope="prototype"/>
+
+	<bean id="gameDao" class="uk.co.unclealex.hammers.calendar.dao.HibernateGameDao"/>
+	<bean id="gameService" class="uk.co.unclealex.hammers.calendar.service.GameServiceImpl"/>
+
+	<bean id="googleCalendarService" class="uk.co.unclealex.hammers.calendar.google.GoogleCalendarServiceImpl">
+		<property name="googleCalendars">
+			<list>
+				<bean class="uk.co.unclealex.hammers.calendar.google.AttendedGoogleCalendar">
+					<property name="calendarTitle" value="West Ham (Attended)"/>
+					<property name="description" value="West Ham games I attended."/>
+					<property name="shared" value="false"/>
+					<property name="busy" value="true"/>
+					<property name="defaultColour" value="#7A367A"/>
+					<property name="durationInHours" value="2"/>
+				</bean>
+				
+				<bean class="uk.co.unclealex.hammers.calendar.google.UnattendedGoogleCalendar">
+					<property name="calendarTitle" value="West Ham (Unattended)"/>
+					<property name="description" value="West Ham games I did not attend."/>
+					<property name="shared" value="false"/>
+					<property name="defaultColour" value="#2952A3"/>
+					<property name="durationInHours" value="2"/>
+				</bean>
+
+				<bean class="uk.co.unclealex.hammers.calendar.google.HomeGoogleCalendar">
+					<property name="calendarTitle" value="West Ham (Home)"/>
+					<property name="description" value="Home West Ham games."/>
+					<property name="shared" value="true"/>
+					<property name="defaultColour" value="#7A367A"/>
+					<property name="durationInHours" value="2"/>
+				</bean>
+				<bean class="uk.co.unclealex.hammers.calendar.google.AwayGoogleCalendar">
+					<property name="calendarTitle" value="West Ham (Away)"/>
+					<property name="description" value="Away West Ham games."/>
+					<property name="shared" value="true"/>
+					<property name="defaultColour" value="#2952A3"/>
+					<property name="durationInHours" value="2"/>
+				</bean>
+
+				<bean class="uk.co.unclealex.hammers.calendar.google.GeneralSaleGoogleCalendar">
+					<property name="calendarTitle" value="West Ham Tickets (General Sale)"/>
+					<property name="description" value="West Ham ticket general sale dates."/>
+					<property name="shared" value="true"/>
+					<property name="defaultColour" value="#528800"/>
+					<property name="durationInHours" value="1"/>
+					<property name="reminderInMinutes" value="30"/>
+				</bean>
+				<bean class="uk.co.unclealex.hammers.calendar.google.AcademyGoogleCalendar">
+					<property name="calendarTitle" value="West Ham Tickets (Academy Members)"/>
+					<property name="description" value="West Ham ticket selling dates for academy members."/>
+					<property name="shared" value="true"/>
+					<property name="defaultColour" value="#528800"/>
+					<property name="durationInHours" value="1"/>
+					<property name="reminderInMinutes" value="30"/>
+				</bean>
+				<bean class="uk.co.unclealex.hammers.calendar.google.SeasonTicketGoogleCalendar">
+					<property name="calendarTitle" value="West Ham Tickets (Season Ticket Holders)"/>
+					<property name="description" value="West Ham ticket selling dates for season ticket holders."/>
+					<property name="shared" value="true"/>
+					<property name="defaultColour" value="#528800"/>
+					<property name="durationInHours" value="1"/>
+					<property name="reminderInMinutes" value="30"/>
+				</bean>
+				<bean class="uk.co.unclealex.hammers.calendar.google.PriorityPointGoogleCalendar">
+					<property name="calendarTitle" value="West Ham Tickets (Priority Point Holders)"/>
+					<property name="description" value="West Ham ticket selling dates for priority point holders."/>
+					<property name="shared" value="true"/>
+					<property name="defaultColour" value="#528800"/>
+					<property name="durationInHours" value="1"/>
+					<property name="reminderInMinutes" value="30"/>
+				</bean>
+				<bean class="uk.co.unclealex.hammers.calendar.google.BondHolderGoogleCalendar">
+					<property name="calendarTitle" value="West Ham Tickets (Bondholders)"/>
+					<property name="description" value="West Ham ticket selling dates for bondholders."/>
+					<property name="shared" value="true"/>
+					<property name="defaultColour" value="#528800"/>
+					<property name="durationInHours" value="1"/>
+					<property name="reminderInMinutes" value="30"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="googleConfiguration" class="uk.co.unclealex.hammers.calendar.google.GoogleConfigurationImpl"/>
+</beans>
