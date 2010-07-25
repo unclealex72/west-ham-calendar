@@ -96,6 +96,13 @@
 					<property name="defaultColour" value="#2952A3"/>
 					<property name="durationInHours" value="2"/>
 				</bean>
+				<bean class="uk.co.unclealex.hammers.calendar.google.HomeAndAwayGoogleCalendar">
+					<property name="calendarTitle" value="West Ham (Home and Away)"/>
+					<property name="description" value="All West Ham games."/>
+					<property name="shared" value="true"/>
+					<property name="defaultColour" value="#7A367A"/>
+					<property name="durationInHours" value="2"/>
+				</bean>
 
 				<bean class="uk.co.unclealex.hammers.calendar.google.GeneralSaleGoogleCalendar">
 					<property name="calendarTitle" value="West Ham Tickets (General Sale)"/>
