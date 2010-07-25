@@ -4,7 +4,7 @@
   <artifactId>west-ham-calendar</artifactId>
   <packaging>war</packaging>
   <name>west-ham-calendar</name>
-  <version>3.2</version>
+  <version>3.3-SNAPSHOT</version>
   <description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
   <url>http://code.google.com/p/west-ham-calendar/</url>
 
@@ -19,9 +19,9 @@
 		<spring-version>3.0.3.RELEASE</spring-version>
 	</properties>
   <scm>
-  	<connection>scm:svn:http://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-3.2</connection>
-  	<developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-3.2</developerConnection>
-  	<url>http://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-3.2</url>
+  	<connection>scm:svn:http://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</connection>
+  	<developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</developerConnection>
+  	<url>http://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</url>
   </scm>
 
   <dependencies>
