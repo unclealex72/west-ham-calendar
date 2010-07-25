@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee        http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+ <display-name>Hammers Calendar</display-name>
+ <context-param>
+  <param-name>contextConfigLocation</param-name>
+  <param-value>
+  	classpath:applicationContext-hammers.xml
+  </param-value>
+ </context-param>
+
+ <filter>
+  <filter-name>hibernate</filter-name>
+  <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
+  <init-param>
+   <param-name>singleSession</param-name>
+   <param-value>true</param-value>
+  </init-param>
+ </filter>
+
+ <filter-mapping>
+  <filter-name>hibernate</filter-name>
+  <url-pattern>/*</url-pattern>
+ </filter-mapping>
+ 
+ <listener>
+  <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+ </listener>
+ <listener>
+  <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+ </listener>
+
+ <servlet>
+  <display-name>Attendence Servlet</display-name>
+  <servlet-name>attendence</servlet-name>
+  <servlet-class>uk.co.unclealex.hammers.calendar.servlet.AttendenceServlet</servlet-class>
+  <load-on-startup>1</load-on-startup>
+ </servlet>
+
+ <servlet-mapping>
+ 	<servlet-name>attendence</servlet-name>
+ 	<url-pattern>/index.html</url-pattern>
+ </servlet-mapping>
+
+  <resource-ref>
+      <description>DB Connection</description>
+      <res-ref-name>jdbc/hammers</res-ref-name>
+      <res-type>javax.sql.DataSource</res-type>
+      <res-auth>Container</res-auth>
+  </resource-ref>
+</web-app>
