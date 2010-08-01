@@ -25,11 +25,11 @@ package uk.co.unclealex.hammers.calendar.google;
 
 import uk.co.unclealex.hammers.calendar.model.Game;
 
-public class HomeAndAwayGoogleCalendar extends GameGoogleCalendar {
+public class TelevisedGoogleCalendar extends GameGoogleCalendar {
 
 	@Override
 	public boolean evaluate(Game game) {
-		return true;
+		return game.getTelevisionChannel() != null;
 	}
 	
 }

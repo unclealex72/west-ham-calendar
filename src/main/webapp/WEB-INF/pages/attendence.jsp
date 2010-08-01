@@ -77,6 +77,7 @@
 							<td><c:out value="${game.competition}"/></td>
 							<td><c:out value="${game.opponents}"/></td>
 							<td><c:out value="${game.result}"/></td>
+							<td><c:out value="${game.televisionChannel}"/></td>
 							<td>
 								<c:choose>
 									<c:when test="${game.attended}">

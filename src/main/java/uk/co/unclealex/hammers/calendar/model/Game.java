@@ -60,10 +60,10 @@ public class Game implements Serializable {
 	private Date i_academyMembersAvailable;
 	private Date i_generalSaleAvailable;
 
-	
 	private String i_result;
 	private Integer i_attendence;
 	private String i_matchReport;
+	private String i_televisionChannel;
 	
 	private boolean i_attended;
 
@@ -86,7 +86,7 @@ public class Game implements Serializable {
 			3 * ObjectUtils.hashCode(getLocation()) + 
 			5 * ObjectUtils.hashCode(getOpponents());
 	}
-	
+
 	@Id @GeneratedValue
 	public Integer getId() {
 		return i_id;
@@ -219,5 +219,13 @@ public class Game implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	public void setGeneralSaleAvailable(Date generalSaleAvailable) {
 		i_generalSaleAvailable = generalSaleAvailable;
+	}
+
+	public String getTelevisionChannel() {
+		return i_televisionChannel;
+	}
+
+	public void setTelevisionChannel(String televisionChannel) {
+		i_televisionChannel = televisionChannel;
 	}	
 }

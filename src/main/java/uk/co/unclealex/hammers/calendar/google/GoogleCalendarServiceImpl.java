@@ -303,7 +303,12 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 			firstTeam = opponents;			
 			secondTeam = WEST_HAM;
 		}
-		return String.format("%s vs. %s (%s)", firstTeam, secondTeam, competition.getName());
+		String title = String.format("%s vs. %s (%s)", firstTeam, secondTeam, competition.getName());
+		String televisionChannel = game.getTelevisionChannel();
+		if (televisionChannel != null) {
+			title += String.format(" [%s]", televisionChannel);
+		}
+		return title;
 	}		
 
 	protected String createDescription(Game game) {

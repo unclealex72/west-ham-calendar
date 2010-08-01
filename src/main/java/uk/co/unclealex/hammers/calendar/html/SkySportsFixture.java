@@ -21,15 +21,49 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+package uk.co.unclealex.hammers.calendar.html;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
+public class SkySportsFixture {
 
-public class HomeAndAwayGoogleCalendar extends GameGoogleCalendar {
+	private String i_monthAndYear;
+	private String i_date;
+	private String i_time;
+	private String i_channel;
 
-	@Override
-	public boolean evaluate(Game game) {
-		return true;
+	public SkySportsFixture(String monthAndYear) {
+		super();
+		i_monthAndYear = monthAndYear;
 	}
 	
+	public boolean isComplete() {
+		return getMonthAndYear() != null && getDate() != null && getTime() != null && getChannel() != null;
+		
+	}
+	public String getMonthAndYear() {
+		return i_monthAndYear;
+	}
+	
+	public String getDate() {
+		return i_date;
+	}
+	
+	public void setDate(String date) {
+		i_date = date;
+	}
+	
+	public String getTime() {
+		return i_time;
+	}
+	
+	public void setTime(String time) {
+		i_time = time;
+	}
+	
+	public String getChannel() {
+		return i_channel;
+	}
+	
+	public void setChannel(String channel) {
+		i_channel = channel;
+	}
 }

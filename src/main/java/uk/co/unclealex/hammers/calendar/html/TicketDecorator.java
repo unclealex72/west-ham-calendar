@@ -46,9 +46,9 @@ import uk.co.unclealex.hammers.calendar.service.DateService;
 import uk.co.unclealex.hammers.calendar.service.GameService;
 
 @Transactional
-public class TicketBuilderServiceImpl implements TicketBuilderService {
+public class TicketDecorator implements Decorator {
 
-	private static final Logger log = Logger.getLogger(TicketBuilderServiceImpl.class);
+	private static final Logger log = Logger.getLogger(TicketDecorator.class);
 	
 	private HtmlDocumentService i_htmlDocumentService;
 	private UrlExtractorService i_urlExtractorService;
@@ -58,7 +58,7 @@ public class TicketBuilderServiceImpl implements TicketBuilderService {
 	
 	private int i_ticketOfficeOpeningHour;
 	
-	public void decorateWithTicketInformation() throws IOException {
+	public void decorate() throws IOException {
 		
 		UrlExtractorService urlExtractorService = getUrlExtractorService();
 		GameDao gameDao = getGameDao();

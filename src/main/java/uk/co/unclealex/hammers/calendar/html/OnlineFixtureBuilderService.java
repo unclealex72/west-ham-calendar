@@ -57,7 +57,7 @@ public class OnlineFixtureBuilderService extends AbstractFixtureBuilderService i
 	
 	private HtmlDocumentService i_htmlDocumentService;
 	private UrlExtractorService i_urlExtractorService;
-	private TicketBuilderService i_ticketBuilderService;
+	private List<Decorator> i_decorators;
 	
 	private FixtureTableExtractorService<Document> i_fixtureTableExtractorService;
 	private GameBuilderActionFactory i_gameBuilderActionFactory;
@@ -135,10 +135,23 @@ public class OnlineFixtureBuilderService extends AbstractFixtureBuilderService i
 			URL fixturesUrl = entry.getValue();
 			allGames.addAll(build(season, fixturesUrl, null));
 		}
-		getTicketBuilderService().decorateWithTicketInformation();
+		decorate();
 		return allGames;
 	}
 	
+	protected void decorate() {
+		for (Decorator decorator : getDecorators()) {
+			try {
+				decorator.decorate();
+			}
+			catch (IOException e) {
+				log.error("Decorator " + decorator + " failed.", e);
+			}
+			catch (RuntimeException e) {
+				log.error("Decorator " + decorator + " failed.", e);
+			}
+		}
+	}
 	public HtmlDocumentService getHtmlDocumentService() {
 		return i_htmlDocumentService;
 	}
@@ -173,12 +186,11 @@ public class OnlineFixtureBuilderService extends AbstractFixtureBuilderService i
 		i_urlExtractorService = urlExtractorService;
 	}
 
-	public TicketBuilderService getTicketBuilderService() {
-		return i_ticketBuilderService;
+	public List<Decorator> getDecorators() {
+		return i_decorators;
 	}
-
-	public void setTicketBuilderService(TicketBuilderService ticketBuilderService) {
-		i_ticketBuilderService = ticketBuilderService;
+	public void setDecorators(List<Decorator> decorators) {
+		i_decorators = decorators;
 	}
 
 }

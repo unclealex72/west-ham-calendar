@@ -25,7 +25,8 @@ package uk.co.unclealex.hammers.calendar.html;
 
 import java.io.IOException;
 
-public interface TicketBuilderService {
 
-	public void decorateWithTicketInformation() throws IOException;
+public interface Decorator {
+
+	public void decorate() throws IOException;
 }
