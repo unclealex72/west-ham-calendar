@@ -24,6 +24,7 @@
 package uk.co.unclealex.hammers.calendar.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.SortedSet;
 
 import uk.co.unclealex.hammers.calendar.model.Competition;
@@ -32,7 +33,7 @@ import uk.co.unclealex.hammers.calendar.model.Location;
 
 public interface GameService {
 
-	public Game findOrCreateGame(Competition competition, Location location, String opponents, int season);
+	public Game findOrCreateGame(Competition competition, Location location, String opponents, int season, Date datePlayed);
 	
 	public void storeGame(Game game);
 	

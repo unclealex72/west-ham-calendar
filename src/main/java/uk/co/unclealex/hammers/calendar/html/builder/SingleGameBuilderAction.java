@@ -119,8 +119,7 @@ public class SingleGameBuilderAction extends AbstractGameBuilderAction {
 		// Which competition?
 		Competition competition = Competition.findByToken(competitionElement.getTextNormalize());
 
-		Game game = getGameService().findOrCreateGame(competition, location, opponents, season);
-		game.setDatePlayed(datePlayed);
+		Game game = getGameService().findOrCreateGame(competition, location, opponents, season, datePlayed);
 		
 		// What was the result? From here on leave as null if the game has yet to be played.
 		if (!score.isEmpty()) {

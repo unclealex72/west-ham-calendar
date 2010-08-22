@@ -24,6 +24,7 @@
 package uk.co.unclealex.hammers.calendar.service;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.SortedSet;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -40,15 +41,16 @@ public class GameServiceImpl implements GameService {
 	
 	@Override
 	public Game findOrCreateGame(Competition competition, Location location,
-			String opponents, int season) {
-		Game game = getGameDao().findByBusinessKey(competition, location, opponents, season);
+			String opponents, int season, Date datePlayed) {
+		Game game = getGameDao().findByDatePlayed(datePlayed);
 		if (game == null) {
 			game = new Game();
-			game.setCompetition(competition);
-			game.setLocation(location);
-			game.setOpponents(opponents);
-			game.setSeason(season);
+			game.setDatePlayed(datePlayed);
 		}
+		game.setCompetition(competition);
+		game.setLocation(location);
+		game.setOpponents(opponents);
+		game.setSeason(season);
 		return game;
 	}
 
