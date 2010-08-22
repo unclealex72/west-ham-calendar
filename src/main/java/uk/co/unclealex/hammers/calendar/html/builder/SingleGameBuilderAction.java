@@ -62,7 +62,7 @@ public class SingleGameBuilderAction extends AbstractGameBuilderAction {
 		 * 1) The date in the format EEE dd,
 		 * 2) The start time in the format HH:mm,
 		 * 3) H for home, A for away,
-		 * 4) The a link to the opponents,
+		 * 4) The link to the opponents or just the opponents name,
 		 * 5) The competition,
 		 * 6) Whether the game was won, drawn or lost,
 		 * 7) The final score,
@@ -112,12 +112,14 @@ public class SingleGameBuilderAction extends AbstractGameBuilderAction {
 		
 		// Who were the opponents?
 		String opponents = opponentsElement.getChildTextNormalize("a");
+		if (opponents == null) {
+			opponents = opponentsElement.getText().trim();
+		}
 		
 		// Which competition?
 		Competition competition = Competition.findByToken(competitionElement.getTextNormalize());
 
-		Game game = getGameService().findOrCreateGame(competition, location, opponents, season);
-		game.setDatePlayed(datePlayed);
+		Game game = getGameService().findOrCreateGame(competition, location, opponents, season, datePlayed);
 		
 		// What was the result? From here on leave as null if the game has yet to be played.
 		if (!score.isEmpty()) {
