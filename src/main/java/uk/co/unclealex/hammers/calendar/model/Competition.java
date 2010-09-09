@@ -33,7 +33,7 @@ public enum Competition {
 	LGCP("League Cup", "LGCP"),
 	FACP("FA Cup", "FACP"),
 	FLC("Championship", "FLC", "FLD1"),
-	FLCPO("Play-Offs", "FLC P/O");
+	FLCPO("Play-Offs", "FLD1 P/O");
 	
 	private static SortedMap<String, Competition> COMPETITIONS_BY_TOKEN;
 	static {

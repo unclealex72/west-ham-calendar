@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.apache.commons.collections15.CollectionUtils;
 import org.apache.commons.collections15.Predicate;
@@ -88,10 +89,17 @@ public class OnlineFixtureBuilderService extends AbstractFixtureBuilderService i
 		
 		List<Element> tableRowElements = document.getRootElement().getChildren("tr");
 		for (Element tableRowElement : tableRowElements) {
-			String clazz = tableRowElement.getAttributeValue("class");
+			final String clazz = tableRowElement.getAttributeValue("class");
 			if (clazz != null) {
-				GameBuilderAction action = gameBuilderActions.get(clazz);
-				if (action != null) {
+				Predicate<Entry<String, GameBuilderAction>> startsWithPredicate = new Predicate<Entry<String,GameBuilderAction>>() {
+					@Override
+					public boolean evaluate(Entry<String, GameBuilderAction> entry) {
+						return clazz.startsWith(entry.getKey());
+					}
+				};
+				Entry<String, GameBuilderAction> entry = CollectionUtils.find(gameBuilderActions.entrySet(), startsWithPredicate);
+				if (entry != null) {
+					GameBuilderAction action = entry.getValue();
 					action.build(tableRowElement.getChildren("td"), u);
 				}
 			}
