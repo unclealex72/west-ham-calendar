@@ -23,8 +23,10 @@
  */
 package uk.co.unclealex.hammers.calendar.dao;
 
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -51,6 +53,23 @@ public class HibernateGameDao extends HibernateDaoSupport implements GameDao {
 		return (Game) query.uniqueResult();
 	}
 	
+	@Override
+	public Game findByDayPlayed(Date datePlayed) {
+		Calendar cal = new GregorianCalendar();
+		cal.setTime(datePlayed);
+		Query query = 
+			getSession().createQuery(
+					"from Game g " +
+					"where " +
+						"year(g.datePlayed) = :year and " +
+						"month(g.datePlayed) = :month and " +
+						"day(g.datePlayed) = :day").
+			setInteger("year", cal.get(Calendar.YEAR)).
+			setInteger("month", cal.get(Calendar.MONTH) + 1).
+			setInteger("day", cal.get(Calendar.DAY_OF_MONTH));
+		return (Game) query.uniqueResult();
+	}
+
 	@Override
 	public List<Game> getAllAfter(Date date) {
 		Query query = 

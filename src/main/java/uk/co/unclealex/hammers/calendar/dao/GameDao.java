@@ -35,6 +35,7 @@ public interface GameDao {
 
 	public Game findById(int id);
 	public Game findByDatePlayed(Date datePlayed);
+	public Game findByDayPlayed(Date datePlayed);
 	public SortedSet<Game> getAllForSeason(int season);
 	public SortedSet<Integer> getAllSeasons();
 	public Game findByBusinessKey(Competition competition, Location location, String opponents, int season);

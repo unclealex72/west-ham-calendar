@@ -42,15 +42,15 @@ public class GameServiceImpl implements GameService {
 	@Override
 	public Game findOrCreateGame(Competition competition, Location location,
 			String opponents, int season, Date datePlayed) {
-		Game game = getGameDao().findByDatePlayed(datePlayed);
+		Game game = getGameDao().findByBusinessKey(competition, location, opponents, season);
 		if (game == null) {
 			game = new Game();
-			game.setDatePlayed(datePlayed);
+			game.setCompetition(competition);
+			game.setLocation(location);
+			game.setOpponents(opponents);
+			game.setSeason(season);
 		}
-		game.setCompetition(competition);
-		game.setLocation(location);
-		game.setOpponents(opponents);
-		game.setSeason(season);
+		game.setDatePlayed(datePlayed);
 		return game;
 	}
 

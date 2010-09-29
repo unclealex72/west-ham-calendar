@@ -71,7 +71,7 @@ public class TicketDecorator implements Decorator {
 		for (Map.Entry<Date, URL> entry : ticketInformationUrls.entrySet()) {
 			Date datePlayed = entry.getKey();
 			URL ticketUrl = entry.getValue();
-			Game game = gameDao.findByDatePlayed(datePlayed);
+			Game game = gameDao.findByDayPlayed(datePlayed);
 			if (game != null) {
 				BufferedReader reader = new BufferedReader(new StringReader(getHtmlDocumentService().load(ticketUrl)));
 				String line;

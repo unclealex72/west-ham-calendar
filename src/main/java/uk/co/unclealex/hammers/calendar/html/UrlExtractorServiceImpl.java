@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -110,7 +109,7 @@ public class UrlExtractorServiceImpl implements UrlExtractorService {
 	@Override
 	public Map<Date, URL> getTicketInformationUrls(URL ticketInformationUrl)
 			throws IOException {
-		Map<Date, URL> urlsByGameDate = new HashMap<Date, URL>();
+		Map<Date, URL> urlsByGameDate = new TreeMap<Date, URL>();
 		DateService dateService = getDateService();
 		String fmt = "dd MMMM yyyy - h.mma";
 		String yearlessFmt = "dd MMMM - h.mma";
