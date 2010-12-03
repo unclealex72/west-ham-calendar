@@ -111,11 +111,11 @@ public class UrlExtractorServiceImpl implements UrlExtractorService {
 			throws IOException {
 		Map<Date, URL> urlsByGameDate = new TreeMap<Date, URL>();
 		DateService dateService = getDateService();
-		String fmt = "dd MMMM yyyy - h.mma";
-		String yearlessFmt = "dd MMMM - h.mma";
+		String fmt = "dd MMMM yyyy - hh.mma";
+		String yearlessFmt = "dd MMMM - hh.mma";
 		Date now = new Date();
 		Pattern pattern = Pattern.compile(
-				"href=\"(.+)\".*(?:Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\\s+(.*?(?:am|pm))");
+				"href=\"(.+)\".*(?:Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\\s+(.*?(?:am|pm|noon))");
 		String document = getHtmlDocumentService().load(ticketInformationUrl);
 		BufferedReader reader = new BufferedReader(new StringReader(document));
 		try {
