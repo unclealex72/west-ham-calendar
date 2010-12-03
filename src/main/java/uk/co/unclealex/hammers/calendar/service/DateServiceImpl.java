@@ -51,6 +51,7 @@ public class DateServiceImpl implements DateService {
 	
 	public Date parseDate(String dateFormat, String date, URL referringUrl) throws UnparseableDateException {
 		try {
+			date = date.replaceAll("noon", "pm");
 			return getDateFormat(dateFormat).parse(date);
 		}
 		catch (ParseException e) {

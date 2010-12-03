@@ -16,7 +16,7 @@
 	</licenses>
 	
 	<properties>
-		<spring-version>3.0.3.RELEASE</spring-version>
+		<spring-version>3.0.5.RELEASE</spring-version>
 	</properties>
   <scm>
   	<connection>scm:svn:http://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</connection>
