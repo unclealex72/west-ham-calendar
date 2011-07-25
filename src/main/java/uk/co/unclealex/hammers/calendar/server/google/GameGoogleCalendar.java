@@ -21,16 +21,16 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+package uk.co.unclealex.hammers.calendar.server.google;
 
 import java.util.Date;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 public abstract class GameGoogleCalendar extends AbstractGoogleCalendar {
 
 	@Override
-	public Date transform(Game game) {
+	public Date getGameDate(Game game) {
 		return game.getDatePlayed();
 	}
 

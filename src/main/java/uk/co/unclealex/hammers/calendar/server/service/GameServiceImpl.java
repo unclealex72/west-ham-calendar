@@ -21,18 +21,16 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.service;
+package uk.co.unclealex.hammers.calendar.server.service;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.SortedSet;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.unclealex.hammers.calendar.dao.GameDao;
-import uk.co.unclealex.hammers.calendar.model.Competition;
-import uk.co.unclealex.hammers.calendar.model.Game;
-import uk.co.unclealex.hammers.calendar.model.Location;
+import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.Competition;
+import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 @Transactional
 public class GameServiceImpl implements GameService {
@@ -55,19 +53,28 @@ public class GameServiceImpl implements GameService {
 	}
 
 	@Override
-	public SortedSet<Game> attendGames(int season, Collection<Integer> gameIds) {
-		GameDao gameDao = getGameDao();
-		SortedSet<Game> games = gameDao.getAllForSeason(season);
-		for (Game game : games) {
-			game.setAttended(gameIds.contains(game.getId()));
-			gameDao.store(game);
-		}
-		return games;
+	public Game attendGame(Integer gameId) {
+		return attend(gameId, true);
 	}
-
+	
 	@Override
-	public void storeGame(Game game) {
-		getGameDao().store(game);
+	public Game unattendGame(Integer gameId) {
+		return attend(gameId, false);
+	}
+	
+	/**
+	 * @param gameId
+	 * @param b
+	 * @return
+	 */
+	protected Game attend(Integer gameId, boolean attended) {
+		GameDao gameDao = getGameDao();
+		Game game = gameDao.findById(gameId);
+		if (game != null) {
+			game.setAttended(attended);
+			gameDao.saveOrUpdate(game);
+		}
+		return game;
 	}
 
 	public GameDao getGameDao() {

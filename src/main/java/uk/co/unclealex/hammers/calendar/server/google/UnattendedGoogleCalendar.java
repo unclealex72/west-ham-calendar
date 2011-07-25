@@ -21,15 +21,15 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+package uk.co.unclealex.hammers.calendar.server.google;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 
 public class UnattendedGoogleCalendar extends GameGoogleCalendar {
 
 	@Override
-	public boolean evaluate(Game game) {
+	public boolean contains(Game game) {
 		return !game.isAttended();
 	}
 }

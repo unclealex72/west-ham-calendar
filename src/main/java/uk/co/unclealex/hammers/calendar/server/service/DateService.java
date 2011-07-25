@@ -21,23 +21,26 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.service;
+package uk.co.unclealex.hammers.calendar.server.service;
 
 import java.net.URL;
 import java.util.Date;
 
-import uk.co.unclealex.hammers.calendar.exception.UnparseableDateException;
+import uk.co.unclealex.hammers.calendar.server.exception.UnparseableDateException;
 
 public interface DateService {
 
-	public Date parseDate(String dateFormat, String date, URL referringUrl) throws UnparseableDateException;
+	public Date parseDate(String date, URL referringUrl, String... dateFormat) throws UnparseableDateException;
 	
-	public Date parseYearlessDate(String dateFormat, String date, Date yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl) throws UnparseableDateException;
+	public Date parseYearlessDate(String date, Date yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl, String... dateFormats) throws UnparseableDateException;
 	
 	public Date addYearToDate(Date yearlessDate, Date yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate);
 
 	public String printDate(String dateFormat, Date date);
 
-	public Date parsePossiblyYearlessDate(String dateFormat, String yearlessDateFormat,
-			String date, Date yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl) throws UnparseableDateException;
+	public Date parsePossiblyYearlessDate(String date, Date yearDeterminingDate,
+			boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl, String dateFormat, String yearlessDateFormat) throws UnparseableDateException;
+
+	public Date parsePossiblyYearlessDate(String date, Date yearDeterminingDate,
+			boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl, String[] dateFormat, String[] yearlessDateFormat) throws UnparseableDateException;
 }

@@ -21,25 +21,16 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+package uk.co.unclealex.hammers.calendar.server.google;
+
+import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 
 public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 
+	private CalendarType i_calendarType;
 	private String i_calendarTitle;
 	private String i_description;
-	private boolean i_shared;
-	private boolean i_busy;
-	private Integer i_reminderInMinutes;
 	private int i_durationInHours;
-	private String i_defaultColour;
-	
-	public String getCalendarTitle() {
-		return i_calendarTitle;
-	}
-
-	public void setCalendarTitle(String calendarTitle) {
-		i_calendarTitle = calendarTitle;
-	}
 
 	public String getDescription() {
 		return i_description;
@@ -47,22 +38,6 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 
 	public void setDescription(String description) {
 		i_description = description;
-	}
-
-	public boolean isShared() {
-		return i_shared;
-	}
-
-	public void setShared(boolean shared) {
-		i_shared = shared;
-	}
-
-	public Integer getReminderInMinutes() {
-		return i_reminderInMinutes;
-	}
-
-	public void setReminderInMinutes(Integer reminderInMinutes) {
-		i_reminderInMinutes = reminderInMinutes;
 	}
 
 	public int getDurationInHours() {
@@ -73,20 +48,20 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 		i_durationInHours = durationInHours;
 	}
 
-	public boolean isBusy() {
-		return i_busy;
+	public CalendarType getCalendarType() {
+		return i_calendarType;
 	}
 
-	public void setBusy(boolean busy) {
-		i_busy = busy;
+	public void setCalendarType(CalendarType calendarType) {
+		i_calendarType = calendarType;
 	}
 
-	public String getDefaultColour() {
-		return i_defaultColour;
+	public String getCalendarTitle() {
+		return i_calendarTitle;
 	}
 
-	public void setDefaultColour(String defaultColour) {
-		i_defaultColour = defaultColour;
+	public void setCalendarTitle(String calendarTitle) {
+		i_calendarTitle = calendarTitle;
 	}
 
 }

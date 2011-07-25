@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html.builder;
+package uk.co.unclealex.hammers.calendar.server.html.builder;
 
 import java.io.IOException;
 import java.net.URL;
@@ -36,17 +36,19 @@ import org.apache.log4j.Logger;
 import org.jdom.Element;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.unclealex.hammers.calendar.exception.UnparseableDateException;
-import uk.co.unclealex.hammers.calendar.model.Competition;
-import uk.co.unclealex.hammers.calendar.model.Game;
-import uk.co.unclealex.hammers.calendar.model.Location;
-import uk.co.unclealex.hammers.calendar.model.Month;
-import uk.co.unclealex.hammers.calendar.service.DateService;
-import uk.co.unclealex.hammers.calendar.service.GameService;
+import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
+import uk.co.unclealex.hammers.calendar.server.exception.UnparseableDateException;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+import uk.co.unclealex.hammers.calendar.server.service.DateService;
+import uk.co.unclealex.hammers.calendar.server.service.GameService;
+import uk.co.unclealex.hammers.calendar.shared.model.Competition;
+import uk.co.unclealex.hammers.calendar.shared.model.Location;
+import uk.co.unclealex.hammers.calendar.shared.model.Month;
 
 @Transactional
 public class SingleGameBuilderAction extends AbstractGameBuilderAction {
 
+	private GameDao i_gameDao;
 	private GameService i_gameService;
 	private DateService i_dateService;
 	
@@ -101,7 +103,7 @@ public class SingleGameBuilderAction extends AbstractGameBuilderAction {
 			(season + month.getYearOffset()) + " " + month.getName() + " " + date + " " + time; 
 		Date datePlayed = null;
 		try {
-			datePlayed = getDateService().parseDate(DATE_FORMAT, datePlayedText, referringUrl);
+			datePlayed = getDateService().parseDate(datePlayedText, referringUrl, DATE_FORMAT);
 		}
 		catch (UnparseableDateException e) {
 			log.warn("Cannot parse date text " + datePlayedText, e);
@@ -144,15 +146,7 @@ public class SingleGameBuilderAction extends AbstractGameBuilderAction {
 		}
 		
 		gameBuilderInformation.getGames().add(game);
-		getGameService().storeGame(game);
-	}
-
-	public GameService getGameService() {
-		return i_gameService;
-	}
-
-	public void setGameService(GameService gameService) {
-		i_gameService = gameService;
+		getGameDao().saveOrUpdate(game);
 	}
 
 	public DateService getDateService() {
@@ -161,5 +155,21 @@ public class SingleGameBuilderAction extends AbstractGameBuilderAction {
 
 	public void setDateService(DateService dateService) {
 		i_dateService = dateService;
+	}
+
+	public GameDao getGameDao() {
+		return i_gameDao;
+	}
+
+	public void setGameDao(GameDao gameDao) {
+		i_gameDao = gameDao;
+	}
+
+	public GameService getGameService() {
+		return i_gameService;
+	}
+
+	public void setGameService(GameService gameService) {
+		i_gameService = gameService;
 	}
 }

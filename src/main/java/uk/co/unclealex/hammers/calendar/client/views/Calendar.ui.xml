@@ -1,0 +1,43 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder 
+  xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui"
+  xmlns:v="urn:import:uk.co.unclealex.hammers.calendar.client.views">
+
+	<ui:style>
+		.configurationButtons {
+			
+
+		}
+	</ui:style>
+	
+	<g:DialogBox ui:field="popupPanel" glassEnabled="true" animationEnabled="true">
+		<g:HTMLPanel>
+			<div class="configuration-form">
+				<span class="configuration-element">
+					Reminder:
+					<g:ListBox ui:field="reminderHours"/> hrs
+					<g:ListBox ui:field="reminderMinutes"/> mins
+				</span>
+				<span class="configuration-element">
+					<g:CheckBox ui:field="busy" text="Show as busy"/>
+				</span>
+				<span class="configuration-element">
+					<g:CheckBox ui:field="share" text="Share"/>
+				</span>
+				<span class="configuration-element">
+					<g:CheckBox ui:field="selected" text="Selected"/>
+				</span>
+				<span class="configuration-element">
+					<g:Button ui:field="changeColour">Change colour</g:Button>
+				</span>
+			</div>
+			<div class="{style.configurationButtons}">
+				<g:Button ui:field="undo">Undo</g:Button>
+				<g:Button ui:field="cancel">Cancel</g:Button>
+				<g:Button ui:field="save">Save</g:Button>
+				<g:Button ui:field="remove">Remove</g:Button>
+			</div>
+		</g:HTMLPanel>
+	</g:DialogBox>
+</ui:UiBinder>

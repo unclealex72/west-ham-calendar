@@ -1,5 +1,12 @@
 /**
- * Copyright 2010 Alex Jones
+ * 
+ */
+package uk.co.unclealex.hammers.calendar.server.google;
+
+import java.util.Date;
+
+/**
+ * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,19 +28,32 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+public class TokenResponse {
 
-public class GoogleConfigurationImpl implements GoogleConfiguration {
+	private String accessToken;
+	private Integer expiresIn;
+	private String refreshToken;
+	private transient long now = System.currentTimeMillis();
 	
-	public String getUsername() {
-		return System.getProperty("uk.co.unclealex.google.username");
+	TokenResponse() {
+		super();
+	}
+
+	public String getAccessToken() {
+		return accessToken;
+	}
+
+	public Integer getExpiresIn() {
+		return expiresIn;
+	}
+
+	public Date getExpiryDate() {
+		return new Date(now + getExpiresIn() * 1000);
 	}
 	
-	public String getPassword() {
-		return System.getProperty("uk.co.unclealex.google.password");
+	public String getRefreshToken() {
+		return refreshToken;
 	}
+
 	
-	public String getCronString() {
-		return System.getProperty("uk.co.unclealex.cal.cron");
-	}
 }

@@ -21,15 +21,15 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+package uk.co.unclealex.hammers.calendar.server.google;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 public abstract class TicketsGoogleCalendar extends AbstractGoogleCalendar {
 
 	@Override
-	public boolean evaluate(Game game) {
-		return transform(game) != null;
+	public boolean contains(Game game) {
+		return getGameDate(game) != null;
 	}
 
 }

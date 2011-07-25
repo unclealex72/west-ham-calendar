@@ -21,47 +21,131 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.service;
+package uk.co.unclealex.hammers.calendar.server.service;
 
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 
-import uk.co.unclealex.hammers.calendar.exception.UnparseableDateException;
+import uk.co.unclealex.hammers.calendar.server.exception.UnparseableDateException;
+
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 
 public class DateServiceImpl implements DateService {
 
-	private Map<String, DateFormat> i_dateFormatCache = new HashMap<String, DateFormat>();
-	
-	protected DateFormat getDateFormat(String dateFormat) {
-		Map<String, DateFormat> dateFormatCache = getDateFormatCache();
-		DateFormat fmt = dateFormatCache.get(dateFormat);
-		if (fmt == null) {
-			fmt = new SimpleDateFormat(dateFormat);
-			dateFormatCache.put(dateFormat, fmt);
+	protected abstract class DateFormatter {
+		private final String i_dateFormat;
+		
+		public DateFormatter(String dateFormat) {
+			super();
+			i_dateFormat = dateFormat;
 		}
-		return fmt;
-	}
-	
-	public Date parseDate(String dateFormat, String date, URL referringUrl) throws UnparseableDateException {
-		try {
-			date = date.replaceAll("noon", "pm");
-			return getDateFormat(dateFormat).parse(date);
+
+		public abstract Date parseDate(String date) throws ParseException;
+
+		@Override
+		public String toString() {
+			return getDateFormat();
 		}
-		catch (ParseException e) {
-			throw new UnparseableDateException("Cannot parse date " + date + " using format string " + dateFormat + " on page " + referringUrl, e);
+		
+		public String getDateFormat() {
+			return i_dateFormat;
 		}
 	}
 	
-	public Date parseYearlessDate(String dateFormat, String date, Date yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl) throws UnparseableDateException {
-		Date yearlessDate = parseDate(dateFormat, date, referringUrl);
-		return addYearToDate(yearlessDate, yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate);
+	protected class StandardDateFormatter extends DateFormatter {
+
+		public StandardDateFormatter(String dateFormat) {
+			super(dateFormat);
+		}
+
+		@Override
+		public Date parseDate(String date) throws ParseException {
+			return new SimpleDateFormat(getDateFormat()).parse(date);
+		}
+		
+	}
+	
+	protected class YearlessDateFormatter extends StandardDateFormatter {
+		private final Date i_yearDeterminingDate;
+		private final boolean i_yearDeterminingDateIsLaterThanTheDate;
+		
+		public YearlessDateFormatter(String dateFormat, Date yearDeterminingDate,
+				boolean yearDeterminingDateIsLaterThanTheDate) {
+			super(dateFormat);
+			i_yearDeterminingDate = yearDeterminingDate;
+			i_yearDeterminingDateIsLaterThanTheDate = yearDeterminingDateIsLaterThanTheDate;
+		}
+
+		@Override
+		public Date parseDate(String date) throws ParseException {
+			Date yearlessDate = super.parseDate(date);
+			return addYearToDate(yearlessDate, getYearDeterminingDate(), isYearDeterminingDateIsLaterThanTheDate());
+		}
+		
+		public Date getYearDeterminingDate() {
+			return i_yearDeterminingDate;
+		}
+
+		public boolean isYearDeterminingDateIsLaterThanTheDate() {
+			return i_yearDeterminingDateIsLaterThanTheDate;
+		}
+		
+		
+	}
+	protected Date parseDate(String date, URL referringUrl, Iterable<DateFormatter> dateFormatters) throws UnparseableDateException {
+		Date parsedDate = null;
+		for (Iterator<DateFormatter> iter = dateFormatters.iterator(); parsedDate == null && iter.hasNext(); ) {
+			try {
+				parsedDate = iter.next().parseDate(date);
+			}
+			catch (ParseException e) {
+				// Try the next one.
+			}
+		}
+		if (parsedDate == null) {
+			String message = 
+					String.format(
+							"Cannot parse date '%s' on page '%s' using the following format strings: ",
+							date, referringUrl, Joiner.on(", ").join(dateFormatters));
+			throw new UnparseableDateException(message);
+		}
+		return parsedDate;
+		
+	}
+	
+	protected Function<String, DateFormatter> createStandardDateFormatterFunction() {
+		return new Function<String, DateFormatter>() {
+			@Override
+			public DateFormatter apply(String dateFormat) {
+				return new StandardDateFormatter(dateFormat);
+			}
+		};
+	}
+	
+	protected Function<String, DateFormatter> createYearlessDateFormatterFunction(final Date yearDeterminingDate, final boolean yearDeterminingDateIsLaterThanTheDate) {
+		return new Function<String, DateFormatter>() {
+			@Override
+			public DateFormatter apply(String dateFormat) {
+				return new YearlessDateFormatter(dateFormat, yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate);
+			}
+		};
+	}
+
+	public Date parseYearlessDate(String date, Date yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl, String... dateFormats) throws UnparseableDateException {
+		return parseDate(
+				date, 
+				referringUrl, 
+				Iterables.transform(
+						Arrays.asList(dateFormats), 
+						createYearlessDateFormatterFunction(yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate)));
 	}
 	
 	public Date addYearToDate(Date yearlessDate, Date yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate) {
@@ -79,22 +163,32 @@ public class DateServiceImpl implements DateService {
 	}
 	
 	public String printDate(String dateFormat, Date date) {
-		return getDateFormat(dateFormat).format(date);
+		return new SimpleDateFormat(dateFormat).format(date);
+	}
+	
+	@Override
+	public Date parsePossiblyYearlessDate(
+			String date, Date yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl, 
+			String[] dateFormats, String[] yearlessDateFormats) throws UnparseableDateException {
+		Iterable<DateFormatter> dateFormatters = Iterables.concat(
+			Iterables.transform(Arrays.asList(dateFormats), createStandardDateFormatterFunction()),
+			Iterables.transform(
+					Arrays.asList(yearlessDateFormats), 
+					createYearlessDateFormatterFunction(yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate)));
+		return parseDate(date, referringUrl, dateFormatters);
 	}
 
 	@Override
-	public Date parsePossiblyYearlessDate(
-			String dateFormat, String yearlessDateFormat, String date, Date yearDeterminingDate, 
-			boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl) throws UnparseableDateException {
-		try {
-			return getDateFormat(dateFormat).parse(date);
-		}
-		catch (ParseException e) {
-			return parseYearlessDate(yearlessDateFormat, date, yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate, referringUrl);
-		}
+	public Date parseDate(String date, URL referringUrl, String... dateFormats) throws UnparseableDateException {
+		return parseDate(date, referringUrl, Iterables.transform(Arrays.asList(dateFormats), createStandardDateFormatterFunction()));
 	}
-	
-	public Map<String, DateFormat> getDateFormatCache() {
-		return i_dateFormatCache;
-	}
+
+	@Override
+	public Date parsePossiblyYearlessDate(String date, Date yearDeterminingDate,
+			boolean yearDeterminingDateIsLaterThanTheDate, URL referringUrl, String dateFormat, String yearlessDateFormat)
+			throws UnparseableDateException {
+		return parsePossiblyYearlessDate(
+				date, yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate, referringUrl, 
+				new String[] { dateFormat }, new String[] { yearlessDateFormat });
+	}	
 }

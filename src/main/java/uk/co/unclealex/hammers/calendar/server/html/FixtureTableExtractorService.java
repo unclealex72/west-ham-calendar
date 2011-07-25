@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.IOException;
 

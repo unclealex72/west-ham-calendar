@@ -1,5 +1,16 @@
 /**
- * Copyright 2010 Alex Jones
+ * 
+ */
+package uk.co.unclealex.hammers.calendar.server.service;
+
+import java.io.IOException;
+
+import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
+
+import com.google.gdata.util.ServiceException;
+
+/**
+ * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,8 +32,15 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.model;
+public interface DefaultsService {
 
-public enum Location {
-	HOME, AWAY
+	public void ensureDefaultUsersExist();
+
+	/**
+	 * @throws IOException
+	 * @throws GoogleAuthenticationFailedException
+	 * @throws ServiceException
+	 */
+	public void ensureDefaultCalendarsExistAndCalendarsAreSynchronised() throws IOException,
+			GoogleAuthenticationFailedException, ServiceException;
 }

@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,8 +41,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.filter.Filter;
 
-import uk.co.unclealex.hammers.calendar.exception.UnparseableDateException;
-import uk.co.unclealex.hammers.calendar.service.DateService;
+import uk.co.unclealex.hammers.calendar.server.exception.UnparseableDateException;
+import uk.co.unclealex.hammers.calendar.server.service.DateService;
 
 public class UrlExtractorServiceImpl implements UrlExtractorService {
 
@@ -111,8 +111,8 @@ public class UrlExtractorServiceImpl implements UrlExtractorService {
 			throws IOException {
 		Map<Date, URL> urlsByGameDate = new TreeMap<Date, URL>();
 		DateService dateService = getDateService();
-		String fmt = "dd MMMM yyyy - hh.mma";
-		String yearlessFmt = "dd MMMM - hh.mma";
+		String[] fmts = new String[] { "dd MMMM yyyy - hh.mma", "dd MMMM yyyy - hha" };
+		String[] yearlessFmt = new String[] { "dd MMMM - hh.mma", "dd MMMM - hha" };
 		Date now = new Date();
 		Pattern pattern = Pattern.compile(
 				"href=\"(.+)\".*(?:Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\\s+(.*?(?:am|pm|noon))");
@@ -128,7 +128,7 @@ public class UrlExtractorServiceImpl implements UrlExtractorService {
 					// Remove the day number prefix
 					dateString = dateString.replaceFirst("(\\d+)(st|nd|rd|th)", "$1");
 					try {
-						Date date = dateService.parsePossiblyYearlessDate(fmt, yearlessFmt, dateString, now, false, ticketInformationUrl);
+						Date date = dateService.parsePossiblyYearlessDate(dateString, now, false, ticketInformationUrl, fmts, yearlessFmt);
 						urlsByGameDate.put(date, new URL(ticketInformationUrl, url));
 					}
 					catch (UnparseableDateException e) {

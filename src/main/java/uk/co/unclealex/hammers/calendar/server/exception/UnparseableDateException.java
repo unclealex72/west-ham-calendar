@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.exception;
+package uk.co.unclealex.hammers.calendar.server.exception;
 
 public class UnparseableDateException extends Exception {
 

@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -38,12 +38,12 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.unclealex.hammers.calendar.dao.GameDao;
-import uk.co.unclealex.hammers.calendar.exception.UnparseableDateException;
-import uk.co.unclealex.hammers.calendar.model.Game;
-import uk.co.unclealex.hammers.calendar.model.Location;
-import uk.co.unclealex.hammers.calendar.service.DateService;
-import uk.co.unclealex.hammers.calendar.service.GameService;
+import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
+import uk.co.unclealex.hammers.calendar.server.exception.UnparseableDateException;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+import uk.co.unclealex.hammers.calendar.server.service.DateService;
+import uk.co.unclealex.hammers.calendar.server.service.GameService;
+import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 @Transactional
 public class TicketDecorator implements Decorator {
@@ -62,7 +62,6 @@ public class TicketDecorator implements Decorator {
 		
 		UrlExtractorService urlExtractorService = getUrlExtractorService();
 		GameDao gameDao = getGameDao();
-		GameService gameService = getGameService();
 		
 		URL homePage = urlExtractorService.getHomePage();
 		URL ticketInformationUrl = urlExtractorService.getTicketInformationUrl(homePage);
@@ -84,7 +83,7 @@ public class TicketDecorator implements Decorator {
 					}
 				}
 				reader.close();
-				gameService.storeGame(game);
+				gameDao.saveOrUpdate(game);
 			}
 		}
 	}
@@ -123,7 +122,7 @@ public class TicketDecorator implements Decorator {
 			if (matcher.find()) {
 				String date = matcher.group(1);
 				try {
-					Date ticketDate = getDateService().parseYearlessDate(getDateFormat(), date, game.getDatePlayed(), true, ticketUrl);
+					Date ticketDate = getDateService().parseYearlessDate(date, game.getDatePlayed(), true, ticketUrl, getDateFormat());
 					if (ticketDate != null) {
 						populateDate(game, openingHours(ticketDate));
 						return true;

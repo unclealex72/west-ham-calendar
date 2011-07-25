@@ -21,15 +21,15 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+package uk.co.unclealex.hammers.calendar.server.google;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
-import uk.co.unclealex.hammers.calendar.model.Location;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 public class HomeGoogleCalendar extends GameGoogleCalendar {
 
 	@Override
-	public boolean evaluate(Game game) {
+	public boolean contains(Game game) {
 		return game.getLocation() == Location.HOME;
 	}
 	

@@ -21,11 +21,11 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.dao;
+package uk.co.unclealex.hammers.calendar.server.dao;
 
 import java.util.Collection;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 public interface GameSelector {
 

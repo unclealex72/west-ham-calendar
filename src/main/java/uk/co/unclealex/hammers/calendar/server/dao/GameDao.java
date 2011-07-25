@@ -21,28 +21,27 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.dao;
+package uk.co.unclealex.hammers.calendar.server.dao;
 
 import java.util.Date;
-import java.util.List;
 import java.util.SortedSet;
 
-import uk.co.unclealex.hammers.calendar.model.Competition;
-import uk.co.unclealex.hammers.calendar.model.Game;
-import uk.co.unclealex.hammers.calendar.model.Location;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.Competition;
+import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
-public interface GameDao {
+public interface GameDao extends CrudDao<Game> {
 
-	public Game findById(int id);
 	public Game findByDatePlayed(Date datePlayed);
 	public Game findByDayPlayed(Date datePlayed);
-	public SortedSet<Game> getAllForSeason(int season);
+	public Iterable<Game> getAllForSeason(int season);
 	public SortedSet<Integer> getAllSeasons();
 	public Game findByBusinessKey(Competition competition, Location location, String opponents, int season);
-	public void store(Game game);
-	public List<Game> getAll();
-	public List<Game> getAllByAttendence(boolean booleanValue);
-	public List<Game> getAllTicketDates();
-	public List<Game> getAllAfter(Date date);
-	public List<Game> getAllTicketDatesAfter(Date date);
+	public Iterable<Game> getAllByAttendence(boolean booleanValue);
+	public Iterable<Game> getAllTicketDates();
+	public Iterable<Game> getAllAfter(Date date);
+	public Iterable<Game> getAllTicketDatesAfter(Date date);
+	public void attendAllHomeGamesForSeason(int season);
+	public Integer getLatestSeason();
+
 }

@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html.builder;
+package uk.co.unclealex.hammers.calendar.server.html.builder;
 
 
 public abstract class AbstractGameBuilderAction implements GameBuilderAction {

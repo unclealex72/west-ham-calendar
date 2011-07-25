@@ -21,17 +21,16 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.IOException;
-import java.util.List;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 public abstract class AbstractFixtureBuilderService implements FixtureBuilderService {
 
 	@Override
-	public List<Game> buildAll() throws IOException {
+	public Iterable<Game> buildAll() throws IOException {
 		return buildAll(null);
 	}
 

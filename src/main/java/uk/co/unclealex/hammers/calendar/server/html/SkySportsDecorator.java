@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -37,8 +37,9 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections15.Predicate;
 import org.apache.log4j.Logger;
+
+import com.google.common.base.Predicate;
 
 public class SkySportsDecorator extends TelevisionDecorator {
 
@@ -153,7 +154,7 @@ public class SkySportsDecorator extends TelevisionDecorator {
 	 */
 	protected boolean attemptMatch(Action action, String line, SkySportsFixture skySportsFixture) {
 		Matcher matcher = action.getPattern().matcher(line);
-		if (action.evaluate(matcher)) {
+		if (action.apply(matcher)) {
 			String match = matcher.group(1);
 			log.debug(String.format("Found %s '%s'", action.getName(), match));
 			action.execute(skySportsFixture, match);
@@ -195,7 +196,7 @@ public class SkySportsDecorator extends TelevisionDecorator {
 			super(pattern, name);
 		}
 
-		public boolean evaluate(Matcher matcher) {
+		public boolean apply(Matcher matcher) {
 			return matcher.find();
 		}
 	}
@@ -206,7 +207,7 @@ public class SkySportsDecorator extends TelevisionDecorator {
 			super(pattern, name);
 		}
 
-		public boolean evaluate(Matcher matcher) {
+		public boolean apply(Matcher matcher) {
 			return matcher.matches();
 		}
 	}

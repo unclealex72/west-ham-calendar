@@ -21,28 +21,21 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+package uk.co.unclealex.hammers.calendar.server.google;
 
 import java.util.Date;
 
-import org.apache.commons.collections15.Predicate;
-import org.apache.commons.collections15.Transformer;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
-
-public interface GoogleCalendar extends Predicate<Game>, Transformer<Game, Date> {
+public interface GoogleCalendar {
 
 	public String getCalendarTitle();
 	
 	public String getDescription();
 	
-	public boolean isShared();
-	
-	public boolean isBusy();
-	
-	public Integer getReminderInMinutes();
-	
 	public int getDurationInHours();
 	
-	public String getDefaultColour();
+	public boolean contains(Game game);
+	
+	public Date getGameDate(Game game);
 }

@@ -21,21 +21,19 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.service;
+package uk.co.unclealex.hammers.calendar.server.service;
 
-import java.util.Collection;
 import java.util.Date;
-import java.util.SortedSet;
 
-import uk.co.unclealex.hammers.calendar.model.Competition;
-import uk.co.unclealex.hammers.calendar.model.Game;
-import uk.co.unclealex.hammers.calendar.model.Location;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.Competition;
+import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 public interface GameService {
 
 	public Game findOrCreateGame(Competition competition, Location location, String opponents, int season, Date datePlayed);
-	
-	public void storeGame(Game game);
-	
-	public SortedSet<Game> attendGames(int season, Collection<Integer> gameIds);
+
+	public Game attendGame(Integer gameId);
+	public Game unattendGame(Integer gameId);
+
 }

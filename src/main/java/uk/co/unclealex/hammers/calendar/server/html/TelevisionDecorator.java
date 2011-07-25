@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.IOException;
 import java.net.URL;
@@ -32,8 +32,8 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.unclealex.hammers.calendar.dao.GameDao;
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 @Transactional
 public abstract class TelevisionDecorator implements Decorator {
@@ -55,7 +55,7 @@ public abstract class TelevisionDecorator implements Decorator {
 			}
 			else {
 				game.setTelevisionChannel(channel);
-				gameDao.store(game);
+				gameDao.saveOrUpdate(game);
 			}
 		}
 	}

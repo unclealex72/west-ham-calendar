@@ -21,7 +21,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,21 +30,22 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
-import org.apache.commons.collections15.CollectionUtils;
-import org.apache.commons.collections15.Predicate;
 import org.apache.log4j.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.unclealex.hammers.calendar.html.builder.GameBuilderAction;
-import uk.co.unclealex.hammers.calendar.html.builder.GameBuilderActionFactory;
-import uk.co.unclealex.hammers.calendar.html.builder.GameBuilderInformation;
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.html.builder.GameBuilderAction;
+import uk.co.unclealex.hammers.calendar.server.html.builder.GameBuilderActionFactory;
+import uk.co.unclealex.hammers.calendar.server.html.builder.GameBuilderInformation;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * A fixture builder service that just queries the online calendar every time it is requested.
@@ -93,11 +94,11 @@ public class OnlineFixtureBuilderService extends AbstractFixtureBuilderService i
 			if (clazz != null) {
 				Predicate<Entry<String, GameBuilderAction>> startsWithPredicate = new Predicate<Entry<String,GameBuilderAction>>() {
 					@Override
-					public boolean evaluate(Entry<String, GameBuilderAction> entry) {
+					public boolean apply(Entry<String, GameBuilderAction> entry) {
 						return clazz.startsWith(entry.getKey());
 					}
 				};
-				Entry<String, GameBuilderAction> entry = CollectionUtils.find(gameBuilderActions.entrySet(), startsWithPredicate);
+				Entry<String, GameBuilderAction> entry = Iterables.find(gameBuilderActions.entrySet(), startsWithPredicate, null);
 				if (entry != null) {
 					GameBuilderAction action = entry.getValue();
 					action.build(tableRowElement.getChildren("td"), u);
@@ -112,17 +113,17 @@ public class OnlineFixtureBuilderService extends AbstractFixtureBuilderService i
 			games = new LinkedList<Game>();
 			Predicate<Game> predicate = new Predicate<Game>() {
 				@Override
-				public boolean evaluate(Game game) {
-					return game.isAttended() == attended.booleanValue();
+				public boolean apply(Game game) {
+					return game.isAttended() != attended.booleanValue();
 				}
 			};
-			CollectionUtils.selectRejected(gameBuilderInformation.getGames(), predicate, games);
+			Iterables.addAll(games, Iterables.filter(gameBuilderInformation.getGames(), predicate));
 		}
 		return games;
 	}
 
 	@Override
-	public List<Game> buildAll(Boolean attended) throws IOException {
+	public Iterable<Game> buildAll(Boolean attended) throws IOException {
 		UrlExtractorService urlExtractorService = getUrlExtractorService();
 		
 		URL homePage = urlExtractorService.getHomePage();

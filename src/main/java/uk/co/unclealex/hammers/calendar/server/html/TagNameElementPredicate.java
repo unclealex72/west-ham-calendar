@@ -21,14 +21,14 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.html.HTML;
 
-import org.apache.commons.collections15.Predicate;
+import com.google.common.base.Predicate;
 
 public class TagNameElementPredicate implements Predicate<Element> {
 
@@ -41,7 +41,7 @@ public class TagNameElementPredicate implements Predicate<Element> {
 	}
 
 	@Override
-	public boolean evaluate(Element element) {
+	public boolean apply(Element element) {
     AttributeSet attributes = element.getAttributes();
     Object name = attributes.getAttribute(StyleConstants.NameAttribute);
     return (name instanceof HTML.Tag) && name == getName();

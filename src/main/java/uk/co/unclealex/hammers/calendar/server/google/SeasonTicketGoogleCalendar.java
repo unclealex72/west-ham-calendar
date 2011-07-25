@@ -21,17 +21,17 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+package uk.co.unclealex.hammers.calendar.server.google;
 
 import java.util.Date;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 
 public class SeasonTicketGoogleCalendar extends TicketsGoogleCalendar {
 
 	@Override
-	public Date transform(Game game) {
+	public Date getGameDate(Game game) {
 		return game.getSeasonTicketsAvailable();
 	}
 }

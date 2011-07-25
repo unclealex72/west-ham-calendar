@@ -21,15 +21,14 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
-import uk.co.unclealex.hammers.calendar.dao.GameDao;
-import uk.co.unclealex.hammers.calendar.model.Game;
+import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 @Transactional
 public class DaoFixtureBuilderService extends AbstractFixtureBuilderService {
@@ -37,7 +36,7 @@ public class DaoFixtureBuilderService extends AbstractFixtureBuilderService {
 	private GameDao i_gameDao;
 	
 	@Override
-	public List<Game> buildAll(Boolean attended) throws IOException {
+	public Iterable<Game> buildAll(Boolean attended) throws IOException {
 		if (attended == null) {
 			return getGameDao().getAll();
 		}

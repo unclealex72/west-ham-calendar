@@ -21,14 +21,14 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.html.builder;
+package uk.co.unclealex.hammers.calendar.server.html.builder;
 
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import uk.co.unclealex.hammers.calendar.model.Game;
-import uk.co.unclealex.hammers.calendar.model.Month;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.Month;
 
 public class GameBuilderInformation {
 

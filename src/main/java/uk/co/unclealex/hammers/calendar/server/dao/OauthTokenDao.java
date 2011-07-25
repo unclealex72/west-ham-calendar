@@ -1,5 +1,14 @@
 /**
- * Copyright 2010 Alex Jones
+ * 
+ */
+package uk.co.unclealex.hammers.calendar.server.dao;
+
+import uk.co.unclealex.hammers.calendar.server.model.OauthToken;
+import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
+
+
+/**
+ * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,43 +30,6 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.model;
+public interface OauthTokenDao extends BusinessCrudDao<OauthTokenType, OauthToken> {
 
-public enum Month {
-	AUGUST("August", 0),
-	SEPTEMBER("September", 0),
-	OCTOBER("October", 0),
-	NOVEMBER("November", 0),
-	DECEMBER("December", 0),
-	JANUARY("January", 1),
-	FEBRUARY("February", 1),
-	MARCH("March", 1),
-	APRIL("April", 1),
-	MAY("May", 1);
-	
-	public static Month findByName(String name) {
-		for (Month month : Month.values()) {
-			if (month.getName().equals(name)) {
-				return month;
-			}
-		}
-		return null;
-	}
-	
-	private String i_name;
-	private int i_yearOffset;
-	
-	private Month(String name, int yearOffset) {
-		i_name = name;
-		i_yearOffset = yearOffset;
-	}
-
-	public int getYearOffset() {
-		return i_yearOffset;
-	}
-	
-	public String getName() {
-		return i_name;
-	}
-	
 }

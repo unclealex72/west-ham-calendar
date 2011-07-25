@@ -21,12 +21,9 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.scheduling;
+package uk.co.unclealex.hammers.calendar.server.scheduling;
 
-import java.io.IOException;
 import java.text.ParseException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 import org.quartz.CronTrigger;
@@ -36,13 +33,13 @@ import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.StatefulJob;
+import org.quartz.TriggerUtils;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 
-import uk.co.unclealex.hammers.calendar.google.GoogleCalendarService;
-import uk.co.unclealex.hammers.calendar.google.GoogleConfiguration;
-import uk.co.unclealex.hammers.calendar.html.FixtureBuilderService;
+import uk.co.unclealex.hammers.calendar.server.html.FixtureBuilderService;
+import uk.co.unclealex.hammers.calendar.server.service.GoogleCalendarService;
 
 public class UpdateCalendarJob implements StatefulJob, JobFactory {
 
@@ -50,8 +47,9 @@ public class UpdateCalendarJob implements StatefulJob, JobFactory {
 	
 	private FixtureBuilderService i_onlineFixtureBuilderService;
 	private GoogleCalendarService i_googleCalendarService;
-	private GoogleConfiguration i_googleConfiguration;
+	private String i_cronString;
 	private Scheduler i_scheduler;
+	private JobDetail i_jobDetail;
 	
 	public void initialise() throws SchedulerException, ParseException {
     Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
@@ -59,13 +57,15 @@ public class UpdateCalendarJob implements StatefulJob, JobFactory {
     scheduler.setJobFactory(this);
     scheduler.start();
     JobDetail job = new JobDetail("job1", "group1", getClass());
-		String cronString = getGoogleConfiguration().getCronString();
-		Matcher matcher = Pattern.compile("\"(.+)\"").matcher(cronString);
-		if (matcher.matches()) {
-			cronString = matcher.group(1);
+    setJobDetail(job);
+		String cronString = getCronString();
+		if (cronString != null) {
+			scheduler.scheduleJob(job, new CronTrigger("trigger1", "group1", cronString));
 		}
-		CronTrigger trigger = new CronTrigger("trigger1", "group1", cronString);
-		scheduler.scheduleJob(job, trigger);
+	}
+
+	public void scheduleNow() throws SchedulerException {
+		getScheduler().scheduleJob(getJobDetail(), TriggerUtils.makeImmediateTrigger("trigger2", 0, 0));
 	}
 	
 	@Override
@@ -81,11 +81,9 @@ public class UpdateCalendarJob implements StatefulJob, JobFactory {
 		try {
 			getOnlineFixtureBuilderService().buildAll();
 			getGoogleCalendarService().updateCalendars();
+			log.info("Updating completed.");
 		}
-		catch (IOException e) {
-			log.error("Could not update calendars.", e);
-		}
-		catch (RuntimeException e) {
+		catch (Throwable e) {
 			log.error("Could not update calendars.", e);
 		}
 	}
@@ -114,12 +112,19 @@ public class UpdateCalendarJob implements StatefulJob, JobFactory {
 		i_scheduler = scheduler;
 	}
 
-	public GoogleConfiguration getGoogleConfiguration() {
-		return i_googleConfiguration;
+	public String getCronString() {
+		return i_cronString;
 	}
 
-	public void setGoogleConfiguration(GoogleConfiguration googleConfiguration) {
-		i_googleConfiguration = googleConfiguration;
+	public void setCronString(String cronString) {
+		i_cronString = cronString;
 	}
 
+	public JobDetail getJobDetail() {
+		return i_jobDetail;
+	}
+
+	public void setJobDetail(JobDetail jobDetail) {
+		i_jobDetail = jobDetail;
+	}
 }

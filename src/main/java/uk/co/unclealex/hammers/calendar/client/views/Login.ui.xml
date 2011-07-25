@@ -1,0 +1,26 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder 
+  xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<g:DialogBox ui:field="popupPanel" modal="true" autoHideEnabled="false" glassEnabled="true" animationEnabled="true">
+		<g:caption>Login</g:caption>
+		<g:Grid>
+			<g:row>
+				<g:customCell><g:Label ui:field="failureLabel" visible="false"/></g:customCell>
+			</g:row>
+			<g:row>
+				<g:cell>Username</g:cell>
+				<g:customCell><g:TextBox ui:field="username"/></g:customCell>
+			</g:row>
+			<g:row>
+				<g:cell>Password</g:cell>
+				<g:customCell><g:PasswordTextBox ui:field="password"/></g:customCell>
+			</g:row>
+			<g:row>
+				<g:customCell><g:Button ui:field="cancel">Cancel</g:Button></g:customCell>
+				<g:customCell><g:Button ui:field="login">Login</g:Button></g:customCell>
+			</g:row>
+		</g:Grid>
+	</g:DialogBox>
+</ui:UiBinder>

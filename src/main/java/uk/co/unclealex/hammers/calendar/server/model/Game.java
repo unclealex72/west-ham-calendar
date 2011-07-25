@@ -21,9 +21,8 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.model;
+package uk.co.unclealex.hammers.calendar.server.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -39,12 +38,15 @@ import javax.persistence.UniqueConstraint;
 
 import org.apache.commons.lang.ObjectUtils;
 
+import uk.co.unclealex.hammers.calendar.shared.model.Competition;
+import uk.co.unclealex.hammers.calendar.shared.model.Location;
+
 @Entity
 @Table(
 	name="game",
 	uniqueConstraints = 
 		@UniqueConstraint(columnNames = {"competition", "location", "opponents", "season"}))
-public class Game implements Serializable {
+public class Game implements HasIdentity {
 
 	private Integer i_id;
 	

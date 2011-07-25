@@ -1,5 +1,12 @@
 /**
- * Copyright 2010 Alex Jones
+ * 
+ */
+package uk.co.unclealex.hammers.calendar.client.factories;
+
+import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter;
+
+/**
+ * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,13 +28,7 @@
  * @author unclealex72
  *
  */
-package uk.co.unclealex.hammers.calendar.google;
+public interface LoginPresenterFactory {
 
-public interface GoogleConfiguration {
-
-	public String getUsername();
-	
-	public String getPassword();
-
-	public String getCronString();
+	public LoginPresenter createLoginPresenter(Runnable originalAction);
 }
