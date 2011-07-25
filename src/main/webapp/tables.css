@@ -1,0 +1,46 @@
+body {
+	font-family: sans-serif;
+}
+
+#sidebar table.games {
+	display: inline;
+}
+
+table.games {
+		border-collapse: collapse;
+}
+
+.games tr.subheader, .league tr.header, .games tr.header {
+	font-size: larger;
+	font-weight: bolder;	
+	background: #7B0038;
+	color: white;
+}
+
+.games td, .league td {
+	padding: 5px 5px 5px 5px;
+}
+
+.games .indicator, .key td.week, .key td.weekend {
+	width: 10px
+}
+
+.games tr.week .indicator, .key td.week .indicator {
+    background: red;
+}
+
+.games tr.weekend .indicator, .key td.weekend .indicator {
+    background: yellow;
+}
+
+.key td.week, .key td.weekend {
+	background: black;
+}
+
+.games tr.odd, .league tr.odd {
+	background: #94BDE6;
+}
+
+.games tr.even, .league tr.even {
+	background: #A5CEF7;
+}
