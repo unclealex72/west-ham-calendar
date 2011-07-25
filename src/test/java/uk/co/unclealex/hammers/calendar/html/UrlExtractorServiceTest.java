@@ -29,6 +29,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import uk.co.unclealex.hammers.calendar.SpringTest;
+import uk.co.unclealex.hammers.calendar.server.html.UrlExtractorService;
+import uk.co.unclealex.hammers.calendar.server.html.UrlExtractorServiceImpl;
 
 public class UrlExtractorServiceTest extends SpringTest {
 

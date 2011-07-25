@@ -26,7 +26,8 @@ package uk.co.unclealex.hammers.calendar.service;
 import java.util.Date;
 
 import junit.framework.TestCase;
-import uk.co.unclealex.hammers.calendar.exception.UnparseableDateException;
+import uk.co.unclealex.hammers.calendar.server.exception.UnparseableDateException;
+import uk.co.unclealex.hammers.calendar.server.service.DateServiceImpl;
 
 public class DateServiceImplTest extends TestCase {
 
@@ -48,8 +49,8 @@ public class DateServiceImplTest extends TestCase {
 
 	public void testYearless(String yearlessDate, String yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate, String expectedDate) throws UnparseableDateException {
 		DateServiceImpl dateService = new DateServiceImpl();
-		Date ydd = dateService.parseDate("dd/MM/yyyy", yearDeterminingDate, null);
-		Date date = dateService.parseYearlessDate("dd/MM", yearlessDate, ydd, yearDeterminingDateIsLaterThanTheDate, null);
+		Date ydd = dateService.parseDate(yearDeterminingDate, null, "dd/MM/yyyy");
+		Date date = dateService.parseYearlessDate(yearlessDate, ydd, yearDeterminingDateIsLaterThanTheDate, null, "dd/MM");
 		String actualDate = dateService.printDate("dd/MM/yyyy", date);
 		assertEquals("The wrong date was created.", expectedDate, actualDate);
 	}

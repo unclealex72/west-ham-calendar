@@ -28,9 +28,10 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import uk.co.unclealex.hammers.calendar.SpringTest;
-import uk.co.unclealex.hammers.calendar.model.Competition;
-import uk.co.unclealex.hammers.calendar.model.Game;
-import uk.co.unclealex.hammers.calendar.model.Location;
+import uk.co.unclealex.hammers.calendar.server.html.OnlineFixtureBuilderService;
+import uk.co.unclealex.hammers.calendar.server.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.Competition;
+import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 public class FixtureBuilderServiceTest extends SpringTest {
 

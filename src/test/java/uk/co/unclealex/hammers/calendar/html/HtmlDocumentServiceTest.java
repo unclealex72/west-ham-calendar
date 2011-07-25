@@ -26,6 +26,8 @@ package uk.co.unclealex.hammers.calendar.html;
 import java.io.IOException;
 
 import uk.co.unclealex.hammers.calendar.SpringTest;
+import uk.co.unclealex.hammers.calendar.server.html.HtmlDocumentService;
+import uk.co.unclealex.hammers.calendar.server.html.HtmlDocumentServiceImpl;
 
 public class HtmlDocumentServiceTest extends SpringTest {
 
