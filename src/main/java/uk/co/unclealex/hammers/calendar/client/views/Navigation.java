@@ -43,7 +43,8 @@ public class Navigation extends Composite implements Display {
 
   @UiTemplate("Navigation.ui.xml")
 	public interface Binder extends UiBinder<Widget, Navigation> {
-	}
+    // No extra method
+  }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 

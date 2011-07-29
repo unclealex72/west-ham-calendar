@@ -3,8 +3,9 @@
  */
 package uk.co.unclealex.hammers.calendar.server.service;
 
-import uk.co.unclealex.hammers.calendar.server.exception.UsernameAlreadyExistsException;
-import uk.co.unclealex.hammers.calendar.server.model.Role;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
+import uk.co.unclealex.hammers.calendar.shared.model.Role;
 
 /**
  * Copyright 2011 Alex Jones
@@ -32,12 +33,8 @@ import uk.co.unclealex.hammers.calendar.server.model.Role;
 public interface UserService {
 
 	public void ensureDefaultUsersExists(String username, String password);
-
-	/**
-	 * @param username
-	 * @param password
-	 * @param role
-	 * @throws UsernameAlreadyExistsException
-	 */
-	void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException;
+	public void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException;
+	public void removeUser(String username) throws NoSuchUsernameException;
+  public void alterUser(String username, String newPassword, Role newRole) throws NoSuchUsernameException;
+  public void alterPassword(String username, String newPassword) throws NoSuchUsernameException;
 }

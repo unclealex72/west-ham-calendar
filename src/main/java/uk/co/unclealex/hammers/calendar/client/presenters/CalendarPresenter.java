@@ -8,7 +8,6 @@ import javax.inject.Inject;
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
 import uk.co.unclealex.hammers.calendar.client.factories.ColourPickerPresenterFactory;
 import uk.co.unclealex.hammers.calendar.client.presenters.CalendarPresenter.Display;
-import uk.co.unclealex.hammers.calendar.client.util.CanWait;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.NumericListBoxAdaptor;
@@ -24,7 +23,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
@@ -55,9 +53,9 @@ import com.google.inject.assistedinject.Assisted;
  * @author unclealex72
  *
  */
-public class CalendarPresenter extends AbstractPopupPresenter<Display> {
+public class CalendarPresenter extends AbstractCallbackPopupPresenter<Display> {
 
-	public static interface Display extends AbstractPopupPresenter.Display, CanWait {
+	public static interface Display extends AbstractCallbackPopupPresenter.Display {
 
 		Button getRemove();
 		Button getSave();
@@ -77,7 +75,6 @@ public class CalendarPresenter extends AbstractPopupPresenter<Display> {
 	private final NumericListBoxAdaptor i_reminderMinutesAdaptor;
 	private CalendarConfiguration i_calendarConfiguration;
 	private final ColourPickerPresenterFactory i_colourPickerPresenterFactory;
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
 	private CalendarColour i_originalCalendarColour;
 	private CalendarColour i_currentCalendarColour;
 	
@@ -85,13 +82,12 @@ public class CalendarPresenter extends AbstractPopupPresenter<Display> {
 	public CalendarPresenter(
 			@Assisted CalendarConfiguration calendarConfiguration, Display display, 
 			ColourPickerPresenterFactory colourPickerPresenterFactory, AsyncCallbackExecutor asyncCallbackExecutor) {
-		super();
+		super(asyncCallbackExecutor);
 		i_calendarConfiguration = calendarConfiguration;
 		i_display = display;
 		i_reminderHoursAdaptor = new NumericListBoxAdaptor(display.getReminderHours());
 		i_reminderMinutesAdaptor = new NumericListBoxAdaptor(display.getReminderMinutes());
 		i_colourPickerPresenterFactory = colourPickerPresenterFactory;
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
 		setCalendarConfiguration(calendarConfiguration);
 	}
 
@@ -239,40 +235,6 @@ public class CalendarPresenter extends AbstractPopupPresenter<Display> {
 		calendarConfiguration.setSelected(display.getSelected().getValue());
 		calendarConfiguration.setShared(display.getShare().getValue());
 	}
-
-	protected abstract class AsyncRunnable<T> extends FailureAsPopupExecutableAsyncCallback<T> implements Runnable {
-
-		private final boolean i_hideOnExit;
-		
-		public AsyncRunnable(boolean hideOnExit) {
-			super();
-			i_hideOnExit = hideOnExit;
-		}
-
-
-		public void run() {
-			ExecutableAsyncCallback<T> callback = new FailureAsPopupExecutableAsyncCallback<T>() {
-				public void onSuccess(T result) {
-					AsyncRunnable.this.onSuccess(result);
-					if (isHideOnExit()) {
-						hide();
-					}
-				}
-				@Override
-				public void execute(AnonymousAttendanceServiceAsync anonymousAttendanceService,
-						UserAttendanceServiceAsync userAttendanceService, AdminAttendanceServiceAsync adminAttendanceService,
-						AsyncCallback<T> callback) {
-					AsyncRunnable.this.execute(anonymousAttendanceService, userAttendanceService, adminAttendanceService, callback);					
-				}
-			};
-      getAsyncCallbackExecutor().executeAndWait(callback, getDisplay());
-		}
-
-
-		public boolean isHideOnExit() {
-			return i_hideOnExit;
-		}
-	}
 	
 	protected <T> void registerForUpdates(HasValue<T> hasValue) {
 		ValueChangeHandler<T> handler = new ValueChangeHandler<T>() {
@@ -313,43 +275,12 @@ public class CalendarPresenter extends AbstractPopupPresenter<Display> {
 		return !isAsOriginal;
 	}
 	
-	protected interface ConfirmationRequired {
-		public boolean isConfirmationRequired();
-	}
-	
-	protected static class ConfirmationRequiredAlways implements ConfirmationRequired {
-		
-		public static ConfirmationRequiredAlways INSTANCE = new ConfirmationRequiredAlways();
-		@Override
-		public boolean isConfirmationRequired() {
-			return true;
-		}
-	}
-	
-	protected void addConfirmableAction(
-			HasClickHandlers target, final String action, final ConfirmationRequired confirmationRequired, final Runnable runnable) {
-		ClickHandler handler = new ClickHandler() {
-			
-			@Override
-			public void onClick(ClickEvent event) {
-				if (!confirmationRequired.isConfirmationRequired() || Window.confirm("Are you sure you want to " + action + "?")) {
-					runnable.run();
-				}
-			}
-		};
-		target.addClickHandler(handler);
-	}
-
 	public Display getDisplay() {
 		return i_display;
 	}
 
 	public CalendarConfiguration getCalendarConfiguration() {
 		return i_calendarConfiguration;
-	}
-
-	public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-		return i_asyncCallbackExecutor;
 	}
 
 	public CalendarColour getOriginalCalendarColour() {

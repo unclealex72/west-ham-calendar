@@ -7,9 +7,13 @@ import java.io.IOException;
 
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarColour;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarConfiguration;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+import uk.co.unclealex.hammers.calendar.shared.model.Role;
+import uk.co.unclealex.hammers.calendar.shared.model.User;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -52,4 +56,10 @@ public interface AdminAttendanceService extends RemoteService {
 	public CalendarConfiguration[] getCalendarConfigurations(boolean tickets);
 	
 	public void updateCalendars();
+	
+	public User[] getAllUsers();
+	public void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException;	  
+	public void removeUser(String username) throws NoSuchUsernameException;
+	public void alterUser(String username, String newPassword, Role newRole) throws NoSuchUsernameException;
+
 }

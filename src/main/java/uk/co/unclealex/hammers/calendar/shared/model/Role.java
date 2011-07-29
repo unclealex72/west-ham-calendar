@@ -1,17 +1,7 @@
 /**
  * 
  */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import uk.co.unclealex.hammers.calendar.shared.model.Role;
+package uk.co.unclealex.hammers.calendar.shared.model;
 
 /**
  * Copyright 2011 Alex Jones
@@ -36,30 +26,18 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
  * @author unclealex72
  *
  */
-@Entity
-@Table(name="authorities")
-public class Authority implements HasIdentity {
-
-	private Integer i_id;
-	private Role i_role;
+public enum Role {
+	ROLE_USER("User"), ROLE_ADMIN("Administrator");
 	
-	@Id @GeneratedValue
-	public Integer getId() {
-		return i_id;
-	}
+	private final String i_displayableName;
 
-	public void setId(Integer id) {
-		i_id = id;
-	}
+  private Role(String displayableName) {
+    i_displayableName = displayableName;
+  }
 
-	@Enumerated(EnumType.STRING)
-	@Column(name="authority", nullable=false)
-	public Role getRole() {
-		return i_role;
-	}
-
-	public void setRole(Role role) {
-		i_role = role;
-	}
-
+  public String getDisplayableName() {
+    return i_displayableName;
+  }
+	
+	
 }

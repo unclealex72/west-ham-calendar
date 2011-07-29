@@ -21,10 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.unclealex.hammers.calendar.server.dao.HibernateUserDao;
 import uk.co.unclealex.hammers.calendar.server.dao.UserDao;
-import uk.co.unclealex.hammers.calendar.server.exception.UsernameAlreadyExistsException;
 import uk.co.unclealex.hammers.calendar.server.model.Authority;
-import uk.co.unclealex.hammers.calendar.server.model.Role;
 import uk.co.unclealex.hammers.calendar.server.model.User;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
+import uk.co.unclealex.hammers.calendar.shared.model.Role;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
@@ -86,27 +87,80 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException {
-		if (getUserDao().findByKey(username) != null) {
-			throw new UsernameAlreadyExistsException(username, username + " is already taken.");
+		UserDao userDao = getUserDao();
+    if (userDao.findByKey(username) != null) {
+			throw new UsernameAlreadyExistsException(username + " is already taken.");
 		}
 		User user = new User();
 		user.setUsername(username);
 		user.setEnabled(true);
-		String encryptedPassword = encryptPassword(username, password);
-		user.setPassword(encryptedPassword);
-		Iterable<Role> roles = rolesUpToAndIncluding(role);
-		Set<Authority> authorities = new HashSet<Authority>();
+		alterPassword(user, password);
+		alterRoles(user, role);
+		userDao.saveOrUpdate(user);
+	}
+
+  protected void alterRoles(User user, Role role) {
+    Iterable<Role> roles = rolesUpToAndIncluding(role);
+		Set<Authority> authorities = user.getAuthorities();
+		if (authorities == null) {
+		  authorities = new HashSet<Authority>();
+		}
+		else {
+		  authorities.clear();
+		}
 		Iterables.addAll(authorities, Iterables.transform(roles, newAuthorityFunction()));
 		user.setAuthorities(authorities);
-		getUserDao().saveOrUpdate(user);
+  }
+
+  protected void alterPassword(User user, String password) {
+    String encryptedPassword = encryptPassword(user.getUsername(), password);
+		user.setPassword(encryptedPassword);
+  }
+	
+  @Override
+	public void alterPassword(String username, String newPassword) throws NoSuchUsernameException {
+	  User user = getExistingUserByUsername(username);
+	  alterPassword(user, newPassword);
+	  getUserDao().saveOrUpdate(user);
 	}
-	protected String encryptPassword(String username, String password) {
+	
+	public void alterRole(String username, Role role) throws NoSuchUsernameException {
+	  User user = getExistingUserByUsername(username);
+	  alterRoles(user, role);
+	  getUserDao().saveOrUpdate(user);
+	}
+
+	@Override
+	public void alterUser(String username, String newPassword, Role newRole) throws NoSuchUsernameException {
+    User user = getExistingUserByUsername(username);
+    alterRoles(user, newRole);
+    if (!newPassword.isEmpty()) {
+      alterPassword(user, newPassword);
+    }
+    getUserDao().saveOrUpdate(user);
+	}
+	
+  protected User getExistingUserByUsername(String username) throws NoSuchUsernameException {
+    User user = getUserDao().findByKey(username);
+    if (user == null) {
+      throw new NoSuchUsernameException("Cannot find user " + username);
+    }
+    return user;
+  }
+
+  protected String encryptPassword(String username, String password) {
 		Set<GrantedAuthority> emptySet = Collections.emptySet();
 		org.springframework.security.core.userdetails.User user = 
 				new org.springframework.security.core.userdetails.User(username, password, true, true, true, true, emptySet);
 		return getPasswordEncoder().encodePassword(password, getSaltSource().getSalt(user));
 	}
 
+  @Override
+  public void removeUser(String username) throws NoSuchUsernameException {
+    User user = getExistingUserByUsername(username);
+    getUserDao().remove(user.getUsername());
+  }
+  
 	protected Iterable<Role> rolesUpToAndIncluding(Role role) {
 		SortedSet<Role> allRoles = getAllRoles();
 		return Iterables.concat(allRoles.subSet(getSmallestRole(), role), Collections.singleton(role));

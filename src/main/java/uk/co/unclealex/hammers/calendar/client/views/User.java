@@ -5,17 +5,18 @@ package uk.co.unclealex.hammers.calendar.client.views;
 
 import javax.inject.Inject;
 
-import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter.Display;
+import uk.co.unclealex.hammers.calendar.client.presenters.UserPresenter.Display;
+import uk.co.unclealex.hammers.calendar.client.util.CanWaitSupport;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.HasText;
-import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -41,58 +42,74 @@ import com.google.gwt.user.client.ui.Widget;
  * @author unclealex72
  *
  */
-public class Login extends SimplePanel implements Display {
+public class User extends SimplePanel implements Display {
 
-	@UiTemplate("Login.ui.xml")
-	public interface Binder extends UiBinder<Widget, Login> {
+  @UiTemplate("User.ui.xml")
+	public interface Binder extends UiBinder<Widget, User> {
     // No extra method
   }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
+	private final CanWaitSupport i_canWaitSupport;
+	
 	@UiField PopupPanel popupPanel;
-	@UiField Label failureLabel;
-	@UiField HasText password;
-	@UiField HasText username;
-	@UiField Button login;
+	@UiField TextBox username;
+	@UiField TextBox password;
+	@UiField ListBox roles;
+	@UiField Button remove;
 	@UiField Button cancel;
+	@UiField Button update;
 	
 	@Inject
-	public Login() {
+	public User(CanWaitSupport canWaitSupport) {
 		add(binder.createAndBindUi(this));
+		i_canWaitSupport = canWaitSupport;
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter.Display#showFailure()
-	 */
 	@Override
-	public void showFailure() {
-		failureLabel.setVisible(true);
+	public void startWaiting() {
+	  getCanWaitSupport().startWaiting();
 	}
 
-	public HasText getPassword() {
-		return password;
-	}
+  @Override
+  public void stopWaiting() {
+    getCanWaitSupport().stopWaiting();
+  }
 
-	public HasText getUsername() {
-		return username;
-	}
+	public static Binder getBinder() {
+    return binder;
+  }
 
-	public Button getLogin() {
-		return login;
-	}
+  public PopupPanel getPopupPanel() {
+    return popupPanel;
+  }
 
-	public Button getCancel() {
-		return cancel;
-	}
+  public TextBox getUsername() {
+    return username;
+  }
 
-	public PopupPanel getPopupPanel() {
-		return popupPanel;
-	}
+  public TextBox getPassword() {
+    return password;
+  }
 
-	public Label getFailureLabel() {
-		return failureLabel;
-	}
+  public ListBox getRoles() {
+    return roles;
+  }
 
+  public Button getCancel() {
+    return cancel;
+  }
 
+  public Button getUpdate() {
+    return update;
+  }
+
+  public CanWaitSupport getCanWaitSupport() {
+    return i_canWaitSupport;
+  }
+
+  public Button getRemove() {
+    return remove;
+  }	
 }

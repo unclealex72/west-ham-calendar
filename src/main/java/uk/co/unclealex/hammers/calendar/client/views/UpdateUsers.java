@@ -5,16 +5,15 @@ package uk.co.unclealex.hammers.calendar.client.views;
 
 import javax.inject.Inject;
 
-import uk.co.unclealex.hammers.calendar.client.presenters.CalendarsPresenter.Display;
-import uk.co.unclealex.hammers.calendar.client.ui.UnorderedListPanel;
+import uk.co.unclealex.hammers.calendar.client.presenters.UpdateUsersPresenter.Display;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -40,34 +39,29 @@ import com.google.gwt.user.client.ui.Widget;
  * @author unclealex72
  *
  */
-public class Calendars extends Composite implements Display {
+public class UpdateUsers extends Composite implements Display {
 
-	@UiTemplate("Calendars.ui.xml")
-	public interface Binder extends UiBinder<Widget, Calendars> {
-    // No extra method
-  }
+  @UiField HasClickHandlers addNewUserButton;
+	@UiField HasWidgets usersPanel;
+	
+  @UiTemplate("UpdateUsers.ui.xml")
+	public interface Binder extends UiBinder<Widget, UpdateUsers> {
+    // No extra methods
+	}
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
-	@UiField UnorderedListPanel calendarListPanel;
-	@UiField ListBox otherCalendarNames;
-	@UiField Button addNewCalendar;
-
 	@Inject
-	public Calendars() {
+	public UpdateUsers() {
 		initWidget(binder.createAndBindUi(this));
 	}
 
-	public UnorderedListPanel getCalendarListPanel() {
-		return calendarListPanel;
-	}
+  public HasClickHandlers getAddNewUserButton() {
+    return addNewUserButton;
+  }
 
-	public ListBox getOtherCalendarNames() {
-		return otherCalendarNames;
-	}
-
-	public Button getAddNewCalendar() {
-		return addNewCalendar;
-	}
+  public HasWidgets getUsersPanel() {
+    return usersPanel;
+  }
 
 }

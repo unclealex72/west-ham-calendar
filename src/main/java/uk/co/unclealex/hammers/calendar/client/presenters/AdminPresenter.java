@@ -52,23 +52,26 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 		HasWidgets getGameCalendarsPanel();
 		HasWidgets getTicketCalendarsPanel();
 		HasClickHandlers getRunJobButton();
+		HasWidgets getUpdateUsersPanel();
 	}
 	
 	private final GoogleAuthenticationPresenterFactory i_googleAuthenticationPresenterFactory;
 	private final Display i_display;
 	private final GameCalendarsPresenter i_gameCalendarsPresenter;
 	private final TicketCalendarsPresenter i_ticketCalendarsPresenter;
-	
+	private final UpdateUsersPresenter i_updateUsersPresenter;
 
 	@Inject
 	public AdminPresenter(AsyncCallbackExecutor asyncCallbackExecutor,
 			GoogleAuthenticationPresenterFactory googleAuthenticationPresenterFactory, Display display,
-			GameCalendarsPresenter gameCalendarsPresenter, TicketCalendarsPresenter ticketCalendarsPresenter) {
+			GameCalendarsPresenter gameCalendarsPresenter, TicketCalendarsPresenter ticketCalendarsPresenter,
+			UpdateUsersPresenter updateUsersPresenter) {
 		super(asyncCallbackExecutor);
 		i_googleAuthenticationPresenterFactory = googleAuthenticationPresenterFactory;
 		i_display = display;
 		i_gameCalendarsPresenter = gameCalendarsPresenter;
 		i_ticketCalendarsPresenter = ticketCalendarsPresenter;
+		i_updateUsersPresenter = updateUsersPresenter;
 	}
 
 	@Override
@@ -92,7 +95,7 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 		Display display = getDisplay();
 		getGameCalendarsPresenter().show(display.getGameCalendarsPanel());
 		getTicketCalendarsPresenter().show(display.getTicketCalendarsPanel());
-		
+		getUpdateUsersPresenter().show(display.getUpdateUsersPanel());
 		display.getRunJobButton().addClickHandler(new ClickHandler() {
 			
 			@Override
@@ -137,5 +140,9 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 	public TicketCalendarsPresenter getTicketCalendarsPresenter() {
 		return i_ticketCalendarsPresenter;
 	}
+
+  public UpdateUsersPresenter getUpdateUsersPresenter() {
+    return i_updateUsersPresenter;
+  }
 
 }

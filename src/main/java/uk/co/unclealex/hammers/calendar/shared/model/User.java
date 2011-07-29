@@ -1,19 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import uk.co.unclealex.hammers.calendar.shared.model.Role;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,30 +21,42 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
  * @author unclealex72
  *
  */
-@Entity
-@Table(name="authorities")
-public class Authority implements HasIdentity {
+package uk.co.unclealex.hammers.calendar.shared.model;
 
-	private Integer i_id;
-	private Role i_role;
-	
-	@Id @GeneratedValue
-	public Integer getId() {
-		return i_id;
-	}
+import java.io.Serializable;
 
-	public void setId(Integer id) {
-		i_id = id;
-	}
+/**
+ * @author aj016368
+ *
+ */
+public class User implements Serializable {
 
-	@Enumerated(EnumType.STRING)
-	@Column(name="authority", nullable=false)
-	public Role getRole() {
-		return i_role;
-	}
+  private String i_username;
+  private boolean i_loggedIn;
+  private Role i_role;
+  
+  protected User() {
+    super();
+  }
 
-	public void setRole(Role role) {
-		i_role = role;
-	}
+  public User(String username, boolean loggedIn, Role role) {
+    super();
+    i_username = username;
+    i_loggedIn = loggedIn;
+    i_role = role;
+  }
 
+  public String getUsername() {
+    return i_username;
+  }
+
+  public Role getRole() {
+    return i_role;
+  }
+
+  public boolean isLoggedIn() {
+    return i_loggedIn;
+  }
+  
+  
 }

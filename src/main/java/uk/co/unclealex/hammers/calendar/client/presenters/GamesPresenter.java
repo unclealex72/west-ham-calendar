@@ -43,8 +43,8 @@ import com.google.inject.Provider;
 public class GamesPresenter extends AbstractGamesPresenter<Display, GameTableRow> {
 
 	public static interface Display extends AbstractGamesPresenter.Display<GameTableRow> {
-		
-	}
+    // No extra method
+  }
 
 
 	@Inject

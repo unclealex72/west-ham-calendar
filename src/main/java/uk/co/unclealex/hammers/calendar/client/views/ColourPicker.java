@@ -60,7 +60,8 @@ public class ColourPicker extends SimplePanel implements Display {
 	
   @UiTemplate("ColourPicker.ui.xml")
 	public interface Binder extends UiBinder<Widget, ColourPicker> {
-	}
+    // No extra method
+  }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 

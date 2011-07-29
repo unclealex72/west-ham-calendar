@@ -43,7 +43,8 @@ public class TeamTableRow extends AbstractGameTableRow {
 
   @UiTemplate("TeamTableRow.ui.xml")
 	public interface Binder extends UiBinder<Widget, TeamTableRow> {
-	}
+    // No extra method
+  }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 

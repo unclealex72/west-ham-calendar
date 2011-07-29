@@ -63,4 +63,13 @@ public interface HammersMessages extends Messages {
 	
 	@DefaultMessage("Logoff")
 	String logoff();
+
+	@DefaultMessage("Passwords cannot be empty")
+  String passwordCannotBeEmpty();
+
+	@DefaultMessage("Passwords match")
+  String passwordsMatch();
+
+	@DefaultMessage("Passwords do not match")
+  String passwordsDontMatch();
 }

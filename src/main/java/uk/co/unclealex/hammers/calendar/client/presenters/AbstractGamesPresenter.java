@@ -47,6 +47,7 @@ import com.google.inject.Provider;
 public abstract class AbstractGamesPresenter<D extends Display<V>, V extends AbstractGameTableRow> extends AbstractTablePresenter<Game, V, D> {
 
 	public static interface Display<V> extends AbstractTablePresenter.Display<Game, V> {
+	  // No extra methods
 	}
 	
 	private final AsyncCallbackExecutor i_asyncCallbackExecutor;

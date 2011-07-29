@@ -41,4 +41,5 @@ public interface UserAttendanceService extends RemoteService {
 	public Game attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException, GoogleException;
 	public Game unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException, GoogleException;
 	public void forceLogin();
+	public void changePassword(String newPassword);
 }

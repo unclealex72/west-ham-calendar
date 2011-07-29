@@ -44,7 +44,8 @@ public class GoogleAuthentication extends SimplePanel implements Display {
 
 	@UiTemplate("GoogleAuthentication.ui.xml")
 	public interface Binder extends UiBinder<Widget, GoogleAuthentication> {
-	}
+    // No extra method
+  }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 

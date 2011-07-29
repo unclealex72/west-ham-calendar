@@ -55,4 +55,9 @@ public class UserAttendanceServlet extends AbstractAttendanceServlet implements 
 		createAttendanceService().forceLogin();
 	}
 
+	@Override
+	public void changePassword(String newPassword) {
+	  createAttendanceService().changePassword(newPassword);
+	  
+	}
 }

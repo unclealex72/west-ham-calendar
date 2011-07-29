@@ -42,7 +42,8 @@ public class Seasons extends Composite implements Display {
 
   @UiTemplate("Seasons.ui.xml")
 	public interface Binder extends UiBinder<Widget, Seasons> {
-	}
+    // No extra method
+  }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 

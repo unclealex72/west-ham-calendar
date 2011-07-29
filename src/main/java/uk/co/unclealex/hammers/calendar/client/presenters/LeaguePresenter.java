@@ -45,7 +45,8 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class LeaguePresenter extends AbstractTablePresenter<LeagueRow, LeagueTableRow, Display> {
 
 	public static interface Display extends AbstractTablePresenter.Display<LeagueRow, LeagueTableRow> {
-	}
+    // No extra method
+  }
 	
 	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
 	

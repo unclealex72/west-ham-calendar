@@ -13,10 +13,12 @@ import uk.co.unclealex.hammers.calendar.client.factories.LeagueTableRowFactory;
 import uk.co.unclealex.hammers.calendar.client.factories.LoginPresenterFactory;
 import uk.co.unclealex.hammers.calendar.client.factories.LoginPresenterFactoryImpl;
 import uk.co.unclealex.hammers.calendar.client.factories.TeamTableRowFactory;
+import uk.co.unclealex.hammers.calendar.client.factories.UserPresenterFactory;
 import uk.co.unclealex.hammers.calendar.client.presenters.AdminPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.AuthenticationPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.CalendarPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.CalendarsPresenter;
+import uk.co.unclealex.hammers.calendar.client.presenters.ChangePasswordPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.ColourPickerPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.GameCalendarsPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.GamesPresenter;
@@ -28,12 +30,15 @@ import uk.co.unclealex.hammers.calendar.client.presenters.NavigationPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.SeasonsPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.TeamsPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.TicketCalendarsPresenter;
+import uk.co.unclealex.hammers.calendar.client.presenters.UpdateUsersPresenter;
+import uk.co.unclealex.hammers.calendar.client.presenters.UserPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.WaitingPresenter;
 import uk.co.unclealex.hammers.calendar.client.views.Admin;
 import uk.co.unclealex.hammers.calendar.client.views.Authentication;
 import uk.co.unclealex.hammers.calendar.client.views.Calendar;
 import uk.co.unclealex.hammers.calendar.client.views.CalendarCaption;
 import uk.co.unclealex.hammers.calendar.client.views.Calendars;
+import uk.co.unclealex.hammers.calendar.client.views.ChangePassword;
 import uk.co.unclealex.hammers.calendar.client.views.ColourPicker;
 import uk.co.unclealex.hammers.calendar.client.views.GameTableRow;
 import uk.co.unclealex.hammers.calendar.client.views.GamesTable;
@@ -46,6 +51,8 @@ import uk.co.unclealex.hammers.calendar.client.views.Seasons;
 import uk.co.unclealex.hammers.calendar.client.views.TableRow;
 import uk.co.unclealex.hammers.calendar.client.views.TeamTableRow;
 import uk.co.unclealex.hammers.calendar.client.views.TeamsTable;
+import uk.co.unclealex.hammers.calendar.client.views.UpdateUsers;
+import uk.co.unclealex.hammers.calendar.client.views.User;
 import uk.co.unclealex.hammers.calendar.client.views.Waiting;
 
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -89,6 +96,9 @@ public class HammersClientModule extends AbstractGinModule {
 		bind(AuthenticationPresenter.Display.class).to(Authentication.class).in(Singleton.class);
 		bind(AuthenticationPresenter.class).asEagerSingleton();
 		
+		bind(ChangePasswordPresenter.Display.class).to(ChangePassword.class).in(Singleton.class);
+		bind(ChangePasswordPresenter.class).in(Singleton.class);
+		
 		bind(GoogleAuthenticationPresenter.Display.class).to(GoogleAuthentication.class);
 		install(new GinFactoryModuleBuilder().implement(GoogleAuthenticationPresenter.class, GoogleAuthenticationPresenter.class).
 				build(GoogleAuthenticationPresenterFactory.class));
@@ -106,6 +116,10 @@ public class HammersClientModule extends AbstractGinModule {
 		install(new GinFactoryModuleBuilder().implement(TableRow.class, TeamTableRow.class).
 				build(TeamTableRowFactory.class));
 				
+    bind(CalendarsPresenter.Display.class).to(Calendars.class);
+    bind(GameCalendarsPresenter.class).in(Singleton.class);
+    bind(TicketCalendarsPresenter.class).in(Singleton.class);
+    
 		bind(LeaguePresenter.Display.class).to(LeagueTable.class).in(Singleton.class);
 		bind(LeaguePresenter.class).in(Singleton.class);
 		install(new GinFactoryModuleBuilder().implement(TableRow.class, LeagueTableRow.class).
@@ -114,20 +128,22 @@ public class HammersClientModule extends AbstractGinModule {
 		bind(AdminPresenter.Display.class).to(Admin.class).in(Singleton.class);
 		bind(AdminPresenter.class).in(Singleton.class);
 		
-		bind(CalendarsPresenter.Display.class).to(Calendars.class);
-		bind(GameCalendarsPresenter.class).in(Singleton.class);
-		bind(TicketCalendarsPresenter.class).in(Singleton.class);
-		
-		bind(ColourPickerPresenter.Display.class).to(ColourPicker.class);
-		install(new GinFactoryModuleBuilder().implement(ColourPickerPresenter.class, ColourPickerPresenter.class).
-				build(ColourPickerPresenterFactory.class));
-		
-		bind(CalendarCaption.class);
-		bind(CalendarPresenter.Display.class).to(Calendar.class);
-		install(new GinFactoryModuleBuilder().implement(CalendarPresenter.class, CalendarPresenter.class).
-				build(CalendarPresenterFactory.class));
-		
-		bind(WaitingPresenter.Display.class).to(Waiting.class).in(Singleton.class);
+    bind(ColourPickerPresenter.Display.class).to(ColourPicker.class);
+    install(new GinFactoryModuleBuilder().implement(ColourPickerPresenter.class, ColourPickerPresenter.class).
+        build(ColourPickerPresenterFactory.class));
+    
+    bind(CalendarCaption.class);
+    bind(CalendarPresenter.Display.class).to(Calendar.class);
+    install(new GinFactoryModuleBuilder().implement(UserPresenter.class, UserPresenter.class).
+        build(UserPresenterFactory.class));
+    
+    bind(UpdateUsersPresenter.Display.class).to(UpdateUsers.class).in(Singleton.class);
+    bind(UpdateUsersPresenter.class).in(Singleton.class);
+    bind(UserPresenter.Display.class).to(User.class);
+    install(new GinFactoryModuleBuilder().implement(CalendarPresenter.class, CalendarPresenter.class).
+        build(CalendarPresenterFactory.class));
+
+    bind(WaitingPresenter.Display.class).to(Waiting.class).in(Singleton.class);
 		bind(WaitingPresenter.class).asEagerSingleton();
 	}
 

@@ -30,5 +30,5 @@ import uk.co.unclealex.hammers.calendar.shared.model.Game;
  *
  */
 public interface GameTableRowFactory extends TableRowFactory<Game, GameTableRow> {
-
+  // No extra method
 }

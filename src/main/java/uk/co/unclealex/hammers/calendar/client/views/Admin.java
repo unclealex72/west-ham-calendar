@@ -44,9 +44,11 @@ public class Admin extends Composite implements Display {
 	@UiField HasWidgets gameCalendarsPanel;
 	@UiField HasWidgets ticketCalendarsPanel;
 	@UiField HasClickHandlers runJobButton;
+	@UiField HasWidgets updateUsersPanel;
 	
   @UiTemplate("Admin.ui.xml")
 	public interface Binder extends UiBinder<Widget, Admin> {
+    // No extra methods
 	}
 	
 	private static final Binder binder = GWT.create(Binder.class);
@@ -67,5 +69,9 @@ public class Admin extends Composite implements Display {
 	public HasClickHandlers getRunJobButton() {
 		return runJobButton;
 	}
+
+  public HasWidgets getUpdateUsersPanel() {
+    return updateUsersPanel;
+  }
 
 }

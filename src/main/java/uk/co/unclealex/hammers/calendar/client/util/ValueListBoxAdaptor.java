@@ -3,6 +3,8 @@
  */
 package uk.co.unclealex.hammers.calendar.client.util;
 
+import java.util.Arrays;
+
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -51,7 +53,7 @@ public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 		ChangeHandler changeHandler = new ChangeHandler() {
 			@Override
 			public void onChange(ChangeEvent event) {
-				ValueChangeEvent<T> vce = new ValueChangeEvent<T>(getValue()) {};
+				ValueChangeEvent<T> vce = new ValueChangeEvent<T>(getValue()) { /* Do nothing */};
 				handler.onValueChange(vce);
 			}
 		};
@@ -100,8 +102,20 @@ public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 		getListBox().clear();
 	}
 	
-	public void addValue(T value) {
-		getListBox().addItem(toDisplayableString(value), toString(value));
+	@SuppressWarnings("unchecked")
+  public void addValue(T value) {
+	  addValues(value);
+	}
+	
+	public void addValues(T... values) {
+	  addValues(Arrays.asList(values));
+	}
+	
+	public void addValues(Iterable<T> values) {
+	  ListBox listBox = getListBox();
+	  for (T value : values) {
+	    listBox.addItem(toDisplayableString(value), toString(value));
+	  }
 	}
 	
 	@Override

@@ -31,5 +31,5 @@ import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
  *
  */
 public interface OauthTokenDao extends BusinessCrudDao<OauthTokenType, OauthToken> {
-
+  // No extra method
 }

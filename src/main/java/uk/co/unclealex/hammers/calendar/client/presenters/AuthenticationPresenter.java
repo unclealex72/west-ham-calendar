@@ -10,8 +10,12 @@ import uk.co.unclealex.hammers.calendar.client.security.AuthenticationEvent;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationEventListener;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationManager;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.UIObject;
 
 /**
  * Copyright 2011 Alex Jones
@@ -41,24 +45,43 @@ public class AuthenticationPresenter implements AuthenticationEventListener {
 	public interface Display extends IsWidget {
 
 		HasText getMessage();
+    Anchor getChangePasswordLink();
 	}
 
 	private final HammersMessages i_hammersMessages;
+	private final ChangePasswordPresenter i_changePasswordPresenter;
 	private final Display i_display;
 	
 	@Inject
-	public AuthenticationPresenter(Display display, HammersMessages hammersMessages, AuthenticationManager authenticationManager) {
+	public AuthenticationPresenter(
+	    ChangePasswordPresenter changePasswordPresenter,
+	    Display display, HammersMessages hammersMessages, AuthenticationManager authenticationManager) {
+	  i_changePasswordPresenter = changePasswordPresenter;
 		i_hammersMessages = hammersMessages;
 		i_display = display;
-		authenticationManager.addAuthenticationEventListener(this);
+    authenticationManager.addAuthenticationEventListener(this);
+		bind();
 	}
 
+	protected void bind() {
+	  ClickHandler showPopupHandler = new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        getChangePasswordPresenter().showRelativeTo((UIObject) event.getSource());
+      }
+    };
+    getDisplay().getChangePasswordLink().addClickHandler(showPopupHandler);
+  }
+	
 	@Override
 	public void onAuthenticationChanged(AuthenticationEvent event) {
 		String username = event.getUsername();
 		HammersMessages hammersMessages = getHammersMessages();
-		String message = username==null?hammersMessages.notLoggedIn():hammersMessages.loggedIn(username);
-		getDisplay().getMessage().setText(message);
+		boolean loggedIn = username != null;
+    String message = loggedIn?hammersMessages.loggedIn(username):hammersMessages.notLoggedIn();
+		Display display = getDisplay();
+    display.getMessage().setText(message);
+		display.getChangePasswordLink().setVisible(loggedIn);
 	}
 
 	public HammersMessages getHammersMessages() {
@@ -68,4 +91,9 @@ public class AuthenticationPresenter implements AuthenticationEventListener {
 	public Display getDisplay() {
 		return i_display;
 	}
+
+  public ChangePasswordPresenter getChangePasswordPresenter() {
+    return i_changePasswordPresenter;
+  }
+
 }

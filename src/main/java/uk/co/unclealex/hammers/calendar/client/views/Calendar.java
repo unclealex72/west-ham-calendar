@@ -48,6 +48,7 @@ public class Calendar extends SimplePanel implements Display {
 
   @UiTemplate("Calendar.ui.xml")
 	public interface Binder extends UiBinder<Widget, Calendar> {
+    // No extra method
 	}
 	
 	private static final Binder binder = GWT.create(Binder.class);

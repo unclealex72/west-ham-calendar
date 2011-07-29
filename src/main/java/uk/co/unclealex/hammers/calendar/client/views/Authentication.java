@@ -11,6 +11,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.Widget;
@@ -42,19 +43,26 @@ public class Authentication extends Composite implements Display {
 
   @UiTemplate("Authentication.ui.xml")
 	public interface Binder extends UiBinder<Widget, Authentication> {
+    // No extra methods
 	}
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
-	@Inject
-	public Authentication() {
-		initWidget(binder.createAndBindUi(this));
-	}
-
   @UiField HasText message;
+  @UiField Anchor changePasswordLink;
+  
+  @Inject
+  public Authentication() {
+    initWidget(binder.createAndBindUi(this));
+  }
 
-	@Override
+  @Override
 	public HasText getMessage() {
 		return message;
 	}
+
+  @Override
+  public Anchor getChangePasswordLink() {
+    return changePasswordLink;
+  }
 }

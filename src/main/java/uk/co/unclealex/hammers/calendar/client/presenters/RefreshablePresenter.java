@@ -1,19 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import uk.co.unclealex.hammers.calendar.shared.model.Role;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,30 +21,17 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
  * @author unclealex72
  *
  */
-@Entity
-@Table(name="authorities")
-public class Authority implements HasIdentity {
+package uk.co.unclealex.hammers.calendar.client.presenters;
 
-	private Integer i_id;
-	private Role i_role;
-	
-	@Id @GeneratedValue
-	public Integer getId() {
-		return i_id;
-	}
+import com.google.gwt.user.client.ui.HasWidgets;
 
-	public void setId(Integer id) {
-		i_id = id;
-	}
+/**
+ * @author aj016368
+ *
+ */
+public interface RefreshablePresenter {
 
-	@Enumerated(EnumType.STRING)
-	@Column(name="authority", nullable=false)
-	public Role getRole() {
-		return i_role;
-	}
-
-	public void setRole(Role role) {
-		i_role = role;
-	}
-
+  public void refresh();
+  
+  public void show(HasWidgets container);
 }

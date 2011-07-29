@@ -41,7 +41,8 @@ public class GamesTable extends Table<Game, GameTableRow, GameTableRowFactory> i
 
   @UiTemplate("Table.ui.xml")
 	public interface Binder extends UiBinder<Widget, GamesTable> {
-	}
+    // No extra method
+  }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 

@@ -1,9 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.exception;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,18 +21,28 @@ package uk.co.unclealex.hammers.calendar.server.exception;
  * @author unclealex72
  *
  */
-public class UsernameAlreadyExistsException extends Exception {
+package uk.co.unclealex.hammers.calendar.shared.exceptions;
 
-	private final String i_username;
+/**
+ * @author aj016368
+ *
+ */
+public class NoSuchUsernameException extends Exception {
 
-	public UsernameAlreadyExistsException(String username, String message) {
-		super(message);
-		i_username = username;
-	}
+  public NoSuchUsernameException() {
+    super();
+  }
 
-	public String getUsername() {
-		return i_username;
-	}
-	
-	
+  public NoSuchUsernameException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public NoSuchUsernameException(String message) {
+    super(message);
+  }
+
+  public NoSuchUsernameException(Throwable cause) {
+    super(cause);
+  }
+
 }

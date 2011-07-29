@@ -49,7 +49,7 @@ import com.google.gwt.user.client.ui.PopupPanel;
  * @author unclealex72
  *
  */
-public abstract class CalendarsPresenter implements CloseHandler<PopupPanel> {
+public abstract class CalendarsPresenter implements CloseHandler<PopupPanel>, RefreshablePresenter {
 
 	public static interface Display extends IsWidget {
 		HasWidgets getCalendarListPanel();
@@ -88,7 +88,8 @@ public abstract class CalendarsPresenter implements CloseHandler<PopupPanel> {
 		container.add(getDisplay().asWidget());
 	}
 	
-	protected void refresh() {
+	@Override
+	public void refresh() {
 		HasWidgets calendarListPanel = getDisplay().getCalendarListPanel();
 		calendarListPanel.clear();
 		getDisplay().getOtherCalendarNames().clear();

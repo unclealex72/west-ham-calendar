@@ -42,7 +42,8 @@ public class CalendarCaption extends FocusPanel implements Caption {
 
   @UiTemplate("CalendarCaption.ui.xml")
 	public interface Binder extends UiBinder<Widget, CalendarCaption> {
-	}
+    // No extra method
+  }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 

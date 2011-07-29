@@ -7,8 +7,6 @@ import javax.persistence.Entity;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import uk.co.unclealex.hammers.calendar.server.model.HasIdentity;
@@ -41,7 +39,7 @@ import com.google.common.collect.Iterables;
  */
 public class GenericHibernateDaoSupport<M extends HasIdentity> extends HibernateDaoSupport implements CrudDao<M>{
 
-	private static final Logger log = LoggerFactory.getLogger(GenericHibernateDaoSupport.class);
+	//private static final Logger log = LoggerFactory.getLogger(GenericHibernateDaoSupport.class);
 	
 	private final Class<M> i_clazz;
 	private final String i_entityName;

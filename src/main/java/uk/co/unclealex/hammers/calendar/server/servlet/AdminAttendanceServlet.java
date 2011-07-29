@@ -7,9 +7,13 @@ import java.io.IOException;
 
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarColour;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarConfiguration;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+import uk.co.unclealex.hammers.calendar.shared.model.Role;
+import uk.co.unclealex.hammers.calendar.shared.model.User;
 import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceService;
 
 /**
@@ -82,7 +86,26 @@ public class AdminAttendanceServlet extends AbstractAttendanceServlet implements
 	
 	@Override
 	public void updateCalendars() {
-		createAttendanceService().updateCalendars();
-		
+		createAttendanceService().updateCalendars();		
+	}
+	
+	@Override
+	public void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException {
+	  createAttendanceService().addUser(username, password, role);
+	}
+	
+	@Override
+	public void alterUser(String username, String newPassword, Role newRole) throws NoSuchUsernameException {
+	  createAttendanceService().alterUser(username, newPassword, newRole);
+	}
+	
+	@Override
+	public void removeUser(String username) throws NoSuchUsernameException {
+	  createAttendanceService().removeUser(username);
+	}
+	
+	@Override
+	public User[] getAllUsers() {
+	  return createAttendanceService().getAllUsers();
 	}
 }

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
@@ -30,16 +31,22 @@ import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.unclealex.hammers.calendar.server.dao.CalendarConfigurationDao;
 import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
+import uk.co.unclealex.hammers.calendar.server.dao.UserDao;
 import uk.co.unclealex.hammers.calendar.server.google.GoogleCalendar;
+import uk.co.unclealex.hammers.calendar.server.model.Authority;
 import uk.co.unclealex.hammers.calendar.server.scheduling.UpdateCalendarJob;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarColour;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarConfiguration;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
 import uk.co.unclealex.hammers.calendar.shared.model.Game;
 import uk.co.unclealex.hammers.calendar.shared.model.LeagueRow;
+import uk.co.unclealex.hammers.calendar.shared.model.Role;
+import uk.co.unclealex.hammers.calendar.shared.model.User;
 import uk.co.unclealex.hammers.calendar.shared.remote.AttendanceService;
 import uk.co.unclealex.hammers.calendar.shared.remote.SecurityInvalidator;
 
@@ -87,6 +94,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	private SecurityInvalidator i_securityInvalidator;
 	private Map<CalendarType, GoogleCalendar> i_googleCalendarsByCalendarType;
 	private UpdateCalendarJob i_updateCalendarJob;
+	private UserDao i_userDao;
 	
 	public void initialise() {
 		// Do nothing.
@@ -445,6 +453,57 @@ public class AttendanceServiceImpl implements AttendanceService {
 		}
 	}
 	
+	@Override
+	public void addUser(String username, String password, Role role)
+	    throws UsernameAlreadyExistsException {
+	  getUserService().addUser(username, password, role);
+	}
+	
+	@Override
+	public void alterUser(String username, String newPassword, Role newRole)
+	    throws NoSuchUsernameException {
+	  getUserService().alterUser(username, newPassword, newRole);
+	}
+	
+	@Override
+	public void changePassword(String newPassword) {
+	  try {
+      getUserService().alterPassword(getUserPrincipal(), newPassword);
+    }
+    catch (NoSuchUsernameException e) {
+      throw new IllegalStateException(e);
+    }
+	}
+	
+	@Override
+	public User[] getAllUsers() {
+	  final Function<Authority, Role> authorityFunction = new Function<Authority, Role>() {
+	    /* (non-Javadoc)
+	     * @see com.google.common.base.Function#apply(java.lang.Object)
+	     */
+	    @Override
+	    public Role apply(Authority authority) {
+	      return authority.getRole();
+	    }
+    };
+    final String userPrincipal = getUserPrincipal();
+	  Function<uk.co.unclealex.hammers.calendar.server.model.User, User> userFunction = 
+	      new Function<uk.co.unclealex.hammers.calendar.server.model.User, User>() {
+	    @Override
+	    public User apply(uk.co.unclealex.hammers.calendar.server.model.User user) {
+	      SortedSet<Role> roles = Sets.newTreeSet(Iterables.transform(user.getAuthorities(), authorityFunction));
+	      String username = user.getUsername();
+        return new User(username, username.equals(userPrincipal), roles.last());
+	    }
+    };
+    return Iterables.toArray(Iterables.transform(Sets.newTreeSet(getUserDao().getAll()), userFunction), User.class);
+	}
+	
+	@Override
+	public void removeUser(String username) throws NoSuchUsernameException {
+	  getUserService().removeUser(username);
+	}
+	
 	public GameDao getGameDao() {
 		return i_gameDao;
 	}
@@ -532,4 +591,12 @@ public class AttendanceServiceImpl implements AttendanceService {
 	public void setUpdateCalendarJob(UpdateCalendarJob updateCalendarJob) {
 		i_updateCalendarJob = updateCalendarJob;
 	}
+
+  public UserDao getUserDao() {
+    return i_userDao;
+  }
+
+  public void setUserDao(UserDao userDao) {
+    i_userDao = userDao;
+  }
 }

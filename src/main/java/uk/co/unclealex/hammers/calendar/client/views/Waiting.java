@@ -44,7 +44,8 @@ public class Waiting extends Composite implements Display {
 	
   @UiTemplate("Waiting.ui.xml")
 	public interface Binder extends UiBinder<Widget, Waiting> {
-	}
+    // No extra method
+  }
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
