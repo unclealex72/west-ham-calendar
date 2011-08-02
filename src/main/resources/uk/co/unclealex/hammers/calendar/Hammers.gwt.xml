@@ -20,6 +20,8 @@
 	<!-- javax.inject -->
 	<inherits name='javax.JSR330' />
 
+  <set-configuration-property name="UiBinder.useSafeHtmlTemplates" value="true" />
+   
   <!-- Specify the app entry point class.                         -->
   <entry-point class='uk.co.unclealex.hammers.calendar.client.Hammers'/>
 

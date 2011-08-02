@@ -40,14 +40,11 @@ public class HibernateCalendarConfigurationDao extends BusinessKeyHibernateDaoSu
 		super(CalendarConfiguration.class, "calendarType");
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.co.unclealex.hammers.calendar.server.dao.CalendarConfigurationDao#findByGoogleCalendarId(java.lang.String)
-	 */
 	@Override
 	public CalendarConfiguration findByGoogleCalendarId(String googleCalendarId) {
 		Query query = getSession().createQuery(
 				"from CalendarConfiguration where googleCalendarId = :googleCalendarId").
 				setString("googleCalendarId", googleCalendarId);
 		return unique(query);
-	}
+	}	
 }

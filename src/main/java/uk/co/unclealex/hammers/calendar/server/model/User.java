@@ -25,7 +25,6 @@ package uk.co.unclealex.hammers.calendar.server.model;
 
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,6 +33,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 @Entity
 @Table(name="users")
@@ -60,7 +62,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 		return obj instanceof User && isEqual((User) obj);
 	}
 	
-	@Column(nullable=false, unique=true, name="username")
+	@Column(nullable=false, name="username")
 	public String getUsername() {
 		return i_username;
 	}
@@ -87,7 +89,8 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 		i_enabled = enabled;
 	}
 
-	@OneToMany(cascade=CascadeType.ALL)
+	@OneToMany
+	@Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
 	@JoinColumn(name="username", referencedColumnName="username")
 	public Set<Authority> getAuthorities() {
 		return i_authorities;

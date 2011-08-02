@@ -24,6 +24,7 @@
 package uk.co.unclealex.hammers.calendar.server.scheduling;
 
 import java.text.ParseException;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.log4j.Logger;
 import org.quartz.CronTrigger;
@@ -51,21 +52,33 @@ public class UpdateCalendarJob implements StatefulJob, JobFactory {
 	private Scheduler i_scheduler;
 	private JobDetail i_jobDetail;
 	
+	private AtomicLong i_jobIdSequence = new AtomicLong();
+	
 	public void initialise() throws SchedulerException, ParseException {
     Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
     setScheduler(scheduler);
     scheduler.setJobFactory(this);
     scheduler.start();
-    JobDetail job = new JobDetail("job1", "group1", getClass());
+    long id = nextJobIdSequence();
+    JobDetail job = createJobDetail(id);
     setJobDetail(job);
 		String cronString = getCronString();
 		if (cronString != null) {
-			scheduler.scheduleJob(job, new CronTrigger("trigger1", "group1", cronString));
+			scheduler.scheduleJob(job, new CronTrigger("trigger" + id, "group" + id, cronString));
 		}
 	}
 
+  protected long nextJobIdSequence() {
+    return getJobIdSequence().getAndIncrement();
+  }
+
+  protected JobDetail createJobDetail(long id) {
+    JobDetail job = new JobDetail("job" + id, "group" + id, getClass());
+    return job;
+  }
+
 	public void scheduleNow() throws SchedulerException {
-		getScheduler().scheduleJob(getJobDetail(), TriggerUtils.makeImmediateTrigger("trigger2", 0, 0));
+		getScheduler().scheduleJob(createJobDetail(nextJobIdSequence()), TriggerUtils.makeImmediateTrigger("trigger2", 0, 0));
 	}
 	
 	@Override
@@ -79,9 +92,11 @@ public class UpdateCalendarJob implements StatefulJob, JobFactory {
 	@Override
 	public void execute(JobExecutionContext jobExecutionContext) {
 		try {
+		  log.info("Updating started.");
 			getOnlineFixtureBuilderService().buildAll();
 			getGoogleCalendarService().updateCalendars();
 			log.info("Updating completed.");
+			System.gc();
 		}
 		catch (Throwable e) {
 			log.error("Could not update calendars.", e);
@@ -127,4 +142,8 @@ public class UpdateCalendarJob implements StatefulJob, JobFactory {
 	public void setJobDetail(JobDetail jobDetail) {
 		i_jobDetail = jobDetail;
 	}
+
+  public AtomicLong getJobIdSequence() {
+    return i_jobIdSequence;
+  }
 }

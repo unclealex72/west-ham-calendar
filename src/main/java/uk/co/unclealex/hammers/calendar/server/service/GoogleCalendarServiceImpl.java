@@ -37,7 +37,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpResponse;
@@ -134,6 +136,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	private GameDao i_gameDao;
 	private CalendarConfigurationDao i_calendarConfigurationDao;
 	private OauthTokenDao i_oauthTokenDao;
+	private List<String> i_publishedCalendarIds;
 	
 	@Override
 	public void updateCalendars() {
@@ -153,7 +156,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 		Map<CalendarType, GoogleCalendar> googleCalendarsByCalendarType = getGoogleCalendarsByCalendarType();
 		for (CalendarConfiguration calendarConfiguration : getCalendarConfigurationDao().getAll()) {
 			GoogleCalendar googleCalendar = googleCalendarsByCalendarType.get(calendarConfiguration.getCalendarType());
-			CalendarEntry calendarEntry = findCalendar(calendarEntries, googleCalendar);
+			CalendarEntry calendarEntry = findCalendar(calendarEntries, calendarConfiguration);
 			try {
 				if (calendarEntry == null) {
 					calendarEntry = createNewCalendar(calendarService, googleCalendar, calendarConfiguration);
@@ -170,12 +173,12 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 		}
 	}
 
-	protected CalendarEntry findCalendar(List<CalendarEntry> calendarEntries, GoogleCalendar googleCalendar) {
-		final String calendarTitle = googleCalendar.getCalendarTitle();
+	protected CalendarEntry findCalendar(List<CalendarEntry> calendarEntries, CalendarConfiguration calendarConfiguration) {
+		final String calendarId = calendarConfiguration.getGoogleCalendarId();
 		Predicate<CalendarEntry> predicate = new Predicate<CalendarEntry>() {
 			@Override
 			public boolean apply(CalendarEntry calendarEntry) {
-				return calendarEntry.getTitle().getPlainText().equals(calendarTitle);
+				return calendarEntry.getId().equals(calendarId);
 			}
 		};
 		CalendarEntry calendarEntry = Iterables.find(calendarEntries, predicate, null);
@@ -190,6 +193,22 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 
 		// Insert the calendar
 		calendarEntry = calendarService.insert(new URL(OWNED_CALENDAR_FEED), calendarEntry);
+		
+		// Deal with a google bug where sometimes the wrong title is given to created calendars
+		String givenTitle;
+		int retries = 0;
+		while (!(givenTitle = calendarEntry.getTitle().getPlainText()).equals(calendarTitle)) {
+		  if (++retries == 4) {
+		    calendarEntry.delete();
+		    throw new ServiceException("Retried renaming calendar 3 times. Giving up!");
+		  }
+		  log.warn(
+		    String.format(
+		      "Calendar %s was incorrectly given title %s. Trying to change it. " +
+		      "(See http://code.google.com/a/google.com/p/apps-api-issues/issues/detail?id=1892)", calendarTitle, givenTitle));
+		  calendarEntry.setTitle(new PlainTextConstruct(calendarTitle));
+		  calendarEntry = calendarEntry.update();
+		}
 		calendarConfiguration.setGoogleCalendarId(calendarEntry.getId());
 		shareOrUnshareCalendar(calendarService, calendarEntry, calendarConfiguration.isShared());
 		getCalendarConfigurationDao().saveOrUpdate(calendarConfiguration);
@@ -620,6 +639,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 		CalendarService calendarService = createCalendarService();
 		List<CalendarEntry> allOwnedCalendars = getAllOwnedCalendars(calendarService);
 		TreeMap<CalendarType, Collection<CalendarEntry>> calendarEntriesByCalendarType = new TreeMap<CalendarType, Collection<CalendarEntry>>();
+		Set<CalendarType> foundCalendarTypes = new TreeSet<CalendarType>();
 		Supplier<List<CalendarEntry>> supplier = new Supplier<List<CalendarEntry>>() {
 			@Override
 			public List<CalendarEntry> get() {
@@ -640,7 +660,6 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 				calendarEntriesByCalendarTypeMultimap.put(calendarType, ownedCalendar);
 			}
 		}
-		
 		
 		for (Entry<CalendarType, CalendarConfiguration> entry : calendarConfigurationsByCalendarType.entrySet()) {
 			CalendarType calendarType = entry.getKey();
@@ -666,17 +685,57 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 			else {
 				// Make sure exactly one calendar exists.
 				updateCalendarConfigurationAndRemoveSpurious(calendarService, calendarConfiguration, calendars);
-				calendarEntriesByCalendarType.remove(calendarType);
+				foundCalendarTypes.add(calendarType);
 			}
 		}
-		for (Collection<CalendarEntry> spuriousCalendarEntries : calendarEntriesByCalendarType.values()) {
-			for (CalendarEntry spuriousCalendarEntry : spuriousCalendarEntries) {
-				deleteCalendarIgnoringExceptions(calendarService, spuriousCalendarEntry);
-			}
+		for (Entry<CalendarType, Collection<CalendarEntry>> entry : calendarEntriesByCalendarType.entrySet()) {
+		  CalendarType calendarType = entry.getKey();
+		  if (!foundCalendarTypes.contains(calendarType)) {
+		    createNewCalendarConfigurationFromExisting(calendarService, calendarType, entry.getValue());
+		  }
 		}
 	}
 	
 	/**
+   * @param calendarType
+   * @param value
+	 * @throws ServiceException 
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+   */
+  protected void createNewCalendarConfigurationFromExisting(
+      CalendarService calendarService, CalendarType calendarType, Collection<CalendarEntry> calendarEntries) throws IOException, ServiceException {
+    CalendarEntry calendarEntry = calendarEntries.iterator().next();
+    log.info("Creating a new configuration for calendar " + calendarType);
+    CalendarConfiguration calendarConfiguration = new CalendarConfiguration();
+    calendarConfiguration.setCalendarType(calendarType);
+    final String rgb = calendarEntry.getColor().getValue();
+    Predicate<CalendarColour> hasRgbPredicate = new Predicate<CalendarColour>() {
+      public boolean apply(CalendarColour calendarColour) {
+        return calendarColour.getRgb().equals(rgb);
+      }
+    };
+    calendarConfiguration.setColour(
+        Iterables.find(Arrays.asList(CalendarColour.values()), hasRgbPredicate, CalendarColour.PLUM));
+    calendarConfiguration.setSelected(calendarEntry.getSelected().equals(SelectedProperty.TRUE));
+    Link aclLink = calendarEntry.getLink(AclNamespace.LINK_REL_ACCESS_CONTROL_LIST, Link.Type.ATOM);
+    AclFeed aclFeed = calendarService.getFeed(new URL(aclLink.getHref()), AclFeed.class);
+    Predicate<AclEntry> isSharedPredicate = new Predicate<AclEntry>() {
+      @Override
+      public boolean apply(AclEntry aclEntry) {
+        Type scopeType = aclEntry.getScope().getType();
+        AclRole role = aclEntry.getRole();
+        return AclScope.Type.DEFAULT.equals(scopeType) && CalendarAclRole.READ.equals(role);
+      }
+    };
+    calendarConfiguration.setShared(Iterables.find(aclFeed.getEntries(), isSharedPredicate) != null);
+    // There is no easy way to check either of these so just cop out!
+    calendarConfiguration.setReminderInMinutes(null);
+    calendarConfiguration.setBusy(false);
+    updateCalendarConfigurationAndRemoveSpurious(calendarService, calendarConfiguration, calendarEntries);
+  }
+
+  /**
 	 * @param calendarService
 	 * @param calendarConfiguration
 	 * @param calendars
@@ -726,8 +785,21 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 * @throws IOException 
 	 */
 	protected void deleteCalendar(CalendarService calendarService, CalendarEntry calendarEntry) throws IOException, ServiceException {
-		log.info(String.format("Removing calendar %s (%s)", calendarEntry.getId(), calendarEntry.getTitle().getPlainText()));
-		calendarEntry.delete();
+		final String id = calendarEntry.getId();
+    String title = calendarEntry.getTitle().getPlainText();
+    log.info(String.format("Removing calendar %s (%s)", id, title));
+		Predicate<String> isPublishedCalendar = new Predicate<String>() {
+		  @Override
+		  public boolean apply(String publishedId) {
+		    return id.contains(publishedId);
+		  }
+    };
+    if (Iterables.find(getPublishedCalendarIds(), isPublishedCalendar, null) == null) {
+      //calendarEntry.delete();
+    }
+    else {
+      log.warn(String.format("Calendar %s (%s) is a published calendar. It will not be deleted.", id, title));
+    }
 	}
 
 	protected CalendarService createCalendarService() throws GoogleAuthenticationFailedException, IOException {
@@ -866,4 +938,12 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	public void setOauthTokenDao(OauthTokenDao oauthTokenDao) {
 		i_oauthTokenDao = oauthTokenDao;
 	}
+
+  public List<String> getPublishedCalendarIds() {
+    return i_publishedCalendarIds;
+  }
+
+  public void setPublishedCalendarIds(List<String> publishedCalendarIds) {
+    i_publishedCalendarIds = publishedCalendarIds;
+  }
 }

@@ -4,13 +4,6 @@
   xmlns:g="urn:import:com.google.gwt.user.client.ui"
   xmlns:v="urn:import:uk.co.unclealex.hammers.calendar.client.views">
 
-	<ui:style>
-		.configurationButtons {
-			
-
-		}
-	</ui:style>
-	
 	<g:DialogBox ui:field="popupPanel" glassEnabled="true" animationEnabled="true">
 		<g:HTMLPanel>
 			<div class="configuration-form">
@@ -32,11 +25,11 @@
 					<g:Button ui:field="changeColour">Change colour</g:Button>
 				</span>
 			</div>
-			<div class="{style.configurationButtons}">
-				<g:Button ui:field="undo">Undo</g:Button>
-				<g:Button ui:field="cancel">Cancel</g:Button>
-				<g:Button ui:field="save">Save</g:Button>
-				<g:Button ui:field="remove">Remove</g:Button>
+			<div class="buttonbar">
+        <g:Button ui:field="save">Save</g:Button>
+        <g:Button ui:field="remove">Remove</g:Button>
+        <g:Button ui:field="undo">Undo</g:Button>
+        <g:Button ui:field="cancel">Cancel</g:Button>
 			</div>
 		</g:HTMLPanel>
 	</g:DialogBox>

@@ -27,6 +27,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+import uk.co.unclealex.hammers.calendar.client.HammersMessages;
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
 import uk.co.unclealex.hammers.calendar.client.presenters.UserPresenter.Display;
 import uk.co.unclealex.hammers.calendar.client.util.CanWait;
@@ -41,6 +42,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.inject.assistedinject.Assisted;
@@ -49,9 +51,9 @@ import com.google.inject.assistedinject.Assisted;
  * @author aj016368
  *
  */
-public class UserPresenter extends AbstractCallbackPopupPresenter<Display> implements CanWait {
+public class UserPresenter extends AbstractCallbackPopupPresenter<DialogBox, Display> implements CanWait {
 
-  public static interface Display extends AbstractCallbackPopupPresenter.Display {
+  public static interface Display extends AbstractCallbackPopupPresenter.Display<DialogBox> {
     TextBox getUsername();
     TextBox getPassword();
     ListBox getRoles();
@@ -64,15 +66,17 @@ public class UserPresenter extends AbstractCallbackPopupPresenter<Display> imple
   private final User i_user;
   private final Collection<String> i_existingUsernames;
   private final RoleListBoxAdaptor i_roleListBoxAdaptor;
+  private final HammersMessages i_messages;
   
   @Inject
-  public UserPresenter(Display display, AsyncCallbackExecutor asyncCallbackExecutor, @Assisted User user,
-      @Assisted Collection<String> existingUsernames) {
+  public UserPresenter(Display display, AsyncCallbackExecutor asyncCallbackExecutor, HammersMessages messages,
+      @Assisted User user, @Assisted Collection<String> existingUsernames) {
     super(asyncCallbackExecutor);
     i_display = display;
     i_user = user;
     i_existingUsernames = existingUsernames;
     i_roleListBoxAdaptor = new RoleListBoxAdaptor(display.getRoles());
+    i_messages = messages;
   }
 
   @Override
@@ -80,6 +84,9 @@ public class UserPresenter extends AbstractCallbackPopupPresenter<Display> imple
     RoleListBoxAdaptor roleListBoxAdaptor = getRoleListBoxAdaptor();
     roleListBoxAdaptor.addValues(Role.values());
     User user = getUser();
+    HammersMessages messages = getMessages();
+    String caption = user==null?messages.newUser():messages.updateUser();
+    display.getPopupPanel().getCaption().setText(caption);
     TextBox password = display.getPassword();
     TextBox username = display.getUsername();
     KeyUpHandler keyUpHandler = new KeyUpHandler() {
@@ -175,5 +182,9 @@ public class UserPresenter extends AbstractCallbackPopupPresenter<Display> imple
 
   public RoleListBoxAdaptor getRoleListBoxAdaptor() {
     return i_roleListBoxAdaptor;
+  }
+
+  public HammersMessages getMessages() {
+    return i_messages;
   }
 }

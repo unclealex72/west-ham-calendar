@@ -6,10 +6,14 @@ package uk.co.unclealex.hammers.calendar.client.security;
 import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
+import uk.co.unclealex.hammers.calendar.client.factories.GoogleAuthenticationPresenterFactory;
 import uk.co.unclealex.hammers.calendar.client.factories.LoginPresenterFactory;
+import uk.co.unclealex.hammers.calendar.client.presenters.GoogleAuthenticationPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.WaitingPresenter;
 import uk.co.unclealex.hammers.calendar.client.util.CanWait;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
+import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.shared.remote.UserAttendanceServiceAsync;
@@ -49,12 +53,15 @@ public class SecureAsyncCallbackExecutor implements AsyncCallbackExecutor {
 	private final AnonymousAttendanceServiceAsync i_anonymousAttendanceService;
 	private final UserAttendanceServiceAsync i_userAttendanceService;
 	private final AdminAttendanceServiceAsync i_adminAttendanceService;
-
+	private final GoogleAuthenticationPresenterFactory i_googleAuthenticationPresenterFactory;
+	
 	@Inject
 	public SecureAsyncCallbackExecutor(LoginPresenterFactory loginPresenterFactory,
+	    GoogleAuthenticationPresenterFactory googleAuthenticationPresenterFactory,
 			AnonymousAttendanceServiceAsync anonymousAttendanceService, UserAttendanceServiceAsync userAttendanceService,
 			AdminAttendanceServiceAsync adminAttendanceService, WaitingPresenter waitingPresenter) {
 		super();
+		i_googleAuthenticationPresenterFactory = googleAuthenticationPresenterFactory;
 		i_loginPresenterFactory = loginPresenterFactory;
 		i_anonymousAttendanceService = anonymousAttendanceService;
 		i_userAttendanceService = userAttendanceService;
@@ -85,12 +92,39 @@ public class SecureAsyncCallbackExecutor implements AsyncCallbackExecutor {
 		else if (isLoginRequired(caught)) {
 			onLoginRequired(originalAction);
 		}
+		else if (isGoogleAuthenticationRequired(caught)) {
+		  onGoogleAuthenticationRequired(originalAction);
+		}
 		else {
 			callback.onFailure(caught);
 		}
 	}
 
-	protected boolean isRefused(Throwable t) {
+  protected boolean isGoogleAuthenticationRequired(Throwable caught) {
+    return caught instanceof GoogleAuthenticationFailedException;
+  }
+
+  protected void onGoogleAuthenticationRequired(final Runnable originalAction) {
+    ExecutableAsyncCallback<String> authenticationUrlCallback = new FailureAsPopupExecutableAsyncCallback<String>() {
+      @Override
+      public void onSuccess(String authenticationUrl) {
+        if (authenticationUrl != null) {
+          GoogleAuthenticationPresenter googleAuthenticationPresenter = 
+              getGoogleAuthenticationPresenterFactory().createGoogleAuthenticationPresenter(authenticationUrl, originalAction);
+          googleAuthenticationPresenter.center();
+        }
+      }
+      @Override
+      public void execute(AnonymousAttendanceServiceAsync anonymousAttendanceService,
+          UserAttendanceServiceAsync userAttendanceService, AdminAttendanceServiceAsync adminAttendanceService,
+          AsyncCallback<String> callback) {
+        adminAttendanceService.createGoogleAuthenticationUrlIfRequired(callback);
+      }
+    };
+    execute(authenticationUrlCallback);
+  }
+
+  protected boolean isRefused(Throwable t) {
 		return (t instanceof StatusCodeException) && 403 == ((StatusCodeException) t).getStatusCode();
 	}
 	
@@ -173,5 +207,9 @@ public class SecureAsyncCallbackExecutor implements AsyncCallbackExecutor {
 
   public WaitingPresenter getWaitingPresenter() {
     return i_waitingPresenter;
+  }
+
+  public GoogleAuthenticationPresenterFactory getGoogleAuthenticationPresenterFactory() {
+    return i_googleAuthenticationPresenterFactory;
   }
 }

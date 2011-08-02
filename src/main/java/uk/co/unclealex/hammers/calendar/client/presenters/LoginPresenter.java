@@ -5,6 +5,7 @@ package uk.co.unclealex.hammers.calendar.client.presenters;
 
 import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter.Display;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationManager;
+import uk.co.unclealex.hammers.calendar.client.util.ClickHelper;
 import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,6 +14,8 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.PopupPanel;
 
 /**
  * Copyright 2011 Alex Jones
@@ -37,29 +40,31 @@ import com.google.gwt.user.client.ui.HasText;
  * @author unclealex72
  *
  */
-public class LoginPresenter extends AbstractPopupPresenter<Display> {
+public class LoginPresenter extends AbstractPopupPresenter<PopupPanel, Display> {
 
-	public static interface Display extends AbstractPopupPresenter.Display {
+	public static interface Display extends AbstractPopupPresenter.Display<PopupPanel> {
 		public HasText getPassword();
 		public HasText getUsername();
 		public Button getLogin();
 		public Button getCancel();
-		public void showFailure();
+		public Label getFailureLabel();
 	}
 
 	private final Display i_display;
 	private final AnonymousAttendanceServiceAsync i_anonymousAttendanceService;
 	private final AuthenticationManager i_authenticationManager;
 	private final Runnable i_originalAction;
+	private final ClickHelper i_clickHelper;
 	
 	public LoginPresenter(
 			Display display, AnonymousAttendanceServiceAsync anonymousAttendanceService, 
-			AuthenticationManager authenticationManager, Runnable originalAction) {
+			AuthenticationManager authenticationManager, ClickHelper clickHelper, Runnable originalAction) {
 		super();
 		i_display = display;
 		i_anonymousAttendanceService = anonymousAttendanceService;
 		i_authenticationManager = authenticationManager;
 		i_originalAction = originalAction;
+		i_clickHelper = clickHelper;
 	}
 
 	
@@ -79,10 +84,13 @@ public class LoginPresenter extends AbstractPopupPresenter<Display> {
 			}
 		};
 		display.getCancel().addClickHandler(cancelHandler);
+		display.getFailureLabel().setVisible(false);
+		getClickHelper().clickOnReturnKeyPressed(display.getPassword(), display.getLogin());
 	}
 	
 	protected void authenticate(final String username, String password) {
-		final Button login = getDisplay().getLogin();
+    final Display display = getDisplay();
+		final Button login = display.getLogin();
 		login.setEnabled(false);
 		AsyncCallback<Boolean> callback = new AsyncCallback<Boolean>() {
 
@@ -95,8 +103,8 @@ public class LoginPresenter extends AbstractPopupPresenter<Display> {
 					getOriginalAction().run();
 				}
 				else {
+          display.getFailureLabel().setVisible(true);
 					getAuthenticationManager().unauthenticated();
-					getDisplay().showFailure();
 				}
 			}
 
@@ -126,4 +134,9 @@ public class LoginPresenter extends AbstractPopupPresenter<Display> {
 	public Runnable getOriginalAction() {
 		return i_originalAction;
 	}
+
+
+  public ClickHelper getClickHelper() {
+    return i_clickHelper;
+  }
 }

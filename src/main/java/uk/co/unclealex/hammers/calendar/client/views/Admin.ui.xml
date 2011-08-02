@@ -8,6 +8,7 @@
 		<g:FlowPanel ui:field="gameCalendarsPanel"/>
 		<h3>Ticket Calendars</h3>
 		<g:FlowPanel ui:field="ticketCalendarsPanel"/>
+		<g:FlowPanel ui:field="selectTicketCalendarPanel"/>
 		<h3>Updates</h3>
 		<g:Button ui:field="runJobButton">Update Now</g:Button>
 		<h3>Users</h3>

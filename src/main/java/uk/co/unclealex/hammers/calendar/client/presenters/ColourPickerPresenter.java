@@ -10,6 +10,7 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarColour;
 
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.IsWidget;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
@@ -36,9 +37,9 @@ import com.google.inject.assistedinject.Assisted;
  * @author unclealex72
  *
  */
-public class ColourPickerPresenter extends AbstractPopupPresenter<Display> {
+public class ColourPickerPresenter extends AbstractPopupPresenter<PopupPanel, Display> {
 
-	public static interface Display extends AbstractPopupPresenter.Display, HasValue<CalendarColour> {
+	public static interface Display extends AbstractPopupPresenter.Display<PopupPanel>, HasValue<CalendarColour> {
 		Map<CalendarColour, IsWidget> getWidgetsByCalendarColour();
 		void markAsUsed(IsWidget isWidget);
 	}

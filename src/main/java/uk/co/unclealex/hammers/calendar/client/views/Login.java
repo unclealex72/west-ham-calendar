@@ -62,14 +62,6 @@ public class Login extends SimplePanel implements Display {
 		add(binder.createAndBindUi(this));
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter.Display#showFailure()
-	 */
-	@Override
-	public void showFailure() {
-		failureLabel.setVisible(true);
-	}
-
 	public HasText getPassword() {
 		return password;
 	}

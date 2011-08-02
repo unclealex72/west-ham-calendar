@@ -6,7 +6,6 @@ package uk.co.unclealex.hammers.calendar.client.presenters;
 import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
-import uk.co.unclealex.hammers.calendar.client.factories.GoogleAuthenticationPresenterFactory;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
@@ -17,6 +16,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -51,50 +51,36 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 
 		HasWidgets getGameCalendarsPanel();
 		HasWidgets getTicketCalendarsPanel();
+		HasWidgets getSelectTicketCalendarPanel();
 		HasClickHandlers getRunJobButton();
 		HasWidgets getUpdateUsersPanel();
 	}
 	
-	private final GoogleAuthenticationPresenterFactory i_googleAuthenticationPresenterFactory;
 	private final Display i_display;
 	private final GameCalendarsPresenter i_gameCalendarsPresenter;
 	private final TicketCalendarsPresenter i_ticketCalendarsPresenter;
+	private final SelectTicketCalendarPresenter i_selectTicketCalendarPresenter;
 	private final UpdateUsersPresenter i_updateUsersPresenter;
 
 	@Inject
-	public AdminPresenter(AsyncCallbackExecutor asyncCallbackExecutor,
-			GoogleAuthenticationPresenterFactory googleAuthenticationPresenterFactory, Display display,
+	public AdminPresenter(AsyncCallbackExecutor asyncCallbackExecutor, Display display,
 			GameCalendarsPresenter gameCalendarsPresenter, TicketCalendarsPresenter ticketCalendarsPresenter,
+			SelectTicketCalendarPresenter selectTicketCalendarPresenter,
 			UpdateUsersPresenter updateUsersPresenter) {
 		super(asyncCallbackExecutor);
-		i_googleAuthenticationPresenterFactory = googleAuthenticationPresenterFactory;
 		i_display = display;
 		i_gameCalendarsPresenter = gameCalendarsPresenter;
 		i_ticketCalendarsPresenter = ticketCalendarsPresenter;
 		i_updateUsersPresenter = updateUsersPresenter;
+		i_selectTicketCalendarPresenter = selectTicketCalendarPresenter;
 	}
 
 	@Override
 	protected void afterActionPerformed(AcceptsOneWidget panel, EventBus eventBus) {
-		ExecutableAsyncCallback<String> authenticateCallback = new FailureAsPopupExecutableAsyncCallback<String>() {
-			@Override
-			public void onSuccess(String authenticationUrl) {
-				if (authenticationUrl != null) {
-					getGoogleAuthenticationPresenterFactory().createGoogleAuthenticationPresenter(authenticationUrl).center();
-				}
-			}
-			@Override
-			public void execute(AnonymousAttendanceServiceAsync anonymousAttendanceService,
-					UserAttendanceServiceAsync userAttendanceService,
-					AdminAttendanceServiceAsync adminAttendanceService, AsyncCallback<String> callback) {
-				adminAttendanceService.createGoogleAuthenticationUrlIfRequired(callback);
-			}
-		};
-		AsyncCallbackExecutor asyncCallbackExecutor = getAsyncCallbackExecutor();
-		asyncCallbackExecutor.execute(authenticateCallback);
 		Display display = getDisplay();
 		getGameCalendarsPresenter().show(display.getGameCalendarsPanel());
 		getTicketCalendarsPresenter().show(display.getTicketCalendarsPanel());
+		getSelectTicketCalendarPresenter().show(display.getSelectTicketCalendarPanel());
 		getUpdateUsersPresenter().show(display.getUpdateUsersPanel());
 		display.getRunJobButton().addClickHandler(new ClickHandler() {
 			
@@ -113,6 +99,7 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 					}
 				};
 				getAsyncCallbackExecutor().execute(callback);
+        Window.alert("Calendars will now be updated. Please wait a few minutes and refresh your browser.");
 			}
 		});
 		panel.setWidget(display);
@@ -129,10 +116,6 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 		return i_display;
 	}
 
-	public GoogleAuthenticationPresenterFactory getGoogleAuthenticationPresenterFactory() {
-		return i_googleAuthenticationPresenterFactory;
-	}
-
 	public GameCalendarsPresenter getGameCalendarsPresenter() {
 		return i_gameCalendarsPresenter;
 	}
@@ -143,6 +126,10 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 
   public UpdateUsersPresenter getUpdateUsersPresenter() {
     return i_updateUsersPresenter;
+  }
+
+  public SelectTicketCalendarPresenter getSelectTicketCalendarPresenter() {
+    return i_selectTicketCalendarPresenter;
   }
 
 }

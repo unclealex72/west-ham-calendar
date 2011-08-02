@@ -72,4 +72,10 @@ public interface HammersMessages extends Messages {
 
 	@DefaultMessage("Passwords do not match")
   String passwordsDontMatch();
+	
+	@DefaultMessage("New user")
+	String newUser();
+	
+	@DefaultMessage("Update user")
+	String updateUser();
 }

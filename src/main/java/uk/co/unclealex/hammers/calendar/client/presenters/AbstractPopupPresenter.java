@@ -34,11 +34,11 @@ import com.google.gwt.user.client.ui.UIObject;
  * @author unclealex72
  *
  */
-public abstract class AbstractPopupPresenter<D extends Display> {
+public abstract class AbstractPopupPresenter<P extends PopupPanel, D extends Display<P>> {
 
-	public static interface Display extends IsWidget, HasWidgets {
+	public static interface Display<P> extends IsWidget, HasWidgets {
 	
-		public PopupPanel getPopupPanel();
+		public P getPopupPanel();
 	}
 
 	public void center() {

@@ -36,12 +36,9 @@ public class NumericListBoxAdaptor extends ValueListBoxAdaptor<Integer> {
 	 * @param listBox
 	 */
 	public NumericListBoxAdaptor(ListBox listBox) {
-		super(listBox);
+		super(listBox, null);
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.co.unclealex.hammers.calendar.client.util.ValueListBoxAdaptor#parse(java.lang.String)
-	 */
 	@Override
 	protected Integer parse(String value) {
 		return Integer.parseInt(value);

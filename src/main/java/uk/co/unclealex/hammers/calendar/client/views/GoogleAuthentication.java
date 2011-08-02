@@ -6,15 +6,18 @@ package uk.co.unclealex.hammers.calendar.client.views;
 import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.presenters.GoogleAuthenticationPresenter.Display;
+import uk.co.unclealex.hammers.calendar.client.util.CanWaitSupport;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiTemplate;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasText;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
@@ -49,15 +52,30 @@ public class GoogleAuthentication extends SimplePanel implements Display {
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
+	private final CanWaitSupport i_canWaitSupport;
+	
 	@UiField PopupPanel popupPanel;
-	@UiField HasText successCode;
+	@UiField Anchor authenticationAnchor;
+	@UiField TextBox successCode;
 	@UiField Button submitButton;
 	
 	@Inject
-	public GoogleAuthentication() {
+	public GoogleAuthentication(CanWaitSupport canWaitSupport) {
+	  i_canWaitSupport = canWaitSupport;
 		add(binder.createAndBindUi(this));
+		canWaitSupport.wrap(successCode, submitButton);
 	}
 
+	@Override
+	public void startWaiting() {
+	  getCanWaitSupport().startWaiting();
+	}
+	
+  @Override
+  public void stopWaiting() {
+    getCanWaitSupport().stopWaiting();
+  }
+	
 	public HasText getSuccessCode() {
 		return successCode;
 	}
@@ -69,6 +87,15 @@ public class GoogleAuthentication extends SimplePanel implements Display {
 	public PopupPanel getPopupPanel() {
 		return popupPanel;
 	}
+
+  public CanWaitSupport getCanWaitSupport() {
+    return i_canWaitSupport;
+  }
+
+  @Override
+  public Anchor getAuthenticationAnchor() {
+    return authenticationAnchor;
+  }
 
 
 

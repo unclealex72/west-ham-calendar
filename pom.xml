@@ -4,7 +4,7 @@
   <artifactId>west-ham-calendar</artifactId>
   <packaging>war</packaging>
   <name>west-ham-calendar</name>
-  <version>3.10-SNAPSHOT</version>
+  <version>4.0.0-SNAPSHOT</version>
   <description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
   <url>http://code.google.com/p/west-ham-calendar/</url>
 
@@ -35,12 +35,6 @@
   </scm>
 
   <dependencies>
-  
-  <dependency>
-    <groupId>postgresql</groupId>
-    <artifactId>postgresql</artifactId>
-    <version>9.0-801.jdbc4</version>
-</dependency>
   
 		<dependency>
 			<groupId>com.google.gwt</groupId>
@@ -342,6 +336,12 @@
 		    <groupId>com.google.code.gson</groupId>
 		    <artifactId>gson</artifactId>
 		    <version>1.7.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.apache.derby</groupId>
+			<artifactId>derby</artifactId>
+			<version>10.8.1.2</version>
 		</dependency>
   </dependencies>
   

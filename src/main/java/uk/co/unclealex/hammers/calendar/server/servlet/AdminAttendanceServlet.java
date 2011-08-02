@@ -108,4 +108,14 @@ public class AdminAttendanceServlet extends AbstractAttendanceServlet implements
 	public User[] getAllUsers() {
 	  return createAttendanceService().getAllUsers();
 	}
+	
+	@Override
+	public CalendarType getSelectedTicketingCalendar() {
+	  return createAttendanceService().getSelectedTicketingCalendar();
+	}
+	
+	@Override
+	public void setSelectedTicketingCalendar(CalendarType calendarType) {
+	  createAttendanceService().setSelectedTicketingCalendar(calendarType);
+	}
 }

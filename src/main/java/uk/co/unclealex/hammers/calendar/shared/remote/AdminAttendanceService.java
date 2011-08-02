@@ -61,5 +61,6 @@ public interface AdminAttendanceService extends RemoteService {
 	public void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException;	  
 	public void removeUser(String username) throws NoSuchUsernameException;
 	public void alterUser(String username, String newPassword, Role newRole) throws NoSuchUsernameException;
-
+	public void setSelectedTicketingCalendar(CalendarType calendarType);
+	public CalendarType getSelectedTicketingCalendar();
 }

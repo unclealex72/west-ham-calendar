@@ -125,7 +125,17 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	@Override
 	public Integer getLatestSeason() {
-		return getGameDao().getLatestSeason();
+		Integer latestSeason = getGameDao().getLatestSeason();
+		if (latestSeason == null) {
+		  Calendar cal = new GregorianCalendar();
+		  int currentYear = cal.get(Calendar.YEAR);
+		  int currentMonth = cal.get(Calendar.MONTH);
+		  latestSeason = currentYear;
+		  if (currentMonth < Calendar.AUGUST) {
+		    latestSeason = latestSeason - 1;
+		  }
+		}
+		return latestSeason;
 	}
 	
 	@Override
@@ -230,6 +240,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	protected Function<uk.co.unclealex.hammers.calendar.server.model.Game, Game> createGameFunction() {
+	  final Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date> ticketFunction =
+	      createTicketFunction();
 		final boolean isAuthenticated = isUserAuthenticated();
 		return new Function<uk.co.unclealex.hammers.calendar.server.model.Game, Game>() {
 			@Override
@@ -265,7 +277,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 						game.getAttendence(),
 						game.getMatchReport(),
 						game.getTelevisionChannel(),
-						game.getSeasonTicketsAvailable(),
+						ticketFunction.apply(game),
 						game.isAttended(),
 						weekGame,
 						nonStandardWeekendGame,
@@ -274,7 +286,63 @@ public class AttendanceServiceImpl implements AttendanceService {
 		};
 	}
 
-	protected boolean isUserInRole(String role) {
+  protected Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date> createTicketFunction() {
+    CalendarType calendarType = getCalendarConfigurationService().getSelectedTicketingCalendar();
+    Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date> ticketFunction = null;
+    if (calendarType != null) {
+      if (calendarType == CalendarType.TICKETS_GENERAL_SALE) {
+        ticketFunction = new Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date>() {
+          @Override
+          public Date apply(uk.co.unclealex.hammers.calendar.server.model.Game game) {
+            return game.getGeneralSaleAvailable();
+          }
+        };
+      }
+      else if (calendarType == CalendarType.TICKETS_ACADEMY) {
+        ticketFunction = new Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date>() {
+          @Override
+          public Date apply(uk.co.unclealex.hammers.calendar.server.model.Game game) {
+            return game.getAcademyMembersAvailable();
+          }
+        };
+      }
+      else if (calendarType == CalendarType.TICKETS_SEASON) {
+        ticketFunction = new Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date>() {
+          @Override
+          public Date apply(uk.co.unclealex.hammers.calendar.server.model.Game game) {
+            return game.getSeasonTicketsAvailable();
+          }
+        };
+      }
+      else if (calendarType == CalendarType.TICKETS_PRIORITY) {
+        ticketFunction = new Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date>() {
+          @Override
+          public Date apply(uk.co.unclealex.hammers.calendar.server.model.Game game) {
+            return game.getPriorityPointPostAvailable();
+          }
+        };
+      }
+      else if (calendarType == CalendarType.TICKETS_BONDHOLDERS) {
+        ticketFunction = new Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date>() {
+          @Override
+          public Date apply(uk.co.unclealex.hammers.calendar.server.model.Game game) {
+            return game.getBondholdersAvailable();
+          }
+        };
+      }
+    }
+    if (ticketFunction == null) {
+      ticketFunction = new Function<uk.co.unclealex.hammers.calendar.server.model.Game, Date>() {
+        @Override
+        public Date apply(uk.co.unclealex.hammers.calendar.server.model.Game game) {
+          return null;
+        }
+      };
+    }
+    return ticketFunction;
+  }
+
+  protected boolean isUserInRole(String role) {
 		Function<GrantedAuthority, String> authorityFunction = new Function<GrantedAuthority, String>() {
 			@Override
 			public String apply(GrantedAuthority grantedAuthority) {
@@ -502,6 +570,16 @@ public class AttendanceServiceImpl implements AttendanceService {
 	@Override
 	public void removeUser(String username) throws NoSuchUsernameException {
 	  getUserService().removeUser(username);
+	}
+	
+	@Override
+	public void setSelectedTicketingCalendar(CalendarType calendarType) {
+	  getCalendarConfigurationService().setSelectedTicketingCalendar(calendarType);
+	}
+	
+	@Override
+	public CalendarType getSelectedTicketingCalendar() {
+	  return getCalendarConfigurationService().getSelectedTicketingCalendar();
 	}
 	
 	public GameDao getGameDao() {

@@ -37,10 +37,11 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.PopupPanel;
 
-public abstract class AbstractCallbackPopupPresenter<D extends Display> extends AbstractPopupPresenter<D> {
+public abstract class AbstractCallbackPopupPresenter<P extends PopupPanel, D extends Display<P>> extends AbstractPopupPresenter<P, D> {
 
-  public static interface Display extends AbstractPopupPresenter.Display, CanWait {
+  public interface Display<P> extends AbstractPopupPresenter.Display<P>, CanWait {
     // Empty interface.
   }
 

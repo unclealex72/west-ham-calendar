@@ -23,33 +23,22 @@
  */
 package uk.co.unclealex.hammers.calendar.client.util;
 
+import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+
 import com.google.gwt.user.client.ui.ListBox;
 
 /**
  * @author aj016368
  *
  */
-public abstract class EnumListBoxAdaptor<E extends Enum<E>> extends ValueListBoxAdaptor<E> {
+public class CalendarTypeListBoxAdaptor extends EnumListBoxAdaptor<CalendarType> {
 
-  private final Class<E> i_enumClass;
-
-  public EnumListBoxAdaptor(Class<E> enumClass, ListBox listBox, String nullText) {
-    super(listBox, nullText);
-    i_enumClass = enumClass;
+  public CalendarTypeListBoxAdaptor(ListBox listBox, String nullText) {
+    super(CalendarType.class, listBox, nullText);
   }
 
   @Override
-  protected E parse(String value) {
-    return Enum.valueOf(getEnumClass(), value);
+  protected String toDisplayableString(CalendarType calendarType) {
+    return calendarType.getDisplayName();
   }
-
-  @Override
-  protected String toString(E value) {
-    return value.name();
-  }
-
-  public Class<E> getEnumClass() {
-    return i_enumClass;
-  }
-
 }

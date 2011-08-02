@@ -28,11 +28,14 @@ import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.MainPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.NavigationPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.SeasonsPresenter;
+import uk.co.unclealex.hammers.calendar.client.presenters.SelectTicketCalendarPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.TeamsPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.TicketCalendarsPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.UpdateUsersPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.UserPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.WaitingPresenter;
+import uk.co.unclealex.hammers.calendar.client.util.ClickHelper;
+import uk.co.unclealex.hammers.calendar.client.util.ClickHelperImpl;
 import uk.co.unclealex.hammers.calendar.client.views.Admin;
 import uk.co.unclealex.hammers.calendar.client.views.Authentication;
 import uk.co.unclealex.hammers.calendar.client.views.Calendar;
@@ -48,6 +51,7 @@ import uk.co.unclealex.hammers.calendar.client.views.LeagueTableRow;
 import uk.co.unclealex.hammers.calendar.client.views.Login;
 import uk.co.unclealex.hammers.calendar.client.views.Navigation;
 import uk.co.unclealex.hammers.calendar.client.views.Seasons;
+import uk.co.unclealex.hammers.calendar.client.views.SelectTicketCalendar;
 import uk.co.unclealex.hammers.calendar.client.views.TableRow;
 import uk.co.unclealex.hammers.calendar.client.views.TeamTableRow;
 import uk.co.unclealex.hammers.calendar.client.views.TeamsTable;
@@ -143,8 +147,13 @@ public class HammersClientModule extends AbstractGinModule {
     install(new GinFactoryModuleBuilder().implement(CalendarPresenter.class, CalendarPresenter.class).
         build(CalendarPresenterFactory.class));
 
+    bind(SelectTicketCalendarPresenter.Display.class).to(SelectTicketCalendar.class);
+    bind(SelectTicketCalendarPresenter.class).in(Singleton.class);
+    
     bind(WaitingPresenter.Display.class).to(Waiting.class).in(Singleton.class);
 		bind(WaitingPresenter.class).asEagerSingleton();
+		
+		bind(ClickHelper.class).to(ClickHelperImpl.class);
 	}
 
 }

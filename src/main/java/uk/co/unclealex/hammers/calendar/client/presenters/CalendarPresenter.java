@@ -27,6 +27,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasValue;
 import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.assistedinject.Assisted;
 
@@ -53,9 +54,9 @@ import com.google.inject.assistedinject.Assisted;
  * @author unclealex72
  *
  */
-public class CalendarPresenter extends AbstractCallbackPopupPresenter<Display> {
+public class CalendarPresenter extends AbstractCallbackPopupPresenter<PopupPanel, Display> {
 
-	public static interface Display extends AbstractCallbackPopupPresenter.Display {
+	public static interface Display extends AbstractCallbackPopupPresenter.Display<PopupPanel> {
 
 		Button getRemove();
 		Button getSave();

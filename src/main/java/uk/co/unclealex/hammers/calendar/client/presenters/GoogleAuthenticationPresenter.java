@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
 import uk.co.unclealex.hammers.calendar.client.presenters.GoogleAuthenticationPresenter.Display;
+import uk.co.unclealex.hammers.calendar.client.util.CanWait;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
@@ -18,7 +19,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.assistedinject.Assisted;
 
 /**
@@ -44,24 +47,29 @@ import com.google.inject.assistedinject.Assisted;
  * @author unclealex72
  *
  */
-public class GoogleAuthenticationPresenter extends AbstractPopupPresenter<Display> {
+public class GoogleAuthenticationPresenter extends AbstractPopupPresenter<PopupPanel, Display> {
 
-	public static interface Display extends AbstractPopupPresenter.Display {
+	public static interface Display extends AbstractPopupPresenter.Display<PopupPanel>, CanWait {
 		
 		HasText getSuccessCode();
 		HasClickHandlers getSubmitButton();
+    Anchor getAuthenticationAnchor();
 	}
 	
 	private final Display i_display;
 	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
 	private final String i_authenticationUrl;
+	private final Runnable i_originalAction;
 	
 	@Inject
-	public GoogleAuthenticationPresenter(Display display, AsyncCallbackExecutor asyncCallbackExecutor, @Assisted String authenticationUrl) {
+	public GoogleAuthenticationPresenter(
+	    Display display, AsyncCallbackExecutor asyncCallbackExecutor, 
+	    @Assisted String authenticationUrl, @Assisted Runnable originalAction) {
 		super();
 		i_display = display;
 		i_asyncCallbackExecutor = asyncCallbackExecutor;
 		i_authenticationUrl = authenticationUrl;
+		i_originalAction = originalAction;
 	}
 
 	@Override
@@ -73,6 +81,7 @@ public class GoogleAuthenticationPresenter extends AbstractPopupPresenter<Displa
 					@Override
 					public void onSuccess(Void result) {
 						hide();
+						getOriginalAction().run();
 					}
 					@Override
 					public void execute(AnonymousAttendanceServiceAsync anonymousAttendanceService,
@@ -81,11 +90,13 @@ public class GoogleAuthenticationPresenter extends AbstractPopupPresenter<Displa
 						adminAttendanceService.authenticate(display.getSuccessCode().getText(), callback);
 					}
 				};
-				getAsyncCallbackExecutor().execute(successTokenCallback);
+				getAsyncCallbackExecutor().executeAndWait(successTokenCallback, getDisplay());
 			}
 		};
 		display.getSubmitButton().addClickHandler(handler);
-		Window.open(getAuthenticationUrl(), "google-oauth", "width=800,height=600");
+		String authenticationUrl = getAuthenticationUrl();
+    display.getAuthenticationAnchor().setHref(authenticationUrl);
+		Window.open(authenticationUrl, "google-oauth", "width=800,height=600");
 	}
 
 	public Display getDisplay() {
@@ -99,4 +110,8 @@ public class GoogleAuthenticationPresenter extends AbstractPopupPresenter<Displa
 	public String getAuthenticationUrl() {
 		return i_authenticationUrl;
 	}
+
+  public Runnable getOriginalAction() {
+    return i_originalAction;
+  }
 }

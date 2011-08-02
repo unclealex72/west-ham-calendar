@@ -24,9 +24,11 @@
 					</g:customCell>
 				</g:row>
 			</g:Grid>
-	    <g:Button ui:field="remove">Remove</g:Button>
-			<g:Button ui:field="cancel">Cancel</g:Button>
-			<g:Button ui:field="update">Update</g:Button>
+			<div class="buttonbar">
+				<g:Button ui:field="update">Update</g:Button>
+        <g:Button ui:field="cancel">Cancel</g:Button>
+        <g:Button ui:field="remove">Remove</g:Button>
+			</div>
 		</g:HTMLPanel>
 	</g:DialogBox>
 </ui:UiBinder>

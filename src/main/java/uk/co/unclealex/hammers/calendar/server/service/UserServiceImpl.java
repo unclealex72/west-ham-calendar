@@ -6,6 +6,7 @@ package uk.co.unclealex.hammers.calendar.server.service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -101,15 +102,23 @@ public class UserServiceImpl implements UserService {
 
   protected void alterRoles(User user, Role role) {
     Iterable<Role> roles = rolesUpToAndIncluding(role);
-		Set<Authority> authorities = user.getAuthorities();
+		Set<Authority> authorities = removeRoles(user);
+		Iterables.addAll(authorities, Iterables.transform(roles, newAuthorityFunction()));
+		user.setAuthorities(authorities);
+  }
+
+  protected Set<Authority> removeRoles(User user) {
+    Set<Authority> authorities = user.getAuthorities();
 		if (authorities == null) {
 		  authorities = new HashSet<Authority>();
 		}
 		else {
-		  authorities.clear();
+		  for (Iterator<Authority> iter = authorities.iterator(); iter.hasNext(); ) {
+		    iter.next();
+		    iter.remove();
+		  }
 		}
-		Iterables.addAll(authorities, Iterables.transform(roles, newAuthorityFunction()));
-		user.setAuthorities(authorities);
+    return authorities;
   }
 
   protected void alterPassword(User user, String password) {
@@ -158,7 +167,10 @@ public class UserServiceImpl implements UserService {
   @Override
   public void removeUser(String username) throws NoSuchUsernameException {
     User user = getExistingUserByUsername(username);
-    getUserDao().remove(user.getUsername());
+    removeRoles(user);
+    UserDao userDao = getUserDao();
+    userDao.saveOrUpdate(user);
+    userDao.remove(user.getUsername());
   }
   
 	protected Iterable<Role> rolesUpToAndIncluding(Role role) {

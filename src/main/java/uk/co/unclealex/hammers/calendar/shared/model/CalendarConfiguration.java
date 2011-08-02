@@ -140,5 +140,4 @@ public class CalendarConfiguration implements Comparable<CalendarConfiguration>,
 	protected void setPersisted(boolean persisted) {
 		i_persisted = persisted;
 	}
-	
 }

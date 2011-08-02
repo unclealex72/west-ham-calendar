@@ -9,11 +9,14 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.unclealex.hammers.calendar.server.dao.CalendarConfigurationDao;
+import uk.co.unclealex.hammers.calendar.server.dao.TicketingCalendarDao;
 import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
+import uk.co.unclealex.hammers.calendar.server.model.TicketingCalendar;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleException;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.gdata.util.ServiceException;
 
@@ -45,6 +48,7 @@ public class CalendarConfigurationServiceImpl implements CalendarConfigurationSe
 
 	private CalendarConfigurationDao i_calendarConfigurationDao;
 	private GoogleCalendarService i_googleCalendarService;
+	private TicketingCalendarDao i_ticketingCalendarDao;
 	
 	@Override
 	public void remove(CalendarType calendarType) throws GoogleAuthenticationFailedException, IOException, GoogleException {
@@ -83,6 +87,34 @@ public class CalendarConfigurationServiceImpl implements CalendarConfigurationSe
 		return Lists.newArrayList(getCalendarConfigurationDao().getAll());
 	}
 	
+	@Override
+	public void setSelectedTicketingCalendar(CalendarType calendarType) {
+	  TicketingCalendarDao ticketingCalendarDao = getTicketingCalendarDao();
+    Iterable<TicketingCalendar> ticketingCalendars = ticketingCalendarDao.getAll();
+	  if (calendarType == null) {
+	    for (TicketingCalendar ticketingCalendar : ticketingCalendars) {
+	      ticketingCalendarDao.remove(ticketingCalendar.getCalendarType());
+	    }
+	  }
+	  else {
+	    TicketingCalendar ticketingCalendar;
+  	  if (Iterables.isEmpty(ticketingCalendars)) {
+  	    ticketingCalendar = new TicketingCalendar();
+  	  }
+  	  else {
+  	    ticketingCalendar = ticketingCalendars.iterator().next();
+  	  }
+      ticketingCalendar.setCalendarType(calendarType);
+  	  ticketingCalendarDao.saveOrUpdate(ticketingCalendar);
+  	}
+	}	
+	
+	@Override
+	public CalendarType getSelectedTicketingCalendar() {
+	  Iterable<TicketingCalendar> ticketingCalendars = getTicketingCalendarDao().getAll();
+	  return Iterables.isEmpty(ticketingCalendars)?null:ticketingCalendars.iterator().next().getCalendarType();
+	}
+	
 	public CalendarConfigurationDao getCalendarConfigurationDao() {
 		return i_calendarConfigurationDao;
 	}
@@ -98,4 +130,12 @@ public class CalendarConfigurationServiceImpl implements CalendarConfigurationSe
 	public void setGoogleCalendarService(GoogleCalendarService googleCalendarService) {
 		i_googleCalendarService = googleCalendarService;
 	}
+
+  public TicketingCalendarDao getTicketingCalendarDao() {
+    return i_ticketingCalendarDao;
+  }
+
+  public void setTicketingCalendarDao(TicketingCalendarDao ticketingCalendarDao) {
+    i_ticketingCalendarDao = ticketingCalendarDao;
+  }
 }

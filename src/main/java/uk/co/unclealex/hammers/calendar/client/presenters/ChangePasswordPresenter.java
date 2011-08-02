@@ -23,6 +23,7 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.TextBox;
 
 /**
@@ -48,9 +49,9 @@ import com.google.gwt.user.client.ui.TextBox;
  * @author unclealex72
  *
  */
-public class ChangePasswordPresenter extends AbstractPopupPresenter<Display> {
+public class ChangePasswordPresenter extends AbstractPopupPresenter<PopupPanel, Display> {
 
-	public static interface Display extends AbstractPopupPresenter.Display, CanWait {
+	public static interface Display extends AbstractPopupPresenter.Display<PopupPanel>, CanWait {
 
     Button getChange();
     Button getCancel();

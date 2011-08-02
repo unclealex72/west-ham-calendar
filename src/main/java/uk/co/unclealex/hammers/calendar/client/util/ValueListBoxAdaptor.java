@@ -42,10 +42,12 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 
 	private final ListBox i_listBox;
+	private final String i_nullText;
 	
-	public ValueListBoxAdaptor(ListBox listBox) {
+	public ValueListBoxAdaptor(ListBox listBox, String nullValue) {
 		super();
 		i_listBox = listBox;
+		i_nullText = nullValue;
 	}
 
 	@Override
@@ -70,7 +72,7 @@ public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 		ListBox listBox = getListBox();
 		int idx = listBox.getSelectedIndex();
 		String value = listBox.getValue(idx);
-		return parse(value);
+		return value.equals(getNullText())?null:parse(value);
 	}
 
 	
@@ -82,7 +84,7 @@ public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 
 	@Override
 	public void setValue(T value) {
-		String text = toString(value);
+		String text = value==null?getNullText():toString(value);
 		boolean found = false;
 		int itemCount = getListBox().getItemCount();
 		for (int idx = 0; !found && idx < itemCount; idx++) {
@@ -114,7 +116,13 @@ public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 	public void addValues(Iterable<T> values) {
 	  ListBox listBox = getListBox();
 	  for (T value : values) {
-	    listBox.addItem(toDisplayableString(value), toString(value));
+	    if (value == null) {
+	      String nullText = getNullText();
+        listBox.addItem(nullText, nullText);
+	    }
+	    else {
+	      listBox.addItem(toDisplayableString(value), toString(value));
+	    }
 	  }
 	}
 	
@@ -126,5 +134,9 @@ public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 	public ListBox getListBox() {
 		return i_listBox;
 	}
+
+  public String getNullText() {
+    return i_nullText;
+  }
 
 }

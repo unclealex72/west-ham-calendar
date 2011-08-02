@@ -23,33 +23,31 @@
  */
 package uk.co.unclealex.hammers.calendar.client.util;
 
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.event.dom.client.HasKeyPressHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.user.client.ui.Button;
 
 /**
  * @author aj016368
  *
  */
-public abstract class EnumListBoxAdaptor<E extends Enum<E>> extends ValueListBoxAdaptor<E> {
-
-  private final Class<E> i_enumClass;
-
-  public EnumListBoxAdaptor(Class<E> enumClass, ListBox listBox, String nullText) {
-    super(listBox, nullText);
-    i_enumClass = enumClass;
-  }
+public class ClickHelperImpl implements ClickHelper {
 
   @Override
-  protected E parse(String value) {
-    return Enum.valueOf(getEnumClass(), value);
-  }
-
-  @Override
-  protected String toString(E value) {
-    return value.name();
-  }
-
-  public Class<E> getEnumClass() {
-    return i_enumClass;
+  public void clickOnReturnKeyPressed(Object source, final Button target) {
+    if (source instanceof HasKeyPressHandlers) {
+      KeyPressHandler handler = new KeyPressHandler() {
+        @Override
+        public void onKeyPress(KeyPressEvent event) {
+          if (event.getCharCode() == KeyCodes.KEY_ENTER) {
+            target.click();
+          }
+        }
+      };
+      ((HasKeyPressHandlers) source).addKeyPressHandler(handler);
+    }
   }
 
 }

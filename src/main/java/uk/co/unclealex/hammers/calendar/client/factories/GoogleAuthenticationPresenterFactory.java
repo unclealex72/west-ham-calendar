@@ -30,5 +30,5 @@ import uk.co.unclealex.hammers.calendar.client.presenters.GoogleAuthenticationPr
  */
 public interface GoogleAuthenticationPresenterFactory {
 
-	public GoogleAuthenticationPresenter createGoogleAuthenticationPresenter(String authenticationUrl);
+	public GoogleAuthenticationPresenter createGoogleAuthenticationPresenter(String authenticationUrl, Runnable originalAction);
 }

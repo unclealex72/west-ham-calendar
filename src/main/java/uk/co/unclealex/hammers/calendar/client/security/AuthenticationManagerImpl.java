@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
+import uk.co.unclealex.hammers.calendar.client.factories.GoogleAuthenticationPresenterFactory;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
@@ -48,7 +49,8 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	@Inject
 	public AuthenticationManagerImpl(
 			final AnonymousAttendanceServiceAsync anonymousAttendanceService,
-			final AsyncCallbackExecutor asyncCallbackExecutor) {
+			final AsyncCallbackExecutor asyncCallbackExecutor,
+			final GoogleAuthenticationPresenterFactory googleAuthenticationPresenterFactory) {
 		ExecutableAsyncCallback<Void> callback = new FailureAsPopupExecutableAsyncCallback<Void>() {
 			@Override
 			public void onSuccess(Void result) {

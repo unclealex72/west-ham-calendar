@@ -44,4 +44,7 @@ public interface CalendarConfigurationService {
 	
 	public List<CalendarConfiguration> getAllCalendarConfigurations();
 	
+	public void setSelectedTicketingCalendar(CalendarType calendarType);
+
+  public CalendarType getSelectedTicketingCalendar();
 }

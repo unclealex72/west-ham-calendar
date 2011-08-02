@@ -34,7 +34,7 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
 public class RoleListBoxAdaptor extends EnumListBoxAdaptor<Role> {
 
   public RoleListBoxAdaptor(ListBox listBox) {
-    super(Role.class, listBox);
+    super(Role.class, listBox, null);
   }
 
   @Override

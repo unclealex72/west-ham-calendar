@@ -43,6 +43,7 @@ public class Admin extends Composite implements Display {
 
 	@UiField HasWidgets gameCalendarsPanel;
 	@UiField HasWidgets ticketCalendarsPanel;
+	@UiField HasWidgets selectTicketCalendarPanel;
 	@UiField HasClickHandlers runJobButton;
 	@UiField HasWidgets updateUsersPanel;
 	
@@ -72,6 +73,10 @@ public class Admin extends Composite implements Display {
 
   public HasWidgets getUpdateUsersPanel() {
     return updateUsersPanel;
+  }
+
+  public HasWidgets getSelectTicketCalendarPanel() {
+    return selectTicketCalendarPanel;
   }
 
 }

@@ -50,7 +50,9 @@ public class CalendarColoursCssServlet extends HttpServlet {
 		Function<CalendarColour, String> f = new Function<CalendarColour, String>() {
 			@Override
 			public String apply(CalendarColour calendarColour) {
-				return String.format(".%s { background-color: %s }", calendarColour.asStyle(), calendarColour.getRgb());
+				String rgb = calendarColour.getRgb();
+				String textColour = textColourOf(rgb);
+        return String.format(".%s { background-color: %s; color: %s }", calendarColour.asStyle(), rgb, textColour);
 			}
 		};
 		String content = Joiner.on('\n').join(Iterables.transform(Arrays.asList(CalendarColour.values()), f));
@@ -58,7 +60,15 @@ public class CalendarColoursCssServlet extends HttpServlet {
 		setContent(content);
 	}
 	
-	@Override
+  protected String textColourOf(String rgb) {
+    double r = (double) Integer.parseInt(rgb.substring(1, 3), 16);
+    double g = (double) Integer.parseInt(rgb.substring(3, 5), 16);
+    double b = (double) Integer.parseInt(rgb.substring(5, 7), 16);
+    int brightness = (int) Math.sqrt(.241 * r * r + .691 * g * g + .068 * b * b);
+    return brightness < 130 ? "white":"black";
+  }
+
+  @Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		showContent(req, resp);
 	}

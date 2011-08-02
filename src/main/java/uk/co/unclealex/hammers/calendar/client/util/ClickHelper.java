@@ -23,33 +23,13 @@
  */
 package uk.co.unclealex.hammers.calendar.client.util;
 
-import com.google.gwt.user.client.ui.ListBox;
+import com.google.gwt.user.client.ui.Button;
 
 /**
  * @author aj016368
  *
  */
-public abstract class EnumListBoxAdaptor<E extends Enum<E>> extends ValueListBoxAdaptor<E> {
+public interface ClickHelper {
 
-  private final Class<E> i_enumClass;
-
-  public EnumListBoxAdaptor(Class<E> enumClass, ListBox listBox, String nullText) {
-    super(listBox, nullText);
-    i_enumClass = enumClass;
-  }
-
-  @Override
-  protected E parse(String value) {
-    return Enum.valueOf(getEnumClass(), value);
-  }
-
-  @Override
-  protected String toString(E value) {
-    return value.name();
-  }
-
-  public Class<E> getEnumClass() {
-    return i_enumClass;
-  }
-
+  public void clickOnReturnKeyPressed(Object source, Button target);
 }

@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter.Display;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationManager;
+import uk.co.unclealex.hammers.calendar.client.util.ClickHelper;
 import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
 
 import com.google.inject.Provider;
@@ -40,15 +41,16 @@ public class LoginPresenterFactoryImpl implements LoginPresenterFactory {
 	private final Provider<Display> i_displayProvider;
 	private final Provider<AnonymousAttendanceServiceAsync> i_anonymousAttendanceServiceProvider;
 	private final Provider<AuthenticationManager> i_authenticationManagerProvider;
-
+	private final Provider<ClickHelper> i_clickHelperProvider;
 	@Inject
 	public LoginPresenterFactoryImpl(Provider<Display> displayProvider,
 			Provider<AnonymousAttendanceServiceAsync> anonymousAttendanceServiceProvider,
-			Provider<AuthenticationManager> authenticationManagerProvider) {
+			Provider<AuthenticationManager> authenticationManagerProvider, Provider<ClickHelper> clickHelperProvider) {
 		super();
 		i_displayProvider = displayProvider;
 		i_anonymousAttendanceServiceProvider = anonymousAttendanceServiceProvider;
 		i_authenticationManagerProvider = authenticationManagerProvider;
+		i_clickHelperProvider = clickHelperProvider;
 	}
 
 
@@ -58,6 +60,7 @@ public class LoginPresenterFactoryImpl implements LoginPresenterFactory {
 				getDisplayProvider().get(), 
 				getAnonymousAttendanceServiceProvider().get(), 
 				getAuthenticationManagerProvider().get(), 
+				getClickHelperProvider().get(),
 				originalAction);
 	}
 
@@ -75,5 +78,10 @@ public class LoginPresenterFactoryImpl implements LoginPresenterFactory {
 	public Provider<AuthenticationManager> getAuthenticationManagerProvider() {
 		return i_authenticationManagerProvider;
 	}
+
+
+  public Provider<ClickHelper> getClickHelperProvider() {
+    return i_clickHelperProvider;
+  }
 
 }
