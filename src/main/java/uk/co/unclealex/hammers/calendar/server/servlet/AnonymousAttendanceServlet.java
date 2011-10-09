@@ -37,8 +37,8 @@ import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceService
 public class AnonymousAttendanceServlet extends AbstractAttendanceServlet implements AnonymousAttendanceService {
 
 	@Override
-	public void initialise() {
-		createAttendanceService().initialise();
+	public Integer initialise() {
+		return createAttendanceService().initialise();
 	}
 	
 	@Override

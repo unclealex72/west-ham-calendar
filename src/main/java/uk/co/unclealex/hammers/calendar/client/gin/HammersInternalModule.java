@@ -7,7 +7,6 @@ import javax.inject.Singleton;
 
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
 import uk.co.unclealex.hammers.calendar.client.places.HammersPlaceHistoryMapper;
-import uk.co.unclealex.hammers.calendar.client.places.MainPlace;
 import uk.co.unclealex.hammers.calendar.client.presenters.HammersActivityMapper;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationManager;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationManagerImpl;
@@ -67,8 +66,8 @@ public class HammersInternalModule extends AbstractGinModule {
 	@Provides
 	@Singleton
 	public PlaceHistoryHandler getHistoryHandler(
-			PlaceController placeController, PlaceHistoryMapper historyMapper,
-			EventBus eventBus, ActivityManager activityManager) {
+			PlaceHistoryMapper historyMapper,
+			ActivityManager activityManager) {
 		/*
 		 * !!Important note!! maybe you have noticed that we are passing an
 		 * instance of ActivityManager to the HistoryHandler provider method and
@@ -78,7 +77,6 @@ public class HammersInternalModule extends AbstractGinModule {
 		 */
 		PlaceHistoryHandler historyHandler = new PlaceHistoryHandler(
 				historyMapper);
-		historyHandler.register(placeController, eventBus, new MainPlace());
 		return historyHandler;
 	}
 

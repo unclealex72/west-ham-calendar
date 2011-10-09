@@ -4,6 +4,7 @@
 package uk.co.unclealex.hammers.calendar.client;
 
 import uk.co.unclealex.hammers.calendar.client.gin.HammersGinjector;
+import uk.co.unclealex.hammers.calendar.client.places.GamesPlace;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
@@ -12,6 +13,7 @@ import uk.co.unclealex.hammers.calendar.shared.remote.UserAttendanceServiceAsync
 
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
@@ -51,16 +53,18 @@ public class Hammers implements EntryPoint {
 		RootPanel.get("nav1").add(injector.getNavigationView());
 		RootPanel.get().add(injector.getWaitingView());
 		
-		ExecutableAsyncCallback<Void> callback = new FailureAsPopupExecutableAsyncCallback<Void>() {
+		ExecutableAsyncCallback<Integer> callback = new FailureAsPopupExecutableAsyncCallback<Integer>() {
 			@Override
-			public void onSuccess(Void result) {
+			public void onSuccess(Integer latestSeason) {
 				// Goes to the place represented on URL else default place
-				injector.getPlaceHistoryHandler().handleCurrentHistory();
+				PlaceHistoryHandler historyHandler = injector.getPlaceHistoryHandler();
+				historyHandler.register(injector.getPlaceController(), injector.getEventBus(), new GamesPlace(latestSeason));
+				historyHandler.handleCurrentHistory();
 			}
 			@Override
 			public void execute(AnonymousAttendanceServiceAsync anonymousAttendanceService,
 					UserAttendanceServiceAsync userAttendanceService, AdminAttendanceServiceAsync adminAttendanceService,
-					AsyncCallback<Void> callback) {
+					AsyncCallback<Integer> callback) {
 				anonymousAttendanceService.initialise(callback);
 			}
 		};

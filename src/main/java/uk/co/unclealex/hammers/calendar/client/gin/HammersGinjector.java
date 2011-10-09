@@ -9,8 +9,10 @@ import uk.co.unclealex.hammers.calendar.client.presenters.NavigationPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.SeasonsPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.WaitingPresenter;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.GinModules;
 import com.google.gwt.inject.client.Ginjector;
+import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.place.shared.PlaceHistoryHandler;
 import com.google.gwt.user.client.ui.SimplePanel;
 
@@ -49,5 +51,8 @@ public interface HammersGinjector extends Ginjector {
 
 	PlaceHistoryHandler getPlaceHistoryHandler();
 	AsyncCallbackExecutor getAsyncCallbackExecutor();
+
+	PlaceController getPlaceController();
+	EventBus getEventBus();
 
 }

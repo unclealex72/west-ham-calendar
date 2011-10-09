@@ -31,7 +31,7 @@ import com.google.gwt.place.shared.WithTokenizers;
  */
 @WithTokenizers({ 
 	GamesPlace.Tokenizer.class, TeamsPlace.Tokenizer.class, 
-	AdminPlace.Tokenizer.class, LeaguePlace.Tokenizer.class, MainPlace.Tokenizer.class })
+	AdminPlace.Tokenizer.class, LeaguePlace.Tokenizer.class })
 public interface HammersPlaceHistoryMapper extends PlaceHistoryMapper {
   // No extra method
 }

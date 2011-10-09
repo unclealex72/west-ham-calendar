@@ -96,8 +96,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 	private UpdateCalendarJob i_updateCalendarJob;
 	private UserDao i_userDao;
 	
-	public void initialise() {
-		// Do nothing.
+	public Integer initialise() {
+		return getLatestSeason();
 	}
 	
 	@Override

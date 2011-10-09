@@ -39,7 +39,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("anonymous")
 public interface AnonymousAttendanceService extends RemoteService {
 
-	public void initialise();
+	public Integer initialise();
 	public Integer[] getAllSeasons();
 	public Game[] getAllGamesChronologicallyForSeason(int season);
 	public Game[] getAllGamesByOpponentsForSeason(int season);

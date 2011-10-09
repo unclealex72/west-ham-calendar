@@ -10,7 +10,6 @@ import uk.co.unclealex.hammers.calendar.client.places.GamesPlace;
 import uk.co.unclealex.hammers.calendar.client.places.HammersPlace;
 import uk.co.unclealex.hammers.calendar.client.places.HammersPlaceVisitor;
 import uk.co.unclealex.hammers.calendar.client.places.LeaguePlace;
-import uk.co.unclealex.hammers.calendar.client.places.MainPlace;
 import uk.co.unclealex.hammers.calendar.client.places.TeamsPlace;
 
 import com.google.gwt.activity.shared.Activity;
@@ -49,20 +48,17 @@ public class HammersActivityMapper implements ActivityMapper {
 	private final Provider<TeamsPresenter> i_teamsPresenterProvider;
 	private final Provider<LeaguePresenter> i_leaguePresenterProvider;
 	private final Provider<AdminPresenter> i_adminPresenterProvider;
-	private final MainPresenter i_mainPresenter;
 	private final SeasonsPresenter i_seasonsPresenter;
 
 	@Inject
 	public HammersActivityMapper(Provider<GamesPresenter> gamesPresenterProvider,
 			Provider<TeamsPresenter> teamsPresenterProvider, Provider<LeaguePresenter> leaguePresenterProvider,
 			Provider<AdminPresenter> adminPresenterProvider,
-			MainPresenter mainPresenter,
 			SeasonsPresenter seasonsPresenter) {
 		i_gamesPresenterProvider = gamesPresenterProvider;
 		i_teamsPresenterProvider = teamsPresenterProvider;
 		i_leaguePresenterProvider = leaguePresenterProvider;
 		i_adminPresenterProvider = adminPresenterProvider;
-		i_mainPresenter = mainPresenter;
 		i_seasonsPresenter = seasonsPresenter;
 	}
 
@@ -126,13 +122,8 @@ public class HammersActivityMapper implements ActivityMapper {
 			setActivity(getAdminPresenterProvider().get());
 		}
 
-		@Override
-		public void visit(MainPlace mainPlace) {
-			setActivity(getMainPresenter());
-		}
-
 		public void asDefault() {
-			new MainPlace().accept(this);
+			// Do nothing
 		}
 		
 		public Activity getActivity() {
@@ -187,9 +178,5 @@ public class HammersActivityMapper implements ActivityMapper {
 
 	public SeasonsPresenter getSeasonsPresenter() {
 		return i_seasonsPresenter;
-	}
-
-	protected MainPresenter getMainPresenter() {
-		return i_mainPresenter;
 	}
 }

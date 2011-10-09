@@ -25,7 +25,6 @@ import uk.co.unclealex.hammers.calendar.client.presenters.GamesPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.GoogleAuthenticationPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.LeaguePresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter;
-import uk.co.unclealex.hammers.calendar.client.presenters.MainPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.NavigationPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.SeasonsPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.SelectTicketCalendarPresenter;
@@ -89,8 +88,6 @@ public class HammersClientModule extends AbstractGinModule {
 
 	@Override
 	protected void configure() {
-		bind(MainPresenter.class).in(Singleton.class);
-
 		bind(SeasonsPresenter.Display.class).to(Seasons.class).in(Singleton.class);
 		bind(SeasonsPresenter.class).in(Singleton.class);
 		

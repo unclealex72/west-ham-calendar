@@ -6,7 +6,6 @@ public interface HammersPlaceVisitor {
 	void visit(LeaguePlace leaguePlace);
 	void visit(GamesPlace gamesPlace);
 	void visit(AdminPlace adminPlace);
-	void visit(MainPlace mainPlace);
 	void visit(HammersPlace hammersPlace);
 
 }
