@@ -179,7 +179,7 @@ public class TicketDecorator implements Decorator {
 	public abstract class AwayTicketPopulator extends TicketPopulator {
 
 		public AwayTicketPopulator(String prefix) {
-			super(prefix + " ([a-zA-Z]{3,} \\d+ [a-zA-Z]+)", "EEE dd MMMM");
+			super(prefix + "(?: [0-9]+[ap]m)? ([a-zA-Z]{3,} \\d+ [a-zA-Z]+)", "EEE dd MMMM");
 		}
 		
 	}
