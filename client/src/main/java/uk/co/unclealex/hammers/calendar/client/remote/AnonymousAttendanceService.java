@@ -1,9 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.shared.remote;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +21,12 @@ package uk.co.unclealex.hammers.calendar.shared.remote;
  * @author unclealex72
  *
  */
-public interface SecurityInvalidator {
+package uk.co.unclealex.hammers.calendar.client.remote;
 
-	public void invalidate();
+import com.google.gwt.user.client.rpc.RemoteService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+
+@RemoteServiceRelativePath("anonymous")
+public interface AnonymousAttendanceService extends RemoteService, uk.co.unclealex.hammers.calendar.shared.services.AnonymousAttendanceService {
+
 }

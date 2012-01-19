@@ -13,7 +13,16 @@
   <url>http://code.google.com/p/west-ham-calendar/</url>
 
   <dependencies>
-  
+  	<dependency>
+  		<groupId>${project.groupId}</groupId>
+  		<artifactId>west-ham-calendar-shared</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>${project.groupId}</groupId>
+  		<artifactId>west-ham-calendar-server</artifactId>
+  		<version>${project.version}</version>
+  	</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
@@ -295,7 +304,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>r09</version>
+			<version>${guava-version}</version>
 		</dependency>
 		
 <dependency>

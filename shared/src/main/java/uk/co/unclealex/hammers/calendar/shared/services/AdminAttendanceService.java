@@ -1,7 +1,7 @@
 /**
  * 
  */
-package uk.co.unclealex.hammers.calendar.shared.remote;
+package uk.co.unclealex.hammers.calendar.shared.services;
 
 import java.io.IOException;
 
@@ -14,9 +14,6 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarConfiguration;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 import uk.co.unclealex.hammers.calendar.shared.model.Role;
 import uk.co.unclealex.hammers.calendar.shared.model.User;
-
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * Copyright 2011 Alex Jones
@@ -41,8 +38,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * @author unclealex72
  *
  */
-@RemoteServiceRelativePath("admin")
-public interface AdminAttendanceService extends RemoteService {
+public interface AdminAttendanceService {
 
 	public String createGoogleAuthenticationUrlIfRequired();
 	

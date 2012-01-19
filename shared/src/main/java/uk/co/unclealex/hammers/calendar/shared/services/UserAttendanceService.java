@@ -1,17 +1,13 @@
 /**
  * 
  */
-package uk.co.unclealex.hammers.calendar.shared.remote;
+package uk.co.unclealex.hammers.calendar.shared.services;
 
 import java.io.IOException;
 
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleException;
 import uk.co.unclealex.hammers.calendar.shared.model.Game;
-import uk.co.unclealex.hammers.calendar.shared.model.LeagueRow;
-
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 /**
  * Copyright 2011 Alex Jones
@@ -36,17 +32,10 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * @author unclealex72
  *
  */
-@RemoteServiceRelativePath("anonymous")
-public interface AnonymousAttendanceService extends RemoteService {
-
-	public Integer initialise();
-	public Integer[] getAllSeasons();
-	public Game[] getAllGamesChronologicallyForSeason(int season);
-	public Game[] getAllGamesByOpponentsForSeason(int season);
-	public LeagueRow[] getLeagueForSeason(int season);
-	public Integer getLatestSeason();
-	public boolean authenticate(String username, String password);
-	public void ensureDefaultsExist() throws GoogleAuthenticationFailedException, GoogleException, IOException;
-	public String getUserPrincipal();
-	public void logout();
+public interface UserAttendanceService {
+	public Game[] attendAllHomeGamesForSeason(int season);
+	public Game attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException, GoogleException;
+	public Game unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException, GoogleException;
+	public void forceLogin();
+	public void changePassword(String newPassword);
 }

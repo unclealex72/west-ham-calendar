@@ -1,8 +1,7 @@
 /**
  * 
  */
-package uk.co.unclealex.hammers.calendar.shared.remote;
-
+package uk.co.unclealex.hammers.calendar.shared.services;
 
 /**
  * Copyright 2011 Alex Jones
@@ -27,8 +26,7 @@ package uk.co.unclealex.hammers.calendar.shared.remote;
  * @author unclealex72
  *
  */
-public interface AttendanceService extends AnonymousAttendanceService, UserAttendanceService, AdminAttendanceService {
-	
-	public void setSecurityInvalidator(SecurityInvalidator securityInvalidator);
+public interface SecurityInvalidator {
 
+	public void invalidate();
 }
