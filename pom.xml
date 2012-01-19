@@ -123,12 +123,6 @@
 			</exclusions>
 		</dependency>
 		
-		<!-- Nos permite usar jsr-330 -->
-		<dependency>
-			<groupId>javax.inject</groupId>
-			<artifactId>javax.inject</artifactId>
-			<version>1</version>
-		</dependency>
 		<!-- Necesario para compilar con GWT -->
 		<!-- Ref: http://code.google.com/p/gwt-maven/issues/detail?id=47#c15 -->
 		<dependency>
@@ -138,6 +132,12 @@
 			<classifier>sources</classifier>
 			<scope>provided</scope>
 			<type>jar</type>
+		</dependency>
+		<!-- Nos permite usar jsr-330 -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
 		</dependency>
 		
 		<!-- Version oficial: <groupId>com.google.gwt.inject</groupId> <artifactId>gin</artifactId> 
