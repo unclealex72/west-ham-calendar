@@ -44,6 +44,15 @@ public class TicketingCalendar extends AbstractBusinessKeyBasedModel<CalendarTyp
 	private Integer i_id;
 	private CalendarType i_calendarType;
 	
+	protected TicketingCalendar() {
+		// Default constructor for ORMs.
+	}
+	
+	public TicketingCalendar(CalendarType calendarType) {
+		super();
+		i_calendarType = calendarType;
+	}
+
 	@Override @Transient
 	public CalendarType getBusinessKey() {
 		return getCalendarType();

@@ -26,14 +26,14 @@ package uk.co.unclealex.hammers.calendar.client.presenters;
 import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
+import uk.co.unclealex.hammers.calendar.client.remote.AdminAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.UserAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.util.CalendarTypeListBoxAdaptor;
 import uk.co.unclealex.hammers.calendar.client.util.CanWait;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
-import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.UserAttendanceServiceAsync;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;

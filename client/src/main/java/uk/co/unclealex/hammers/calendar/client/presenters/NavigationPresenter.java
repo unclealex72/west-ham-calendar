@@ -12,15 +12,15 @@ import uk.co.unclealex.hammers.calendar.client.places.GamesPlace;
 import uk.co.unclealex.hammers.calendar.client.places.LeaguePlace;
 import uk.co.unclealex.hammers.calendar.client.places.SeasonAwarePlace;
 import uk.co.unclealex.hammers.calendar.client.places.TeamsPlace;
+import uk.co.unclealex.hammers.calendar.client.remote.AdminAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.UserAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationEvent;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationEventListener;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationManager;
 import uk.co.unclealex.hammers.calendar.client.ui.SelectableListPanel;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
-import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.UserAttendanceServiceAsync;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

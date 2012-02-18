@@ -30,7 +30,7 @@ import uk.co.unclealex.hammers.calendar.server.model.HasIdentity;
  */
 public interface CrudDao<M extends HasIdentity> {
 
-	public M saveOrUpdate(M model);
+	public void saveOrUpdate(M... models);
 	
 	public Iterable<M> getAll();
 	

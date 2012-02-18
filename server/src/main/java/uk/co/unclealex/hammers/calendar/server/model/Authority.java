@@ -7,7 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -38,20 +37,11 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
  */
 @Entity
 @Table(name="authorities")
-public class Authority implements HasIdentity {
+public class Authority {
 
-	private Integer i_id;
 	private Role i_role;
-	
-	@Id @GeneratedValue
-	public Integer getId() {
-		return i_id;
-	}
 
-	public void setId(Integer id) {
-		i_id = id;
-	}
-
+	@Id
 	@Enumerated(EnumType.STRING)
 	@Column(name="authority", nullable=false)
 	public Role getRole() {

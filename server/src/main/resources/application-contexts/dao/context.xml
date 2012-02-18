@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+			 http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+			 http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd"
+	default-autowire="byName">
+
+	<context:annotation-config />
+	
+	<tx:annotation-driven/>
+
+	<bean id="hibernateProperties"
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+		<property name="properties">
+			<props>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">false</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="annotatedClasses">
+			<list>
+				<value>uk.co.unclealex.hammers.calendar.server.model.Game</value>
+				<value>uk.co.unclealex.hammers.calendar.server.model.User</value>
+				<value>uk.co.unclealex.hammers.calendar.server.model.Authority</value>
+				<value>uk.co.unclealex.hammers.calendar.server.model.OauthToken</value>
+				<value>uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration</value>
+				<value>uk.co.unclealex.hammers.calendar.server.model.TicketingCalendar</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager"/>
+
+	<bean id="userDao" class="uk.co.unclealex.hammers.calendar.server.dao.HibernateUserDao"/>
+	<bean id="calendarConfigurationDao" class="uk.co.unclealex.hammers.calendar.server.dao.HibernateCalendarConfigurationDao"/>
+	<bean id="oauthTokenDao" class="uk.co.unclealex.hammers.calendar.server.dao.HibernateOauthTokenDao"/>
+	<bean id="ticketingCalendarDao" class="uk.co.unclealex.hammers.calendar.server.dao.HibernateTicketingCalendarDao"/>
+	<bean id="gameDao" class="uk.co.unclealex.hammers.calendar.server.dao.HibernateGameDao"/>	
+</beans>

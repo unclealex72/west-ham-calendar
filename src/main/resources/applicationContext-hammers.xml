@@ -203,6 +203,11 @@
 		</property>
 	</bean>
 
+	<bean id="tokenService" class="uk.co.unclealex.hammers.calendar.server.service.TokenServiceImpl"/>
+	
+	<bean id="httpTransport" class="com.google.api.client.http.javanet.NetHttpTransport"/>
+	<bean id="jsonFactory" class="com.google.api.client.json.jackson.JacksonFactory"/>
+	
 	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder">
 		<constructor-arg value="256"/>
   </bean>

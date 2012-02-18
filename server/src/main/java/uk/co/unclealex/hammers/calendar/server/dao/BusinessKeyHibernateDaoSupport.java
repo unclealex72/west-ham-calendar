@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
@@ -57,10 +58,12 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 
 	@Override
 	public void remove(K key) {
-		Query query = getSession().createQuery(
+		Session session = getSession();
+		Query query = session.createQuery(
 				"delete from " + getEntityName() + " where " + getBusinessKeyProperty() + " = :businessKey").
 				setParameter("businessKey", key);
 		query.executeUpdate();
+		session.flush();
 	}
 
 	@Override

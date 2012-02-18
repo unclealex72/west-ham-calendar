@@ -12,4 +12,19 @@
   <description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
   <url>http://code.google.com/p/west-ham-calendar/</url>
 
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>

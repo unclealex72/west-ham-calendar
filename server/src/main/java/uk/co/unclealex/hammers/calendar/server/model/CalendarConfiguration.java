@@ -12,7 +12,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarColour;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 
 /**
@@ -42,14 +41,35 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 @Table(name="calendar")
 public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<CalendarType, CalendarConfiguration> {
 
+	/**
+	 * Default constructor
+	 */
+	protected CalendarConfiguration() {
+		super();
+	}
+
+	/**
+	 * Create a new calendar configuration
+	 * @param id The id of the configuration.
+	 * @param calendarType The calendar type.
+	 * @param googleCalendarId The google id of the calendar.
+	 */
+	public CalendarConfiguration(Integer id, CalendarType calendarType, String googleCalendarId) {
+		super();
+		i_id = id;
+		i_calendarType = calendarType;
+		i_googleCalendarId = googleCalendarId;
+	}
+
+
 	private Integer i_id;
 	private CalendarType i_calendarType;
-	private Integer i_reminderInMinutes;
 	private String i_googleCalendarId;
-	private CalendarColour i_colour;
-	private boolean i_busy;
-	private boolean i_shared;
-	private boolean i_selected;
+	
+	@Override
+	public String toString() {
+		return String.format("[%d:%s:%s]", getId(), getCalendarType(), getGoogleCalendarId());
+	}
 	
 	@Override @Transient
 	public CalendarType getBusinessKey() {
@@ -76,43 +96,6 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 		i_calendarType = calendarType;
 	}
 	
-	@Column(nullable=true)
-	public Integer getReminderInMinutes() {
-		return i_reminderInMinutes;
-	}
-	
-	public void setReminderInMinutes(Integer reminderInMinutes) {
-		i_reminderInMinutes = reminderInMinutes;
-	}
-	
-	@Enumerated(EnumType.STRING)
-	@Column(nullable=false)
-	public CalendarColour getColour() {
-		return i_colour;
-	}
-	
-	public void setColour(CalendarColour colour) {
-		i_colour = colour;
-	}
-	
-	@Column(nullable=false)
-	public boolean isBusy() {
-		return i_busy;
-	}
-	
-	public void setBusy(boolean busy) {
-		i_busy = busy;
-	}
-	
-	@Column(nullable=false)
-	public boolean isShared() {
-		return i_shared;
-	}
-	
-	public void setShared(boolean shared) {
-		i_shared = shared;
-	}
-
 	@Id @GeneratedValue
 	public Integer getId() {
 		return i_id;
@@ -129,13 +112,5 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 
 	public void setGoogleCalendarId(String googleCalendarId) {
 		i_googleCalendarId = googleCalendarId;
-	}
-
-	public boolean isSelected() {
-		return i_selected;
-	}
-
-	public void setSelected(boolean selected) {
-		i_selected = selected;
 	}
 }

@@ -23,8 +23,6 @@
  */
 package uk.co.unclealex.hammers.calendar.server.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -32,64 +30,124 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.commons.lang.ObjectUtils;
+import org.hibernate.annotations.Type;
+import org.joda.time.DateTime;
 
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
+import com.google.common.base.Objects;
+
 @Entity
-@Table(
-	name="game",
-	uniqueConstraints = 
-		@UniqueConstraint(columnNames = {"competition", "location", "opponents", "season"}))
-public class Game implements HasIdentity {
+@Table(name = "game", uniqueConstraints = @UniqueConstraint(columnNames = { "competition", "location", "opponents",
+		"season" }))
+@XmlRootElement
+public class Game implements HasIdentity, Comparable<Game> {
 
 	private Integer i_id;
-	
+
 	private Competition i_competition;
 	private Location i_location;
 	private String i_opponents;
 	private int i_season;
 
-	private Date i_datePlayed;
-	private Date i_bondholdersAvailable;
-	private Date i_priorityPointPostAvailable;
-	private Date i_seasonTicketsAvailable;
-	private Date i_academyMembersAvailable;
-	private Date i_generalSaleAvailable;
+	private DateTime i_datePlayed;
+	private DateTime i_bondholdersAvailable;
+	private DateTime i_priorityPointPostAvailable;
+	private DateTime i_seasonTicketsAvailable;
+	private DateTime i_academyMembersAvailable;
+	private DateTime i_generalSaleAvailable;
 
 	private String i_result;
 	private Integer i_attendence;
 	private String i_matchReport;
 	private String i_televisionChannel;
-	
+
 	private boolean i_attended;
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Game)) {
-			return false;			
-		}
-		Game other = (Game) obj;
-		return 
-			getCompetition().equals(other.getCompetition()) && 
-			getLocation().equals(other.getLocation()) && 
-			getOpponents().equals(other.getOpponents());
+
+	/**
+	 * Default constructor.
+	 */
+	protected Game() {
+		super();
+	}
+
+	/**
+	 * 
+	 * @param id
+	 * @param competition
+	 * @param location
+	 * @param opponents
+	 * @param season
+	 * @param datePlayed
+	 * @param bondholdersAvailable
+	 * @param priorityPointPostAvailable
+	 * @param seasonTicketsAvailable
+	 * @param academyMembersAvailable
+	 * @param generalSaleAvailable
+	 * @param result
+	 * @param attendence
+	 * @param matchReport
+	 * @param televisionChannel
+	 * @param attended
+	 */
+	public Game(Integer id, Competition competition, Location location, String opponents, int season,
+			DateTime datePlayed, DateTime bondholdersAvailable, DateTime priorityPointPostAvailable,
+			DateTime seasonTicketsAvailable, DateTime academyMembersAvailable, DateTime generalSaleAvailable, String result,
+			Integer attendence, String matchReport, String televisionChannel, boolean attended) {
+		super();
+		i_id = id;
+		i_competition = competition;
+		i_location = location;
+		i_opponents = opponents;
+		i_season = season;
+		i_datePlayed = datePlayed;
+		i_bondholdersAvailable = bondholdersAvailable;
+		i_priorityPointPostAvailable = priorityPointPostAvailable;
+		i_seasonTicketsAvailable = seasonTicketsAvailable;
+		i_academyMembersAvailable = academyMembersAvailable;
+		i_generalSaleAvailable = generalSaleAvailable;
+		i_result = result;
+		i_attendence = attendence;
+		i_matchReport = matchReport;
+		i_televisionChannel = televisionChannel;
+		i_attended = attended;
+	}
+
+
+	@Transient
+	public GameKey getGameKey() {
+		return new GameKey(getCompetition(), getLocation(), getOpponents(), getSeason());
 	}
 	
 	@Override
-	public int hashCode() {
-		return 
-			ObjectUtils.hashCode(getCompetition()) + 
-			3 * ObjectUtils.hashCode(getLocation()) + 
-			5 * ObjectUtils.hashCode(getOpponents());
+	public boolean equals(Object obj) {
+		return obj instanceof Game && compareTo((Game) obj) == 0;
 	}
 
-	@Id @GeneratedValue
+	@Override
+	public int compareTo(Game o) {
+		return getGameKey().compareTo(o.getGameKey());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getCompetition(), getLocation(), getOpponents(), getSeason());
+	}
+
+	@Override
+	public String toString() {
+		return String.format("[Opponents: %s, Location: %s, Competition: %s, Season %d]", getOpponents(), getLocation(),
+				getCompetition(), getSeason());
+	}
+
+	@Id
+	@GeneratedValue
 	public Integer getId() {
 		return i_id;
 	}
@@ -99,7 +157,7 @@ public class Game implements HasIdentity {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public Competition getCompetition() {
 		return i_competition;
 	}
@@ -109,7 +167,7 @@ public class Game implements HasIdentity {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public Location getLocation() {
 		return i_location;
 	}
@@ -118,7 +176,7 @@ public class Game implements HasIdentity {
 		i_location = location;
 	}
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public String getOpponents() {
 		return i_opponents;
 	}
@@ -127,7 +185,7 @@ public class Game implements HasIdentity {
 		i_opponents = opponents;
 	}
 
-	@Column(nullable=false)
+	@Column(nullable = false)
 	public int getSeason() {
 		return i_season;
 	}
@@ -136,13 +194,13 @@ public class Game implements HasIdentity {
 		i_season = season;
 	}
 
-	public Date getDatePlayed() {
+	public DateTime getDatePlayed() {
 		return i_datePlayed;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable=false)
-	public void setDatePlayed(Date datePlayed) {
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
+	@Column(nullable = false)
+	public void setDatePlayed(DateTime datePlayed) {
 		i_datePlayed = datePlayed;
 	}
 
@@ -178,48 +236,48 @@ public class Game implements HasIdentity {
 		i_attended = attended;
 	}
 
-	public Date getSeasonTicketsAvailable() {
+	public DateTime getSeasonTicketsAvailable() {
 		return i_seasonTicketsAvailable;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public void setSeasonTicketsAvailable(Date seasonTicketsAvailable) {
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
+	public void setSeasonTicketsAvailable(DateTime seasonTicketsAvailable) {
 		i_seasonTicketsAvailable = seasonTicketsAvailable;
 	}
 
-	public Date getBondholdersAvailable() {
+	public DateTime getBondholdersAvailable() {
 		return i_bondholdersAvailable;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public void setBondholdersAvailable(Date bondholdersAvailable) {
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
+	public void setBondholdersAvailable(DateTime bondholdersAvailable) {
 		i_bondholdersAvailable = bondholdersAvailable;
 	}
 
-	public Date getPriorityPointPostAvailable() {
+	public DateTime getPriorityPointPostAvailable() {
 		return i_priorityPointPostAvailable;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public void setPriorityPointPostAvailable(Date priorityPointPostAvailable) {
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
+	public void setPriorityPointPostAvailable(DateTime priorityPointPostAvailable) {
 		i_priorityPointPostAvailable = priorityPointPostAvailable;
 	}
 
-	public Date getAcademyMembersAvailable() {
+	public DateTime getAcademyMembersAvailable() {
 		return i_academyMembersAvailable;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public void setAcademyMembersAvailable(Date academyMembersAvailable) {
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
+	public void setAcademyMembersAvailable(DateTime academyMembersAvailable) {
 		i_academyMembersAvailable = academyMembersAvailable;
 	}
 
-	public Date getGeneralSaleAvailable() {
+	public DateTime getGeneralSaleAvailable() {
 		return i_generalSaleAvailable;
 	}
 
-	@Temporal(TemporalType.TIMESTAMP)
-	public void setGeneralSaleAvailable(Date generalSaleAvailable) {
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
+	public void setGeneralSaleAvailable(DateTime generalSaleAvailable) {
 		i_generalSaleAvailable = generalSaleAvailable;
 	}
 
@@ -229,5 +287,5 @@ public class Game implements HasIdentity {
 
 	public void setTelevisionChannel(String televisionChannel) {
 		i_televisionChannel = televisionChannel;
-	}	
+	}
 }

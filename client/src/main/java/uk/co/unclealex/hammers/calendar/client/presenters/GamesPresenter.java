@@ -8,10 +8,10 @@ import javax.inject.Inject;
 import uk.co.unclealex.hammers.calendar.client.HammersMessages;
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
 import uk.co.unclealex.hammers.calendar.client.presenters.GamesPresenter.Display;
+import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.util.CanWaitSupport;
 import uk.co.unclealex.hammers.calendar.client.views.GameTableRow;
 import uk.co.unclealex.hammers.calendar.shared.model.Game;
-import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.rpc.AsyncCallback;

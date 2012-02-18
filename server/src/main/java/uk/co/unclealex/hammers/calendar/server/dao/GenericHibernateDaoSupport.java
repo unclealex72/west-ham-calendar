@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 import uk.co.unclealex.hammers.calendar.server.model.HasIdentity;
@@ -90,13 +91,18 @@ public class GenericHibernateDaoSupport<M extends HasIdentity> extends Hibernate
 	}
 	
 	public void remove(Integer id) {
-		getSession().createQuery("delete from " + getEntityName() + " where id = :id").setInteger("id", id).executeUpdate();
+		Session session = getSession();
+		session.createQuery("delete from " + getEntityName() + " where id = :id").setInteger("id", id).executeUpdate();
+		session.flush();
 	}
 	
 	@Override
-	public M saveOrUpdate(M model) {
-		getSession().saveOrUpdate(model);
-		return model;
+	public void saveOrUpdate(M... models) {
+		Session session = getSession();
+		for (M model : models) {
+			session.saveOrUpdate(model);
+		}
+		session.flush();
 	}
 
 	@SuppressWarnings("unchecked")

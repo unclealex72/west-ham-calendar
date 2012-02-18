@@ -1,9 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.shared.exceptions;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,22 +21,34 @@ package uk.co.unclealex.hammers.calendar.shared.exceptions;
  * @author unclealex72
  *
  */
+
+package uk.co.unclealex.hammers.calendar.shared.exceptions;
+
+/**
+ * @author alex
+ *
+ */
 public class GoogleAuthenticationFailedException extends Exception {
 
 	public GoogleAuthenticationFailedException() {
 		super();
+		// TODO Auto-generated constructor stub
 	}
 
 	public GoogleAuthenticationFailedException(String message, Throwable cause) {
 		super(message, cause);
+		// TODO Auto-generated constructor stub
 	}
 
 	public GoogleAuthenticationFailedException(String message) {
 		super(message);
+		// TODO Auto-generated constructor stub
 	}
 
 	public GoogleAuthenticationFailedException(Throwable cause) {
 		super(cause);
+		// TODO Auto-generated constructor stub
 	}
 
+	
 }

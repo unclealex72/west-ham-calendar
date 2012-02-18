@@ -3,8 +3,6 @@
  */
 package uk.co.unclealex.hammers.calendar.server.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -44,7 +42,17 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 	private Integer i_id;
 	private OauthTokenType i_tokenType;
 	private String i_token;
-	private Date i_expiryDate;
+
+	protected OauthToken() {
+		// Default constructor for ORM.
+	}
+	
+	public OauthToken(OauthTokenType tokenType, String token) {
+		super();
+		i_tokenType = tokenType;
+		i_token = token;
+	}
+
 
 	@Override @Transient
 	public OauthTokenType getBusinessKey() {
@@ -71,14 +79,6 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 		i_tokenType = tokenType;
 	}
 	
-	public Date getExpiryDate() {
-		return i_expiryDate;
-	}
-	
-	public void setExpiryDate(Date expiryDate) {
-		i_expiryDate = expiryDate;
-	}
-
 	@Column(nullable=false)
 	public String getToken() {
 		return i_token;

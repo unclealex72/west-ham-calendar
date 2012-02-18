@@ -23,8 +23,9 @@
  */
 package uk.co.unclealex.hammers.calendar.server.dao;
 
-import java.util.Date;
 import java.util.SortedSet;
+
+import org.joda.time.DateTime;
 
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
@@ -32,15 +33,10 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 public interface GameDao extends CrudDao<Game> {
 
-	public Game findByDatePlayed(Date datePlayed);
-	public Game findByDayPlayed(Date datePlayed);
+	public Game findByDatePlayed(DateTime datePlayed);
 	public Iterable<Game> getAllForSeason(int season);
 	public SortedSet<Integer> getAllSeasons();
 	public Game findByBusinessKey(Competition competition, Location location, String opponents, int season);
-	public Iterable<Game> getAllByAttendence(boolean booleanValue);
-	public Iterable<Game> getAllTicketDates();
-	public Iterable<Game> getAllAfter(Date date);
-	public Iterable<Game> getAllTicketDatesAfter(Date date);
 	public void attendAllHomeGamesForSeason(int season);
 	public Integer getLatestSeason();
 

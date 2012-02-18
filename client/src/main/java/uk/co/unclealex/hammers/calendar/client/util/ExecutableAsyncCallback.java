@@ -3,9 +3,9 @@
  */
 package uk.co.unclealex.hammers.calendar.client.util;
 
-import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.UserAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.AdminAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.UserAttendanceServiceAsync;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

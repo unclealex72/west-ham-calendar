@@ -6,11 +6,11 @@ package uk.co.unclealex.hammers.calendar.client.presenters;
 import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
+import uk.co.unclealex.hammers.calendar.client.remote.AdminAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.UserAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.util.ExecutableAsyncCallback;
 import uk.co.unclealex.hammers.calendar.client.util.FailureAsPopupExecutableAsyncCallback;
-import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.UserAttendanceServiceAsync;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -57,20 +57,15 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 	}
 	
 	private final Display i_display;
-	private final GameCalendarsPresenter i_gameCalendarsPresenter;
-	private final TicketCalendarsPresenter i_ticketCalendarsPresenter;
 	private final SelectTicketCalendarPresenter i_selectTicketCalendarPresenter;
 	private final UpdateUsersPresenter i_updateUsersPresenter;
 
 	@Inject
 	public AdminPresenter(AsyncCallbackExecutor asyncCallbackExecutor, Display display,
-			GameCalendarsPresenter gameCalendarsPresenter, TicketCalendarsPresenter ticketCalendarsPresenter,
 			SelectTicketCalendarPresenter selectTicketCalendarPresenter,
 			UpdateUsersPresenter updateUsersPresenter) {
 		super(asyncCallbackExecutor);
 		i_display = display;
-		i_gameCalendarsPresenter = gameCalendarsPresenter;
-		i_ticketCalendarsPresenter = ticketCalendarsPresenter;
 		i_updateUsersPresenter = updateUsersPresenter;
 		i_selectTicketCalendarPresenter = selectTicketCalendarPresenter;
 	}
@@ -78,8 +73,6 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 	@Override
 	protected void afterActionPerformed(AcceptsOneWidget panel, EventBus eventBus) {
 		Display display = getDisplay();
-		getGameCalendarsPresenter().show(display.getGameCalendarsPanel());
-		getTicketCalendarsPresenter().show(display.getTicketCalendarsPanel());
 		getSelectTicketCalendarPresenter().show(display.getSelectTicketCalendarPanel());
 		getUpdateUsersPresenter().show(display.getUpdateUsersPanel());
 		display.getRunJobButton().addClickHandler(new ClickHandler() {
@@ -114,14 +107,6 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 	
 	public Display getDisplay() {
 		return i_display;
-	}
-
-	public GameCalendarsPresenter getGameCalendarsPresenter() {
-		return i_gameCalendarsPresenter;
-	}
-
-	public TicketCalendarsPresenter getTicketCalendarsPresenter() {
-		return i_ticketCalendarsPresenter;
 	}
 
   public UpdateUsersPresenter getUpdateUsersPresenter() {

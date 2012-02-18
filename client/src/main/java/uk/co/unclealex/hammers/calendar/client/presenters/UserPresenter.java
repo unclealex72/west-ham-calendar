@@ -30,13 +30,13 @@ import javax.inject.Inject;
 import uk.co.unclealex.hammers.calendar.client.HammersMessages;
 import uk.co.unclealex.hammers.calendar.client.factories.AsyncCallbackExecutor;
 import uk.co.unclealex.hammers.calendar.client.presenters.UserPresenter.Display;
+import uk.co.unclealex.hammers.calendar.client.remote.AdminAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
+import uk.co.unclealex.hammers.calendar.client.remote.UserAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.util.CanWait;
 import uk.co.unclealex.hammers.calendar.client.util.RoleListBoxAdaptor;
 import uk.co.unclealex.hammers.calendar.shared.model.Role;
 import uk.co.unclealex.hammers.calendar.shared.model.User;
-import uk.co.unclealex.hammers.calendar.shared.remote.AdminAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
-import uk.co.unclealex.hammers.calendar.shared.remote.UserAttendanceServiceAsync;
 
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;

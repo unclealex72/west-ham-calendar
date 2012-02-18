@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<game>
+	<attended>false</attended>
+	<attendence>10000</attendence>
+	<competition>FACP</competition>
+	<datePlayed>2011-11-05T03:00:00.000Z</datePlayed>
+	<location>HOME</location>
+	<matchReport>Good</matchReport>
+	<opponents>Them</opponents>
+	<result>1-0</result>
+	<season>2011</season>
+</game>

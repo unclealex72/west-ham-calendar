@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd"
+	default-autowire="byName">
+
+	<bean id="mainPageService" class="uk.co.unclealex.hammers.calendar.server.html.MainPageServiceImplTest">
+		<constructor-arg ref="mainPage"/>
+	</bean>
+	
+	<bean id="htmlPageLoader" class="uk.co.unclealex.hammers.calendar.server.html.HtmlPageLoaderImpl"/>
+
+	<bean id="ticketsHtmlGameScanner" class="uk.co.unclealex.hammers.calendar.server.html.DelegatingHtmlGamesScanner">
+		<property name="linkHarvester">
+			<bean class="uk.co.unclealex.hammers.calendar.server.html.TicketsLinkHarvester"/>
+		</property>
+		<property name="htmlGamesScanner">
+			<bean class="uk.co.unclealex.hammers.calendar.server.html.TicketsHtmlSingleGameScanner"/>
+		</property>
+	</bean>
+
+	<bean id="fixturesHtmlGamesScanner" class="uk.co.unclealex.hammers.calendar.server.html.DelegatingHtmlGamesScanner">
+		<property name="linkHarvester">
+			<bean class="uk.co.unclealex.hammers.calendar.server.html.SeasonsLinkHarvester"/>
+		</property>
+		<property name="htmlGamesScanner">
+			<bean class="uk.co.unclealex.hammers.calendar.server.html.SeasonHtmlGamesScanner"/>
+		</property>
+	</bean>	
+
+</beans>

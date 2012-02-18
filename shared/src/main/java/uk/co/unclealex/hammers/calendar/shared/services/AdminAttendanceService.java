@@ -6,11 +6,8 @@ package uk.co.unclealex.hammers.calendar.shared.services;
 import java.io.IOException;
 
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
-import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarColour;
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarConfiguration;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 import uk.co.unclealex.hammers.calendar.shared.model.Role;
 import uk.co.unclealex.hammers.calendar.shared.model.User;
@@ -43,13 +40,6 @@ public interface AdminAttendanceService {
 	public String createGoogleAuthenticationUrlIfRequired();
 	
 	public void authenticate(String successToken) throws GoogleAuthenticationFailedException, IOException;
-	public void remove(CalendarType calendarType) throws GoogleAuthenticationFailedException, IOException, GoogleException;	
-	public void createOrUpdate(CalendarConfiguration calendarConfiguration) throws GoogleAuthenticationFailedException, IOException, GoogleException;
-	
-	public CalendarColour[] getUsedCalendarColours() throws GoogleAuthenticationFailedException, IOException, GoogleException;
-	public CalendarConfiguration[] getAllCalendarConfigurations();
-	public CalendarConfiguration createNewCalendarConfiguration(CalendarType calendarType) throws GoogleAuthenticationFailedException, IOException, GoogleException;
-	public CalendarConfiguration[] getCalendarConfigurations(boolean tickets);
 	
 	public void updateCalendars();
 	

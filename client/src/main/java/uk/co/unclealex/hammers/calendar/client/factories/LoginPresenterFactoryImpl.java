@@ -7,9 +7,9 @@ import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter.Display;
+import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.security.AuthenticationManager;
 import uk.co.unclealex.hammers.calendar.client.util.ClickHelper;
-import uk.co.unclealex.hammers.calendar.shared.remote.AnonymousAttendanceServiceAsync;
 
 import com.google.inject.Provider;
 

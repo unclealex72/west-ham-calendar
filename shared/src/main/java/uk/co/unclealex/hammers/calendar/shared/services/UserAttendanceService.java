@@ -6,7 +6,6 @@ package uk.co.unclealex.hammers.calendar.shared.services;
 import java.io.IOException;
 
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
-import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleException;
 import uk.co.unclealex.hammers.calendar.shared.model.Game;
 
 /**
@@ -34,8 +33,8 @@ import uk.co.unclealex.hammers.calendar.shared.model.Game;
  */
 public interface UserAttendanceService {
 	public Game[] attendAllHomeGamesForSeason(int season);
-	public Game attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException, GoogleException;
-	public Game unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException, GoogleException;
+	public Game attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
+	public Game unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
 	public void forceLogin();
 	public void changePassword(String newPassword);
 }

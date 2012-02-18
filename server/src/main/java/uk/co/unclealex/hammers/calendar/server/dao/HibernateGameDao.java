@@ -23,12 +23,11 @@
  */
 package uk.co.unclealex.hammers.calendar.server.dao;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.SortedSet;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
+import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.unclealex.hammers.calendar.server.model.Game;
@@ -48,53 +47,14 @@ public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implement
 	}
 
 	@Override
-	public Game findByDatePlayed(Date datePlayed) {
+	public Game findByDatePlayed(DateTime datePlayed) {
 		Query query = 
 			getSession().createQuery(
 					"from Game g " +
 					"where " +
 						"g.datePlayed = :datePlayed").
-			setTimestamp("datePlayed", datePlayed);
+			setParameter("datePlayed", datePlayed);
 		return unique(query);
-	}
-	
-	@Override
-	public Game findByDayPlayed(Date datePlayed) {
-		Calendar cal = new GregorianCalendar();
-		cal.setTime(datePlayed);
-		Query query = 
-			getSession().createQuery(
-					"from Game g " +
-					"where " +
-						"year(g.datePlayed) = :year and " +
-						"month(g.datePlayed) = :month and " +
-						"day(g.datePlayed) = :day").
-			setInteger("year", cal.get(Calendar.YEAR)).
-			setInteger("month", cal.get(Calendar.MONTH) + 1).
-			setInteger("day", cal.get(Calendar.DAY_OF_MONTH));
-		return unique(query);
-	}
-
-	@Override
-	public Iterable<Game> getAllAfter(Date date) {
-		Query query = 
-			getSession().createQuery(
-					"from Game g " +
-					"where " +
-						"g.datePlayed >= :date").
-			setTimestamp("date", date);
-		return list(query);
-	}
-
-	@Override
-	public Iterable<Game> getAllTicketDatesAfter(Date date) {
-		Query query = 
-			getSession().createQuery(
-					"from Game g " +
-					"where " +
-						"g.ticketsAvailable >= :date").
-			setTimestamp("date", date);
-		return list(query);
 	}
 	
 	@Override
@@ -126,17 +86,16 @@ public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implement
 		return list(query);
 	}
 
-	/* (non-Javadoc)
-	 * @see uk.co.unclealex.hammers.calendar.server.dao.GameDao#attendAllHomeGamesForSeason(int)
-	 */
 	@Override
 	public void attendAllHomeGamesForSeason(int season) {
-		getSession().createQuery(
+		Session session = getSession();
+		session.createQuery(
 				"update Game set attended = :attended where season = :season and location = :location")
 		        .setInteger("season", season)
 		        .setBoolean("attended", true)
 		        .setParameter("location", Location.HOME)
 		        .executeUpdate();
+		session.flush();
 	}
 	
 	@Override
@@ -149,16 +108,6 @@ public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implement
 	public Integer getLatestSeason() {
 		Query query = getSession().createQuery("select distinct max(season) from Game");
 		return (Integer) query.uniqueResult();
-	}
-
-	@Override
-	public Iterable<Game> getAllByAttendence(boolean attended) {
-		return list(getSession().createQuery("from Game where attended = :attended").setBoolean("attended", attended));
-	}
-	
-	@Override
-	public Iterable<Game> getAllTicketDates() {
-		return list(getSession().createQuery("from Game where ticketsAvailable is not null"));
 	}
 
 }

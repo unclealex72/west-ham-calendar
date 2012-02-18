@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<game>
+	<attended>false</attended>
+	<attendence>15000</attendence>
+	<competition>LGCP</competition>
+	<datePlayed>2011-11-12T05:30:00.000Z</datePlayed>
+	<id>2</id>
+	<location>AWAY</location>
+	<matchReport>Brilliant</matchReport>
+	<opponents>Opponents</opponents>
+	<result>2-0</result>
+	<season>2012</season>
+	<televisionChannel>Sky</televisionChannel>
+</game>
