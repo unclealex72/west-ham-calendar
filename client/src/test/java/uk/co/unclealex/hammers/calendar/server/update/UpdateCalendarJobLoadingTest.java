@@ -36,7 +36,7 @@ public class UpdateCalendarJobLoadingTest {
 
 	@Test
 	public void testLoad() {
-		ApplicationContext ctxt = new ClassPathXmlApplicationContext("/application-contexts/update/context.xml");
+		ApplicationContext ctxt = new ClassPathXmlApplicationContext("/application-contexts/update/context.xml", "/application-contexts/dao/context.xml", "/application-contexts/dao/test-db.xml");
 		ctxt.getBean("updateCalendarJob");
 	}
 
