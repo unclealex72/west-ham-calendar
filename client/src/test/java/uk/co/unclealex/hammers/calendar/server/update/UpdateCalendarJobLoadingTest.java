@@ -25,19 +25,23 @@
 package uk.co.unclealex.hammers.calendar.server.update;
 
 import org.junit.Test;
+import org.quartz.SchedulerException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @author alex
- *
+ * 
  */
 public class UpdateCalendarJobLoadingTest {
 
 	@Test
-	public void testLoad() {
-		ApplicationContext ctxt = new ClassPathXmlApplicationContext("/application-contexts/update/context.xml", "/application-contexts/dao/context.xml", "/application-contexts/dao/test-db.xml");
-		ctxt.getBean("updateCalendarJob");
+	public void testLoad() throws SchedulerException {
+		ApplicationContext ctxt = new ClassPathXmlApplicationContext("/application-contexts/update/context.xml",
+				"/application-contexts/update/cron.xml", "/application-contexts/dao/context.xml",
+				"/application-contexts/dao/test-db.xml");
+		UpdateCalendarJob updateCalendarJob = ctxt.getBean("updateCalendarJob", UpdateCalendarJob.class);
+		updateCalendarJob.destroy();
 	}
 
 }

@@ -17,8 +17,8 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
   	classpath:application-contexts/defaults/context.xml
   	classpath:application-contexts/html/context.xml
   	classpath:application-contexts/html/mainpage.xml
-  	classpath:application-contexts/update/context.xml
   	classpath:application-contexts/update/cron.xml
+  	classpath:application-contexts/update/context.xml
   	classpath:application-contexts/tickets/context.xml
   	classpath:application-contexts/view/context.xml
   </param-value>
