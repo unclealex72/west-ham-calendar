@@ -10,6 +10,7 @@ import uk.co.unclealex.hammers.calendar.client.places.GamesPlace;
 import uk.co.unclealex.hammers.calendar.client.places.HammersPlace;
 import uk.co.unclealex.hammers.calendar.client.places.HammersPlaceVisitor;
 import uk.co.unclealex.hammers.calendar.client.places.LeaguePlace;
+import uk.co.unclealex.hammers.calendar.client.places.NoGamesPlace;
 import uk.co.unclealex.hammers.calendar.client.places.TeamsPlace;
 
 import com.google.gwt.activity.shared.Activity;
@@ -48,17 +49,20 @@ public class HammersActivityMapper implements ActivityMapper {
 	private final Provider<TeamsPresenter> i_teamsPresenterProvider;
 	private final Provider<LeaguePresenter> i_leaguePresenterProvider;
 	private final Provider<AdminPresenter> i_adminPresenterProvider;
+	private final Provider<NoGamesPresenter> i_noGamesPresenterProvider;
 	private final SeasonsPresenter i_seasonsPresenter;
 
 	@Inject
 	public HammersActivityMapper(Provider<GamesPresenter> gamesPresenterProvider,
 			Provider<TeamsPresenter> teamsPresenterProvider, Provider<LeaguePresenter> leaguePresenterProvider,
 			Provider<AdminPresenter> adminPresenterProvider,
+			Provider<NoGamesPresenter> noGamesPresenterProvider,
 			SeasonsPresenter seasonsPresenter) {
 		i_gamesPresenterProvider = gamesPresenterProvider;
 		i_teamsPresenterProvider = teamsPresenterProvider;
 		i_leaguePresenterProvider = leaguePresenterProvider;
 		i_adminPresenterProvider = adminPresenterProvider;
+		i_noGamesPresenterProvider = noGamesPresenterProvider;
 		i_seasonsPresenter = seasonsPresenter;
 	}
 
@@ -122,6 +126,11 @@ public class HammersActivityMapper implements ActivityMapper {
 			setActivity(getAdminPresenterProvider().get());
 		}
 
+		@Override
+		public void visit(NoGamesPlace noGamesPlace) {
+			setActivity(getNoGamesPresenterProvider().get());
+		}
+
 		public void asDefault() {
 			// Do nothing
 		}
@@ -178,5 +187,9 @@ public class HammersActivityMapper implements ActivityMapper {
 
 	public SeasonsPresenter getSeasonsPresenter() {
 		return i_seasonsPresenter;
+	}
+
+	public Provider<NoGamesPresenter> getNoGamesPresenterProvider() {
+		return i_noGamesPresenterProvider;
 	}
 }

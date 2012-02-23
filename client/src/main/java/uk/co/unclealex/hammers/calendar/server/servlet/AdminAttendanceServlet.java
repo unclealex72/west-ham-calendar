@@ -5,13 +5,13 @@ package uk.co.unclealex.hammers.calendar.server.servlet;
 
 import java.io.IOException;
 
+import uk.co.unclealex.hammers.calendar.client.remote.AdminAttendanceService;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 import uk.co.unclealex.hammers.calendar.shared.model.Role;
 import uk.co.unclealex.hammers.calendar.shared.model.User;
-import uk.co.unclealex.hammers.calendar.shared.services.AdminAttendanceService;
 
 /**
  * Copyright 2011 Alex Jones
@@ -39,18 +39,23 @@ import uk.co.unclealex.hammers.calendar.shared.services.AdminAttendanceService;
 public class AdminAttendanceServlet extends AbstractAttendanceServlet implements AdminAttendanceService {
 
 	@Override
-	public void authenticate(String successToken) throws GoogleAuthenticationFailedException, IOException {
-		createAttendanceService().authenticate(successToken);
+	public void authorise(String authorisationToken) throws GoogleAuthenticationFailedException, IOException {
+		createAttendanceService().authorise(authorisationToken);
 	}
 
 	@Override
-	public String createGoogleAuthenticationUrlIfRequired() {
-		return createAttendanceService().createGoogleAuthenticationUrlIfRequired();
+	public String createGoogleAuthorisationUrlIfRequired() {
+		return createAttendanceService().createGoogleAuthorisationUrlIfRequired();
 	}
 	
 	@Override
 	public void updateCalendars() {
 		createAttendanceService().updateCalendars();		
+	}
+	
+	@Override
+	public void createCalendars() throws IOException, GoogleAuthenticationFailedException {
+		createAttendanceService().createCalendars();
 	}
 	
 	@Override

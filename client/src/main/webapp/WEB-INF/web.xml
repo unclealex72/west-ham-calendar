@@ -7,8 +7,20 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
  <context-param>
   <param-name>contextConfigLocation</param-name>
   <param-value>
-  	classpath:applicationContext-hammers.xml
   	classpath:applicationContext-hammers-security.xml
+  	classpath:application-contexts/auth/context.xml
+  	classpath:application-contexts/calendar/context.xml
+  	classpath:application-contexts/calendar/dao.xml
+  	classpath:application-contexts/dao/context.xml
+  	classpath:application-contexts/dao/jndi.xml
+  	classpath:application-contexts/dates/context.xml
+  	classpath:application-contexts/defaults/context.xml
+  	classpath:application-contexts/html/context.xml
+  	classpath:application-contexts/html/mainpage.xml
+  	classpath:application-contexts/update/context.xml
+  	classpath:application-contexts/update/cron.xml
+  	classpath:application-contexts/tickets/context.xml
+  	classpath:application-contexts/view/context.xml
   </param-value>
  </context-param>
 
@@ -76,17 +88,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns
     <url-pattern>/hammers/admin</url-pattern>
   </servlet-mapping>
 
-	<servlet>
-		<servlet-name>calendarColoursCss</servlet-name>
-		<servlet-class>uk.co.unclealex.hammers.calendar.server.servlet.CalendarColoursCssServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>calendarColoursCss</servlet-name>
-		<url-pattern>/calendar-colours.css</url-pattern>
-	</servlet-mapping>
-	
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>hammers.html</welcome-file>

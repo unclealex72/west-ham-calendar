@@ -28,9 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.cdmckay.coffeedom.Document;
-import org.cdmckay.coffeedom.Element;
-import org.cdmckay.coffeedom.filter.Filter;
+import org.htmlcleaner.TagNode;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +56,8 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 	public static final String GENERAL_SALE_PATTERN = "General Sale";
 
 	@Override
-	protected Scanner createScanner(URI uri, Document document) {
-		return new TicketsScanner(uri, document);
+	protected Scanner createScanner(URI uri, TagNode tagNode) {
+		return new TicketsScanner(uri, tagNode);
 	}
 	
 	class TicketsScanner extends Scanner {
@@ -67,8 +65,8 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		private DateTime i_dateTimePlayed;
 
 		
-		public TicketsScanner(URI uri, Document document) {
-			super(uri, document);
+		public TicketsScanner(URI uri, TagNode tagNode) {
+			super(uri, tagNode);
 		}
 
 		abstract class ParsingAction {
@@ -226,14 +224,15 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 					.newArrayList(new GameDatePlayedParsingAction(), new BondHoldersTicketParsingAction(),
 							new PriorityPointTicketParsingAction(), new SeasonTicketParsingAction(),
 							new AcademyMemberTicketParsingAction(), new GeneralSaleTicketParsingAction());
-			Filter filter = new Filter() {
+			TagNodeFilter filter = new TagNodeFilter() {
+				
 				@Override
-				public boolean matches(Object object) {
-					return object instanceof Element;
+				public boolean apply(TagNode tagNode) {
+					return true;
 				}
 			};
-			for (Element el : Iterables.filter(getDocument().getDescendants(filter), Element.class)) {
-				final String text = normaliseTextToNull(el);
+			for (TagNode tagNode : filter.list(getTagNode())) {
+				final String text = TagNodeUtils.normaliseTextToNull(tagNode);
 				if (text != null) {
 					Predicate<ParsingAction> parsingActionPredicate = new Predicate<ParsingAction>() {
 						@Override

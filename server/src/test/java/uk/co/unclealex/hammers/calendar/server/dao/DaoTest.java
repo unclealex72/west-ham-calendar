@@ -46,16 +46,24 @@ public abstract class DaoTest {
 
 	@Autowired SimpleJdbcTemplate simpleJdbcTemplate;
 	
-	private final Class<?> i_entityClass;
+	@SuppressWarnings("rawtypes")
+	private final Class[] i_entityClasses;
 
-	public DaoTest(Class<?> entityClass) {
+	@SuppressWarnings("rawtypes")
+	public DaoTest(Class... entityClasses) {
 		super();
-		i_entityClass = entityClass;
+		i_entityClasses = entityClasses;
 	}
 	
 	@Before
 	public final void setup() throws Exception {
-		SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, getEntityClass().getAnnotation(Table.class).name());
+		@SuppressWarnings("rawtypes")
+		Class[] entityClasses = getEntityClasses();
+		String[] tableNames = new String[entityClasses.length];
+		for (int idx = 0; idx < entityClasses.length; idx++) {
+			tableNames[idx] = ((Class<?>) entityClasses[idx]).getAnnotation(Table.class).name();
+		}
+		SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, tableNames);
 		doSetup();
 	}
 	
@@ -64,7 +72,8 @@ public abstract class DaoTest {
 	/**
 	 * @return the entityClass
 	 */
-	public Class<?> getEntityClass() {
-		return i_entityClass;
+	@SuppressWarnings("rawtypes")
+	public Class[] getEntityClasses() {
+		return i_entityClasses;
 	}
 }

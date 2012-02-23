@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.joda.time.Chronology;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 import org.joda.time.DayOfWeekIgnoringChronology;
 import org.joda.time.chrono.ISOChronology;
@@ -260,5 +261,17 @@ public class DateServiceImpl implements DateService {
 			dateTime = dateTime.plusYears(1);
 		}
 		return dateTime;
+	}
+
+	@Override
+	public boolean isWeekday(DateTime dateTime) {
+		int dayOfWeek = dateTime.getDayOfWeek();
+		return dayOfWeek != DateTimeConstants.SATURDAY && dayOfWeek != DateTimeConstants.SUNDAY;
+	}
+
+	@Override
+	public boolean isThreeOClockOnASaturday(DateTime dateTime) {
+		return dateTime.getDayOfWeek() == DateTimeConstants.SATURDAY && dateTime.getHourOfDay() == 15
+				&& dateTime.getMinuteOfHour() == 0;
 	}
 }

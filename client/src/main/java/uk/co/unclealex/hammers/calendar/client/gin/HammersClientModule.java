@@ -11,6 +11,7 @@ import uk.co.unclealex.hammers.calendar.client.factories.LeagueTableRowFactory;
 import uk.co.unclealex.hammers.calendar.client.factories.LoginPresenterFactory;
 import uk.co.unclealex.hammers.calendar.client.factories.LoginPresenterFactoryImpl;
 import uk.co.unclealex.hammers.calendar.client.factories.TeamTableRowFactory;
+import uk.co.unclealex.hammers.calendar.client.factories.UserPresenterFactory;
 import uk.co.unclealex.hammers.calendar.client.presenters.AdminPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.AuthenticationPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.ChangePasswordPresenter;
@@ -19,6 +20,7 @@ import uk.co.unclealex.hammers.calendar.client.presenters.GoogleAuthenticationPr
 import uk.co.unclealex.hammers.calendar.client.presenters.LeaguePresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.LoginPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.NavigationPresenter;
+import uk.co.unclealex.hammers.calendar.client.presenters.NoGamesPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.SeasonsPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.SelectTicketCalendarPresenter;
 import uk.co.unclealex.hammers.calendar.client.presenters.TeamsPresenter;
@@ -37,6 +39,7 @@ import uk.co.unclealex.hammers.calendar.client.views.LeagueTable;
 import uk.co.unclealex.hammers.calendar.client.views.LeagueTableRow;
 import uk.co.unclealex.hammers.calendar.client.views.Login;
 import uk.co.unclealex.hammers.calendar.client.views.Navigation;
+import uk.co.unclealex.hammers.calendar.client.views.NoGames;
 import uk.co.unclealex.hammers.calendar.client.views.Seasons;
 import uk.co.unclealex.hammers.calendar.client.views.SelectTicketCalendar;
 import uk.co.unclealex.hammers.calendar.client.views.TableRow;
@@ -113,6 +116,12 @@ public class HammersClientModule extends AbstractGinModule {
 		bind(AdminPresenter.Display.class).to(Admin.class).in(Singleton.class);
 		bind(AdminPresenter.class).in(Singleton.class);
     
+		bind(NoGamesPresenter.Display.class).to(NoGames.class).in(Singleton.class);
+		bind(NoGamesPresenter.class).in(Singleton.class);
+
+		install(new GinFactoryModuleBuilder().implement(UserPresenter.class, UserPresenter.class).
+        build(UserPresenterFactory.class));
+
     bind(UpdateUsersPresenter.Display.class).to(UpdateUsers.class).in(Singleton.class);
     bind(UpdateUsersPresenter.class).in(Singleton.class);
     bind(UserPresenter.Display.class).to(User.class);

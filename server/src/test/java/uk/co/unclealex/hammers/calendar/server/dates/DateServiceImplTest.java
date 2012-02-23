@@ -24,6 +24,9 @@
 
 package uk.co.unclealex.hammers.calendar.server.dates;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import junit.framework.Assert;
 
 import org.joda.time.DateTime;
@@ -31,7 +34,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.Test;
 
 import com.google.common.base.Strings;
-
+import com.google.common.collect.Maps;
 
 /**
  * @author alex
@@ -63,7 +66,8 @@ public class DateServiceImplTest {
 	public void testYearAwareParse() {
 		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat(
 				"dd/MM[/yyyy] HH:mm");
-		testParseAndFind(minuteOf(5, 9, 1972, 9, 12), "05/09/1972 9:12", dateOf(10, 10, 2012), true, possiblyYearlessDateFormat);
+		testParseAndFind(minuteOf(5, 9, 1972, 9, 12), "05/09/1972 9:12", dateOf(10, 10, 2012), true,
+				possiblyYearlessDateFormat);
 	}
 
 	@Test
@@ -75,8 +79,7 @@ public class DateServiceImplTest {
 
 	@Test
 	public void testDefinitelyYearlessParse() {
-		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat(
-				"dd/MM HH:mm");
+		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat("dd/MM HH:mm");
 		testParseAndFind(minuteOf(5, 9, 2012, 9, 12), "05/09 9:12", dateOf(10, 10, 2012), true, possiblyYearlessDateFormat);
 	}
 
@@ -86,16 +89,17 @@ public class DateServiceImplTest {
 				"HH:mm dd/MM[/yyyy]");
 		PossiblyYearlessDateFormat secondPossiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat(
 				"dd/MM[/yyyy] HH:mm");
-		testParseAndFind(minuteOf(5, 9, 2012, 9, 12), "05/09 9:12", dateOf(10, 10, 2012), true, firstPossiblyYearlessDateFormat,
-				secondPossiblyYearlessDateFormat);
+		testParseAndFind(minuteOf(5, 9, 2012, 9, 12), "05/09 9:12", dateOf(10, 10, 2012), true,
+				firstPossiblyYearlessDateFormat, secondPossiblyYearlessDateFormat);
 	}
 
 	@Test
 	public void testYearlessWithDayOfWeekParse() {
 		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat("ha EEE dd MMM");
-		testParseAndFind(minuteOf(26, 1, 2012, 9, 0), "9am Thu 26 Jan", dateOf(18, 2, 2012), true, possiblyYearlessDateFormat);
+		testParseAndFind(minuteOf(26, 1, 2012, 9, 0), "9am Thu 26 Jan", dateOf(18, 2, 2012), true,
+				possiblyYearlessDateFormat);
 	}
-	
+
 	@Test
 	public void testFailureToParse() {
 		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat(
@@ -117,14 +121,56 @@ public class DateServiceImplTest {
 			String padding = Strings.repeat("x", paddingLength);
 			for (String dateContainingString : new String[] { date, padding + date, date + padding, padding + date + padding }) {
 				try {
-					DateTime actualDateTime = new DateServiceImpl().findPossiblyYearlessDate(dateContainingString, yearDeterminingDate,
-							yearDeterminingDateIsLaterThanTheDate, possiblyYearlessDateFormats);
+					DateTime actualDateTime = new DateServiceImpl().findPossiblyYearlessDate(dateContainingString,
+							yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate, possiblyYearlessDateFormats);
 					Assert.assertEquals("The wrong date was found.", expectedDateTime, actualDateTime);
 				}
 				catch (UnparseableDateException e) {
 					Assert.assertNull("A date could not be found", expectedDateTime);
-				}			
-			}			
+				}
+			}
+		}
+	}
+
+	@Test
+	public void testWeek() {
+		DateTime tuesday = dateOf(5, 9, 1972);
+		DateTime wednesday = dateOf(6, 9, 1972);
+		DateTime thursday = dateOf(7, 9, 1972);
+		DateTime friday = dateOf(8, 9, 1972);
+		DateTime saturday = dateOf(9, 9, 1972);
+		DateTime sunday = dateOf(10, 9, 1972);
+		DateTime monday = dateOf(11, 9, 1972);
+
+		DateServiceImpl dateServiceImpl = new DateServiceImpl();
+
+		for (DateTime dateTime : new DateTime[] { tuesday, wednesday, thursday, friday, monday }) {
+			Assert.assertTrue(dateTime + " was not identified as a weekday.", dateServiceImpl.isWeekday(dateTime));
+		}
+
+		for (DateTime dateTime : new DateTime[] { saturday, sunday }) {
+			Assert.assertFalse(dateTime + " was wrongly identified as a weekday.", dateServiceImpl.isWeekday(dateTime));
+		}
+	}
+
+	@Test
+	public void test3pmSaturday() {
+		Map<DateTime, Boolean> expectedResultsByDateTime = Maps.newLinkedHashMap();
+		expectedResultsByDateTime.put(minuteOf(9, 9, 1972, 15, 0), true);
+		expectedResultsByDateTime.put(minuteOf(9, 9, 1972, 12, 0), false);
+		expectedResultsByDateTime.put(minuteOf(9, 9, 1972, 15, 30), false);
+		expectedResultsByDateTime.put(minuteOf(9, 9, 1972, 17, 30), false);
+		expectedResultsByDateTime.put(minuteOf(10, 9, 1972, 15, 0), false);
+		expectedResultsByDateTime.put(minuteOf(10, 9, 1972, 12, 0), false);
+		expectedResultsByDateTime.put(minuteOf(10, 9, 1972, 15, 30), false);
+		expectedResultsByDateTime.put(minuteOf(10, 9, 1972, 17, 30), false);
+		DateServiceImpl dateServiceImpl = new DateServiceImpl();
+		for (Entry<DateTime, Boolean> entry : expectedResultsByDateTime.entrySet()) {
+			DateTime dateTime = entry.getKey();
+			boolean expectedResult = entry.getValue();
+			boolean actualResult = dateServiceImpl.isThreeOClockOnASaturday(dateTime);
+			Assert.assertEquals("The wrong result was found checking whether " + dateTime + " is 3pm on a Saturday.",
+					expectedResult, actualResult);
 		}
 	}
 

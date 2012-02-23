@@ -6,7 +6,7 @@ package uk.co.unclealex.hammers.calendar.shared.services;
 import java.io.IOException;
 
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
 
 /**
  * Copyright 2011 Alex Jones
@@ -32,9 +32,9 @@ import uk.co.unclealex.hammers.calendar.shared.model.Game;
  *
  */
 public interface UserAttendanceService {
-	public Game[] attendAllHomeGamesForSeason(int season);
-	public Game attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
-	public Game unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
+	public GameView[] attendAllHomeGameViewsForSeason(int season) throws GoogleAuthenticationFailedException, IOException;
+	public GameView attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
+	public GameView unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
 	public void forceLogin();
 	public void changePassword(String newPassword);
 }

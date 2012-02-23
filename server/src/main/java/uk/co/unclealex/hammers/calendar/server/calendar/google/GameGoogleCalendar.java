@@ -31,7 +31,7 @@ public abstract class GameGoogleCalendar extends AbstractGoogleCalendar {
 
 	@Override
 	public DateTime getGameDate(Game game) {
-		return game.getDatePlayed();
+		return game.getDateTimePlayed();
 	}
 
 }

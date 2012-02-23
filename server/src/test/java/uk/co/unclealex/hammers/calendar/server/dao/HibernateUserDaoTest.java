@@ -52,7 +52,7 @@ public class HibernateUserDaoTest extends DaoTest {
 	@Autowired UserDao userDao;
 	
 	public HibernateUserDaoTest() {
-		super(User.class);
+		super(Authority.class, User.class);
 	}
 
 	@Override

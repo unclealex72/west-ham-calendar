@@ -29,51 +29,45 @@ import java.net.URI;
 import java.util.List;
 import java.util.Set;
 
-import org.cdmckay.coffeedom.Content;
-import org.cdmckay.coffeedom.Document;
-import org.cdmckay.coffeedom.Element;
-import org.cdmckay.coffeedom.filter.Filter;
+import org.htmlcleaner.TagNode;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
  * @author alex
- *
+ * 
  */
 public abstract class ElementLinkHarvester implements LinkHarvester {
 
 	private final String i_elementName;
-	
+
 	public ElementLinkHarvester(String elementName) {
 		super();
 		i_elementName = elementName;
 	}
 
 	@Override
-	public List<URI> harvestLinks(final URI pageUri, Document document) throws IOException {
+	public List<URI> harvestLinks(final URI pageUri, TagNode tagNode) throws IOException {
 		final Set<URI> links = Sets.newLinkedHashSet();
 		final String elementName = getElementName();
-		Filter filter = new Filter() {
+		new TagNodeWalker(tagNode) {
+			
 			@Override
-			public boolean matches(Object object) {
-				if (object instanceof Element && elementName.equals(((Element) object).getName())) {
-					URI linkUri = checkForLink(pageUri, (Element) object);
+			public void execute(TagNode tagNode) {
+				if (elementName.equals(tagNode.getName())) {
+					URI linkUri = checkForLink(pageUri, tagNode);
 					if (linkUri != null) {
 						links.add(linkUri);
 					}
 				}
-				return false;
 			}
 		};
-		for (@SuppressWarnings("unused") Content content : document.getDescendants(filter)) {
-			// Do nothing
-		}
 		return Lists.newArrayList(links);
 	}
 
-	protected abstract URI checkForLink(URI uri, Element element);
-	
+	protected abstract URI checkForLink(URI uri, TagNode tagNode);
+
 	public String getElementName() {
 		return i_elementName;
 	}

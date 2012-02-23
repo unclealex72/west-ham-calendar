@@ -18,13 +18,17 @@
 	</bean>
 
 	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
-		<property name="url" value="jdbc:hsqldb:." />
-		<property name="username" value="sa" />
-		<property name="password" value="" />
+		class="uk.co.unclealex.hammers.calendar.server.testing.CountingDataSource">
+		<property name="targetDataSource">
+			<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+				<property name="driverClassName" value="org.hsqldb.jdbcDriver" />
+				<property name="url" value="jdbc:hsqldb:." />
+				<property name="username" value="sa" />
+				<property name="password" value="" />
+			</bean>
+		</property>
 	</bean>
-
+	
 	<bean id="simpleJdbcTemplate" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
 		<constructor-arg ref="dataSource" />
 	</bean>

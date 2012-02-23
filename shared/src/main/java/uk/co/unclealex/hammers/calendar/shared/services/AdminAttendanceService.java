@@ -37,9 +37,10 @@ import uk.co.unclealex.hammers.calendar.shared.model.User;
  */
 public interface AdminAttendanceService {
 
-	public String createGoogleAuthenticationUrlIfRequired();
+	public String createGoogleAuthorisationUrlIfRequired();
+	public void createCalendars() throws IOException, GoogleAuthenticationFailedException;
 	
-	public void authenticate(String successToken) throws GoogleAuthenticationFailedException, IOException;
+	public void authorise(String authorisationToken) throws GoogleAuthenticationFailedException, IOException;
 	
 	public void updateCalendars();
 	

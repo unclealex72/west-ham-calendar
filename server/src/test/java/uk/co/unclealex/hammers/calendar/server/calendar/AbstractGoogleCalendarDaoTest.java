@@ -200,6 +200,13 @@ public abstract class AbstractGoogleCalendarDaoTest {
 		checker.update(true);
 		checker.busy = false;
 		checker.update(true);
+		// Check that updating an empty description with an empty description does not cause an update.
+		checker.attendence = null;
+		checker.matchReport = null;
+		checker.televisionChannel = null;
+		checker.result = null;
+		checker.update(true);
+		checker.update(false);
 	}
 
 	protected abstract void checkGame(String calendarId, String eventId, String gameId, Competition competition,
@@ -351,17 +358,21 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	@Test
 	public void testListGameIdsByEventId() throws IOException, GoogleAuthenticationFailedException {
 		String calendarId = getPrimaryCalendarId();
-		String firstEventId = definitelyCreateGame(calendarId, "Calendar", "100", Competition.FACP, Location.HOME,
-				"Opponents", new Interval(dateOf(5, 9, 1972, 9, 12), dateOf(5, 9, 1972, 11, 12)), "1-0", 10, null, null, true);
-		String secondEventId = definitelyCreateGame(calendarId, "Calendar", "200", Competition.FACP, Location.HOME,
-				"Opponents", new Interval(dateOf(4, 9, 1972, 9, 12), dateOf(4, 9, 1972, 11, 12)), "1-0", 10, null, null, true);
+		DateTime nowish = new DateTime(DateTimeZone.forID("Europe/London")).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		int weeksToAdd = 26;
+		Map<String, String> expectedGameIdsByEventId = Maps.newTreeMap();
+		for (int idx = 0; idx < 30; idx++) {
+			String gameId = Integer.toString(idx);
+			String eventId = definitelyCreateGame(calendarId, "Calendar", gameId, Competition.FACP, Location.HOME,
+					"Opponents" + idx, new Interval(nowish, nowish.plusHours(1)), "1-0", 10, null, null, true);
+			nowish = nowish.plusWeeks(weeksToAdd).plusHours(1);
+			weeksToAdd *= -1;
+			expectedGameIdsByEventId.put(eventId, gameId);
+		}
 		Map<String, String> actualGameIdsByEventId = Maps.newTreeMap();
 		for (Entry<String, String> entry : getGoogleCalendarDao().listGameIdsByEventId(calendarId).entrySet()) {
 			actualGameIdsByEventId.put(entry.getKey(), entry.getValue());
 		}
-		Map<String, String> expectedGameIdsByEventId = Maps.newTreeMap();
-		expectedGameIdsByEventId.put(firstEventId, "100");
-		expectedGameIdsByEventId.put(secondEventId, "200");
 		Assert
 				.assertEquals("The wrong game event mappings were returned", expectedGameIdsByEventId, actualGameIdsByEventId);
 	}

@@ -6,7 +6,7 @@
 	default-autowire="byName">
 
 	<bean id="mainPage" class="java.lang.String">
-		<constructor-arg>http://www.whufc.com/page/Home/</constructor-arg>
+		<constructor-arg value="http://www.whufc.com/page/Home/"/>
 	</bean>
 	
 </beans>

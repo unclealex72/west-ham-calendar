@@ -26,6 +26,8 @@ package uk.co.unclealex.hammers.calendar.server.calendar;
 
 import java.io.IOException;
 
+import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
+
 /**
  * A factory class to create a {@link GoogleCalendarDao}. Instances of this interface will typically
  * make sure that the dao is correctly authenticated.
@@ -34,5 +36,5 @@ import java.io.IOException;
  */
 public interface GoogleCalendarDaoFactory {
 
-	public GoogleCalendarDao createGoogleCalendarDao() throws IOException;
+	public GoogleCalendarDao createGoogleCalendarDao() throws IOException, GoogleAuthenticationFailedException;
 }

@@ -6,7 +6,7 @@ package uk.co.unclealex.hammers.calendar.shared.services;
 import java.io.IOException;
 
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
 import uk.co.unclealex.hammers.calendar.shared.model.LeagueRow;
 
 /**
@@ -34,12 +34,10 @@ import uk.co.unclealex.hammers.calendar.shared.model.LeagueRow;
  */
 public interface AnonymousAttendanceService {
 
-	public Integer initialise();
 	public Integer[] getAllSeasons();
-	public Game[] getAllGamesChronologicallyForSeason(int season);
-	public Game[] getAllGamesByOpponentsForSeason(int season);
+	public GameView[] getAllGameViewsChronologicallyForSeason(int season);
+	public GameView[] getAllGameViewsByOpponentsForSeason(int season);
 	public LeagueRow[] getLeagueForSeason(int season);
-	public Integer getLatestSeason();
 	public boolean authenticate(String username, String password);
 	public void ensureDefaultsExist() throws GoogleAuthenticationFailedException, IOException;
 	public String getUserPrincipal();

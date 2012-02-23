@@ -40,6 +40,7 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
@@ -75,10 +76,10 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 			this.location = location;
 			this.opponents = opponents;
 			this.gameInterval = gameInterval;
-			this.result = result;
+			this.result = Strings.emptyToNull(result);
 			this.attendence = attendence;
-			this.matchReport = matchReport;
-			this.televisionChannel = televisionChannel;
+			this.matchReport = Strings.emptyToNull(matchReport);
+			this.televisionChannel = Strings.emptyToNull(televisionChannel);
 			this.busy = busy;
 		}
 

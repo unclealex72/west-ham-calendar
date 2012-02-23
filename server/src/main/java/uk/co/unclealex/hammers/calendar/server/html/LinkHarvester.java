@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import org.cdmckay.coffeedom.Document;
+import org.htmlcleaner.TagNode;
 
 
 /**
@@ -41,9 +41,9 @@ public interface LinkHarvester {
 	/**
 	 * Harvest links from a page.
 	 * @param pageUri The URI of the page from which links are being harvested.
-	 * @param document The document of the page.
+	 * @param tagNode The document of the page.
 	 * @return A list of links to further scan for games.
 	 * @throws IOException Thrown if there are any issues reading the document.
 	 */
-	public List<URI> harvestLinks(URI pageUri, Document document) throws IOException;
+	public List<URI> harvestLinks(URI pageUri, TagNode tagNode) throws IOException;
 }

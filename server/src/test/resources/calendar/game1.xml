@@ -3,7 +3,7 @@
 	<attended>false</attended>
 	<attendence>10000</attendence>
 	<competition>FACP</competition>
-	<datePlayed>2011-11-05T03:00:00.000Z</datePlayed>
+	<dateTimePlayed>2011-11-05T03:00:00.000Z</dateTimePlayed>
 	<id>1</id>
 	<location>HOME</location>
 	<matchReport>Good</matchReport>

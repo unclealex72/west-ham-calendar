@@ -8,7 +8,7 @@ import java.util.Date;
 import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.HammersMessages;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -49,12 +49,12 @@ public class GameTableRow extends AbstractGameTableRow {
 	private static final Binder binder = GWT.create(Binder.class);
 
 	/**
-	 * @param game
+	 * @param gameView
 	 * @param hammersMessages
 	 */
 	@Inject
-	public GameTableRow(@Assisted Game game, HammersMessages hammersMessages) {
-		super(game, hammersMessages);
+	public GameTableRow(@Assisted GameView gameView, HammersMessages hammersMessages) {
+		super(gameView, hammersMessages);
 	}
 
 	@Override

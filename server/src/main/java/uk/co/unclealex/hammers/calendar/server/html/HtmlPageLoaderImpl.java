@@ -25,36 +25,29 @@
 package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.net.URL;
 
-import org.cdmckay.coffeedom.Document;
-import org.cdmckay.coffeedom.input.SAXBuilder;
 import org.htmlcleaner.HtmlCleaner;
-import org.htmlcleaner.PrettyXmlSerializer;
 import org.htmlcleaner.TagNode;
 
 /**
- * The default implementation of {@link HtmlPageLoader} that cleans a page using HtmlCleaner.
+ * The default implementation of {@link HtmlPageLoader} that cleans a page using
+ * HtmlCleaner.
+ * 
  * @author alex
- *
+ * 
  */
 public class HtmlPageLoaderImpl implements HtmlPageLoader {
 
 	private final HtmlCleaner i_htmlCleaner = new HtmlCleaner();
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Document loadPage(URL url) throws IOException {
+	public TagNode loadPage(URL url) throws IOException {
 		HtmlCleaner htmlCleaner = getHtmlCleaner();
-		TagNode tagNode = htmlCleaner.clean(url);
-		StringWriter writer = new StringWriter();
-		new PrettyXmlSerializer(htmlCleaner.getProperties()).write(tagNode, writer, "utf-8");
-		SAXBuilder saxBuilder = new SAXBuilder();
-		return saxBuilder.build(new StringReader(writer.toString()));
+		return htmlCleaner.clean(url);
 	}
 
 	public HtmlCleaner getHtmlCleaner() {

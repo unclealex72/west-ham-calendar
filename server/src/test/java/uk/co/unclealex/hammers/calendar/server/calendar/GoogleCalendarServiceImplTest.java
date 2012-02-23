@@ -45,6 +45,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import uk.co.unclealex.hammers.calendar.server.calendar.UpdateChangeLog.Action;
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
+import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendarFactory;
 import uk.co.unclealex.hammers.calendar.server.dao.CalendarConfigurationDao;
 import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
 import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
@@ -80,7 +81,9 @@ public class GoogleCalendarServiceImplTest {
 	GoogleCalendarDaoFactory googleCalendarDaoFactory;
 	@Inject
 	GoogleCalendarServiceImpl googleCalendarService;
-
+	@Inject
+	GoogleCalendarFactory googleCalendarFactory;
+	
 	MockGoogleCalendarDao mockGoogleCalendarDao;
 	GameDao gameDao;
 	
@@ -90,7 +93,7 @@ public class GoogleCalendarServiceImplTest {
 	Game game2_altered;
 
 	@Before
-	public void setUp() throws IOException, JAXBException {
+	public void setUp() throws IOException, JAXBException, GoogleAuthenticationFailedException {
 		mockGoogleCalendarDao = (MockGoogleCalendarDao) googleCalendarDaoFactory.createGoogleCalendarDao();
 		mockGoogleCalendarDao.clear();
 		JAXBContext ctxt = JAXBContext.newInstance(Game.class);
@@ -118,13 +121,13 @@ public class GoogleCalendarServiceImplTest {
 		};
 		gameDao = readOnlyDaoFactory.createCrudDao(GameDao.class, game1, game2, game3);
 		CalendarConfigurationDao calendarConfigurationDao = readOnlyDaoFactory.createBusinessCrudDao(
-				CalendarConfigurationDao.class, Iterables.transform(googleCalendarService.getGoogleCalendarsByCalendarType()
+				CalendarConfigurationDao.class, Iterables.transform(googleCalendarFactory.getGoogleCalendarsByCalendarType()
 						.keySet(), calendarConfigurationFactory));
 		googleCalendarService.setCalendarConfigurationDao(calendarConfigurationDao);
 		class GameAdder {
 			public void addGame(String calendarId, Game game) {
 				mockGoogleCalendarDao.createOrUpdateGame(calendarId, null, game.getId().toString(), game.getCompetition(),
-						game.getLocation(), game.getOpponents(), new Interval(game.getDatePlayed(), Duration.standardHours(2)),
+						game.getLocation(), game.getOpponents(), new Interval(game.getDateTimePlayed(), Duration.standardHours(2)),
 						game.getResult(), game.getAttendence(), game.getMatchReport(), game.getTelevisionChannel(), true);
 			}
 		}
@@ -190,7 +193,7 @@ public class GoogleCalendarServiceImplTest {
 		// Check games. For all but the attended and unattended calendars, all games
 		// will just be added.
 		SortedSet<UpdateChangeLog> expectedUpdateChangeLogs = Sets.newTreeSet();
-		for (Entry<CalendarType, GoogleCalendar> entry : googleCalendarService.getGoogleCalendarsByCalendarType()
+		for (Entry<CalendarType, GoogleCalendar> entry : googleCalendarFactory.getGoogleCalendarsByCalendarType()
 				.entrySet()) {
 			CalendarType calendarType = entry.getKey();
 			GoogleCalendar googleCalendar = entry.getValue();

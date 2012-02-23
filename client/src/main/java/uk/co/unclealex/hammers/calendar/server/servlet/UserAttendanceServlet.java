@@ -5,9 +5,10 @@ package uk.co.unclealex.hammers.calendar.server.servlet;
 
 import java.io.IOException;
 
+import uk.co.unclealex.hammers.calendar.client.remote.UserAttendanceService;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
-import uk.co.unclealex.hammers.calendar.shared.services.UserAttendanceService;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
+
 
 /**
  * Copyright 2011 Alex Jones
@@ -35,17 +36,17 @@ import uk.co.unclealex.hammers.calendar.shared.services.UserAttendanceService;
 public class UserAttendanceServlet extends AbstractAttendanceServlet implements UserAttendanceService {
 
 	@Override
-	public Game[] attendAllHomeGamesForSeason(int season) {
-		return createAttendanceService().attendAllHomeGamesForSeason(season);
+	public GameView[] attendAllHomeGameViewsForSeason(int season) throws GoogleAuthenticationFailedException, IOException {
+		return createAttendanceService().attendAllHomeGameViewsForSeason(season);
 	}
 
 	@Override
-	public Game attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException {
+	public GameView attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException {
 		return createAttendanceService().attendGame(gameId);
 	}
 
 	@Override
-	public Game unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException {
+	public GameView unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException {
 		return createAttendanceService().unattendGame(gameId);
 	}
 

@@ -208,7 +208,7 @@ public class GameUpdateCommandTest {
 		Function<Game, DateTime> valueFunction = new Function<Game, DateTime>() {
 			@Override
 			public DateTime apply(Game game) {
-				return game.getDatePlayed();
+				return game.getDateTimePlayed();
 			}
 		};
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_DATE_PLAYED,
@@ -318,7 +318,7 @@ public class GameUpdateCommandTest {
 		Function<Game, DateTime> valueFunction = new Function<Game, DateTime>() {
 			@Override
 			public DateTime apply(Game game) {
-				return game.getBondholdersAvailable();
+				return game.getDateTimeBondholdersAvailable();
 			}
 		};
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_BONDHOLDERS_AVAILABLE,
@@ -337,7 +337,7 @@ public class GameUpdateCommandTest {
 		Function<Game, DateTime> valueFunction = new Function<Game, DateTime>() {
 			@Override
 			public DateTime apply(Game game) {
-				return game.getPriorityPointPostAvailable();
+				return game.getDateTimePriorityPointPostAvailable();
 			}
 		};
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_PRIORITY_POINT_POST_AVAILABLE,
@@ -356,7 +356,7 @@ public class GameUpdateCommandTest {
 		Function<Game, DateTime> valueFunction = new Function<Game, DateTime>() {
 			@Override
 			public DateTime apply(Game game) {
-				return game.getSeasonTicketsAvailable();
+				return game.getDateTimeSeasonTicketsAvailable();
 			}
 		};
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_SEASON_TICKETS_AVAILABLE,
@@ -375,7 +375,7 @@ public class GameUpdateCommandTest {
 		Function<Game, DateTime> valueFunction = new Function<Game, DateTime>() {
 			@Override
 			public DateTime apply(Game game) {
-				return game.getAcademyMembersAvailable();
+				return game.getDateTimeAcademyMembersAvailable();
 			}
 		};
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_ACADEMY_TICKETS_AVAILABLE,
@@ -394,7 +394,7 @@ public class GameUpdateCommandTest {
 		Function<Game, DateTime> valueFunction = new Function<Game, DateTime>() {
 			@Override
 			public DateTime apply(Game game) {
-				return game.getGeneralSaleAvailable();
+				return game.getDateTimeGeneralSaleAvailable();
 			}
 		};
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_GENERATE_SALE_TICKETS_AVAILABLE,

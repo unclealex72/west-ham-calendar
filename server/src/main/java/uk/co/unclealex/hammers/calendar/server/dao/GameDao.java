@@ -37,7 +37,7 @@ public interface GameDao extends CrudDao<Game> {
 	public Iterable<Game> getAllForSeason(int season);
 	public SortedSet<Integer> getAllSeasons();
 	public Game findByBusinessKey(Competition competition, Location location, String opponents, int season);
-	public void attendAllHomeGamesForSeason(int season);
 	public Integer getLatestSeason();
+	public Iterable<Game> getAllForSeasonAndLocation(int season, Location location);
 
 }

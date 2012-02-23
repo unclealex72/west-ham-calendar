@@ -32,6 +32,6 @@ public class SeasonTicketGoogleCalendar extends TicketsGoogleCalendar {
 
 	@Override
 	public DateTime getGameDate(Game game) {
-		return game.getSeasonTicketsAvailable();
+		return game.getDateTimeSeasonTicketsAvailable();
 	}
 }

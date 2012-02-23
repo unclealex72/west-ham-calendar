@@ -32,6 +32,6 @@ public class PriorityPointGoogleCalendar extends TicketsGoogleCalendar {
 
 	@Override
 	public DateTime getGameDate(Game game) {
-		return game.getPriorityPointPostAvailable();
+		return game.getDateTimePriorityPointPostAvailable();
 	}
 }

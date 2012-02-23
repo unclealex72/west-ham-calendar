@@ -26,6 +26,8 @@ package uk.co.unclealex.hammers.calendar.server.calendar;
 
 import java.io.IOException;
 
+import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
+
 import com.google.api.services.calendar.Calendar;
 
 /**
@@ -40,6 +42,11 @@ public interface CalendarFactory {
 	 * Create a new Google {@link Calendar} object.
 	 * @return A new, authenticated Google {@link Calendar} object.
 	 * @throws IOException
+	 * @throws GoogleAuthenticationFailedException 
 	 */
-	public Calendar createCalendar() throws IOException;
+	public Calendar createCalendar() throws IOException, GoogleAuthenticationFailedException;
+	
+	public String getAuthorisationUrl();
+	
+	public void installAuthorisationCode(String authorisationCode) throws IOException;
 }

@@ -77,7 +77,7 @@ import com.google.common.collect.Sets;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "/application-contexts/main/context.xml", "/application-contexts/dao/context.xml",
+@ContextConfiguration({ "/application-contexts/update/context.xml", "/application-contexts/dao/context.xml",
 		"/application-contexts/dao/test-db.xml", "/application-contexts/calendar/context.xml",
 		"/application-contexts/calendar/test-dao.xml" })
 @SuppressWarnings({"unchecked", "deprecation"})
@@ -245,8 +245,8 @@ public class MainUpdateServiceImplTest {
 				return fixtureUpdateCommands;
 			}
 		};
-		mainUpdateService.setFixturesHtmlGameScanner(fixtureScanner);
-		mainUpdateService.setTicketsHtmlGameScanner(ticketsScanner);
+		mainUpdateService.setFixturesHtmlGamesScanner(fixtureScanner);
+		mainUpdateService.setTicketsHtmlGamesScanner(ticketsScanner);
 		mainUpdateService.setMainPageService(new MainPageServiceImpl());
 	}
 

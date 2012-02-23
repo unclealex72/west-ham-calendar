@@ -36,4 +36,6 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 public interface GoogleCalendarFactory {
 
 	public Map<CalendarType, GoogleCalendar> getGoogleCalendarsByCalendarType();
+	
+	public GoogleCalendar getGoogleCalendar(CalendarType calendarType);
 }

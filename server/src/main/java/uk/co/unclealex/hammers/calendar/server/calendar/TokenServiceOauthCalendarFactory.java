@@ -34,6 +34,11 @@ import uk.co.unclealex.hammers.calendar.server.auth.TokenService;
 public class TokenServiceOauthCalendarFactory extends AbstractOauthCalendarFactory {
 
 	private TokenService i_tokenService;
+
+	@Override
+	protected void installTokens(String accessToken, String refreshToken) {
+		getTokenService().installTokens(accessToken, refreshToken);
+	}
 	
 	public String getRefreshToken() {
 		return getTokenService().getCurrentTokens().getRefreshToken();

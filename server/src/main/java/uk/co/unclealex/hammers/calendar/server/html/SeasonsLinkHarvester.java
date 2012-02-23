@@ -26,7 +26,7 @@ package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.net.URI;
 
-import org.cdmckay.coffeedom.Element;
+import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +46,9 @@ public class SeasonsLinkHarvester extends ElementLinkHarvester {
 	}
 
 	@Override
-	protected URI checkForLink(URI uri, Element element) {
-		String value = Strings.nullToEmpty(element.getAttributeValue("value"));
-		String optionText = element.getTextNormalize();
+	protected URI checkForLink(URI uri, TagNode tagNode) {
+		String value = Strings.nullToEmpty(tagNode.getAttributeByName("value"));
+		String optionText = TagNodeUtils.normaliseText(tagNode);
 		if (optionText.matches(".*[0-9]+/[0-9]+.*")) {
 			URI linkUri = uri.resolve(value);
 			log.info("Found link " + linkUri + " for " + optionText);

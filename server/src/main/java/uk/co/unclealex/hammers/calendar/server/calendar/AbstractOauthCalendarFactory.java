@@ -29,7 +29,12 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
+
+import com.google.api.client.auth.oauth2.draft10.AccessTokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessProtectedResource;
+import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAccessTokenRequest.GoogleAuthorizationCodeGrant;
+import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAuthorizationRequestUrl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.services.calendar.Calendar;
@@ -43,6 +48,8 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 
 	private static final String CONSUMER_SECRET = "MFy0s8Zh5lmjaz0IEiwDdoEj";
 	private static final String CONSUMER_KEY = "566815420118.apps.googleusercontent.com";
+	private static final String REDIRECT_URL = "urn:ietf:wg:oauth:2.0:oob";
+	private static final String SCOPE = "https://www.googleapis.com/auth/calendar";
 
 	private static final Logger log = LoggerFactory.getLogger(AbstractOauthCalendarFactory.class);
 	private HttpTransport i_httpTransport;
@@ -52,10 +59,15 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	 * Create a new {@link Calendar} using Oauth.
 	 */
 	@Override
-	public Calendar createCalendar() throws IOException {
+	public Calendar createCalendar() throws IOException, GoogleAuthenticationFailedException {
+		String accessToken = getAccessToken();
+		String refreshToken = getRefreshToken();
+		if (refreshToken == null) {
+			throw new GoogleAuthenticationFailedException("There is no refresh token.");
+		}
 		GoogleAccessProtectedResource accessProtectedResource = new GoogleAccessProtectedResource(
-        getAccessToken(), getHttpTransport(), getJsonFactory(), CONSUMER_KEY, CONSUMER_SECRET,
-        getRefreshToken()) {
+        accessToken, getHttpTransport(), getJsonFactory(), CONSUMER_KEY, CONSUMER_SECRET,
+        refreshToken) {
 			protected void onAccessToken(String accessToken) {
 				log.info("Changing access token to " + accessToken);
 				AbstractOauthCalendarFactory.this.setAccessToken(accessToken);
@@ -65,6 +77,28 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 				.setHttpRequestInitializer(accessProtectedResource).build();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getAuthorisationUrl() {
+    String authorisationUrl = new GoogleAuthorizationRequestUrl(CONSUMER_KEY, REDIRECT_URL, SCOPE)
+        .build();
+    return authorisationUrl;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void installAuthorisationCode(String authorisationCode) throws IOException {
+    AccessTokenResponse response = new GoogleAuthorizationCodeGrant(getHttpTransport(), getJsonFactory(),
+        CONSUMER_KEY, CONSUMER_SECRET, authorisationCode, REDIRECT_URL).execute();
+    installTokens(response.accessToken, response.refreshToken);
+	}
+	
+	protected abstract void installTokens(String accessToken, String refreshToken);
+	
 	/**
 	 * @return The refresh token to use.
 	 */

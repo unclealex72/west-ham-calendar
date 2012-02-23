@@ -3,6 +3,8 @@
  */
 package uk.co.unclealex.hammers.calendar.server.dao;
 
+import java.util.Arrays;
+
 import javax.persistence.Entity;
 
 import org.hibernate.Criteria;
@@ -98,6 +100,11 @@ public class GenericHibernateDaoSupport<M extends HasIdentity> extends Hibernate
 	
 	@Override
 	public void saveOrUpdate(M... models) {
+		saveOrUpdate(Arrays.asList(models));
+	}
+
+	@Override
+	public void saveOrUpdate(Iterable<M> models) {
 		Session session = getSession();
 		for (M model : models) {
 			session.saveOrUpdate(model);

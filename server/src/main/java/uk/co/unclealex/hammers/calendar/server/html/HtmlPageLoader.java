@@ -27,7 +27,7 @@ package uk.co.unclealex.hammers.calendar.server.html;
 import java.io.IOException;
 import java.net.URL;
 
-import org.cdmckay.coffeedom.Document;
+import org.htmlcleaner.TagNode;
 
 /**
  * An interface for classes that can load an HTML page and turn it into a structured, well-formed XML document.
@@ -42,5 +42,5 @@ public interface HtmlPageLoader {
 	 * @return A well formed XML document that represents the HTML page.
 	 * @throws IOException Thrown if there are any network problems.
 	 */
-	public Document loadPage(URL url) throws IOException;
+	public TagNode loadPage(URL url) throws IOException;
 }

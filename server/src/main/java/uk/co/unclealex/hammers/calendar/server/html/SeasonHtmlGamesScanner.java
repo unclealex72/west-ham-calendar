@@ -34,11 +34,8 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.cdmckay.coffeedom.Content;
-import org.cdmckay.coffeedom.Document;
-import org.cdmckay.coffeedom.Element;
-import org.cdmckay.coffeedom.filter.Filter;
-import org.cdmckay.coffeedom.xpath.XPath;
+import org.htmlcleaner.TagNode;
+import org.htmlcleaner.XPatherException;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +50,7 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
 import com.google.common.base.Joiner;
 import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 
 /**
  * @author alex
@@ -67,32 +64,38 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected Scanner createScanner(URI uri, Document document) {
-		return new SeasonScanner(uri, document);
+	protected Scanner createScanner(URI uri, TagNode tagNode) {
+		return new SeasonScanner(uri, tagNode);
 	}
 	
 	class SeasonScanner extends Scanner {
 		private int i_season;
 
-		private final XPath i_mainTableXpath = XPath.newInstance("//table[@class='fixtureList']");
 		private String i_month;
 		private DateTime i_startOfSeason;
 
-		public SeasonScanner(URI uri, Document document) {
-			super(uri, document);
+		public SeasonScanner(URI uri, TagNode tagNode) {
+			super(uri, tagNode);
 		}
 
 		@Override
 		public void scan() throws IOException {
 			updateSeason();
-			Element tableElement = (Element) getMainTableXpath().selectSingleNode(getDocument());
-			Filter tableRowFilter = new Filter() {
+			TagNode tableTagNode;
+			try {
+				tableTagNode = (TagNode) getTagNode().evaluateXPath("//table[@class='fixtureList']")[0];
+			}
+			catch (XPatherException e) {
+				throw new IOException(e);
+			}
+			TagNodeFilter tableRowFilter = new TagNodeFilter() {
+				
 				@Override
-				public boolean matches(Object object) {
-					return object instanceof Element && "tr".equals(((Element) object).getName());
+				public boolean apply(TagNode tagNode) {
+					return "tr".equals(tagNode.getName());
 				}
 			};
-			class ClassContainsPredicate implements Predicate<Element> {
+			class ClassContainsPredicate implements Predicate<TagNode> {
 				String target;
 
 				public ClassContainsPredicate(String target) {
@@ -101,15 +104,14 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 				}
 
 				@Override
-				public boolean apply(Element element) {
-					String classes = element.getAttributeValue("class");
+				public boolean apply(TagNode tagNode) {
+					String classes = tagNode.getAttributeByName("class");
 					return classes != null && classes.contains(target);
 				}
-			}
-			;
-			Predicate<Element> isMonthRowPredicate = new ClassContainsPredicate("rowHeader");
-			Predicate<Element> isGameRow = new ClassContainsPredicate("fixture");
-			for (Element row : Iterables.filter(tableElement.getDescendants(tableRowFilter), Element.class)) {
+			};
+			Predicate<TagNode> isMonthRowPredicate = new ClassContainsPredicate("rowHeader");
+			Predicate<TagNode> isGameRow = new ClassContainsPredicate("fixture");
+			for (TagNode row : tableRowFilter.list(tableTagNode)) {
 				if (isMonthRowPredicate.apply(row)) {
 					updateMonth(row);
 				}
@@ -124,11 +126,12 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 */
 		protected void updateSeason() {
 			final Pattern seasonPattern = Pattern.compile("s\\.prop3=\"([0-9]+)\"");
-			Filter filter = new Filter() {
+			new TagNodeWalker(getTagNode()) {
+				
 				@Override
-				public boolean matches(Object object) {
-					if (getSeason() == 0 && object instanceof Element && "script".equals(((Element) object).getName())) {
-						String text = ((Element) object).getText();
+				public void execute(TagNode tagNode) {
+					if (getSeason() == 0 && "script".equals(tagNode.getName())) {
+						String text = TagNodeUtils.normaliseText(tagNode);
 						Matcher matcher = seasonPattern.matcher(text);
 						if (matcher.find()) {
 							int season = Integer.valueOf(matcher.group(1));
@@ -137,12 +140,8 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 							setStartOfSeason(getDateService().parseDate("01/07/" + season, "dd/MM/yyyy"));
 						}
 					}
-					return true;
 				}
 			};
-			for (@SuppressWarnings("unused") Content content : getDocument().getDescendants(filter)) {
-				// Do nothing
-			}
 		}
 		
 		/**
@@ -151,9 +150,9 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 * @param row
 		 *          The table row containing the month.
 		 */
-		protected void updateMonth(Element row) {
-			Element child = row.getChild("td");
-			String month = child.getTextNormalize();
+		protected void updateMonth(TagNode row) {
+			TagNode child = row.findElementByName("td", false);
+			String month = TagNodeUtils.normaliseText(child);
 			log.info("Found " + month + " " + getSeason());
 			setMonth(month);
 		}
@@ -163,22 +162,22 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 * @param gameUpdateCommands
 		 * @throws UnparseableDateException
 		 */
-		protected void updateGame(Element row) {
-			Iterator<Element> tds = row.getChildren("td").iterator();
-			String date = normaliseTextToNull(tds.next());
+		protected void updateGame(TagNode row) {
+			Iterator<TagNode> tds = Iterators.forArray(row.getElementsByName("td", false));
+			String date = TagNodeUtils.normaliseTextToNull(tds.next());
 			date = date.replaceAll("[^0-9]", "");
 			date = Strings.padStart(date, 2, '0');
-			String time = normaliseTextToNull(tds.next());
+			String time = TagNodeUtils.normaliseTextToNull(tds.next());
 
-			Location location = "H".equals(normaliseTextToNull(tds.next())) ? Location.HOME : Location.AWAY;
-			Element opponentsEl = tds.next();
+			Location location = "H".equals(TagNodeUtils.normaliseTextToNull(tds.next())) ? Location.HOME : Location.AWAY;
+			TagNode opponentsEl = tds.next();
 			// Could be in a link
-			Element opponentsLink = opponentsEl.getChild("a");
+			TagNode opponentsLink = opponentsEl.findElementByName("a", false);
 			if (opponentsLink != null) {
 				opponentsEl = opponentsLink;
 			}
-			String opponents = normaliseTextToNull(opponentsEl);
-			Competition competition = Competition.findByToken(normaliseTextToNull(tds.next()));
+			String opponents = TagNodeUtils.normaliseTextToNull(opponentsEl);
+			Competition competition = Competition.findByToken(TagNodeUtils.normaliseTextToNull(tds.next()));
 			GameKey gameKey = new GameKey(competition, location, opponents, getSeason());
 			log.info("Found game key " + gameKey);
 			String datePlayedString = Joiner.on(" ").join(date, time, getMonth());
@@ -195,8 +194,8 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 			GameUpdateCommand datePlayedGameUpdateCommand = GameUpdateCommand.datePlayed(gameKeyLocator, datePlayed);
 			tds.next(); // Move past the W/L/D token.
 			GameUpdateCommand resultGameUpdateCommand = GameUpdateCommand.result(gameKeyLocator,
-					normaliseTextToNull(tds.next()));
-			String attendenceText = normaliseTextToNull(tds.next());
+					TagNodeUtils.normaliseTextToNull(tds.next()));
+			String attendenceText = TagNodeUtils.normaliseTextToNull(tds.next());
 			Integer attendence;
 			URI uri = getUri();
 			try {
@@ -220,11 +219,11 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 			}
 			GameUpdateCommand attendenceUpdateCommand = GameUpdateCommand.attendence(gameKeyLocator, attendence);
 			tds.next(); // Move past the league table token.
-			Element matchReportTd = tds.next();
-			Element matchReportLink = matchReportTd.getChild("a");
+			TagNode matchReportTd = tds.next();
+			TagNode matchReportLink = matchReportTd.findElementByName("a", false);
 			String matchReport;
 			if (matchReportLink != null) {
-				String matchReportPath = matchReportLink.getAttributeValue("href");
+				String matchReportPath = matchReportLink.getAttributeByName("href");
 				URI matchReportUri = uri.resolve(matchReportPath);
 				matchReport = matchReportUri.toString();
 			}
@@ -238,10 +237,6 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 
 		public int getSeason() {
 			return i_season;
-		}
-
-		public XPath getMainTableXpath() {
-			return i_mainTableXpath;
 		}
 
 		public String getMonth() {

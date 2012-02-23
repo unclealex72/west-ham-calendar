@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -47,6 +48,11 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	private boolean i_enabled;
 	private Set<Authority> i_authorities;
 
+	@Override
+	public String toString() {
+		return getUsername();
+	}
+	
 	@Override @Transient
 	public String getBusinessKey() {
 		return getUsername();
@@ -89,7 +95,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 		i_enabled = enabled;
 	}
 
-	@OneToMany
+	@OneToMany(fetch=FetchType.EAGER)
 	@Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
 	@JoinColumn(name="username", referencedColumnName="username")
 	public Set<Authority> getAuthorities() {

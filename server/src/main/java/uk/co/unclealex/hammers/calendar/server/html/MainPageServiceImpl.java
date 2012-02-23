@@ -32,16 +32,12 @@ import java.util.Iterator;
 
 import javax.annotation.PostConstruct;
 
-import org.cdmckay.coffeedom.Document;
-import org.cdmckay.coffeedom.Element;
-import org.cdmckay.coffeedom.filter.Filter;
+import org.htmlcleaner.TagNode;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.NativeArray;
 import org.mozilla.javascript.Scriptable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.Iterables;
 
 /**
  * @author alex
@@ -69,15 +65,16 @@ public class MainPageServiceImpl implements MainPageService {
 	}
 
 	public void initialise(URL mainPageUrl) throws IOException {
-		Document mainPage = getHtmlPageLoader().loadPage(mainPageUrl);
-		Filter filter = new Filter() {
+		TagNode mainPage = getHtmlPageLoader().loadPage(mainPageUrl);
+		TagNodeFilter filter = new TagNodeFilter() {
+			
 			@Override
-			public boolean matches(Object object) {
-				return object instanceof Element && "script".equals(((Element) object).getName());
+			public boolean apply(TagNode tagNode) {
+				return "script".equals(tagNode.getName());
 			}
 		};
 		boolean linksFound = false;
-		for (Iterator<Element> iter = Iterables.filter(mainPage.getDescendants(filter), Element.class).iterator(); !linksFound
+		for (Iterator<TagNode> iter = filter.list(mainPage).iterator(); !linksFound
 				&& iter.hasNext();) {
 			linksFound |= searchForLinks(iter.next());
 		}
@@ -86,11 +83,11 @@ public class MainPageServiceImpl implements MainPageService {
 		}
 	}
 
-	protected boolean searchForLinks(Element scriptElement) {
+	protected boolean searchForLinks(TagNode scriptNode) {
 		Context cx = Context.enter();
 		try {
 			final Scriptable scope = cx.initStandardObjects();
-			String script = scriptElement.getText().replace('\n', ' ');
+			String script = TagNodeUtils.textOf(scriptNode).toString().replace('\n', ' ');
 			try {
 				cx.evaluateString(scope, script, "<cmd>", 1, null);
 			}

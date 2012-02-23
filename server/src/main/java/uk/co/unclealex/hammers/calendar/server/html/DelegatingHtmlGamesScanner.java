@@ -29,7 +29,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.cdmckay.coffeedom.Document;
+import org.htmlcleaner.TagNode;
 
 import com.google.common.collect.Sets;
 
@@ -39,15 +39,14 @@ import com.google.common.collect.Sets;
  * @author alex
  *
  */
-public class DelegatingHtmlGamesScanner extends DomBasedHtmlGamesScanner {
+public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 
 	private LinkHarvester i_linkHarvester;
 	private HtmlGamesScanner i_htmlGamesScanner;
 	
-	@Override
-	protected SortedSet<GameUpdateCommand> scan(URI uri, Document document) throws IOException {
+	@Override SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException {
 		SortedSet<GameUpdateCommand> gameUpdateCommands = Sets.newTreeSet();
-		List<URI> links = getLinkHarvester().harvestLinks(uri, document);
+		List<URI> links = getLinkHarvester().harvestLinks(uri, tagNode);
 		for (URI link : links) {
 			gameUpdateCommands.addAll(getHtmlGamesScanner().scan(link));
 		}

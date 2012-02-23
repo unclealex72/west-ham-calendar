@@ -32,6 +32,6 @@ public class BondHolderGoogleCalendar extends TicketsGoogleCalendar {
 
 	@Override
 	public DateTime getGameDate(Game game) {
-		return game.getBondholdersAvailable();
+		return game.getDateTimeBondholdersAvailable();
 	}
 }

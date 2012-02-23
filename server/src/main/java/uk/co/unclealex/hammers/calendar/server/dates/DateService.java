@@ -92,4 +92,18 @@ public interface DateService {
 	 * @return The found date or null if no date could be found.
 	 */
 	public DateTime findDate(String date, String dateFormat);
+	
+	/**
+	 * Check whether a {@link DateTime} instant is occurs on a week-day.
+	 * @param dateTime The {@link DateTime} to check.
+	 * @return True if the instant is during the week, false otherwise.
+	 */
+	public boolean isWeekday(DateTime dateTime);
+	
+	/**
+	 * Check whether a {@link DateTime} instant is 3pm on a Saturday.
+	 * @param dateTime The {@link DateTime} to check.
+	 * @return True if the instant is 3pm on a Saturday, false otherwise.
+	 */
+	public boolean isThreeOClockOnASaturday(DateTime dateTime);
 }

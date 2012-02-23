@@ -4,7 +4,7 @@
 package uk.co.unclealex.hammers.calendar.client.factories;
 
 import uk.co.unclealex.hammers.calendar.client.views.TeamTableRow;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
 
 /**
  * Copyright 2011 Alex Jones
@@ -29,6 +29,6 @@ import uk.co.unclealex.hammers.calendar.shared.model.Game;
  * @author unclealex72
  *
  */
-public interface TeamTableRowFactory extends TableRowFactory<Game, TeamTableRow> {
+public interface TeamTableRowFactory extends TableRowFactory<GameView, TeamTableRow> {
   // No extra method
 }

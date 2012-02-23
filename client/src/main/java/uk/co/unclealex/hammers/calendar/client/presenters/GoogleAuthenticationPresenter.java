@@ -87,7 +87,7 @@ public class GoogleAuthenticationPresenter extends AbstractPopupPresenter<PopupP
 					public void execute(AnonymousAttendanceServiceAsync anonymousAttendanceService,
 							UserAttendanceServiceAsync userAttendanceService, AdminAttendanceServiceAsync adminAttendanceService,
 							AsyncCallback<Void> callback) {
-						adminAttendanceService.authenticate(display.getSuccessCode().getText(), callback);
+						adminAttendanceService.authorise(display.getSuccessCode().getText(), callback);
 					}
 				};
 				getAsyncCallbackExecutor().executeAndWait(successTokenCallback, getDisplay());

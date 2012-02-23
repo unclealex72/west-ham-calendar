@@ -52,12 +52,12 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		return new InternalGameUpdateCommand<DateTime>(Type.DATE_PLAYED, gameLocator, newDatePlayed) {
 			@Override
 			protected DateTime getCurrentValue(Game game) {
-				return game.getDatePlayed();
+				return game.getDateTimePlayed();
 			}
 
 			@Override
 			protected void setNewValue(Game game, DateTime newDatePlayed) {
-				game.setDatePlayed(newDatePlayed);
+				game.setDateTimePlayed(newDatePlayed);
 			}
 		};
 	}
@@ -194,12 +194,12 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		return new InternalGameUpdateCommand<DateTime>(Type.BONDHOLDER_TICKETS, gameLocator, newBondHolderTicketsAvailable) {
 			@Override
 			protected DateTime getCurrentValue(Game game) {
-				return game.getBondholdersAvailable();
+				return game.getDateTimeBondholdersAvailable();
 			}
 
 			@Override
 			protected void setNewValue(Game game, DateTime newBondHolderTicketsAvailable) {
-				game.setBondholdersAvailable(newBondHolderTicketsAvailable);
+				game.setDateTimeBondholdersAvailable(newBondHolderTicketsAvailable);
 			}
 		};
 	}
@@ -217,12 +217,12 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		return new InternalGameUpdateCommand<DateTime>(Type.PRIORITY_POINT_POST_TICKETS, gameLocator, newPriorityPointTicketsAvailable) {
 			@Override
 			protected DateTime getCurrentValue(Game game) {
-				return game.getPriorityPointPostAvailable();
+				return game.getDateTimePriorityPointPostAvailable();
 			}
 
 			@Override
 			protected void setNewValue(Game game, DateTime newPriorityPointTicketsAvailable) {
-				game.setPriorityPointPostAvailable(newPriorityPointTicketsAvailable);
+				game.setDateTimePriorityPointPostAvailable(newPriorityPointTicketsAvailable);
 			}
 		};
 	}
@@ -240,12 +240,12 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		return new InternalGameUpdateCommand<DateTime>(Type.SEASON_TICKETS, gameLocator, newSeasonTicketsAvailable) {
 			@Override
 			protected DateTime getCurrentValue(Game game) {
-				return game.getSeasonTicketsAvailable();
+				return game.getDateTimeSeasonTicketsAvailable();
 			}
 
 			@Override
 			protected void setNewValue(Game game, DateTime newSeasonTicketsAvailable) {
-				game.setSeasonTicketsAvailable(newSeasonTicketsAvailable);
+				game.setDateTimeSeasonTicketsAvailable(newSeasonTicketsAvailable);
 			}
 		};
 	}
@@ -263,12 +263,12 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		return new InternalGameUpdateCommand<DateTime>(Type.ACADEMY_TICKETS, gameLocator, newAcademyTicketsAvailable) {
 			@Override
 			protected DateTime getCurrentValue(Game game) {
-				return game.getAcademyMembersAvailable();
+				return game.getDateTimeAcademyMembersAvailable();
 			}
 
 			@Override
 			protected void setNewValue(Game game, DateTime newAcademyAvailable) {
-				game.setAcademyMembersAvailable(newAcademyAvailable);
+				game.setDateTimeAcademyMembersAvailable(newAcademyAvailable);
 			}
 		};
 	}
@@ -286,12 +286,12 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		return new InternalGameUpdateCommand<DateTime>(Type.GENERAL_SALE_TICKETS, gameLocator, newGeneralSaleTicketsAvailable) {
 			@Override
 			protected DateTime getCurrentValue(Game game) {
-				return game.getGeneralSaleAvailable();
+				return game.getDateTimeGeneralSaleAvailable();
 			}
 
 			@Override
 			protected void setNewValue(Game game, DateTime newAcademyAvailable) {
-				game.setGeneralSaleAvailable(newAcademyAvailable);
+				game.setDateTimeGeneralSaleAvailable(newAcademyAvailable);
 			}
 		};
 	}

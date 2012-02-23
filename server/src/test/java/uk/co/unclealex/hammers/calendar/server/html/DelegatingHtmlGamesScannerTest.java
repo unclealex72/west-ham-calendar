@@ -32,10 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.cdmckay.coffeedom.Content;
-import org.cdmckay.coffeedom.Document;
-import org.cdmckay.coffeedom.Element;
-import org.cdmckay.coffeedom.filter.Filter;
+import org.htmlcleaner.TagNode;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -73,24 +70,17 @@ public class DelegatingHtmlGamesScannerTest {
 		LinkHarvester linkHarvester = new LinkHarvester() {
 
 			@Override
-			public List<URI> harvestLinks(URI pageUri, Document document) throws IOException {
+			public List<URI> harvestLinks(URI pageUri, TagNode tagNode) throws IOException {
 				final List<URI> links = Lists.newArrayList();
-				Filter filter = new Filter() {
+				new TagNodeWalker(tagNode) {
 					@Override
-					public boolean matches(Object object) {
-						if (object instanceof Element) {
-							Element el = (Element) object;
-							String href = el.getAttributeValue("href");
-							if (href != null) {
-								links.add(URI.create(href));
-							}
+					public void execute(TagNode tagNode) {
+						String href = tagNode.getAttributeByName("href");
+						if (href != null) {
+							links.add(URI.create(href));
 						}
-						return true;
 					}
 				};
-				for (@SuppressWarnings("unused") Content content : document.getRootElement().getDescendants(filter)) {
-					// Do nothing
-				}
 				return links;
 			}
 		};

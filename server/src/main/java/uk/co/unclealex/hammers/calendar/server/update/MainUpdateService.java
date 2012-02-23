@@ -66,4 +66,12 @@ public interface MainUpdateService {
 	 * @throws GoogleAuthenticationFailedException
 	 */
 	public SortedSet<UpdateChangeLog> updateAllCalendars() throws IOException, GoogleAuthenticationFailedException;
+
+	/**
+	 * Attend all home games in a season.
+	 * @param season
+	 * @throws IOException 
+	 * @throws GoogleAuthenticationFailedException 
+	 */
+	public void attendAllHomeGamesForSeason(int season) throws GoogleAuthenticationFailedException, IOException;	
 }

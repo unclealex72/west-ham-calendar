@@ -118,7 +118,7 @@ public class SecureAsyncCallbackExecutor implements AsyncCallbackExecutor {
       public void execute(AnonymousAttendanceServiceAsync anonymousAttendanceService,
           UserAttendanceServiceAsync userAttendanceService, AdminAttendanceServiceAsync adminAttendanceService,
           AsyncCallback<String> callback) {
-        adminAttendanceService.createGoogleAuthenticationUrlIfRequired(callback);
+        adminAttendanceService.createGoogleAuthorisationUrlIfRequired(callback);
       }
     };
     execute(authenticationUrlCallback);

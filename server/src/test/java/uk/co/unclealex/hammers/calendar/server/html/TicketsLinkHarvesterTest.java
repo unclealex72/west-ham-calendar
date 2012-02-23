@@ -29,8 +29,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-import org.cdmckay.coffeedom.CoffeeDOMException;
-import org.cdmckay.coffeedom.Document;
+import org.htmlcleaner.TagNode;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -43,11 +42,11 @@ import com.google.common.collect.Iterables;
 public class TicketsLinkHarvesterTest {
 
 	@Test
-	public void testTickets() throws CoffeeDOMException, IOException, URISyntaxException {
+	public void testTickets() throws IOException, URISyntaxException {
 		TicketsLinkHarvester harvester = new TicketsLinkHarvester();
 		URL url = getClass().getClassLoader().getResource("html/tickets.html");
-		Document document = new HtmlPageLoaderImpl().loadPage(url);
-		URI[] actualLinks = Iterables.toArray(harvester.harvestLinks(new URI("http://www.whufc.com/page/TicketNews/0,,12562,00.html"), document), URI.class);
+		TagNode tagNode = new HtmlPageLoaderImpl().loadPage(url);
+		URI[] actualLinks = Iterables.toArray(harvester.harvestLinks(new URI("http://www.whufc.com/page/TicketNews/0,,12562,00.html"), tagNode), URI.class);
 		URI[] expectedLinks = new URI[] { new URI("http://www.whufc.com/articles/20110601/a-v-peterborough-united_2236896_2480754"),
 				new URI("http://www.whufc.com/articles/20110601/h-v-southampton_2236896_2479769"),
 				new URI("http://www.whufc.com/articles/20110601/a-v-blackpool_2236896_2480761"),

@@ -47,6 +47,11 @@ public class ConstantOauthCalendarFactory extends AbstractOauthCalendarFactory {
 		return "1/UcuXuqCOI1eV_1S8XlvVMsO2x6QOIqtMeZ-Qe7KeYXE";
 	}
 
+	@Override
+	protected void installTokens(String accessToken, String refreshToken) {
+		throw new UnsupportedOperationException("installTokens");
+	}
+	
 	public String getAccessToken() {
 		return i_accessToken;
 	}

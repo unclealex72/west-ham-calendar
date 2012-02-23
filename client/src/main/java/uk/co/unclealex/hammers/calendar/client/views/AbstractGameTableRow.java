@@ -6,7 +6,7 @@ package uk.co.unclealex.hammers.calendar.client.views;
 import java.util.Date;
 
 import uk.co.unclealex.hammers.calendar.client.HammersMessages;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -53,19 +53,19 @@ public abstract class AbstractGameTableRow extends TableRow implements HasValue<
 
 	private final HammersMessages i_hammersMessages;
 	
-	public AbstractGameTableRow(Game game, HammersMessages hammersMessages) {
+	public AbstractGameTableRow(GameView gameView, HammersMessages hammersMessages) {
 		i_hammersMessages = hammersMessages;
 		bind();
 		boolean visible = false;
 		boolean enabled = false;
-		if (game != null) {
-			date.setText(formatDatePlayed(game.getDatePlayed()));
-			location.setText(Location.HOME == game.getLocation()?hammersMessages.home():hammersMessages.away());
-			competition.setText(game.getCompetition().getName());
-			opponents.setText(game.getOpponents());
-			result.setText(game.getResult());
-			televisionChannel.setText(game.getTelevisionChannel());
-			Date dateTicketsAvailable = game.getTicketsAvailable();
+		if (gameView != null) {
+			date.setText(formatDatePlayed(gameView.getDatePlayed()));
+			location.setText(Location.HOME == gameView.getLocation()?hammersMessages.home():hammersMessages.away());
+			competition.setText(gameView.getCompetition().getName());
+			opponents.setText(gameView.getOpponents());
+			result.setText(gameView.getResult());
+			televisionChannel.setText(gameView.getTelevisionChannel());
+			Date dateTicketsAvailable = gameView.getTicketsAvailable();
 			String tickets;
 			if (dateTicketsAvailable != null) {
 				tickets = hammersMessages.ticketsAvailable(dateTicketsAvailable);
@@ -74,13 +74,13 @@ public abstract class AbstractGameTableRow extends TableRow implements HasValue<
 				tickets = "";
 			}
 			ticketsAvailable.setText(tickets);
-			attended.setValue(game.isAttended());
+			attended.setValue(gameView.isAttended());
 			visible = true;
-			enabled = game.isEnabled();
-			if (game.isNonStandardWeekendGame()) {
+			enabled = gameView.isEnabled();
+			if (gameView.isNonStandardWeekendGame()) {
 				setStylePrimaryName("weekend");
 			}
-			else if (game.isWeekGame()) {
+			else if (gameView.isWeekGame()) {
 				setStylePrimaryName("week");
 			}
 		}

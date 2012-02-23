@@ -26,7 +26,7 @@ package uk.co.unclealex.hammers.calendar.shared.model;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Game implements Serializable, Comparable<Game> {
+public class GameView implements Serializable, Comparable<GameView> {
 
 	private Integer i_id;
 	
@@ -48,11 +48,11 @@ public class Game implements Serializable, Comparable<Game> {
 	private boolean i_nonStandardWeekendGame;
 	private boolean i_enabled;
 	
-	public Game() {
+	public GameView() {
 		super();
 	}
 
-	public Game(Integer id, Competition competition, Location location, String opponents, int season, Date datePlayed,
+	public GameView(Integer id, Competition competition, Location location, String opponents, int season, Date datePlayed,
 			String result, Integer attendence, String matchReport, String televisionChannel, Date ticketsAvailable, 
 			boolean attended, boolean weekGame, boolean nonStandardWeekendGame, boolean enabled) {
 		super();
@@ -77,13 +77,13 @@ public class Game implements Serializable, Comparable<Game> {
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
-	public int compareTo(Game o) {
+	public int compareTo(GameView o) {
 		return getDatePlayed().compareTo(o.getDatePlayed());
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		return (obj instanceof Game) && compareTo((Game) obj) == 0;
+		return (obj instanceof GameView) && compareTo((GameView) obj) == 0;
 	}
 	
 	@Override

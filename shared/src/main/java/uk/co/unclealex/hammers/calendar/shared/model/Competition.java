@@ -29,11 +29,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public enum Competition {
-	PREM("Premiership", "PREM"),
-	LGCP("League Cup", "LGCP"),
-	FACP("FA Cup", "FACP"),
-	FLC("Championship", "FLC", "FLD1"),
-	FLCPO("Play-Offs", "FLD1 P/O");
+	PREM("Premiership", true, "PREM"),
+	LGCP("League Cup", false, "LGCP"),
+	FACP("FA Cup", false, "FACP"),
+	FLC("Championship", true, "FLC", "FLD1"),
+	FLCPO("Play-Offs", false, "FLD1 P/O");
 	
 	private static SortedMap<String, Competition> COMPETITIONS_BY_TOKEN;
 	static {
@@ -62,10 +62,12 @@ public enum Competition {
 	}
 	
 	private String[] i_tokens;
+	private boolean i_league;
 	private String i_name;
 	
-	private Competition(String name, String... tokens) {
+	private Competition(String name, boolean league, String... tokens) {
 		i_name = name;
+		i_league = league;
 		i_tokens = tokens;
 	}
 
@@ -77,4 +79,10 @@ public enum Competition {
 		return i_tokens;
 	}
 
+	/**
+	 * @return True if this is a league competition, false otherwise.
+	 */
+	public boolean isLeague() {
+		return i_league;
+	}
 }

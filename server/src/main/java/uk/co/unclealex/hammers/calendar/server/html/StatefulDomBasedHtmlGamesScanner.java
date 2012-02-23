@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.SortedSet;
 
-import org.cdmckay.coffeedom.Document;
+import org.htmlcleaner.TagNode;
 
 import com.google.common.collect.Sets;
 
@@ -37,24 +37,23 @@ import com.google.common.collect.Sets;
  * @author alex
  *
  */
-public abstract class StatefulDomBasedHtmlGamesScanner extends DomBasedHtmlGamesScanner {
+public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	protected SortedSet<GameUpdateCommand> scan(URI uri, Document document) throws IOException {
-		Scanner scanner = createScanner(uri, document);
+	@Override SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException {
+		Scanner scanner = createScanner(uri, tagNode);
 		scanner.scan();
 		return scanner.getGameUpdateCommands();
 	}
 	
 	/**
 	 * Create a scanner to scan the games.
-	 * @param document The XML document to scan.
+	 * @param tagNode The XML tagNode to scan.
 	 * @return A scanner as described above.
 	 */
-	protected abstract Scanner createScanner(URI uri, Document document);
+	protected abstract Scanner createScanner(URI uri, TagNode tagNode);
 
 	/**
 	 * An abstract to allow for scanning state to be stored, mainly so that there is
@@ -66,12 +65,12 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends DomBasedHtmlGames
 		
 		private final SortedSet<GameUpdateCommand> i_gameUpdateCommands = Sets.newTreeSet();
 		private final URI i_uri;
-		private final Document i_document;
+		private final TagNode i_tagNode;
 		
-		public Scanner(URI uri, Document document) {
+		public Scanner(URI uri, TagNode tagNode) {
 			super();
 			i_uri = uri;
-			i_document = document;
+			i_tagNode = tagNode;
 		}
 
 		public abstract void scan() throws IOException;
@@ -93,10 +92,10 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends DomBasedHtmlGames
 
 		/**
 		 * 
-		 * @return The document being scanned.
+		 * @return The tagNode being scanned.
 		 */
-		public final Document getDocument() {
-			return i_document;
+		public final TagNode getTagNode() {
+			return i_tagNode;
 		};
 	}	
 }

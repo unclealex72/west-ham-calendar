@@ -55,12 +55,12 @@ public class Game implements HasIdentity, Comparable<Game> {
 	private String i_opponents;
 	private int i_season;
 
-	private DateTime i_datePlayed;
-	private DateTime i_bondholdersAvailable;
-	private DateTime i_priorityPointPostAvailable;
-	private DateTime i_seasonTicketsAvailable;
-	private DateTime i_academyMembersAvailable;
-	private DateTime i_generalSaleAvailable;
+	private DateTime i_dateTimePlayed;
+	private DateTime i_dateTimeBondholdersAvailable;
+	private DateTime i_dateTimePriorityPointPostAvailable;
+	private DateTime i_dateTimeSeasonTicketsAvailable;
+	private DateTime i_dateTimeAcademyMembersAvailable;
+	private DateTime i_dateTimeGeneralSaleAvailable;
 
 	private String i_result;
 	private Integer i_attendence;
@@ -106,12 +106,12 @@ public class Game implements HasIdentity, Comparable<Game> {
 		i_location = location;
 		i_opponents = opponents;
 		i_season = season;
-		i_datePlayed = datePlayed;
-		i_bondholdersAvailable = bondholdersAvailable;
-		i_priorityPointPostAvailable = priorityPointPostAvailable;
-		i_seasonTicketsAvailable = seasonTicketsAvailable;
-		i_academyMembersAvailable = academyMembersAvailable;
-		i_generalSaleAvailable = generalSaleAvailable;
+		i_dateTimePlayed = datePlayed;
+		i_dateTimeBondholdersAvailable = bondholdersAvailable;
+		i_dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
+		i_dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
+		i_dateTimeAcademyMembersAvailable = academyMembersAvailable;
+		i_dateTimeGeneralSaleAvailable = generalSaleAvailable;
 		i_result = result;
 		i_attendence = attendence;
 		i_matchReport = matchReport;
@@ -194,14 +194,14 @@ public class Game implements HasIdentity, Comparable<Game> {
 		i_season = season;
 	}
 
-	public DateTime getDatePlayed() {
-		return i_datePlayed;
+	public DateTime getDateTimePlayed() {
+		return i_dateTimePlayed;
 	}
 
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
 	@Column(nullable = false)
-	public void setDatePlayed(DateTime datePlayed) {
-		i_datePlayed = datePlayed;
+	public void setDateTimePlayed(DateTime datePlayed) {
+		i_dateTimePlayed = datePlayed;
 	}
 
 	public String getResult() {
@@ -236,49 +236,49 @@ public class Game implements HasIdentity, Comparable<Game> {
 		i_attended = attended;
 	}
 
-	public DateTime getSeasonTicketsAvailable() {
-		return i_seasonTicketsAvailable;
+	public DateTime getDateTimeSeasonTicketsAvailable() {
+		return i_dateTimeSeasonTicketsAvailable;
 	}
 
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
-	public void setSeasonTicketsAvailable(DateTime seasonTicketsAvailable) {
-		i_seasonTicketsAvailable = seasonTicketsAvailable;
+	public void setDateTimeSeasonTicketsAvailable(DateTime seasonTicketsAvailable) {
+		i_dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
 	}
 
-	public DateTime getBondholdersAvailable() {
-		return i_bondholdersAvailable;
-	}
-
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
-	public void setBondholdersAvailable(DateTime bondholdersAvailable) {
-		i_bondholdersAvailable = bondholdersAvailable;
-	}
-
-	public DateTime getPriorityPointPostAvailable() {
-		return i_priorityPointPostAvailable;
+	public DateTime getDateTimeBondholdersAvailable() {
+		return i_dateTimeBondholdersAvailable;
 	}
 
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
-	public void setPriorityPointPostAvailable(DateTime priorityPointPostAvailable) {
-		i_priorityPointPostAvailable = priorityPointPostAvailable;
+	public void setDateTimeBondholdersAvailable(DateTime bondholdersAvailable) {
+		i_dateTimeBondholdersAvailable = bondholdersAvailable;
 	}
 
-	public DateTime getAcademyMembersAvailable() {
-		return i_academyMembersAvailable;
-	}
-
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
-	public void setAcademyMembersAvailable(DateTime academyMembersAvailable) {
-		i_academyMembersAvailable = academyMembersAvailable;
-	}
-
-	public DateTime getGeneralSaleAvailable() {
-		return i_generalSaleAvailable;
+	public DateTime getDateTimePriorityPointPostAvailable() {
+		return i_dateTimePriorityPointPostAvailable;
 	}
 
 	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
-	public void setGeneralSaleAvailable(DateTime generalSaleAvailable) {
-		i_generalSaleAvailable = generalSaleAvailable;
+	public void setDateTimePriorityPointPostAvailable(DateTime priorityPointPostAvailable) {
+		i_dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
+	}
+
+	public DateTime getDateTimeAcademyMembersAvailable() {
+		return i_dateTimeAcademyMembersAvailable;
+	}
+
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
+	public void setDateTimeAcademyMembersAvailable(DateTime academyMembersAvailable) {
+		i_dateTimeAcademyMembersAvailable = academyMembersAvailable;
+	}
+
+	public DateTime getDateTimeGeneralSaleAvailable() {
+		return i_dateTimeGeneralSaleAvailable;
+	}
+
+	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
+	public void setDateTimeGeneralSaleAvailable(DateTime generalSaleAvailable) {
+		i_dateTimeGeneralSaleAvailable = generalSaleAvailable;
 	}
 
 	public String getTelevisionChannel() {

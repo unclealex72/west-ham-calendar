@@ -169,6 +169,7 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 				pageToken = calendarList.getNextPageToken();
 			} while (pageToken != null);
 			String primaryCalendarId = getCalendarService().calendars().get("primary").execute().getId();
+			log.info("The id of the primary calendar is " + primaryCalendarId);
 			existingCalendarIds.remove(primaryCalendarId);
 			for (String calendarId : existingCalendarIds) {
 				log.info("Removing calendar " + calendarId);
@@ -205,12 +206,25 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 			Assert.assertFalse("The entry title starts with West Ham for an away game", title.startsWith("West Ham"));
 		}
 		Assert.assertTrue("The entry title does not mention the opponents", title.contains(opponents));
-		Assert.assertTrue("The entry title does not mention the TV broadcaster", title.contains(televisionChannel));
+		if (televisionChannel != null) {
+			Assert.assertTrue("The entry title does not mention the TV broadcaster", title.contains(televisionChannel));
+		}
 		String description = event.getDescription();
-		Assert.assertTrue("The entry description does not mention the result", description.contains(result));
-		Assert.assertTrue("The entry description does not mention the attendence",
-				description.contains(NumberFormat.getInstance().format(attendence.longValue())));
-		Assert.assertTrue("The entry description does not mention the match report", description.contains(matchReport));
+		if (result == null && attendence == null && matchReport == null) {
+			Assert.assertEquals("The entry description was not null when there was no result, attendence nor match report.", null, description);
+		}
+		else {
+			if (result != null) {
+				Assert.assertTrue("The entry description does not mention the result", description.contains(result));
+			}
+			if (attendence != null) {
+				Assert.assertTrue("The entry description does not mention the attendence",
+					description.contains(NumberFormat.getInstance().format(attendence.longValue())));
+			}
+			if (matchReport != null) {
+				Assert.assertTrue("The entry description does not mention the match report", description.contains(matchReport));
+			}
+		}
 		checkDate("The game's start date was wrong", dateStarted, event.getStart());
 		checkDate("The game's end date was wrong", dateFinished, event.getEnd());
 		String transparency = event.getTransparency();

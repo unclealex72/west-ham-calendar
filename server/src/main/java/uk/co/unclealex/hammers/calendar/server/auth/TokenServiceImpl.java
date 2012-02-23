@@ -24,6 +24,8 @@
 
 package uk.co.unclealex.hammers.calendar.server.auth;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import uk.co.unclealex.hammers.calendar.server.dao.OauthTokenDao;
 import uk.co.unclealex.hammers.calendar.server.model.OauthToken;
 import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
@@ -32,6 +34,7 @@ import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
  * @author alex
  *
  */
+@Transactional
 public class TokenServiceImpl implements TokenService {
 
 	private OauthTokenDao i_oauthTokenDao;

@@ -55,6 +55,11 @@ public class ReadOnlyDaoFactory {
 	@SuppressWarnings("unchecked")
 	public <M extends HasIdentity, D extends CrudDao<M>> D createCrudDao(Class<? extends D> iface, final Iterable<M> elements) {
 		final CrudDao<M> crudDao = new CrudDao<M>() {
+			
+			public void saveOrUpdate(Iterable<M> models) {
+				throw new UnsupportedOperationException("saveOrUpdate");
+			}
+
 			public void saveOrUpdate(M... models) {
 				throw new UnsupportedOperationException("saveOrUpdate");
 			}
@@ -108,6 +113,10 @@ public class ReadOnlyDaoFactory {
 		};
 		final Map<K, M> allByKey = Maps.uniqueIndex(elements, keyFunction);
 		final BusinessCrudDao<K, M> crudDao = new BusinessCrudDao<K, M>() {
+			public void saveOrUpdate(Iterable<M> models) {
+				throw new UnsupportedOperationException("saveOrUpdate");
+			}
+
 			public void saveOrUpdate(M... models) {
 				throw new UnsupportedOperationException("saveOrUpdate");
 			}

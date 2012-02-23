@@ -7,7 +7,7 @@ import javax.inject.Inject;
 
 import uk.co.unclealex.hammers.calendar.client.factories.TeamTableRowFactory;
 import uk.co.unclealex.hammers.calendar.client.presenters.TeamsPresenter.Display;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -37,7 +37,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @author unclealex72
  *
  */
-public class TeamsTable extends Table<Game, TeamTableRow, TeamTableRowFactory> implements Display {
+public class TeamsTable extends Table<GameView, TeamTableRow, TeamTableRowFactory> implements Display {
 
   @UiTemplate("Table.ui.xml")
 	public interface Binder extends UiBinder<Widget, TeamsTable> {

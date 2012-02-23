@@ -26,6 +26,8 @@ package uk.co.unclealex.hammers.calendar.server.html;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Objects;
+
 import uk.co.unclealex.hammers.calendar.server.model.GameKey;
 
 /**
@@ -87,6 +89,11 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 			i_locator = locator;
 		}
 
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(getClass(), getLocator());
+		}
+		
 		@Override
 		public String toString() {
 			return getLocator().toString();

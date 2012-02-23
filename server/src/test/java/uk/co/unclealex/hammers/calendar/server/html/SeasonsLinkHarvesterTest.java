@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.cdmckay.coffeedom.Document;
+import org.htmlcleaner.TagNode;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -42,7 +42,7 @@ public class SeasonsLinkHarvesterTest {
 
 	@Test
 	public void test() throws IOException, URISyntaxException {
-		Document document = new HtmlPageLoaderImpl().loadPage(getClass().getClassLoader().getResource("html/fixtures.html"));
+		TagNode tagNode = new HtmlPageLoaderImpl().loadPage(getClass().getClassLoader().getResource("html/fixtures.html"));
 		URI fixturesUri = new URI("http://www.whufc.com/page/FixturesResults/0,,12562,00.html");
 		URI[] expectedLinks = new URI[] {
 				new URI("http://www.whufc.com/page/FixturesResults/0,,12562~2001,00.html"),
@@ -57,7 +57,7 @@ public class SeasonsLinkHarvesterTest {
 				new URI("http://www.whufc.com/page/FixturesResults/0,,12562~2010,00.html"),
 				new URI("http://www.whufc.com/page/FixturesResults/0,,12562~2011,00.html")	
 		};
-		URI[] actualLinks = Iterables.toArray(new SeasonsLinkHarvester().harvestLinks(fixturesUri, document), URI.class);
+		URI[] actualLinks = Iterables.toArray(new SeasonsLinkHarvester().harvestLinks(fixturesUri, tagNode), URI.class);
 		Assert.assertArrayEquals("The wrong season links were returned.", expectedLinks, actualLinks);
 	}
 

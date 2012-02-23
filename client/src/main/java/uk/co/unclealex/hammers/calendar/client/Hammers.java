@@ -5,6 +5,8 @@ package uk.co.unclealex.hammers.calendar.client;
 
 import uk.co.unclealex.hammers.calendar.client.gin.HammersGinjector;
 import uk.co.unclealex.hammers.calendar.client.places.GamesPlace;
+import uk.co.unclealex.hammers.calendar.client.places.HammersPlace;
+import uk.co.unclealex.hammers.calendar.client.places.NoGamesPlace;
 import uk.co.unclealex.hammers.calendar.client.remote.AdminAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.remote.UserAttendanceServiceAsync;
@@ -53,19 +55,21 @@ public class Hammers implements EntryPoint {
 		RootPanel.get("nav1").add(injector.getNavigationView());
 		RootPanel.get().add(injector.getWaitingView());
 		
-		ExecutableAsyncCallback<Integer> callback = new FailureAsPopupExecutableAsyncCallback<Integer>() {
+		ExecutableAsyncCallback<Integer[]> callback = new FailureAsPopupExecutableAsyncCallback<Integer[]>() {
 			@Override
-			public void onSuccess(Integer latestSeason) {
+			public void onSuccess(Integer[] seasons) {
 				// Goes to the place represented on URL else default place
 				PlaceHistoryHandler historyHandler = injector.getPlaceHistoryHandler();
-				historyHandler.register(injector.getPlaceController(), injector.getEventBus(), new GamesPlace(latestSeason));
+				int cnt = seasons.length;
+				HammersPlace place = cnt == 0?new NoGamesPlace():new GamesPlace(seasons[cnt - 1]);				
+				historyHandler.register(injector.getPlaceController(), injector.getEventBus(), place);
 				historyHandler.handleCurrentHistory();
 			}
 			@Override
 			public void execute(AnonymousAttendanceServiceAsync anonymousAttendanceService,
 					UserAttendanceServiceAsync userAttendanceService, AdminAttendanceServiceAsync adminAttendanceService,
-					AsyncCallback<Integer> callback) {
-				anonymousAttendanceService.initialise(callback);
+					AsyncCallback<Integer[]> callback) {
+				anonymousAttendanceService.getAllSeasons(callback);
 			}
 		};
 		injector.getAsyncCallbackExecutor().execute(callback);

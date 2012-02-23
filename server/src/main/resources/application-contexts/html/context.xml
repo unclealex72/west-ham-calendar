@@ -5,13 +5,13 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd"
 	default-autowire="byName">
 
-	<bean id="mainPageService" class="uk.co.unclealex.hammers.calendar.server.html.MainPageServiceImplTest">
+	<bean id="mainPageService" class="uk.co.unclealex.hammers.calendar.server.html.MainPageServiceImpl">
 		<constructor-arg ref="mainPage"/>
 	</bean>
 	
 	<bean id="htmlPageLoader" class="uk.co.unclealex.hammers.calendar.server.html.HtmlPageLoaderImpl"/>
 
-	<bean id="ticketsHtmlGameScanner" class="uk.co.unclealex.hammers.calendar.server.html.DelegatingHtmlGamesScanner">
+	<bean id="ticketsHtmlGamesScanner" class="uk.co.unclealex.hammers.calendar.server.html.DelegatingHtmlGamesScanner">
 		<property name="linkHarvester">
 			<bean class="uk.co.unclealex.hammers.calendar.server.html.TicketsLinkHarvester"/>
 		</property>

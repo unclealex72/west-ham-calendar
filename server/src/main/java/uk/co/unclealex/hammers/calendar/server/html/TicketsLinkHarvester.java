@@ -26,7 +26,7 @@ package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.net.URI;
 
-import org.cdmckay.coffeedom.Element;
+import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,8 +50,8 @@ public class TicketsLinkHarvester extends ElementLinkHarvester {
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected URI checkForLink(URI uri, Element element) {
-		String href = Strings.nullToEmpty(element.getAttributeValue("href"));
+	protected URI checkForLink(URI uri, TagNode tagNode) {
+		String href = Strings.nullToEmpty(tagNode.getAttributeByName("href"));
 		if (href.matches("/articles/[0-9]+/(h|a)-v-.+")) {
 			URI linkUri = uri.resolve(href);
 			log.info("Found tickets link " + linkUri);

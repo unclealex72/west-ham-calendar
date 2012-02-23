@@ -5,10 +5,10 @@ package uk.co.unclealex.hammers.calendar.server.servlet;
 
 import java.io.IOException;
 
+import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceService;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
 import uk.co.unclealex.hammers.calendar.shared.model.LeagueRow;
-import uk.co.unclealex.hammers.calendar.shared.services.AnonymousAttendanceService;
 
 /**
  * Copyright 2011 Alex Jones
@@ -34,11 +34,6 @@ import uk.co.unclealex.hammers.calendar.shared.services.AnonymousAttendanceServi
  *
  */
 public class AnonymousAttendanceServlet extends AbstractAttendanceServlet implements AnonymousAttendanceService {
-
-	@Override
-	public Integer initialise() {
-		return createAttendanceService().initialise();
-	}
 	
 	@Override
 	public Integer[] getAllSeasons() {
@@ -46,23 +41,18 @@ public class AnonymousAttendanceServlet extends AbstractAttendanceServlet implem
 	}
 
 	@Override
-	public Game[] getAllGamesChronologicallyForSeason(int season) {
-		return createAttendanceService().getAllGamesChronologicallyForSeason(season);
+	public GameView[] getAllGameViewsChronologicallyForSeason(int season) {
+		return createAttendanceService().getAllGameViewsChronologicallyForSeason(season);
 	}
 
 	@Override
-	public Game[] getAllGamesByOpponentsForSeason(int season) {
-		return createAttendanceService().getAllGamesByOpponentsForSeason(season);
+	public GameView[] getAllGameViewsByOpponentsForSeason(int season) {
+		return createAttendanceService().getAllGameViewsByOpponentsForSeason(season);
 	}
 
 	@Override
 	public LeagueRow[] getLeagueForSeason(int season) {
 		return createAttendanceService().getLeagueForSeason(season);
-	}
-
-	@Override
-	public Integer getLatestSeason() {
-		return createAttendanceService().getLatestSeason();
 	}
 
 	@Override

@@ -47,8 +47,11 @@ import com.google.api.services.calendar.model.EventDateTime;
 import com.google.api.services.calendar.model.EventExtendedProperties;
 import com.google.api.services.calendar.model.Events;
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
 /**
@@ -110,7 +113,7 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 		}
 		isUpdated = updateTime(event.getStart(), gameInterval.getStart()) || isUpdated;
 		isUpdated = updateTime(event.getEnd(), gameInterval.getEnd()) || isUpdated;
-		if (!description.equals(event.getDescription())) {
+		if (!description.equals(Strings.nullToEmpty(event.getDescription()))) {
 			event.setDescription(description);
 			isUpdated = true;
 		}
@@ -366,12 +369,18 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 			GoogleAuthenticationFailedException {
 		BiMap<String, String> gameIdsByEventId = HashBiMap.create();
 		String pageToken = null;
+		Predicate<Event> notCancelledEvent = new Predicate<Event>() {
+			@Override
+			public boolean apply(Event event) {
+				return !"cancelled".equals(event.getStatus());
+			}
+		};
 		do {
 			com.google.api.services.calendar.Calendar.Events.List list = getCalendarService().events().list(calendarId)
-					.setPageToken(pageToken).setMaxResults(Integer.MAX_VALUE);
-			list.setFields("items(extendedProperties/shared,id)");
+					.setPageToken(pageToken).setShowDeleted(true);
+			list.setFields("items(extendedProperties/shared,id,status),nextPageToken");
 			Events events = list.execute();
-			for (Event event : notEmpty(events.getItems())) {
+			for (Event event : Iterables.filter(notEmpty(events.getItems()), notCancelledEvent)) {
 				String gameId = event.getExtendedProperties().getShared().get(ID_PROPERTY);
 				if (gameId != null) {
 					gameIdsByEventId.put(event.getId(), gameId);

@@ -28,15 +28,11 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.SortedSet;
 
-import org.cdmckay.coffeedom.CoffeeDOMException;
-import org.cdmckay.coffeedom.Document;
-import org.cdmckay.coffeedom.Element;
+import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.unclealex.hammers.calendar.server.dates.DateService;
-
-import com.google.common.base.Strings;
 
 /**
  * A base class for {@link HtmlGamesScanner}s that first parse a URL into an XML
@@ -45,9 +41,9 @@ import com.google.common.base.Strings;
  * @author alex
  * 
  */
-public abstract class DomBasedHtmlGamesScanner implements HtmlGamesScanner {
+public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 
-	private static final Logger log = LoggerFactory.getLogger(DomBasedHtmlGamesScanner.class);
+	private static final Logger log = LoggerFactory.getLogger(TagNodeBasedHtmlGamesScanner.class);
 	
 	private HtmlPageLoader i_htmlPageLoader;
 	private DateService i_dateService;
@@ -56,14 +52,9 @@ public abstract class DomBasedHtmlGamesScanner implements HtmlGamesScanner {
 	 * {@inheritDoc}
 	 */
 	public SortedSet<GameUpdateCommand> scan(URI uri) throws IOException {
-		try {
-			log.info("Scanning URI " + uri);
-			Document document = getHtmlPageLoader().loadPage(uri.toURL());
-			return scan(uri, document);
-		}
-		catch (CoffeeDOMException e) {
-			throw new IOException(e);
-		}
+		log.info("Scanning URI " + uri);
+		TagNode tagNode = getHtmlPageLoader().loadPage(uri.toURL());
+		return scan(uri, tagNode);
 	}
 
 	/**
@@ -71,36 +62,13 @@ public abstract class DomBasedHtmlGamesScanner implements HtmlGamesScanner {
 	 * 
 	 * @param uri
 	 *          The URI of the page being scanned.
-	 * @param document
+	 * @param tagNode
 	 *          The document that is being scanned.
 	 * @return A set of {@link GameUpdateCommand}s that need to be made.
 	 * @throws IOException
 	 *           If there are any network problems.
 	 */
-	protected abstract SortedSet<GameUpdateCommand> scan(URI uri, Document document) throws IOException;
-
-	/**
-	 * Normalise all whitespace (including non-breaking) and trim.
-	 * 
-	 * @param el
-	 *          The element whose text should be normalised.
-	 * @return The normalised text of the element.
-	 */
-	protected String normaliseText(Element el) {
-		return el.getTextTrim().replace('\u00a0', ' ').replace("\\s+", " ").trim();
-	}
-
-	/**
-	 * Normalise all whitespace (including non-breaking) and trim.
-	 * 
-	 * @param el
-	 *          The element whose text should be normalised.
-	 * @return The normalised text of the element or null if the normalised text
-	 *         is empty.
-	 */
-	protected String normaliseTextToNull(Element el) {
-		return Strings.emptyToNull(normaliseText(el));
-	}
+	abstract SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException;
 
 	public HtmlPageLoader getHtmlPageLoader() {
 		return i_htmlPageLoader;

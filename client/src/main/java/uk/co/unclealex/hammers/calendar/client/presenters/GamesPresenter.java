@@ -11,7 +11,7 @@ import uk.co.unclealex.hammers.calendar.client.presenters.GamesPresenter.Display
 import uk.co.unclealex.hammers.calendar.client.remote.AnonymousAttendanceServiceAsync;
 import uk.co.unclealex.hammers.calendar.client.util.CanWaitSupport;
 import uk.co.unclealex.hammers.calendar.client.views.GameTableRow;
-import uk.co.unclealex.hammers.calendar.shared.model.Game;
+import uk.co.unclealex.hammers.calendar.shared.model.GameView;
 
 import com.google.gwt.place.shared.PlaceController;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -57,8 +57,8 @@ public class GamesPresenter extends AbstractGamesPresenter<Display, GameTableRow
 
   @Override
   protected void executeCallback(AnonymousAttendanceServiceAsync anonymousAttendanceService, int season,
-  		AsyncCallback<Game[]> callback) {
-  	anonymousAttendanceService.getAllGamesChronologicallyForSeason(season, callback);
+  		AsyncCallback<GameView[]> callback) {
+  	anonymousAttendanceService.getAllGameViewsChronologicallyForSeason(season, callback);
   }
 	
 	@Override

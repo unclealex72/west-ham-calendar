@@ -74,7 +74,7 @@ public class GoogleCalendarUpdatingServiceImplTest {
 		final GoogleCalendar googleCalendar = new AbstractGoogleCalendar("Calendar Title", "Calendar Description", 2, true) {
 			@Override
 			public DateTime getGameDate(Game game) {
-				return game.getDatePlayed();
+				return game.getDateTimePlayed();
 			}
 
 			@Override
@@ -91,7 +91,7 @@ public class GoogleCalendarUpdatingServiceImplTest {
 					alreadyExistingGame.getTelevisionChannel(), googleCalendar.isBusy());
 		}
 		Game gameOne = loadGame("1");
-		gameOne.setDatePlayed(gameOne.getDatePlayed().plusHours(1));
+		gameOne.setDateTimePlayed(gameOne.getDateTimePlayed().plusHours(1));
 		List<Game> games = Lists.newArrayList(gameOne, loadGame("2"), loadGame("3"), loadGame("4"));
 		Map<String, GoogleCalendar> googleCalendarsByCalendarId = Collections.singletonMap(calendarId, googleCalendar);
 		SortedSet<UpdateChangeLog> actualUpdateChangeLogs = googleCalendarUpdatingServiceImpl.updateCalendars(

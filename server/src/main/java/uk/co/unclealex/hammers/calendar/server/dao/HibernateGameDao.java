@@ -26,7 +26,6 @@ package uk.co.unclealex.hammers.calendar.server.dao;
 import java.util.SortedSet;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,56 +47,33 @@ public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implement
 
 	@Override
 	public Game findByDatePlayed(DateTime datePlayed) {
-		Query query = 
-			getSession().createQuery(
-					"from Game g " +
-					"where " +
-						"g.datePlayed = :datePlayed").
-			setParameter("datePlayed", datePlayed);
+		Query query = getSession().createQuery("from Game g " + "where " + "g.dateTimePlayed = :datePlayed").setParameter(
+				"datePlayed", datePlayed);
 		return unique(query);
 	}
-	
+
 	@Override
-	public Game findByBusinessKey(Competition competition, Location location,
-			String opponents, int season) {
-		Query query = 
-			getSession().createQuery(
-					"from Game g " +
-					"where " +
-						"g.competition = :competition and " +
-						"g.location = :location and " +
-						"g.opponents = :opponents and " +
-						"g.season = :season").
-			setString("competition", competition.name()).
-			setString("location", location.name()).
-			setString("opponents", opponents).
-			setInteger("season", season);
+	public Game findByBusinessKey(Competition competition, Location location, String opponents, int season) {
+		Query query = getSession()
+				.createQuery(
+						"from Game g " + "where " + "g.competition = :competition and " + "g.location = :location and "
+								+ "g.opponents = :opponents and " + "g.season = :season").setString("competition", competition.name())
+				.setString("location", location.name()).setString("opponents", opponents).setInteger("season", season);
 		return (Game) query.uniqueResult();
 	}
 
 	@Override
 	public Iterable<Game> getAllForSeason(int season) {
-		Query query = 
-			getSession().createQuery(
-					"from Game " +
-					"where " +
-						"season = :season").
-			setInteger("season", season);
+		Query query = getSession().createQuery("from Game " + "where " + "season = :season").setInteger("season", season);
 		return list(query);
 	}
 
 	@Override
-	public void attendAllHomeGamesForSeason(int season) {
-		Session session = getSession();
-		session.createQuery(
-				"update Game set attended = :attended where season = :season and location = :location")
-		        .setInteger("season", season)
-		        .setBoolean("attended", true)
-		        .setParameter("location", Location.HOME)
-		        .executeUpdate();
-		session.flush();
+	public Iterable<Game> getAllForSeasonAndLocation(int season, Location location) {
+		Query query = getSession().createQuery("from Game where season = :season and location = :location").setInteger("season", season).setParameter("location", location);
+		return list(query);
 	}
-	
+
 	@Override
 	public SortedSet<Integer> getAllSeasons() {
 		Query query = getSession().createQuery("select distinct season from Game");

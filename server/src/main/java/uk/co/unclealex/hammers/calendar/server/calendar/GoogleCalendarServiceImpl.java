@@ -33,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
+import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendarFactory;
 import uk.co.unclealex.hammers.calendar.server.dao.CalendarConfigurationDao;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
@@ -54,7 +55,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	private CalendarConfigurationDao i_calendarConfigurationDao;
 	private GoogleCalendarUpdatingService i_googleCalendarUpdatingService;
 	private GoogleCalendarDaoFactory i_googleCalendarDaoFactory;
-	private Map<CalendarType, GoogleCalendar> i_googleCalendarsByCalendarType;
+	private GoogleCalendarFactory i_googleCalendarFactory;
 
 	/**
 	 * {@inheritDoc}
@@ -87,12 +88,13 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	protected void moveGame(Game game, CalendarType source, CalendarType target) throws IOException, GoogleAuthenticationFailedException {
 		String sourceCalendarId = getGoogleCalendarIdForCalendarType(source);
 		String targetCalendarId = getGoogleCalendarIdForCalendarType(target);
-		GoogleCalendar sourceGoogleCalendar = getGoogleCalendarsByCalendarType().get(source);
-		GoogleCalendar targetGoogleCalendar = getGoogleCalendarsByCalendarType().get(target);
+		GoogleCalendarFactory googleCalendarFactory = getGoogleCalendarFactory();
+		GoogleCalendar sourceGoogleCalendar = googleCalendarFactory.getGoogleCalendar(source);
+		GoogleCalendar targetGoogleCalendar = googleCalendarFactory.getGoogleCalendar(target);
 		log.info(String.format("Moving game %s from calendar %s to calendar %s", game,
 				sourceGoogleCalendar.getCalendarTitle(), targetGoogleCalendar.getCalendarTitle()));
 		GoogleCalendarDao googleCalendarDao = getGoogleCalendarDaoFactory().createGoogleCalendarDao();
-		String eventId = googleCalendarDao.findGame(sourceCalendarId, Integer.toString(game.getId()), game.getDatePlayed());
+		String eventId = googleCalendarDao.findGame(sourceCalendarId, Integer.toString(game.getId()), game.getDateTimePlayed());
 		googleCalendarDao.moveGame(sourceCalendarId, targetCalendarId, eventId, Integer.toString(game.getId()), targetGoogleCalendar.isBusy());
 	}
 
@@ -108,7 +110,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 		SortedSet<UpdateChangeLog> updates = Sets.newTreeSet();
 		log.info("Updating all calendars.");
 		Map<String, GoogleCalendar> googleCalendarsByCalendarId = Maps.newLinkedHashMap();
-		for (Entry<CalendarType, GoogleCalendar> entry : getGoogleCalendarsByCalendarType().entrySet()) {
+		for (Entry<CalendarType, GoogleCalendar> entry : getGoogleCalendarFactory().getGoogleCalendarsByCalendarType().entrySet()) {
 			CalendarType calendarType = entry.getKey();
 			GoogleCalendar googleCalendar = entry.getValue();
 			String googleCalendarId = getGoogleCalendarIdForCalendarType(calendarType);
@@ -126,14 +128,6 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 		i_calendarConfigurationDao = calendarConfigurationDao;
 	}
 
-	public Map<CalendarType, GoogleCalendar> getGoogleCalendarsByCalendarType() {
-		return i_googleCalendarsByCalendarType;
-	}
-
-	public void setGoogleCalendarsByCalendarType(Map<CalendarType, GoogleCalendar> googleCalendarsByCalendarType) {
-		i_googleCalendarsByCalendarType = googleCalendarsByCalendarType;
-	}
-
 	public GoogleCalendarUpdatingService getGoogleCalendarUpdatingService() {
 		return i_googleCalendarUpdatingService;
 	}
@@ -148,5 +142,13 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 
 	public void setGoogleCalendarDaoFactory(GoogleCalendarDaoFactory googleCalendarDaoFactory) {
 		i_googleCalendarDaoFactory = googleCalendarDaoFactory;
+	}
+
+	public GoogleCalendarFactory getGoogleCalendarFactory() {
+		return i_googleCalendarFactory;
+	}
+
+	public void setGoogleCalendarFactory(GoogleCalendarFactory googleCalendarFactory) {
+		i_googleCalendarFactory = googleCalendarFactory;
 	}
 }

@@ -33,6 +33,8 @@ import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
+import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
+
 import com.google.common.base.Function;
 
 /**
@@ -50,9 +52,10 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 
 	/**
 	 * {@inheritDoc}
+	 * @throws GoogleAuthenticationFailedException 
 	 */
 	@Override
-	public GoogleCalendarDao createGoogleCalendarDao() throws IOException {
+	public GoogleCalendarDao createGoogleCalendarDao() throws IOException, GoogleAuthenticationFailedException {
 		GoogleCalendarDao googleCalendarDao = new GoogleCalendarDaoImpl(getCalendarFactory().createCalendar(),
 				getCalendarFormatter(), getGameFormatter());
 		getAutowireCapableBeanFactory().autowireBean(googleCalendarDao);

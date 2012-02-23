@@ -36,6 +36,14 @@ public class GoogleCalendarFactoryImpl implements GoogleCalendarFactory {
 
 	private Map<CalendarType, GoogleCalendar> i_googleCalendarsByCalendarType;
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public GoogleCalendar getGoogleCalendar(CalendarType calendarType) {
+		return getGoogleCalendarsByCalendarType().get(calendarType);
+	}
+	
 	public Map<CalendarType, GoogleCalendar> getGoogleCalendarsByCalendarType() {
 		return i_googleCalendarsByCalendarType;
 	}
