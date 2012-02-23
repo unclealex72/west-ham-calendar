@@ -111,9 +111,21 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 			String gameId = entry.getKey();
 			String eventId = entry.getValue();
 			Game game = gamesById.get(gameId);
-			log.info("Removing game " + game);
+			if (game == null) {
+				log.info("Removing unknown game " + gameId);
+			}
+			else {
+				log.info("Removing game " + game);
+			}
 			googleCalendarDao.removeGame(calendarId, eventId, gameId);
-			updates.add(new UpdateChangeLog(Action.REMOVED, game, googleCalendar));
+			UpdateChangeLog updateChangeLog;
+			if (game == null) {
+				updateChangeLog = new UpdateChangeLog(Action.REMOVED, gameId, googleCalendar);
+			}
+			else {
+				updateChangeLog = new UpdateChangeLog(Action.REMOVED, game, googleCalendar);
+			}
+			updates.add(updateChangeLog);
 		}
 	}
 

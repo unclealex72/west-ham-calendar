@@ -83,7 +83,7 @@ public class GoogleCalendarUpdatingServiceImplTest {
 			}
 		};
 		String calendarId = "1";
-		for (Game alreadyExistingGame : new Game[] { loadGame("1"), loadGame("2"), loadGame("4") }) {
+		for (Game alreadyExistingGame : new Game[] { loadGame("1"), loadGame("2"), loadGame("4"), loadGame("5") }) {
 			mockGoogleCalendarDao.createOrUpdateGame(calendarId, null, Integer.toString(alreadyExistingGame.getId()),
 					alreadyExistingGame.getCompetition(), alreadyExistingGame.getLocation(), alreadyExistingGame.getOpponents(),
 					googleCalendar.toCalendarDateInterval().apply(alreadyExistingGame), alreadyExistingGame.getResult(),
@@ -98,7 +98,7 @@ public class GoogleCalendarUpdatingServiceImplTest {
 				googleCalendarsByCalendarId, games);
 		// Check the correct changes were logged.
 		SortedSet<UpdateChangeLog> expectedUpdateChangeLogs = Sets.newTreeSet(Arrays.asList(new UpdateChangeLog(
-				Action.ADDED, loadGame("3"), googleCalendar),
+				Action.ADDED, loadGame("3"), googleCalendar), new UpdateChangeLog(Action.REMOVED, loadGame("5").getId().toString(), googleCalendar),
 				new UpdateChangeLog(Action.REMOVED, loadGame("4"), googleCalendar), new UpdateChangeLog(Action.UPDATED,
 						gameOne, googleCalendar)));
 		Assert.assertArrayEquals("The wrong updates were found.",

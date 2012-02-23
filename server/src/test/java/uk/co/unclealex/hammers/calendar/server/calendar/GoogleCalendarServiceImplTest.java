@@ -91,7 +91,8 @@ public class GoogleCalendarServiceImplTest {
 	Game game2;
 	Game game3;
 	Game game2_altered;
-
+	Game game4;
+	
 	@Before
 	public void setUp() throws IOException, JAXBException, GoogleAuthenticationFailedException {
 		mockGoogleCalendarDao = (MockGoogleCalendarDao) googleCalendarDaoFactory.createGoogleCalendarDao();
@@ -110,6 +111,7 @@ public class GoogleCalendarServiceImplTest {
 		game2 = loader.load("2");
 		game2_altered = loader.load("2-altered");
 		game3 = loader.load("3");
+		game4 = loader.load("4");
 		ReadOnlyDaoFactory readOnlyDaoFactory = new ReadOnlyDaoFactory();
 		Function<CalendarType, CalendarConfiguration> calendarConfigurationFactory = new Function<CalendarType, CalendarConfiguration>() {
 			int id = 0;
@@ -134,6 +136,7 @@ public class GoogleCalendarServiceImplTest {
 		GameAdder gameAdder = new GameAdder();
 		gameAdder.addGame(ID_GENERATOR.apply(CalendarType.ATTENDED), game1);
 		gameAdder.addGame(ID_GENERATOR.apply(CalendarType.UNATTENDED), game2_altered);
+		gameAdder.addGame(ID_GENERATOR.apply(CalendarType.HOME), game4);
 	}
 
 	/**
@@ -204,6 +207,10 @@ public class GoogleCalendarServiceImplTest {
 				populateExpectedUnattendedLog(googleCalendar, expectedUpdateChangeLogs);
 			}
 			else {
+				if (calendarType == CalendarType.HOME) {
+					// Add that game 4 will be removed as it vanished from the database.
+					expectedUpdateChangeLogs.add(new UpdateChangeLog(Action.REMOVED, game4.getId().toString(), googleCalendar));					
+				}
 				populateExpectedAdditionLog(googleCalendar, expectedUpdateChangeLogs);
 			}
 		}

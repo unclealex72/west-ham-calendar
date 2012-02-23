@@ -24,10 +24,13 @@
 
 package uk.co.unclealex.hammers.calendar.server.calendar;
 
+import java.util.Comparator;
+
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 import com.google.common.base.Objects;
+import com.google.common.collect.Ordering;
 
 /**
  * A class to record a change made to a google calendar.
@@ -49,13 +52,23 @@ public class UpdateChangeLog implements Comparable<UpdateChangeLog> {
 	}
 
 	private final Action i_action;
+	private final String i_gameId;
 	private final Game i_game;
 	private final GoogleCalendar i_googleCalendar;
 
 	public UpdateChangeLog(Action action, Game game, GoogleCalendar googleCalendar) {
 		super();
 		i_action = action;
+		i_gameId = Integer.toString(game.getId());
 		i_game = game;
+		i_googleCalendar = googleCalendar;
+	}
+
+	public UpdateChangeLog(Action action, String gameId, GoogleCalendar googleCalendar) {
+		super();
+		i_action = action;
+		i_gameId = gameId;
+		i_game = null;
 		i_googleCalendar = googleCalendar;
 	}
 
@@ -63,7 +76,16 @@ public class UpdateChangeLog implements Comparable<UpdateChangeLog> {
 	public int compareTo(UpdateChangeLog o) {
 		int cmp = getGoogleCalendar().getCalendarTitle().compareTo(o.getGoogleCalendar().getCalendarTitle());
 		if (cmp == 0) {
-			cmp = getGame().getGameKey().compareTo(o.getGame().getGameKey());
+			Comparator<Game> gameComparator = new Comparator<Game>() {
+				@Override
+				public int compare(Game o1, Game o2) {
+					return o1.getGameKey().compareTo(o2.getGameKey());
+				}
+			};
+			cmp = Ordering.from(gameComparator).nullsLast().compare(getGame(), o.getGame());
+		}
+		if (cmp == 0) {
+			cmp = getGameId().compareTo(o.getGameId());
 		}
 		if (cmp == 0) {
 			cmp = getAction().compareTo(o.getAction());
@@ -95,7 +117,14 @@ public class UpdateChangeLog implements Comparable<UpdateChangeLog> {
 	}
 
 	/**
-	 * @return The game that was involved in this change.
+	 * @return The gameId that was involved in this change.
+	 */
+	public String getGameId() {
+		return i_gameId;
+	}
+	
+	/**
+	 * @return The game that was involved in this change, if any.
 	 */
 	public Game getGame() {
 		return i_game;
