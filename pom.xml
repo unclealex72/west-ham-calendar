@@ -56,6 +56,19 @@
       <email>alex.jones@unclealex.co.uk</email>
     </developer>
   </developers>
+  <distributionManagement>
+  	<repository>
+  		<id>release</id>
+  		<name>My Release Repository</name>
+  		<url>http://hurst/nexus/content/repositories/releases/</url>
+  	</repository>
+  	<snapshotRepository>
+  		<id>snapshot</id>
+  		<name>My Snapshot Repository</name>
+  		<url>http://hurst/nexus/content/repositories/snapshots/</url>
+  	</snapshotRepository>
+  </distributionManagement>
+
   <scm>
     <connection>scm:svn:https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-parent-5.0.0</connection>
     <developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-parent-5.0.0</developerConnection>
