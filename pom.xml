@@ -17,7 +17,7 @@
 	
 	<properties>
 		<!-- Convenience property to set the GWT version -->
-		<gwtVersion>2.3.0</gwtVersion>
+		<gwtVersion>2.4.0</gwtVersion>
 		<spring.version>3.1.0.RELEASE</spring.version>
 		<slf4j.version>1.6.1</slf4j.version>
 		<guice.version>3.0</guice.version>
@@ -33,12 +33,23 @@
 		<module>server</module>
 		<module>client</module>
 		<module>shared</module>
+		<module>jndi</module>
 	</modules>	
   <scm>
   	<connection>scm:svn:http://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</connection>
   	<developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</developerConnection>
   	<url>http://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</url>
   </scm>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>cobertura-maven-plugin</artifactId>
+        <version>2.5.1</version>
+      </plugin>
+    </plugins>
+  </reporting>
 
 	<developers>
 		<developer>
