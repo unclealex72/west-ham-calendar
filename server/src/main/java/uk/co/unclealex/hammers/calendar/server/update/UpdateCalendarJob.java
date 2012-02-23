@@ -38,9 +38,13 @@ import org.quartz.TriggerBuilder;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpdateCalendarJob implements JobFactory {
 
+	private final Logger log = LoggerFactory.getLogger(UpdateCalendarJob.class);
+	
 	private Runnable i_runnable;
 	private String i_cronString;
 	private Scheduler i_scheduler;
@@ -59,6 +63,7 @@ public class UpdateCalendarJob implements JobFactory {
 			scheduler.scheduleJob(job, trigger);
 		}
 		else {
+			log.warn("No cron string was set so there will be no automatic updates.");
 			scheduler.addJob(job, false);
 		}
 	}
@@ -86,8 +91,15 @@ public class UpdateCalendarJob implements JobFactory {
 	}
 
 	public void execute() {
-		Thread.currentThread().setName("Update Calendar");
-		getRunnable().run();
+		Thread currentThread = Thread.currentThread();
+		String currentThreadName = currentThread.getName();
+		try {
+			currentThread.setName("Update Calendar");
+			getRunnable().run();
+		}
+		finally {
+			currentThread.setName(currentThreadName);
+		}
 	}
 
 	public Scheduler getScheduler() {

@@ -5,7 +5,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd"
 	default-autowire="byName">
 
-	<bean id="cronString" class="java.lang.String">
-		<constructor-arg value="0 0 * * * ?"/>
+	<bean id="updateCalendarJob" parent="abstractUpdateCalendarJob">
+		<property name="cronString" value="0 0 * * * ?"/>
 	</bean>
 </beans>

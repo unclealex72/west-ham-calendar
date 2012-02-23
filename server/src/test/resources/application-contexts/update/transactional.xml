@@ -5,4 +5,5 @@
 	default-autowire="byName">
 
 	<bean id="updateRunnable" class="uk.co.unclealex.hammers.calendar.server.update.UpdateCalendarJobTransactionalTestRunnable"/>
+	<bean id="updateCalendarJob" parent="abstractUpdateCalendarJob"/>
 </beans>
