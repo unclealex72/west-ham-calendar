@@ -1,34 +1,41 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-  	<groupId>uk.co.unclealex</groupId>
-  	<artifactId>west-ham-calendar-parent</artifactId>	
-	  <version>4.0.2-SNAPSHOT</version>
-  	<relativePath>../pom.xml</relativePath>
-  </parent>
-  <artifactId>west-ham-calendar-client</artifactId>
-  <packaging>war</packaging>
-  <name>west-ham-calendar-client</name>
-  <description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
-  <url>http://code.google.com/p/west-ham-calendar/</url>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>uk.co.unclealex</groupId>
+		<artifactId>west-ham-calendar-parent</artifactId>
+		<version>4.0.2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<artifactId>west-ham-calendar-client</artifactId>
+	<packaging>war</packaging>
+	<name>west-ham-calendar-client</name>
+	<description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
+	<url>http://code.google.com/p/west-ham-calendar/</url>
 
-  <dependencies>
-  	<dependency>
-  		<groupId>${project.groupId}</groupId>
-  		<artifactId>west-ham-calendar-shared</artifactId>
-  		<version>${project.version}</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>${project.groupId}</groupId>
-  		<artifactId>west-ham-calendar-shared</artifactId>
-  		<version>${project.version}</version>
-  		<classifier>sources</classifier>
-  	</dependency>
-  	<dependency>
-  		<groupId>${project.groupId}</groupId>
-  		<artifactId>west-ham-calendar-server</artifactId>
-  		<version>${project.version}</version>
-  	</dependency>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>west-ham-calendar-jndi</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>west-ham-calendar-shared</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>west-ham-calendar-shared</artifactId>
+			<version>${project.version}</version>
+			<classifier>sources</classifier>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>west-ham-calendar-server</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.google.gwt</groupId>
 			<artifactId>gwt-servlet</artifactId>
@@ -41,13 +48,41 @@
 			<version>${gwtVersion}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
+		<!-- Hosted JNDI -->
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-naming</artifactId>
+			<version>6.1.26</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mortbay.jetty</groupId>
+			<artifactId>jetty-plus</artifactId>
+			<version>6.1.26</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>9.1-901-1.jdbc4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>c3p0</groupId>
+			<artifactId>c3p0</artifactId>
+			<version>0.9.1.2</version>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -68,22 +103,22 @@
 			<classifier>sources</classifier>
 			<scope>provided</scope>
 		</dependency>
-	
-			
-		<!-- jsr 303 (javax.validation) provider-->
+
+
+		<!-- jsr 303 (javax.validation) provider -->
 		<dependency>
 			<groupId>org.apache.bval</groupId>
 			<artifactId>bval-core</artifactId>
 			<version>0.3-incubating</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.apache.bval</groupId>
 			<artifactId>bval-jsr303</artifactId>
 			<version>0.3-incubating</version>
 		</dependency>
-		
-		
+
+
 
 		<dependency>
 			<groupId>javax.transaction</groupId>
@@ -115,7 +150,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<!-- Necesario para compilar con GWT -->
 		<!-- Ref: http://code.google.com/p/gwt-maven/issues/detail?id=47#c15 -->
 		<dependency>
@@ -132,7 +167,7 @@
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency>
-		
+
 		<!-- Version oficial: <groupId>com.google.gwt.inject</groupId> <artifactId>gin</artifactId> 
 			<version>1.5.0</version> En el repo de maven es igual a <version>1.5.0-post-2.2</version> 
 			Antes de pasar a esa version hay que migrar gwt a 2.2.0 -->
@@ -145,33 +180,18 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Gin aun tiene la dependencia con 3.0.rc2-->
+		<!-- Gin aun tiene la dependencia con 3.0.rc2 -->
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
-			<version>${guice.version}</version>			
+			<version>${guice.version}</version>
 			<scope>provided</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.7</version>
-			<scope>test</scope>
-		</dependency>
-		
 
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>${spring.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework</groupId>
-			<artifactId>spring-test</artifactId>
-			<version>${spring.version}</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>
@@ -196,148 +216,33 @@
 			<version>1.0</version>
 		</dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.7</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>1.4</version>
-    </dependency>
-    <dependency>
-    	<groupId>opensymphony</groupId>
-    	<artifactId>quartz</artifactId>
-    	<version>1.6.3</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-lang</groupId>
-      <artifactId>commons-lang</artifactId>
-      <version>2.4</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-codec</groupId>
-      <artifactId>commons-codec</artifactId>
-      <version>1.5</version>
-    </dependency>
-
-    <dependency>
-      <groupId>jdom</groupId>
-      <artifactId>jdom</artifactId>
-      <version>1.0</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
-      <version>3.2.5.ga</version>
-      <exclusions>
-      	<exclusion>
-      		<artifactId>commons-collections</artifactId>
-      		<groupId>commons-collections</groupId>
-      	</exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-annotations</artifactId>
-      <version>3.2.0.ga</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>hsqldb</groupId>
-      <artifactId>hsqldb</artifactId>
-      <version>1.8.0.7</version>
-      <scope>test</scope>
-    </dependency>
 		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<version>1.6</version>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.13</version>
 		</dependency>
-		
-		 
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-core</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-client</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-client-meta</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-media</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-base</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-calendar</artifactId>
-			<version>2.0</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.gdata</groupId>
-			<artifactId>gdata-calendar-meta</artifactId>
-			<version>2.0</version>
-		</dependency>
-		 
+
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>${guava-version}</version>
 		</dependency>
-		
-<dependency>
-  <groupId>net.sourceforge.htmlcleaner</groupId>
-  <artifactId>htmlcleaner</artifactId>
-  <version>2.2</version>
-</dependency>
 
 		<dependency>
-		    <groupId>net.sourceforge.htmlunit</groupId>
-		    <artifactId>htmlunit</artifactId>
-		    <version>2.8</version>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>1.7.1</version>
 		</dependency>
-		
-		<dependency>
-		    <groupId>com.google.code.gson</groupId>
-		    <artifactId>gson</artifactId>
-		    <version>1.7.1</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>org.apache.derby</groupId>
-			<artifactId>derby</artifactId>
-			<version>10.8.1.2</version>
-		</dependency>
-  </dependencies>
-  
+
+	</dependencies>
+
 	<build>
 
 
@@ -346,7 +251,7 @@
 
 		<plugins>
 
-          <plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
@@ -363,7 +268,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>gwt-maven-plugin</artifactId>
-				<version>2.2.0</version>
+				<version>${gwtVersion}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -377,6 +282,7 @@
 				<!-- Plugin configuration. There are many available options, see gwt-maven-plugin 
 					documentation at codehaus.org -->
 				<configuration>
+					<server>com.google.gwt.dev.shell.jetty.JndiJettyLauncher</server>
 					<runTarget>hammers.html</runTarget>
 					<hostedWebapp>${webappDirectory}</hostedWebapp>
 					<!-- i18nMessagesBundle>${project.groupId}.client.Messages</i18nMessagesBundle -->
@@ -414,7 +320,7 @@
 						</goals>
 					</execution>
 				</executions>
-				<configuration>					
+				<configuration>
 					<webappDirectory>${webappDirectory}</webappDirectory>
 				</configuration>
 			</plugin>
@@ -491,7 +397,7 @@
 				</dependencies>
 			</plugin>
 
-		     <!-- Para copiar las dependecias : mvn dependency:copy-dependencies El 
+			<!-- Para copiar las dependecias : mvn dependency:copy-dependencies El 
 				includeClassifiers funciona supuestamente en la version 2.2, pero todavia 
 				no tiene el release -->
 			<plugin>
@@ -502,7 +408,7 @@
 					<useRepositoryLayout>true</useRepositoryLayout>
 				</configuration>
 			</plugin>
-			
+
 		</plugins>
 	</build>
 
@@ -512,5 +418,5 @@
 			<email>alex.jones@unclealex.co.uk</email>
 		</developer>
 	</developers>
-	
+
 </project>
