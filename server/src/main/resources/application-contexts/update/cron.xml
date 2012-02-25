@@ -6,6 +6,6 @@
 	default-autowire="byName">
 
 	<bean id="updateCalendarJob" parent="abstractUpdateCalendarJob">
-		<property name="cronString" value="0 0 * * * ?"/>
+		<property name="cronString" value="0 0 2,14 * * ?"/>
 	</bean>
 </beans>
