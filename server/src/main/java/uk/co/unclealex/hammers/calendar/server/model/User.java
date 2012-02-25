@@ -95,8 +95,8 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 		i_enabled = enabled;
 	}
 
-	@OneToMany(fetch=FetchType.EAGER)
-	@Cascade({CascadeType.ALL, CascadeType.DELETE_ORPHAN})
+	@OneToMany(fetch=FetchType.EAGER, orphanRemoval=true)
+	@Cascade(CascadeType.ALL)
 	@JoinColumn(name="username", referencedColumnName="username")
 	public Set<Authority> getAuthorities() {
 		return i_authorities;

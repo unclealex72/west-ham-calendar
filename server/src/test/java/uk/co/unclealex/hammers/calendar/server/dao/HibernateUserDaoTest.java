@@ -94,7 +94,8 @@ public class HibernateUserDaoTest extends DaoTest {
 	@Test
 	public void testChangeAuthorities() {
 		User user = userDao.findByKey("user");
-		user.setAuthorities(Sets.newHashSet(Iterables.transform(Arrays.asList(Role.values()), Functions.forMap(authorities))));
+		user.getAuthorities().clear();
+		Iterables.addAll(user.getAuthorities(), Iterables.transform(Arrays.asList(Role.values()), Functions.forMap(authorities)));
 		userDao.saveOrUpdate(user);
 		User actualUser = userDao.findByKey("user");
 		Role[] actualRoles = rolesForUser(actualUser);

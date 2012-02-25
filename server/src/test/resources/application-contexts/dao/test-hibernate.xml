@@ -31,7 +31,7 @@
 	<tx:annotation-driven/>
 
 	<bean id="sessionFactory"
-		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="annotatedClasses">
 			<list>
 				<value>uk.co.unclealex.hammers.calendar.server.dao.ModelBean</value>
@@ -39,6 +39,6 @@
 		</property>
 	</bean>
 
-	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager"/>
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"/>
 	<bean id="modelDao" class="uk.co.unclealex.hammers.calendar.server.dao.HibernateModelDao"/>
 </beans>

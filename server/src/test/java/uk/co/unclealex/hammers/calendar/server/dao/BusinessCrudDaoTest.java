@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 
@@ -47,7 +48,7 @@ import com.google.common.collect.Maps;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/application-contexts/dao/test-hibernate.xml", "/application-contexts/dao/test-db.xml" })
 @SuppressWarnings("deprecation")
-public class BusinessCrudDaoTest {
+public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
 	private ModelDao modelDao;

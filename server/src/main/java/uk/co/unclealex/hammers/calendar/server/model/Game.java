@@ -34,7 +34,6 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
@@ -198,7 +197,6 @@ public class Game implements HasIdentity, Comparable<Game> {
 		return i_dateTimePlayed;
 	}
 
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
 	@Column(nullable = false)
 	public void setDateTimePlayed(DateTime datePlayed) {
 		i_dateTimePlayed = datePlayed;
@@ -240,7 +238,6 @@ public class Game implements HasIdentity, Comparable<Game> {
 		return i_dateTimeSeasonTicketsAvailable;
 	}
 
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
 	public void setDateTimeSeasonTicketsAvailable(DateTime seasonTicketsAvailable) {
 		i_dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
 	}
@@ -249,7 +246,6 @@ public class Game implements HasIdentity, Comparable<Game> {
 		return i_dateTimeBondholdersAvailable;
 	}
 
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
 	public void setDateTimeBondholdersAvailable(DateTime bondholdersAvailable) {
 		i_dateTimeBondholdersAvailable = bondholdersAvailable;
 	}
@@ -258,7 +254,6 @@ public class Game implements HasIdentity, Comparable<Game> {
 		return i_dateTimePriorityPointPostAvailable;
 	}
 
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
 	public void setDateTimePriorityPointPostAvailable(DateTime priorityPointPostAvailable) {
 		i_dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
 	}
@@ -267,7 +262,6 @@ public class Game implements HasIdentity, Comparable<Game> {
 		return i_dateTimeAcademyMembersAvailable;
 	}
 
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
 	public void setDateTimeAcademyMembersAvailable(DateTime academyMembersAvailable) {
 		i_dateTimeAcademyMembersAvailable = academyMembersAvailable;
 	}
@@ -276,7 +270,6 @@ public class Game implements HasIdentity, Comparable<Game> {
 		return i_dateTimeGeneralSaleAvailable;
 	}
 
-	@Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTimeZoneAsString")
 	public void setDateTimeGeneralSaleAvailable(DateTime generalSaleAvailable) {
 		i_dateTimeGeneralSaleAvailable = generalSaleAvailable;
 	}

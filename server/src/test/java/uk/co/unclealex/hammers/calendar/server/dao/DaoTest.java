@@ -24,15 +24,29 @@
 
 package uk.co.unclealex.hammers.calendar.server.dao;
 
+import java.sql.Types;
+import java.util.Map;
+
 import javax.persistence.Table;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.engine.spi.Mapping;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.Type;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
+
+import com.google.common.collect.Maps;
 
 /**
  * A base class for DAO tests.
@@ -42,17 +56,36 @@ import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/application-contexts/dao/context.xml", "/application-contexts/dao/test-db.xml" })
 @SuppressWarnings("deprecation")
-public abstract class DaoTest {
+public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
 
+	private static final Logger log = LoggerFactory.getLogger(DaoTest.class);
+	
 	@Autowired SimpleJdbcTemplate simpleJdbcTemplate;
+	@Autowired SessionFactory sessionFactory;
 	
 	@SuppressWarnings("rawtypes")
 	private final Class[] i_entityClasses;
-
+	private final Map<Integer, String> blacklist = Maps.newHashMap();
+	
 	@SuppressWarnings("rawtypes")
 	public DaoTest(Class... entityClasses) {
 		super();
 		i_entityClasses = entityClasses;
+		blacklist.put(Types.DATE, "DATE");
+		blacklist.put(Types.TIME, "TIME");
+		blacklist.put(Types.TIMESTAMP, "TIMESTAMP");
+		blacklist.put(Types.BINARY, "BINARY");
+		blacklist.put(Types.VARBINARY, "VARBINARY");
+		blacklist.put(Types.LONGVARBINARY, "LONGVARBINARY");
+		blacklist.put(Types.OTHER, "OTHER");
+		blacklist.put(Types.JAVA_OBJECT, "JAVA_OBJECT");
+		blacklist.put(Types.STRUCT, "STRUCT");
+		blacklist.put(Types.ARRAY, "ARRAY");
+		blacklist.put(Types.BLOB, "BLOB");
+		blacklist.put(Types.DATALINK, "DATALINK");
+		blacklist.put(Types.ROWID, "ROWID");
+		blacklist.put(Types.NCLOB, "NCLOB");
+
 	}
 	
 	@Before
@@ -69,6 +102,26 @@ public abstract class DaoTest {
 	
 	protected abstract void doSetup() throws Exception;
 	
+	@Test
+	public void testMappings() {
+		for (Class<?> entityClass : getEntityClasses()) {
+			testMappings(entityClass);
+		}
+	}
+	
+	public void testMappings(Class<?> entityClass) {
+		log.info("Testing mappings for class " + entityClass);
+		ClassMetadata classMetadata = sessionFactory.getClassMetadata(entityClass);
+		String[] propertyNames = classMetadata.getPropertyNames();
+		for (int idx = 0; idx < propertyNames.length; idx++) {
+			Type propertyType = classMetadata.getPropertyType(propertyNames[idx]);
+			int[] sqlTypes = propertyType.sqlTypes((Mapping) sessionFactory);
+			for (int sqlType : sqlTypes) {
+				String typeName = blacklist.get(sqlType);
+				Assert.assertNull("Property " + propertyNames[idx] + " for entity class " + entityClass + " has invalid sql type " + typeName, typeName);
+			}
+		}
+	}
 	/**
 	 * @return the entityClass
 	 */

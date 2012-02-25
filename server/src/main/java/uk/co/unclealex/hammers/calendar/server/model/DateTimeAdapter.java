@@ -12,11 +12,11 @@ import org.joda.time.DateTime;
 public class DateTimeAdapter 
     extends XmlAdapter<String, DateTime>{
  
-    public DateTime unmarshal(String v) throws Exception {
+    public DateTime unmarshal(String v) {
         return new DateTime(v);
     }
  
-    public String marshal(DateTime v) throws Exception {
+    public String marshal(DateTime v) {
         return v.toString();
     }
  

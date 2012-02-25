@@ -41,6 +41,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 
@@ -63,7 +64,7 @@ import com.google.common.collect.Sets;
 @ContextConfiguration({ "/application-contexts/dao/context.xml", "/application-contexts/dao/test-db.xml",
 		"/application-contexts/auth/context.xml" })
 @SuppressWarnings("deprecation")
-public class UserServiceTest {
+public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	private static final String AUTHORITY_TABLE_NAME = Authority.class.getAnnotation(Table.class).name();
 	private static final String USERS_TABLE_NAME = User.class.getAnnotation(Table.class).name();

@@ -10,7 +10,7 @@ import javax.persistence.Entity;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.hibernate.SessionFactory;
 
 import uk.co.unclealex.hammers.calendar.server.model.HasIdentity;
 
@@ -40,12 +40,13 @@ import com.google.common.collect.Iterables;
  * @author unclealex72
  *
  */
-public class GenericHibernateDaoSupport<M extends HasIdentity> extends HibernateDaoSupport implements CrudDao<M>{
+public class GenericHibernateDaoSupport<M extends HasIdentity> implements CrudDao<M>{
 
 	//private static final Logger log = LoggerFactory.getLogger(GenericHibernateDaoSupport.class);
 	
 	private final Class<M> i_clazz;
 	private final String i_entityName;
+	private SessionFactory i_sessionFactory;
 	
 	public GenericHibernateDaoSupport(Class<M> clazz) {
 		super();
@@ -126,11 +127,23 @@ public class GenericHibernateDaoSupport<M extends HasIdentity> extends Hibernate
 		return Iterables.filter(iterable, clazz);
 	}
 	
+	protected Session getSession() {
+		return getSessionFactory().getCurrentSession();
+	}
+	
 	public Class<M> getClazz() {
 		return i_clazz;
 	}
 
 	public String getEntityName() {
 		return i_entityName;
+	}
+
+	public SessionFactory getSessionFactory() {
+		return i_sessionFactory;
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		i_sessionFactory = sessionFactory;
 	}
 }
