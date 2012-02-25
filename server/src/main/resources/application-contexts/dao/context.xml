@@ -29,16 +29,6 @@
 		<property name="annotatedPackages" value="uk.co.unclealex.hammers.calendar.server.model"/>
 	</bean>
 
-	<!-- 
-    <bean id="hibernateInterceptor" class="org.springframework.orm.hibernate4.HibernateInterceptor"/>
-    -->
-	<bean id="hibernateSessionAwareProxy" class="org.springframework.aop.framework.ProxyFactoryBean"
-		abstract="true">
-		<property name="interceptorNames">
-			<value>hibernateInterceptor</value>
-		</property>
-	</bean>
-
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager" />
 

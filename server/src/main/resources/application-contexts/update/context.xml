@@ -13,8 +13,8 @@
 	<bean id="abstractUpdateCalendarJob" class="uk.co.unclealex.hammers.calendar.server.update.UpdateCalendarJob"
 		init-method="initialise" destroy-method="destroy" abstract="true">
 		<property name="runnable">
-			<bean parent="hibernateSessionAwareProxy">
-				<property name="targetName" value="updateRunnable"/>
+			<bean class="uk.co.unclealex.hammers.calendar.server.update.TransactionalRunnableDelegate">
+				<property name="runnable" ref="updateRunnable"/>	
 			</bean>
 		</property>
 	</bean>

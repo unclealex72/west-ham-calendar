@@ -39,6 +39,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 
@@ -81,7 +82,7 @@ import com.google.common.collect.Sets;
 		"/application-contexts/dao/test-db.xml", "/application-contexts/calendar/context.xml",
 		"/application-contexts/calendar/test-dao.xml" })
 @SuppressWarnings({"unchecked", "deprecation"})
-public class MainUpdateServiceImplTest {
+public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	@Autowired
 	MainUpdateServiceImpl mainUpdateService;
