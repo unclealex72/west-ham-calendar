@@ -59,6 +59,7 @@ public class UpdateCalendarJob implements JobFactory {
 		setJobKey(job.getKey());
 		String cronString = getCronString();
 		if (cronString != null) {
+			log.info("Calendar updates have been scheduled with the following cron string: " + cronString);
 			Trigger trigger = TriggerBuilder.newTrigger().withSchedule(CronScheduleBuilder.cronSchedule(cronString)).build();
 			scheduler.scheduleJob(job, trigger);
 		}
