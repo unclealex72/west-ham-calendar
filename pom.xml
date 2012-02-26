@@ -4,7 +4,7 @@
   <artifactId>west-ham-calendar-parent</artifactId>
   <packaging>pom</packaging>
   <name>west-ham-calendar</name>
-  <version> 5.0.2-SNAPSHOT</version>
+  <version> 5.0.2</version>
   <description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
   <url>http://code.google.com/p/west-ham-calendar/</url>
   <licenses>
@@ -70,8 +70,8 @@
   </distributionManagement>
 
   <scm>
-    <connection>scm:svn:https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</connection>
-    <developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</developerConnection>
-    <url>https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</url>
+    <connection>scm:svn:https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-parent-5.0.2</connection>
+    <developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-parent-5.0.2</developerConnection>
+    <url>https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-parent-5.0.2</url>
   </scm>
 </project>
