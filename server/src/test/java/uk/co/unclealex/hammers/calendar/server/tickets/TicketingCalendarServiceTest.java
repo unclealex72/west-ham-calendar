@@ -33,6 +33,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.simple.SimpleJdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 
@@ -47,7 +49,7 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 @ContextConfiguration({ "/application-contexts/dao/context.xml", "/application-contexts/dao/test-db.xml",
 		"/application-contexts/tickets/context.xml", "/application-contexts/calendar/context.xml" })
 @SuppressWarnings("deprecation")
-public class TicketingCalendarServiceTest {
+public class TicketingCalendarServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
 	/**
 	 * 
