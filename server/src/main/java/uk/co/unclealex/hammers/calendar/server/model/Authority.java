@@ -1,19 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import uk.co.unclealex.hammers.calendar.shared.model.Role;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -36,14 +21,40 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
  * @author unclealex72
  *
  */
+package uk.co.unclealex.hammers.calendar.server.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import uk.co.unclealex.hammers.calendar.shared.model.Role;
+
+/**
+ * A model of a granted {@link Role} for a user.
+ * 
+ * @author alex
+ * 
+ */
 @Entity
-@Table(name="authorities")
+@Table(name = "authorities")
 public class Authority implements HasIdentity {
 
+	/**
+	 * The primary key of this authority.
+	 */
 	private Integer i_id;
-	private Role i_role;
 	
-	@Id @GeneratedValue
+	/**
+	 * The {@link Role} granted to the user.
+	 */
+	private Role i_role;
+
+	@Id
+	@GeneratedValue
 	public Integer getId() {
 		return i_id;
 	}
@@ -53,7 +64,7 @@ public class Authority implements HasIdentity {
 	}
 
 	@Enumerated(EnumType.STRING)
-	@Column(name="authority", nullable=false)
+	@Column(name = "authority", nullable = false)
 	public Role getRole() {
 		return i_role;
 	}

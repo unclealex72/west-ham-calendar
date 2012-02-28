@@ -63,13 +63,39 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	/**
 	 * 
 	 */
-	private static final String TIMEZONE = "Europe/London";
+	private static final int MILLIS_IN_A_SECOND = 1000;
+
 	private static final Logger log = LoggerFactory.getLogger(GoogleCalendarDaoImpl.class);
+
+	/**
+	 * The timezone for any created calendars.
+	 */
+	private static final String TIMEZONE = "Europe/London";
+
+	/**
+	 * The name of an {@link Event}'s shared property that will store the game id.
+	 */
 	private static final String ID_PROPERTY = "hammersId";
+
+	/**
+	 * COYI!
+	 */
 	private static final String WEST_HAM = "West Ham";
 
+	/**
+	 * The {@link com.google.api.services.calendar.Calendar} object used to
+	 * communicate with Google.
+	 */
 	private final com.google.api.services.calendar.Calendar i_calendarService;
+
+	/**
+	 * The {@link Function} used to format a calendar for printing given its id.
+	 */
 	private final Function<String, String> i_calendarFormatter;
+
+	/**
+	 * The {@link Function} used to format a game for printing given its id.
+	 */
 	private final Function<String, String> i_gameFormatter;
 
 	public GoogleCalendarDaoImpl(com.google.api.services.calendar.Calendar calendarService,
@@ -199,8 +225,10 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 */
 	protected boolean updateTime(EventDateTime eventDateTime, DateTime newGameTime) {
 		com.google.api.client.util.DateTime newGoogleGameTime = toGoogleDateTime(newGameTime);
-		if (eventDateTime == null || eventDateTime.getDateTime() == null
-				|| (eventDateTime.getDateTime().getValue() / 1000 != newGoogleGameTime.getValue() / 1000)) {
+		if (eventDateTime == null
+				|| eventDateTime.getDateTime() == null
+				|| (eventDateTime.getDateTime().getValue() / MILLIS_IN_A_SECOND != newGoogleGameTime.getValue()
+						/ MILLIS_IN_A_SECOND)) {
 			eventDateTime.setDateTime(newGoogleGameTime);
 			eventDateTime.setTimeZone(newGameTime.getZone().toTimeZone().getID());
 			return true;
@@ -238,8 +266,8 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	public void moveGame(String sourceCalendarId, String targetCalendarId, String eventId, String gameId, boolean busy)
 			throws IOException, GoogleAuthenticationFailedException {
 		Function<String, String> calendarFormatter = getCalendarFormatter();
-		log.info("Moving game " + getGameFormatter().apply(gameId) + " from calendar " + calendarFormatter.apply(sourceCalendarId) + " to "
-				+ calendarFormatter.apply(targetCalendarId));
+		log.info("Moving game " + getGameFormatter().apply(gameId) + " from calendar "
+				+ calendarFormatter.apply(sourceCalendarId) + " to " + calendarFormatter.apply(targetCalendarId));
 		Event event = getCalendarService().events().move(sourceCalendarId, eventId, targetCalendarId).execute();
 		if (updateBusy(event, busy)) {
 			getCalendarService().events().update(targetCalendarId, eventId, event).execute();
@@ -251,25 +279,26 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 */
 	@Override
 	public void removeGame(String calendarId, String eventId, String gameId) throws IOException {
-		log.info("Removing event " + getGameFormatter().apply(gameId) + " from calendar" + getCalendarFormatter().apply(calendarId));
+		log.info("Removing event " + getGameFormatter().apply(gameId) + " from calendar"
+				+ getCalendarFormatter().apply(calendarId));
 		getCalendarService().events().delete(calendarId, eventId).execute();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public StringAndDurationFieldType findGameAndDurationFieldType(String calendarId, String gameId, DateTime searchDate)
+	public GameIdAndDurationFieldType findGameAndDurationFieldType(String calendarId, String gameId, DateTime searchDate)
 			throws IOException, GoogleAuthenticationFailedException {
 		for (DurationFieldType durationFieldType : durationFieldTypes()) {
 			String foundGameEventId = findGame(calendarId, gameId, searchDate, durationFieldType);
 			if (foundGameEventId != null) {
 				log.info("Found game " + getGameFormatter().apply(gameId) + " in event " + foundGameEventId + ".");
-				return new StringAndDurationFieldType(foundGameEventId, durationFieldType);
+				return new GameIdAndDurationFieldType(foundGameEventId, durationFieldType);
 			}
 		}
 		log.info("Cannot find game " + getGameFormatter().apply(gameId) + " in calendar "
 				+ getCalendarFormatter().apply(calendarId));
-		return new StringAndDurationFieldType(null, null);
+		return new GameIdAndDurationFieldType(null, null);
 	}
 
 	/**
@@ -293,7 +322,8 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 		String timeMin;
 		String timeMax;
 		if (durationFieldType == null) {
-			timeMin = timeMax = null;
+			timeMin = null;
+			timeMax = null;
 			log.info("Searching for game " + getGameFormatter().apply(gameId) + " in calendar "
 					+ getCalendarFormatter().apply(calendarId) + " with no time limits.");
 		}
@@ -319,10 +349,10 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	}
 
 	/**
-	 * Create a new google date time object
+	 * Create a new google date time object.
 	 * 
 	 * @param dateTime
-	 *          The original joda date time
+	 *          The original joda date time.
 	 * @param fieldType
 	 *          A field to add or remove.
 	 * @param offset
@@ -338,7 +368,8 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String createOrUpdateCalendar(String calendarId, String calendarTitle, String calendarDescription) throws IOException {
+	public String createOrUpdateCalendar(String calendarId, String calendarTitle, String calendarDescription)
+			throws IOException {
 		Calendar calendar;
 		if (calendarId == null) {
 			log.info("Creating calendar " + calendarTitle);
@@ -362,7 +393,7 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	}
 
 	/**
-	 * @{inheritDoc
+	 * {@inheritDoc}
 	 */
 	@Override
 	public BiMap<String, String> listGameIdsByEventId(String calendarId) throws IOException,
@@ -391,10 +422,21 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 		return gameIdsByEventId;
 	}
 
+	/**
+	 * Convert a null {@link Iterable} into an empty {@link Iterable}.
+	 * @param items The original {@link Iterable}.
+	 * @param <I> The generic parameter of the {@link Iterable}.
+	 * @return The original {@link Iterable} if it was not null or an empty {@link Iterable} if it was.
+	 */
 	protected <I> Iterable<I> notEmpty(Iterable<I> items) {
 		return items == null ? new ArrayList<I>() : items;
 	}
 
+	/**
+	 * Convert a Joda {@link DateTime} to a Google {@link com.google.api.client.util.DateTime}.
+	 * @param dateTime The Joda {@link DateTime} to convert.
+	 * @return The Google representation of the same instant in the same time zone.
+	 */
 	protected com.google.api.client.util.DateTime toGoogleDateTime(DateTime dateTime) {
 		return new com.google.api.client.util.DateTime(dateTime.toDate(), dateTime.getZone().toTimeZone());
 	}

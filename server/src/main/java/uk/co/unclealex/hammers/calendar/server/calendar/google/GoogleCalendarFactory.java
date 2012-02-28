@@ -35,7 +35,16 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
  */
 public interface GoogleCalendarFactory {
 
-	public Map<CalendarType, GoogleCalendar> getGoogleCalendarsByCalendarType();
+	/**
+	 * Get all {@link GoogleCalendar}s by the {@link CalendarType} they represent.
+	 * @return A map of all {@link GoogleCalendar}s by the {@link CalendarType} they represent.
+	 */
+	Map<CalendarType, GoogleCalendar> getGoogleCalendarsByCalendarType();
 	
-	public GoogleCalendar getGoogleCalendar(CalendarType calendarType);
+	/**
+	 * Get a {@link GoogleCalendar} that represents the given calendar type.
+	 * @param calendarType The {@link CalendarType} that the returned {@link GoogleCalendar} represents.
+	 * @return A {@link GoogleCalendar} that represents the given calendar type.
+	 */
+	GoogleCalendar getGoogleCalendar(CalendarType calendarType);
 }

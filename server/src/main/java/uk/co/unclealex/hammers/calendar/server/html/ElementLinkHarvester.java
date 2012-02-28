@@ -18,10 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
-
 package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.IOException;
@@ -35,11 +32,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
+ * An {@link ElementLinkHarvester} is a {@link LinkHarvester} that searches a page for HTML elements with
+ * a given name and then processes it's inner text.
  * @author alex
  * 
  */
 public abstract class ElementLinkHarvester implements LinkHarvester {
 
+	/**
+	 * The name of the element to look for.
+	 */
 	private final String i_elementName;
 
 	public ElementLinkHarvester(String elementName) {
@@ -66,6 +68,12 @@ public abstract class ElementLinkHarvester implements LinkHarvester {
 		return Lists.newArrayList(links);
 	}
 
+	/**
+	 * Once a suitable element has been found check to see if a link can be found.
+	 * @param uri The URI of the page being harvested.
+	 * @param tagNode The {@link TagNode} that had the correct element name.
+	 * @return A new child link, or null if none was found.
+	 */
 	protected abstract URI checkForLink(URI uri, TagNode tagNode);
 
 	public String getElementName() {

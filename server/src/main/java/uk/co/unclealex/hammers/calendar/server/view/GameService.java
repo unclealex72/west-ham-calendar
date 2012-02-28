@@ -41,7 +41,7 @@ public interface GameService {
 	 * @param season The season to look for.
 	 * @return All games for the given season in the described order.
 	 */
-	public SortedSet<GameView> getGameViewsForSeasonByOpponents(boolean enabled, int season);
+	SortedSet<GameView> getGameViewsForSeasonByOpponents(boolean enabled, int season);
 	
 	/**
 	 * Get all games for a season in chronological order.
@@ -49,18 +49,20 @@ public interface GameService {
 	 * @param season The season to look for.
 	 * @return All games for the given season in the described order.
 	 */
-	public SortedSet<GameView> getGameViewsForSeasonByDatePlayed(boolean enabled, int season);
+	SortedSet<GameView> getGameViewsForSeasonByDatePlayed(boolean enabled, int season);
 
 	/**
-	 * @return
+	 * Get a seasons.
+	 * @return All the seasons in ascending order.
 	 */
-	public SortedSet<Integer> getAllSeasons();
+	SortedSet<Integer> getAllSeasons();
 
-	/**
-	 * @param gameId
-	 * @param enabled
-	 * @return
+	/** 
+	 * Get a {@link GameView} that represents the {@link Game} with the given id.
+	 * @param gameId The id of the game.
+	 * @param enabled True if this {@link GameView} can be edited, false otherwise.
+	 * @return A {@link GameView} that represents the {@link Game} with the given id.
 	 */
-	public GameView getGameViewById(int gameId, boolean enabled);
+	GameView getGameViewById(int gameId, boolean enabled);
 	
 }

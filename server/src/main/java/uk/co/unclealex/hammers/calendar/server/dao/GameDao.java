@@ -31,13 +31,56 @@ import uk.co.unclealex.hammers.calendar.server.model.Game;
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
+/**
+ * The data access object for {@link Game}s.
+ * 
+ * @author alex
+ */
 public interface GameDao extends CrudDao<Game> {
 
-	public Game findByDatePlayed(DateTime datePlayed);
-	public Iterable<Game> getAllForSeason(int season);
-	public SortedSet<Integer> getAllSeasons();
-	public Game findByBusinessKey(Competition competition, Location location, String opponents, int season);
-	public Integer getLatestSeason();
-	public Iterable<Game> getAllForSeasonAndLocation(int season, Location location);
+	/**
+	 * Find a game by the {@link DateTime} it was played.
+	 * @param datePlayed The {@link DateTime} to search for.
+	 * @return The {@link Game} played at the given {@link DateTime} or null if one could not be found.
+	 */
+	Game findByDatePlayed(DateTime datePlayed);
+	
+	/**
+	 * Get all the {@link Game}s for a given season.
+	 * @param season The season to search for.
+	 * @return All the {@link Game}s during the given season.
+	 */
+	Iterable<Game> getAllForSeason(int season);
+	
+	/**
+	 * Find all the seasons known so far.
+	 * @return All the known seasons.
+	 */
+	SortedSet<Integer> getAllSeasons();
+	
+	/**
+	 * Find a game by its {@link Competition}, {@link Location}, opponents and season. Together, these are guaranteed to
+	 * uniquely define a {@link Game}.
+	 * @param competition The {@link Competition} to search for.
+	 * @param location The {@link Location} to search for.
+	 * @param opponents The opponents to search for.
+	 * @param season The season to search for.
+	 * @return The uniquely defined {@link Game} if it exists or null otherwise.
+	 */
+	Game findByBusinessKey(Competition competition, Location location, String opponents, int season);
+	
+	/**
+	 * Get the latest known season.
+	 * @return The latest known season.
+	 */
+	Integer getLatestSeason();
+	
+	/**
+	 * Get all {@link Game}s for a given season and {@link Location}.
+	 * @param season The season to search for.
+	 * @param location The {@link Location} to search for.
+	 * @return All {@link Game}s with the given season and {@link Location}.
+	 */
+	Iterable<Game> getAllForSeasonAndLocation(int season, Location location);
 
 }

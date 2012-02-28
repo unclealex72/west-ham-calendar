@@ -36,5 +36,11 @@ import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFa
  */
 public interface GoogleCalendarDaoFactory {
 
-	public GoogleCalendarDao createGoogleCalendarDao() throws IOException, GoogleAuthenticationFailedException;
+	/**
+	 * Create a new {@link GoogleCalendarDao}.
+	 * @return A newly created {@link GoogleCalendarDao}.
+	 * @throws IOException
+	 * @throws GoogleAuthenticationFailedException
+	 */
+	GoogleCalendarDao createGoogleCalendarDao() throws IOException, GoogleAuthenticationFailedException;
 }

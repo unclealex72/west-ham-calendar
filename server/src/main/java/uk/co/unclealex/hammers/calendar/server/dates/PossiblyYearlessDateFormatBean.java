@@ -31,6 +31,9 @@ package uk.co.unclealex.hammers.calendar.server.dates;
  */
 public class PossiblyYearlessDateFormatBean extends AbstractPossiblyYearlessDateFormat {
 
+	/**
+	 * The yearless date format to use.
+	 */
 	private final String i_dateFormatWithoutYear;
 
 	/**

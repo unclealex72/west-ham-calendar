@@ -18,10 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
-
 package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.util.List;
@@ -43,7 +40,8 @@ public abstract class TagNodeFilter implements Predicate<TagNode> {
 
 	/**
 	 * Walk an entire {@link TagNode} tree.
-	 * @param tagNode The {@link TagNode} to list.
+	 * @param tagNode The {@link TagNode} to walk.
+	 * @return A list of all child {@link TagNodes} that adhere to this {@link Predicate}.
 	 */
 	public List<TagNode> list(TagNode tagNode) {
 		final List<TagNode> tagNodes = Lists.newArrayList();

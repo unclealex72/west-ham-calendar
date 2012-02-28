@@ -42,21 +42,47 @@ import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFa
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 
 /**
+ * The default implementation of {@link DefaultsService}.
  * @author alex
- *
+ * 
  */
 public class DefaultsServiceImpl implements DefaultsService {
 
 	private static final Logger log = LoggerFactory.getLogger(DefaultsServiceImpl.class);
-	
+
+	/**
+	 * The {@link CalendarConfigurationDao} used for finding and creaing calendar
+	 * configurations.
+	 */
 	private CalendarConfigurationDao i_calendarConfigurationDao;
+
+	/**
+	 * The {@link GoogleCalendarDaoFactory} used for creating
+	 * {@link GoogleCalendarDao}s.
+	 */
 	private GoogleCalendarDaoFactory i_googleCalendarDaoFactory;
+
+	/**
+	 * The {@link GoogleCalendarFactory} used for creating {@link GoogleCalendar}
+	 * s.
+	 */
 	private GoogleCalendarFactory i_googleCalendarFactory;
+
+	/**
+	 * The {@link UserService} used to look for and create users.
+	 */
 	private UserService i_userService;
-	
+
+	/**
+	 * The username for the default user.
+	 */
 	private String i_defaultUsername;
+
+	/**
+	 * The password for the default user.
+	 */
 	private String i_defaultPassword;
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -64,13 +90,16 @@ public class DefaultsServiceImpl implements DefaultsService {
 	public void createCalendars() throws IOException, GoogleAuthenticationFailedException {
 		GoogleCalendarDao googleCalendarDao = getGoogleCalendarDaoFactory().createGoogleCalendarDao();
 		CalendarConfigurationDao calendarConfigurationDao = getCalendarConfigurationDao();
-		Map<CalendarType, CalendarConfiguration> calendarConfigurationsByCalendarType = calendarConfigurationDao.getAllByKey();
-		for (Entry<CalendarType, GoogleCalendar> entry : getGoogleCalendarFactory().getGoogleCalendarsByCalendarType().entrySet()) {
+		Map<CalendarType, CalendarConfiguration> calendarConfigurationsByCalendarType = calendarConfigurationDao
+				.getAllByKey();
+		for (Entry<CalendarType, GoogleCalendar> entry : getGoogleCalendarFactory().getGoogleCalendarsByCalendarType()
+				.entrySet()) {
 			CalendarType calendarType = entry.getKey();
 			GoogleCalendar googleCalendar = entry.getValue();
 			String calendarTitle = googleCalendar.getCalendarTitle();
 			log.info("Creating calendar " + calendarTitle);
-			String googleCalendarId = googleCalendarDao.createOrUpdateCalendar(null, calendarTitle, googleCalendar.getDescription());
+			String googleCalendarId = googleCalendarDao.createOrUpdateCalendar(null, calendarTitle,
+					googleCalendar.getDescription());
 			CalendarConfiguration calendarConfiguration = calendarConfigurationsByCalendarType.get(calendarType);
 			if (calendarConfiguration == null) {
 				calendarConfiguration = new CalendarConfiguration(null, calendarType, googleCalendarId);
@@ -89,7 +118,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	public void createDefaultUser() {
 		getUserService().ensureDefaultUsersExists(getDefaultUsername(), getDefaultPassword());
 	}
-	
+
 	public CalendarConfigurationDao getCalendarConfigurationDao() {
 		return i_calendarConfigurationDao;
 	}

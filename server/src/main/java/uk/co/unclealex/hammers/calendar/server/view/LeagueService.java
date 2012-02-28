@@ -29,14 +29,21 @@ import java.util.SortedSet;
 import uk.co.unclealex.hammers.calendar.shared.model.LeagueRow;
 
 /**
+ * A service that constructs a league of how well West Ham have done against all
+ * the different teams in league competitions for a given season.
+ * 
  * @author alex
- *
+ * 
  */
 public interface LeagueService {
 
 	/**
+	 * Constructs a league of how well West Ham have done against all the
+	 * different teams in league competitions for a given season.
+	 * 
 	 * @param season
-	 * @return
+	 *          The league's season.
+	 * @return The {@link LeagueRow}s that make up this league.
 	 */
 	SortedSet<LeagueRow> getLeagueForSeason(int season);
 

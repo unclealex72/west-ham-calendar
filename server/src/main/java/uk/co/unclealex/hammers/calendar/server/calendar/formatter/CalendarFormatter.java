@@ -21,21 +21,30 @@
  * @author unclealex72
  *
  */
+package uk.co.unclealex.hammers.calendar.server.calendar.formatter;
 
-package uk.co.unclealex.hammers.calendar.server.calendar.google;
-
+import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
+import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendarFactory;
 import uk.co.unclealex.hammers.calendar.server.dao.CalendarConfigurationDao;
 import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
 
 import com.google.common.base.Function;
 
 /**
+ * A class to format {@link GoogleCalendar}s given their id.
  * @author alex
  * 
  */
 public class CalendarFormatter implements Function<String, String> {
 
+	/**
+	 * The {@link CalendarConfigurationDao} used to look up calendar ids.
+	 */
 	private CalendarConfigurationDao i_calendarConfigurationDao;
+	
+	/**
+	 * The {@link GoogleCalendarFactory} used to get {@link GoogleCalendar}s.
+	 */
 	private GoogleCalendarFactory i_googleCalendarFactory;
 
 	@Override

@@ -38,9 +38,24 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
  */
 public class GameKey implements Comparable<GameKey> {
 
+	/**
+	 * The game's competition.
+	 */
 	private final Competition i_competition;
+	
+	/**
+	 * The game's location.
+	 */
 	private final Location i_location;
+	
+	/**
+	 * The game's opponents.
+	 */
 	private final String i_opponents;
+	
+	/**
+	 * The game's season.
+	 */
 	private final int i_season;
 
 	/**

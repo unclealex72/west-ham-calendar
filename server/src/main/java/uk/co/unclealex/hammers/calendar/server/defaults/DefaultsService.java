@@ -40,10 +40,10 @@ public interface DefaultsService {
 	 * @throws IOException
 	 * @throws GoogleAuthenticationFailedException
 	 */
-	public void createCalendars() throws IOException, GoogleAuthenticationFailedException;
+	void createCalendars() throws IOException, GoogleAuthenticationFailedException;
 
 	/**
 	 * Create the default user if it does not already exist.
 	 */
-	public void createDefaultUser();
+	void createDefaultUser();
 }

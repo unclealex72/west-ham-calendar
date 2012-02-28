@@ -1,20 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,23 +21,49 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
  * @author unclealex72
  *
  */
+package uk.co.unclealex.hammers.calendar.server.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+
+/**
+ * A calendar configuration is used to link a calendar in the Google Calendar
+ * API with a {@link CalendarType}.
+ * 
+ * @author alex
+ * 
+ */
 @Entity
-@Table(name="calendar")
+@Table(name = "calendar")
 public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<CalendarType, CalendarConfiguration> {
 
 	/**
-	 * Default constructor
+	 * The primary key of this calendar configuration.
 	 */
+	private Integer i_id;
+	
+	/**
+	 * The {@link CalendarType} that is to be bound to a Google calendar.
+	 */
+	private CalendarType i_calendarType;
+	
+	/**
+	 * The id of the calendar in the Google Calendar API.
+	 */
+	private String i_googleCalendarId;
+
 	protected CalendarConfiguration() {
 		super();
 	}
 
-	/**
-	 * Create a new calendar configuration
-	 * @param id The id of the configuration.
-	 * @param calendarType The calendar type.
-	 * @param googleCalendarId The google id of the calendar.
-	 */
 	public CalendarConfiguration(Integer id, CalendarType calendarType, String googleCalendarId) {
 		super();
 		i_id = id;
@@ -61,42 +71,34 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 		i_googleCalendarId = googleCalendarId;
 	}
 
-
-	private Integer i_id;
-	private CalendarType i_calendarType;
-	private String i_googleCalendarId;
-	
 	@Override
 	public String toString() {
 		return String.format("[%d:%s:%s]", getId(), getCalendarType(), getGoogleCalendarId());
 	}
-	
-	@Override @Transient
+
+	@Override
+	@Transient
 	public CalendarType getBusinessKey() {
 		return getCalendarType();
 	}
-	
+
 	@Override
 	public void setBusinessKey(CalendarType businessKey) {
 		setCalendarType(businessKey);
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof CalendarConfiguration && isEqual((CalendarConfiguration) obj);
-	}
-	
+
 	@Enumerated(EnumType.STRING)
-	@Column(unique=true, nullable=false)
+	@Column(unique = true, nullable = false)
 	public CalendarType getCalendarType() {
 		return i_calendarType;
 	}
-	
+
 	public void setCalendarType(CalendarType calendarType) {
 		i_calendarType = calendarType;
 	}
-	
-	@Id @GeneratedValue
+
+	@Id
+	@GeneratedValue
 	public Integer getId() {
 		return i_id;
 	}
@@ -105,7 +107,7 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 		i_id = id;
 	}
 
-	@Column(nullable=false, unique=true)
+	@Column(nullable = false, unique = true)
 	public String getGoogleCalendarId() {
 		return i_googleCalendarId;
 	}

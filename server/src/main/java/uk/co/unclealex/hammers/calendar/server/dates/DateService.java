@@ -53,7 +53,7 @@ public interface DateService {
 	 * @throws UnparseableDateException
 	 *           Thrown if a date could not be found in any of the supplied formats.
 	 */
-	public DateTime parsePossiblyYearlessDate(String date, DateTime yearDeterminingDate,
+	DateTime parsePossiblyYearlessDate(String date, DateTime yearDeterminingDate,
 			boolean yearDeterminingDateIsLaterThanTheDate, PossiblyYearlessDateFormat... possiblyYearlessDateFormats)
 			throws UnparseableDateException;
 
@@ -73,7 +73,7 @@ public interface DateService {
 	 * @throws UnparseableDateException
 	 *           Thrown if the date was not in any of the supplied formats.
 	 */
-	public DateTime findPossiblyYearlessDate(String date, DateTime yearDeterminingDate,
+	DateTime findPossiblyYearlessDate(String date, DateTime yearDeterminingDate,
 			boolean yearDeterminingDateIsLaterThanTheDate, PossiblyYearlessDateFormat... possiblyYearlessDateFormats)
 			throws UnparseableDateException;
 
@@ -83,7 +83,7 @@ public interface DateService {
 	 * @param dateFormat The date format to use.
 	 * @return The parsed date or null if no date could be parsed.
 	 */
-	public DateTime parseDate(String date, String dateFormat);
+	DateTime parseDate(String date, String dateFormat);
 
 	/**
 	 * Find a date.
@@ -91,19 +91,19 @@ public interface DateService {
 	 * @param dateFormat The date format to use.
 	 * @return The found date or null if no date could be found.
 	 */
-	public DateTime findDate(String date, String dateFormat);
+	DateTime findDate(String date, String dateFormat);
 	
 	/**
 	 * Check whether a {@link DateTime} instant is occurs on a week-day.
 	 * @param dateTime The {@link DateTime} to check.
 	 * @return True if the instant is during the week, false otherwise.
 	 */
-	public boolean isWeekday(DateTime dateTime);
+	boolean isWeekday(DateTime dateTime);
 	
 	/**
 	 * Check whether a {@link DateTime} instant is 3pm on a Saturday.
 	 * @param dateTime The {@link DateTime} to check.
 	 * @return True if the instant is 3pm on a Saturday, false otherwise.
 	 */
-	public boolean isThreeOClockOnASaturday(DateTime dateTime);
+	boolean isThreeOClockOnASaturday(DateTime dateTime);
 }

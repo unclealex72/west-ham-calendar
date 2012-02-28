@@ -39,6 +39,9 @@ import org.htmlcleaner.TagNode;
  */
 public class HtmlPageLoaderImpl implements HtmlPageLoader {
 
+	/**
+	 * The {@link HtmlCleaner} used to create a clean HTML page.
+	 */
 	private final HtmlCleaner i_htmlCleaner = new HtmlCleaner();
 
 	/**

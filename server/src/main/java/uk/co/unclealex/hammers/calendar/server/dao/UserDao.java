@@ -25,8 +25,17 @@ package uk.co.unclealex.hammers.calendar.server.dao;
 
 import uk.co.unclealex.hammers.calendar.server.model.User;
 
+/**
+ * A data access object for {@link User}s.
+ * @author alex
+ *
+ */
 public interface UserDao extends BusinessCrudDao<String, User> {
 
+	/**
+	 * Count the number of known users.
+	 * @return The number of known users.
+	 */
 	long countUsers();
 
 }

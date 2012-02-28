@@ -29,11 +29,15 @@ import java.util.Map;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 
 /**
+ * The default implementation of {@link GoogleCalendarFactory}.
  * @author alex
  *
  */
 public class GoogleCalendarFactoryImpl implements GoogleCalendarFactory {
 
+	/**
+	 * The map of {@link GoogleCalendar}s by the {@link CalendarType} they represent.
+	 */
 	private Map<CalendarType, GoogleCalendar> i_googleCalendarsByCalendarType;
 
 	/**

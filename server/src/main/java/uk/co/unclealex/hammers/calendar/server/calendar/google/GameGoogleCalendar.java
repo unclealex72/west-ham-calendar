@@ -27,6 +27,11 @@ import org.joda.time.DateTime;
 
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 
+/**
+ * An abstract {@link GoogleCalendar} whose subclasses represent calendars containing game playing times.
+ * @author alex
+ *
+ */
 public abstract class GameGoogleCalendar extends AbstractGoogleCalendar {
 
 	@Override

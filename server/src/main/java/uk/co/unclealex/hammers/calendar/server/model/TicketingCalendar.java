@@ -1,20 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -37,48 +21,72 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
  * @author unclealex72
  *
  */
+package uk.co.unclealex.hammers.calendar.server.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+
+/**
+ * A ticketing calendar is used to select the calendar to use to show ticketing
+ * information.
+ * 
+ * @author alex
+ * 
+ */
 @Entity
-@Table(name="ticketing")
+@Table(name = "ticketing")
 public class TicketingCalendar extends AbstractBusinessKeyBasedModel<CalendarType, TicketingCalendar> {
 
+	/**
+	 * The primary key of the ticketing calendar.
+	 */
 	private Integer i_id;
+
+	/**
+	 * The {@link CalendarType} of the ticketing calendar.
+	 */
 	private CalendarType i_calendarType;
-	
+
 	protected TicketingCalendar() {
 		// Default constructor for ORMs.
 	}
-	
+
 	public TicketingCalendar(CalendarType calendarType) {
 		super();
 		i_calendarType = calendarType;
 	}
 
-	@Override @Transient
+	@Override
+	@Transient
 	public CalendarType getBusinessKey() {
 		return getCalendarType();
 	}
-	
+
 	@Override
 	public void setBusinessKey(CalendarType businessKey) {
 		setCalendarType(businessKey);
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof TicketingCalendar && isEqual((TicketingCalendar) obj);
-	}
-	
+
 	@Enumerated(EnumType.STRING)
-	@Column(unique=true, nullable=false)
+	@Column(unique = true, nullable = false)
 	public CalendarType getCalendarType() {
 		return i_calendarType;
 	}
-	
+
 	public void setCalendarType(CalendarType calendarType) {
 		i_calendarType = calendarType;
 	}
-	
-	@Id @GeneratedValue
+
+	@Id
+	@GeneratedValue
 	public Integer getId() {
 		return i_id;
 	}

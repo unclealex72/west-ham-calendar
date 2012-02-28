@@ -18,7 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
+ * @author alex
  *
  */
 
@@ -40,23 +40,50 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.services.calendar.Calendar;
 
 /**
- * A calendar factory that uses an Oauth 2 access and refresh token.
+ * A calendar factory that uses an Oauth 2 access and refresh token. Subclasses are responsible for storage
+ * and retrieval of such tokens.
  * @author alex
  *
  */
 public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 
+	/**
+	 * This application's secret key.
+	 */
 	private static final String CONSUMER_SECRET = "MFy0s8Zh5lmjaz0IEiwDdoEj";
+	
+	/**
+	 * This application's public key.
+	 */
 	private static final String CONSUMER_KEY = "566815420118.apps.googleusercontent.com";
+	
+	/**
+	 * The URL to supply to Google for redirecting.
+	 */
 	private static final String REDIRECT_URL = "urn:ietf:wg:oauth:2.0:oob";
+	
+	/**
+	 * The scope for full calendar access.
+	 */
 	private static final String SCOPE = "https://www.googleapis.com/auth/calendar";
 
 	private static final Logger log = LoggerFactory.getLogger(AbstractOauthCalendarFactory.class);
+	
+	/**
+	 * The {@link HttpTransport} used to connect to Google.
+	 */
 	private HttpTransport i_httpTransport;
+	
+	/**
+	 * The {@link JsonFactory} used by the Google client.
+	 */
 	private JsonFactory i_jsonFactory;
 	
 	/**
 	 * Create a new {@link Calendar} using Oauth.
+	 * @return A new Google {@link Calendar} object.
+	 * @throws IOException
+	 * @throws GoogleAuthenticationFailedException
 	 */
 	@Override
 	public Calendar createCalendar() throws IOException, GoogleAuthenticationFailedException {
@@ -97,6 +124,11 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
     installTokens(response.accessToken, response.refreshToken);
 	}
 	
+	/**
+	 * Install the access and refresh tokens.
+	 * @param accessToken The access token to store.
+	 * @param refreshToken The refresh token to store.
+	 */
 	protected abstract void installTokens(String accessToken, String refreshToken);
 	
 	/**
@@ -105,7 +137,7 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	protected abstract String getRefreshToken();
 
 	/**
-	 * @retrun The access token to use.
+	 * @return The access token to use.
 	 */
 	protected abstract String getAccessToken();
 	

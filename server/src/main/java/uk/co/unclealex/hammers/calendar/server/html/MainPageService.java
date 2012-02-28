@@ -34,12 +34,14 @@ import java.net.URI;
 public interface MainPageService {
 
 	/**
+	 * Get the main page for tickets.
 	 * @return The main page for tickets.
 	 */
-	public URI getTicketsUri();
+	URI getTicketsUri();
 	
 	/**
+	 * Get the main page for fixtures.
 	 * @return The main page for fixtures.
 	 */
-	public URI getFixturesUri();
+	URI getFixturesUri();
 }

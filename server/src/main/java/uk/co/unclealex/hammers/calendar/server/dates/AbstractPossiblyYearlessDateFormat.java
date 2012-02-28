@@ -31,6 +31,9 @@ package uk.co.unclealex.hammers.calendar.server.dates;
  */
 public abstract class AbstractPossiblyYearlessDateFormat implements PossiblyYearlessDateFormat {
 
+	/**
+	 * The year aware date format to use.
+	 */
 	private final String i_dateFormatWithYear;
 
 	/**

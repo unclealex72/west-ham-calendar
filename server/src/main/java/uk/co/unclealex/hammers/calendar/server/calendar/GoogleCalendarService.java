@@ -45,7 +45,7 @@ public interface GoogleCalendarService {
 	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
 	 */
-	public void attendGame(Game game) throws GoogleAuthenticationFailedException, IOException;
+	void attendGame(Game game) throws GoogleAuthenticationFailedException, IOException;
 
 	/**
 	 * Move a game to the unattendend calendar.
@@ -55,7 +55,7 @@ public interface GoogleCalendarService {
 	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
 	 */
-	public void unattendGame(Game game) throws GoogleAuthenticationFailedException, IOException;
+	void unattendGame(Game game) throws GoogleAuthenticationFailedException, IOException;
 
 	/**
 	 * Update all google calendars so that they are in sync with games in the
@@ -67,7 +67,7 @@ public interface GoogleCalendarService {
 	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
 	 */
-	public SortedSet<UpdateChangeLog> updateCalendars(Iterable<Game> games) throws IOException,
+	SortedSet<UpdateChangeLog> updateCalendars(Iterable<Game> games) throws IOException,
 			GoogleAuthenticationFailedException;
 
 }

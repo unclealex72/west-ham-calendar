@@ -41,15 +41,39 @@ import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A class that schedules and executes runnable jobs.
+ * @author alex
+ *
+ */
 public class UpdateCalendarJob implements JobFactory {
 
 	private final Logger log = LoggerFactory.getLogger(UpdateCalendarJob.class);
 	
+	/**
+	 * The {@link Runnable} job to execute.
+	 */
 	private Runnable i_runnable;
+	
+	/**
+	 * The cron string used to control job scheduling or null if no job is to be scheduled.
+	 */
 	private String i_cronString;
+	
+	/**
+	 * A Quartz {@link Scheduler}.
+	 */
 	private Scheduler i_scheduler;
+	
+	/**
+	 * A Quartz {@link JobKey}.
+	 */
 	private JobKey i_jobKey;
 	
+	/**
+	 * Initialise the {@link Scheduler} and {@link JobKey}.
+	 * @throws SchedulerException Thrown if there is an error configuring the Quartz {@link Scheduler}.
+	 */
 	public void initialise() throws SchedulerException {
 		Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 		scheduler.setJobFactory(this);
@@ -69,11 +93,19 @@ public class UpdateCalendarJob implements JobFactory {
 		}
 	}
 
+	/**
+	 * Schedule the job to run now.
+	 * @throws SchedulerException Thrown if there is an error configuring the Quartz {@link Scheduler}.
+	 */
 	public void scheduleNow() throws SchedulerException {
 		Scheduler scheduler = getScheduler();
 		scheduler.triggerJob(getJobKey());
 	}
 
+	/**
+	 * Destroy the {@link Scheduler}.
+	 * @throws SchedulerException Thrown if there is an error shutting down the Quartz {@link Scheduler}.
+	 */
 	public void destroy() throws SchedulerException {
 		getScheduler().shutdown();
 	}
@@ -83,6 +115,10 @@ public class UpdateCalendarJob implements JobFactory {
 		return new MyJob();
 	}
 
+	/**
+	 * A class that encapsulates the job to be run, making sure that no two jobs can run concurrently.
+	 * @author alex
+	 */
 	@DisallowConcurrentExecution
 	class MyJob implements Job {
 		@Override
@@ -91,6 +127,9 @@ public class UpdateCalendarJob implements JobFactory {
 		}
 	}
 
+	/**
+	 * Execute the current job.
+	 */
 	public void execute() {
 		Thread currentThread = Thread.currentThread();
 		String currentThreadName = currentThread.getName();

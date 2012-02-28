@@ -9,10 +9,10 @@
 	<bean id="googleCalendarDaoFactory"
 		class="uk.co.unclealex.hammers.calendar.server.calendar.SpringGoogleCalendarDaoFactory">
 		<property name="gameFormatter">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.GameFormatter"/>	
+			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.formatter.GameFormatter"/>	
 		</property>
 		<property name="calendarFormatter">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.CalendarFormatter"/>
+			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.formatter.CalendarFormatter"/>
 		</property>
 	</bean>
 

@@ -25,7 +25,11 @@ package uk.co.unclealex.hammers.calendar.server.calendar.google;
 
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 
-
+/**
+ * The {@link GoogleCalendar} for games that the user attended.
+ * @author alex
+ *
+ */
 public class AttendedGoogleCalendar extends GameGoogleCalendar {
 
 	@Override

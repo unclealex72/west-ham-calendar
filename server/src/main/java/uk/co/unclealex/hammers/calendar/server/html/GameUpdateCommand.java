@@ -18,14 +18,14 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
-
 package uk.co.unclealex.hammers.calendar.server.html;
 
 import org.joda.time.DateTime;
 
+import com.google.common.base.Objects;
+
+import uk.co.unclealex.hammers.calendar.server.html.GameLocator.DatePlayedLocator;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 /**
@@ -141,8 +141,8 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	 *          The locator to use to locate the game.
 	 * @param newTelevisionChannel
 	 *          The new television channel.
-	 * @return A {@link GameUpdateCommand} that updates a game's television channel
-	 *         value.
+	 * @return A {@link GameUpdateCommand} that updates a game's television
+	 *         channel value.
 	 */
 	public static GameUpdateCommand televisionChannel(GameLocator gameLocator, String newTelevisionChannel) {
 		return new InternalGameUpdateCommand<String>(Type.TELEVISION_CHANNEL, gameLocator, newTelevisionChannel) {
@@ -182,13 +182,15 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * Create a {@link GameUpdateCommand} that updates a game's bondholder tickets availability date.
+	 * Create a {@link GameUpdateCommand} that updates a game's bondholder tickets
+	 * availability date.
 	 * 
 	 * @param gameLocator
 	 *          The locator to use to locate the game.
 	 * @param newBondHolderTicketsAvailable
 	 *          The new date for bond holder ticket availabilty.
-	 * @return A {@link GameUpdateCommand} that updates a game's bondholder availability tickets date.
+	 * @return A {@link GameUpdateCommand} that updates a game's bondholder
+	 *         availability tickets date.
 	 */
 	public static GameUpdateCommand bondHolderTickets(GameLocator gameLocator, DateTime newBondHolderTicketsAvailable) {
 		return new InternalGameUpdateCommand<DateTime>(Type.BONDHOLDER_TICKETS, gameLocator, newBondHolderTicketsAvailable) {
@@ -205,16 +207,20 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * Create a {@link GameUpdateCommand} that updates a game's priority points tickets availability date.
+	 * Create a {@link GameUpdateCommand} that updates a game's priority points
+	 * tickets availability date.
 	 * 
 	 * @param gameLocator
 	 *          The locator to use to locate the game.
 	 * @param newPriorityPointTicketsAvailable
 	 *          The new date for priority point ticket availabilty.
-	 * @return A {@link GameUpdateCommand} that updates a game's priority points tickets availability date.
+	 * @return A {@link GameUpdateCommand} that updates a game's priority points
+	 *         tickets availability date.
 	 */
-	public static GameUpdateCommand priorityPointTickets(GameLocator gameLocator, DateTime newPriorityPointTicketsAvailable) {
-		return new InternalGameUpdateCommand<DateTime>(Type.PRIORITY_POINT_POST_TICKETS, gameLocator, newPriorityPointTicketsAvailable) {
+	public static GameUpdateCommand priorityPointTickets(GameLocator gameLocator,
+			DateTime newPriorityPointTicketsAvailable) {
+		return new InternalGameUpdateCommand<DateTime>(Type.PRIORITY_POINT_POST_TICKETS, gameLocator,
+				newPriorityPointTicketsAvailable) {
 			@Override
 			protected DateTime getCurrentValue(Game game) {
 				return game.getDateTimePriorityPointPostAvailable();
@@ -228,13 +234,15 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * Create a {@link GameUpdateCommand} that updates a game's season tickets availability date.
+	 * Create a {@link GameUpdateCommand} that updates a game's season tickets
+	 * availability date.
 	 * 
 	 * @param gameLocator
 	 *          The locator to use to locate the game.
 	 * @param newSeasonTicketsAvailable
 	 *          The new date for season ticket availabilty.
-	 * @return A {@link GameUpdateCommand} that updates a game's season ticket availability date.
+	 * @return A {@link GameUpdateCommand} that updates a game's season ticket
+	 *         availability date.
 	 */
 	public static GameUpdateCommand seasonTickets(GameLocator gameLocator, DateTime newSeasonTicketsAvailable) {
 		return new InternalGameUpdateCommand<DateTime>(Type.SEASON_TICKETS, gameLocator, newSeasonTicketsAvailable) {
@@ -251,13 +259,15 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * Create a {@link GameUpdateCommand} that updates a game's academy tickets availability date.
+	 * Create a {@link GameUpdateCommand} that updates a game's academy tickets
+	 * availability date.
 	 * 
 	 * @param gameLocator
 	 *          The locator to use to locate the game.
 	 * @param newAcademyTicketsAvailable
 	 *          The new date for academy ticket availabilty.
-	 * @return A {@link GameUpdateCommand} that updates a game's academy ticket availability date.
+	 * @return A {@link GameUpdateCommand} that updates a game's academy ticket
+	 *         availability date.
 	 */
 	public static GameUpdateCommand academyTickets(GameLocator gameLocator, DateTime newAcademyTicketsAvailable) {
 		return new InternalGameUpdateCommand<DateTime>(Type.ACADEMY_TICKETS, gameLocator, newAcademyTicketsAvailable) {
@@ -274,16 +284,19 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * Create a {@link GameUpdateCommand} that updates a game's general sale tickets availability date.
+	 * Create a {@link GameUpdateCommand} that updates a game's general sale
+	 * tickets availability date.
 	 * 
 	 * @param gameLocator
 	 *          The locator to use to locate the game.
 	 * @param newGeneralSaleTicketsAvailable
 	 *          The new date for general sale ticket availabilty.
-	 * @return A {@link GameUpdateCommand} that updates a game's general sale ticket availability date.
+	 * @return A {@link GameUpdateCommand} that updates a game's general sale
+	 *         ticket availability date.
 	 */
 	public static GameUpdateCommand generalSaleTickets(GameLocator gameLocator, DateTime newGeneralSaleTicketsAvailable) {
-		return new InternalGameUpdateCommand<DateTime>(Type.GENERAL_SALE_TICKETS, gameLocator, newGeneralSaleTicketsAvailable) {
+		return new InternalGameUpdateCommand<DateTime>(Type.GENERAL_SALE_TICKETS, gameLocator,
+				newGeneralSaleTicketsAvailable) {
 			@Override
 			protected DateTime getCurrentValue(Game game) {
 				return game.getDateTimeGeneralSaleAvailable();
@@ -297,16 +310,67 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * An enumeration to allow the difference {@link GameUpdateCommand}s to be ordered in a sorted set.
+	 * An enumeration to allow the difference {@link GameUpdateCommand}s to be
+	 * ordered in a sorted set.
+	 * 
 	 * @author alex
-	 *
+	 * 
 	 */
 	static enum Type {
-		DATE_PLAYED, RESULT, ATTENDENCE, MATCH_REPORT, TELEVISION_CHANNEL, ATTENDED, 
-		BONDHOLDER_TICKETS, PRIORITY_POINT_POST_TICKETS, SEASON_TICKETS, ACADEMY_TICKETS, GENERAL_SALE_TICKETS
+		/**
+		 * The type for date played updates.
+		 */
+		DATE_PLAYED,
+		/**
+		 * The type for result updates.
+		 */
+		RESULT,
+		/**
+		 * The type for attendence updates.
+		 */
+		ATTENDENCE,
+		/**
+		 * The type for match report updates.
+		 */
+		MATCH_REPORT,
+		/**
+		 * The type for television channel updates.
+		 */
+		TELEVISION_CHANNEL,
+		/**
+		 * The type for attendence updates.
+		 */
+		ATTENDED,
+		/**
+		 * The type for changing the Bondholder ticket selling dates.
+		 */
+		BONDHOLDER_TICKETS,
+		/**
+		 * The type for changing the priority point ticket selling dates.
+		 */
+		PRIORITY_POINT_POST_TICKETS,
+		/**
+		 * The type for changing the season ticket holder ticket selling dates.
+		 */
+		SEASON_TICKETS,
+		/**
+		 * The type for changing the Academy members' ticket selling dates.
+		 */
+		ACADEMY_TICKETS,
+		/**
+		 * The type for changing the general sale ticket selling dates.
+		 */
+		GENERAL_SALE_TICKETS
 	}
 
+	/**
+	 * The {@link GameLocator} to use for finding which game this {@link GameUpdateCommand} will update.
+	 */
 	private final GameLocator i_gameLocator;
+	
+	/**
+	 * The {@link Type} of this {@link GameUpdateCommand}.
+	 */
 	private final Type i_type;
 
 	protected GameUpdateCommand(Type type, GameLocator gameLocator) {
@@ -316,12 +380,15 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * Update a game. No check is made to see if the correct game is being updated.
-	 * @param game The game to update.
+	 * Update a game. No check is made to see if the correct game is being
+	 * updated.
+	 * 
+	 * @param game
+	 *          The game to update.
 	 * @return True if the game was updated, false otherwise.
 	 */
 	public abstract boolean update(Game game);
-	
+
 	@Override
 	public int compareTo(GameUpdateCommand o) {
 		int cmp = getGameLocator().compareTo(o.getGameLocator());
@@ -335,15 +402,26 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	public boolean equals(Object obj) {
 		return obj instanceof GameUpdateCommand && compareTo((GameUpdateCommand) obj) == 0;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(getType(), getGameLocator());
+	}
 	
 	/**
-	 * A subclass of {@link GameUpdateCommand} that actually attempts to update a game.
+	 * A subclass of {@link GameUpdateCommand} that actually attempts to update a
+	 * game.
+	 * 
 	 * @author alex
-	 *
-	 * @param <V> The type of the value that may be updated.
+	 * 
+	 * @param <V>
+	 *          The type of the value that may be updated.
 	 */
-	protected static abstract class InternalGameUpdateCommand<V> extends GameUpdateCommand {
+	protected abstract static class InternalGameUpdateCommand<V> extends GameUpdateCommand {
 
+		/**
+		 * The new value to that will be used to update the game.
+		 */
 		private final V i_newValue;
 
 		protected InternalGameUpdateCommand(Type type, GameLocator gameLocator, V newValue) {
@@ -355,7 +433,8 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		public String toString() {
 			return String.format("{%s: %s <- %s}", getGameLocator(), getType(), getNewValue());
 		}
-		
+
+		@Override
 		public boolean update(Game game) {
 			if (getNewValue() == null || getNewValue().equals(getCurrentValue(game))) {
 				return false;
@@ -365,15 +444,19 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		}
 
 		/**
-		 * @param game The game to check.
+		 * @param game
+		 *          The game to check.
 		 * @return The current value of the current game.
 		 */
 		protected abstract V getCurrentValue(Game game);
 
 		/**
 		 * Alter a game.
-		 * @param game The game to alter.
-		 * @param newValue The new value to assign to the game.
+		 * 
+		 * @param game
+		 *          The game to alter.
+		 * @param newValue
+		 *          The new value to assign to the game.
 		 */
 		protected abstract void setNewValue(Game game, V newValue);
 

@@ -27,12 +27,18 @@ package uk.co.unclealex.hammers.calendar.server.update;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
+ * A {@link Runnable} that wraps and delegates to another {@link Runnable} but makes
+ * sure it is run in a {@link Transactional} context. This class is required to make sure
+ * that jobs not run in a servlet based thread are still transactional.
  * @author alex
  *
  */
 @Transactional
 public class TransactionalRunnableDelegate implements Runnable {
 
+	/**
+	 * The {@link Runnable} to wrap and delegate to.
+	 */
 	private Runnable i_runnable;
 	
 	@Override

@@ -1,18 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,51 +21,73 @@ import javax.persistence.Transient;
  * @author unclealex72
  *
  */
+package uk.co.unclealex.hammers.calendar.server.model;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+/**
+ * An oauth token is used by Google to authenticate this application.
+ * @author alex
+ *
+ */
 @Entity
-@Table(name="oauth")
+@Table(name = "oauth")
 public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, OauthToken> {
 
+	/**
+	 * The primary key of this token.
+	 */
 	private Integer i_id;
+	
+	/**
+	 * The type of this token.
+	 */
 	private OauthTokenType i_tokenType;
+	
+	/**
+	 * The token string to be passed to and from Google.
+	 */
 	private String i_token;
 
 	protected OauthToken() {
 		// Default constructor for ORM.
 	}
-	
+
 	public OauthToken(OauthTokenType tokenType, String token) {
 		super();
 		i_tokenType = tokenType;
 		i_token = token;
 	}
 
-
-	@Override @Transient
+	@Override
+	@Transient
 	public OauthTokenType getBusinessKey() {
 		return getTokenType();
 	}
-	
+
 	@Override
 	public void setBusinessKey(OauthTokenType businessKey) {
 		setTokenType(businessKey);
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof OauthToken && isEqual((OauthToken) obj);
-	}
-	
+
 	@Enumerated(EnumType.STRING)
-	@Column(unique=true, nullable=false)
+	@Column(unique = true, nullable = false)
 	public OauthTokenType getTokenType() {
 		return i_tokenType;
 	}
-	
+
 	public void setTokenType(OauthTokenType tokenType) {
 		i_tokenType = tokenType;
 	}
-	
-	@Column(nullable=false)
+
+	@Column(nullable = false)
 	public String getToken() {
 		return i_token;
 	}
@@ -88,7 +96,8 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 		i_token = token;
 	}
 
-	@Id @GeneratedValue
+	@Id
+	@GeneratedValue
 	public Integer getId() {
 		return i_id;
 	}
@@ -96,7 +105,5 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 	public void setId(Integer id) {
 		i_id = id;
 	}
-	
-	
-	
+
 }

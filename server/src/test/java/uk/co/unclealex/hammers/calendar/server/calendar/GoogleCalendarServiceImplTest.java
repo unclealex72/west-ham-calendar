@@ -43,7 +43,6 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import uk.co.unclealex.hammers.calendar.server.calendar.UpdateChangeLog.Action;
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendarFactory;
 import uk.co.unclealex.hammers.calendar.server.dao.CalendarConfigurationDao;
@@ -209,7 +208,7 @@ public class GoogleCalendarServiceImplTest {
 			else {
 				if (calendarType == CalendarType.HOME) {
 					// Add that game 4 will be removed as it vanished from the database.
-					expectedUpdateChangeLogs.add(new UpdateChangeLog(Action.REMOVED, game4.getId().toString(), googleCalendar));					
+					expectedUpdateChangeLogs.add(new RemovedChangeLog(googleCalendar, game4.getId().toString()));					
 				}
 				populateExpectedAdditionLog(googleCalendar, expectedUpdateChangeLogs);
 			}
@@ -225,8 +224,8 @@ public class GoogleCalendarServiceImplTest {
 	 */
 	protected void populateExpectedAttendedLog(GoogleCalendar googleCalendar,
 			SortedSet<UpdateChangeLog> expectedUpdateChangeLogs) {
-		expectedUpdateChangeLogs.add(new UpdateChangeLog(Action.REMOVED, game1, googleCalendar));
-		expectedUpdateChangeLogs.add(new UpdateChangeLog(Action.ADDED, game3, googleCalendar));
+		expectedUpdateChangeLogs.add(new RemovedChangeLog(googleCalendar, game1.getId().toString()));
+		expectedUpdateChangeLogs.add(new AddedChangeLog(googleCalendar, game3));
 	}
 
 	/**
@@ -235,8 +234,8 @@ public class GoogleCalendarServiceImplTest {
 	 */
 	protected void populateExpectedUnattendedLog(GoogleCalendar googleCalendar,
 			SortedSet<UpdateChangeLog> expectedUpdateChangeLogs) {
-		expectedUpdateChangeLogs.add(new UpdateChangeLog(Action.ADDED, game1, googleCalendar));
-		expectedUpdateChangeLogs.add(new UpdateChangeLog(Action.UPDATED, game2, googleCalendar));
+		expectedUpdateChangeLogs.add(new AddedChangeLog(googleCalendar, game1));
+		expectedUpdateChangeLogs.add(new UpdatedChangeLog(googleCalendar, game2));
 	}
 
 	/**
@@ -248,7 +247,7 @@ public class GoogleCalendarServiceImplTest {
 		Function<Game, UpdateChangeLog> function = new Function<Game, UpdateChangeLog>() {
 			@Override
 			public UpdateChangeLog apply(Game game) {
-				return new UpdateChangeLog(Action.ADDED, game, googleCalendar);
+				return new AddedChangeLog(googleCalendar, game);
 			}
 		};
 		Iterables.addAll(expectedUpdateChangeLogs, Iterables.transform(

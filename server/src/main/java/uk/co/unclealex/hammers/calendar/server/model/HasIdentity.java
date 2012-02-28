@@ -1,11 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import java.io.Serializable;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,12 +18,22 @@ import java.io.Serializable;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.server.model;
+
+import java.io.Serializable;
+
+/**
+ * An interface that can be used by a model to show that it has a primary key.
+ * @author alex
  *
  */
 public interface HasIdentity extends Serializable {
 
-	public Integer getId();
+	/**
+	 * Get the primary key of the model.
+	 * @return The primary key of the model.
+	 */
+	Integer getId();
 	
-	//public void setId(Integer id);
 }

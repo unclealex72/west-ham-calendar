@@ -78,9 +78,9 @@ public interface GoogleCalendarDao {
 	 * @throws GoogleAuthenticationFailedException
 	 *           Thrown if the application cannot authenticate itself.
 	 */
-	public GameUpdateInformation createOrUpdateGame(String calendarId, String eventId, String gameId,
-			Competition competition, Location location, String opponents, Interval gameInterval, String result,
-			Integer attendence, String matchReport, String televisionChannel, boolean busy) throws IOException,
+	GameUpdateInformation createOrUpdateGame(String calendarId, String eventId, String gameId, Competition competition,
+			Location location, String opponents, Interval gameInterval, String result, Integer attendence,
+			String matchReport, String televisionChannel, boolean busy) throws IOException,
 			GoogleAuthenticationFailedException;
 
 	/**
@@ -97,7 +97,7 @@ public interface GoogleCalendarDao {
 	 * @throws GoogleAuthenticationFailedException
 	 *           Thrown if the application cannot authenticate itself.
 	 */
-	public void removeGame(String calendarId, String eventId, String gameId) throws IOException,
+	void removeGame(String calendarId, String eventId, String gameId) throws IOException,
 			GoogleAuthenticationFailedException;
 
 	/**
@@ -118,7 +118,7 @@ public interface GoogleCalendarDao {
 	 * @throws GoogleAuthenticationFailedException
 	 *           Thrown if the application cannot authenticate itself.
 	 */
-	public void moveGame(String sourceCalendarId, String targetCalendarId, String eventId, String gameId, boolean busy)
+	void moveGame(String sourceCalendarId, String targetCalendarId, String eventId, String gameId, boolean busy)
 			throws IOException, GoogleAuthenticationFailedException;
 
 	/**
@@ -136,7 +136,7 @@ public interface GoogleCalendarDao {
 	 * @throws GoogleAuthenticationFailedException
 	 *           Thrown if the application cannot authenticate itself.
 	 */
-	public String findGame(String calendarId, String gameId, DateTime searchDate) throws IOException,
+	String findGame(String calendarId, String gameId, DateTime searchDate) throws IOException,
 			GoogleAuthenticationFailedException;
 
 	/**
@@ -144,6 +144,8 @@ public interface GoogleCalendarDao {
 	 * 
 	 * @param calendarId
 	 *          The id of the calendar to update or null to create a calendar.
+	 * @param calendarTitle
+	 *          The title of the calendar to update or create.
 	 * @param calendarDescription
 	 *          The description of the calender.
 	 * @return The id of the calendar.
@@ -152,8 +154,8 @@ public interface GoogleCalendarDao {
 	 * @throws GoogleAuthenticationFailedException
 	 *           Thrown if the application cannot authenticate itself.
 	 */
-	public String createOrUpdateCalendar(String calendarId, String calendarTitle, String calendarDescription) throws IOException,
-			GoogleAuthenticationFailedException;
+	String createOrUpdateCalendar(String calendarId, String calendarTitle, String calendarDescription)
+			throws IOException, GoogleAuthenticationFailedException;
 
 	/**
 	 * List all the games in a calendar.
@@ -166,7 +168,6 @@ public interface GoogleCalendarDao {
 	 * @throws GoogleAuthenticationFailedException
 	 *           Thrown if the application cannot authenticate itself.
 	 */
-	public BiMap<String, String> listGameIdsByEventId(String calendarId) throws IOException,
-			GoogleAuthenticationFailedException;
+	BiMap<String, String> listGameIdsByEventId(String calendarId) throws IOException, GoogleAuthenticationFailedException;
 
 }

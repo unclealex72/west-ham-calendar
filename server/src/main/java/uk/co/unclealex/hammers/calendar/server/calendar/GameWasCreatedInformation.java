@@ -31,6 +31,9 @@ package uk.co.unclealex.hammers.calendar.server.calendar;
  */
 public class GameWasCreatedInformation implements GameUpdateInformation {
 
+	/**
+	 * The Google Calendar event id of the game that was created.
+	 */
 	private final String i_eventId;
 	
 	/**
@@ -50,9 +53,6 @@ public class GameWasCreatedInformation implements GameUpdateInformation {
 		visitor.visit(this);
 	}
 
-	/**
-	 * @return The id of the newly created event.
-	 */
 	public String getEventId() {
 		return i_eventId;
 	}

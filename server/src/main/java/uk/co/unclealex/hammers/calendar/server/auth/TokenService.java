@@ -36,19 +36,19 @@ public interface TokenService {
 	 * @param accessToken The access token.
 	 * @param refreshToken The refresh token.
 	 */
-	public void installTokens(String accessToken, String refreshToken);
+	void installTokens(String accessToken, String refreshToken);
 	
 	/**
 	 * Store a new access token (in the case that an old one has expired).
 	 * @param refreshedAccessToken The new token returned from Google.
 	 */
-	public void updateAccessToken(String refreshedAccessToken);
+	void updateAccessToken(String refreshedAccessToken);
 	
 	/**
 	 * Retrieve the currently stored tokens.
 	 * @return The currently stored tokens.
 	 */
-	public CurrentTokens getCurrentTokens();
+	CurrentTokens getCurrentTokens();
 	
 	/**
 	 * A simple bean to hold the currently stored tokens.
@@ -61,12 +61,12 @@ public interface TokenService {
 		 * Get the current access token.
 		 * @return The current access token or null if one does not exist.
 		 */
-		public String getAccessToken();
+		String getAccessToken();
 		
 		/**
 		 * Get the current refresh token.
 		 * @return The current refresh token or null if one does not exist.
 		 */
-		public String getRefreshToken();
+		String getRefreshToken();
 	}
 }

@@ -1,11 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.dao;
-
-import uk.co.unclealex.hammers.calendar.server.model.HasIdentity;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,18 +18,47 @@ import uk.co.unclealex.hammers.calendar.server.model.HasIdentity;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.server.dao;
+
+import uk.co.unclealex.hammers.calendar.server.model.HasIdentity;
+
+/**
+ * An interface for data access objects that takes care of create, read, update and delete operations.
+ * @author alex
  *
+ * @param <M> The type of model that this data access object is for.
  */
 public interface CrudDao<M extends HasIdentity> {
 
-	public void saveOrUpdate(M... models);
+	/**
+	 * Create or update a list of model beans.
+	 * @param models The list of model beans.
+	 */
+	void saveOrUpdate(M... models);
 
-	public void saveOrUpdate(Iterable<M> models);
+	/**
+	 * Create or update a list of model beans.
+	 * @param models The list of model beans.
+	 */
+	void saveOrUpdate(Iterable<M> models);
 	
-	public Iterable<M> getAll();
+	/**
+	 * Get all the persisted models.
+	 * @return A list of all available model beans.
+	 */
+	Iterable<M> getAll();
 	
-	public M findById(Integer id);
+	/**
+	 * Find a model by its primary key.
+	 * @param id The primary key to search for.
+	 * @return The model with the given primary key or null if no such model exists.
+	 */
+	M findById(Integer id);
 	
-	public void remove(Integer id);
+	/**
+	 * Remove a model.
+	 * @param id The id of the model to remove.
+	 */
+	void remove(Integer id);
 }

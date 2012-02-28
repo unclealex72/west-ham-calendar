@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.html;

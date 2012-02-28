@@ -41,12 +41,21 @@ public interface CalendarFactory {
 	/**
 	 * Create a new Google {@link Calendar} object.
 	 * @return A new, authenticated Google {@link Calendar} object.
-	 * @throws IOException
+	 * @throws IOException Thrown if there is a network problem.
 	 * @throws GoogleAuthenticationFailedException 
 	 */
-	public Calendar createCalendar() throws IOException, GoogleAuthenticationFailedException;
+	Calendar createCalendar() throws IOException, GoogleAuthenticationFailedException;
 	
-	public String getAuthorisationUrl();
+	/**
+	 * Get the authorisation URL supplied by Google.
+	 * @return The Google Calendar API authorisation URL.
+	 */
+	String getAuthorisationUrl();
 	
-	public void installAuthorisationCode(String authorisationCode) throws IOException;
+	/**
+	 * Install an authorisation code so that access and refresh tokens can be requested from Google.
+	 * @param authorisationCode The authorisation code supplied by Google.
+	 * @throws IOException Thrown if there are any issues getting the access and refresh tokens.
+	 */
+	void installAuthorisationCode(String authorisationCode) throws IOException;
 }

@@ -1,13 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.dao;
-
-import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
-
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,10 +18,23 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.server.dao;
+
+import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
+import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+
+/**
+ * The data access object for {@link CalendarConfiguration}s.
+ * @author alex
  *
  */
 public interface CalendarConfigurationDao extends BusinessCrudDao<CalendarType, CalendarConfiguration> {
 
-	public CalendarConfiguration findByGoogleCalendarId(String googleCalendarId);
+	/**
+	 * Find the {@link CalendarConfiguration} with the given google calendar id.
+	 * @param googleCalendarId The id to search for.
+	 * @return The {@link CalendarConfiguration} with the given google calendar id or null if one could not be found.
+	 */
+	CalendarConfiguration findByGoogleCalendarId(String googleCalendarId);
 }

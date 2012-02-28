@@ -54,7 +54,7 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 	 * @throws IOException
 	 * @throws GoogleAuthenticationFailedException
 	 */
-	public abstract StringAndDurationFieldType findGameAndDurationFieldType(String calendarId, String gameId,
+	public abstract GameIdAndDurationFieldType findGameAndDurationFieldType(String calendarId, String gameId,
 			DateTime searchDate) throws IOException, GoogleAuthenticationFailedException;
 
 	/**
@@ -63,17 +63,17 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 	@Override
 	public final String findGame(String calendarId, String gameId, DateTime searchDate) throws IOException,
 			GoogleAuthenticationFailedException {
-		StringAndDurationFieldType stringAndDurationFieldType = findGameAndDurationFieldType(calendarId, gameId, searchDate);
-		return stringAndDurationFieldType == null ? null : stringAndDurationFieldType.string;
+		GameIdAndDurationFieldType type = findGameAndDurationFieldType(calendarId, gameId, searchDate);
+		return type == null ? null : type.getGameId();
 	}
 
 	/**
-	 * @return The array of {@link DurationFieldType}s to use when searching for a game.
+	 * @return The array of {@link DurationFieldType}s to use when searching for a
+	 *         game.
 	 */
 	protected DurationFieldType[] durationFieldTypes() {
-		return new DurationFieldType[] { DurationFieldType.hours(),
-				DurationFieldType.days(), DurationFieldType.weeks(), DurationFieldType.months(), DurationFieldType.years(),
-				null };
+		return new DurationFieldType[] { DurationFieldType.hours(), DurationFieldType.days(), DurationFieldType.weeks(),
+				DurationFieldType.months(), DurationFieldType.years(), null };
 	}
 
 	/**
@@ -82,16 +82,32 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 	 * @author alex
 	 * 
 	 */
-	class StringAndDurationFieldType {
+	class GameIdAndDurationFieldType {
 
-		public StringAndDurationFieldType(String string, DurationFieldType durationFieldType) {
+		/**
+		 * The game id.
+		 */
+		private final String i_gameId;
+		
+		/**
+		 * The {@link DurationFieldType} that found the game.
+		 */
+		private final DurationFieldType i_durationFieldType;
+
+		public GameIdAndDurationFieldType(String gameId, DurationFieldType durationFieldType) {
 			super();
-			this.string = string;
-			this.durationFieldType = durationFieldType;
+			i_gameId = gameId;
+			i_durationFieldType = durationFieldType;
 		}
 
-		String string;
-		DurationFieldType durationFieldType;
+		public String getGameId() {
+			return i_gameId;
+		}
+
+		public DurationFieldType getDurationFieldType() {
+			return i_durationFieldType;
+		}
+
 	}
 
 }

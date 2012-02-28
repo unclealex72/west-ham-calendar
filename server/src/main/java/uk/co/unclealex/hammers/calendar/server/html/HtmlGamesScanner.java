@@ -44,5 +44,5 @@ public interface HtmlGamesScanner {
 	 * @return A set of changes found.
 	 * @throws IOException Thrown if there are any network problems.
 	 */
-	public SortedSet<GameUpdateCommand> scan(URI uri) throws IOException;
+	SortedSet<GameUpdateCommand> scan(URI uri) throws IOException;
 }

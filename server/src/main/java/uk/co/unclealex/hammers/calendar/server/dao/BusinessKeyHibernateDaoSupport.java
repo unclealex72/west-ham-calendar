@@ -1,20 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.dao;
-
-import java.io.Serializable;
-import java.util.Map;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
-
-import uk.co.unclealex.hammers.calendar.server.model.HasBusinessKey;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -34,15 +18,38 @@ import uk.co.unclealex.hammers.calendar.server.model.HasBusinessKey;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
-public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Comparable<K>, M extends HasBusinessKey<K>> extends GenericHibernateDaoSupport<M> implements BusinessCrudDao<K, M>, Function<M, K> {
+package uk.co.unclealex.hammers.calendar.server.dao;
 
-	private final String i_businessKeyProperty;
-	
+import java.io.Serializable;
+import java.util.Map;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
+
+import uk.co.unclealex.hammers.calendar.server.model.HasBusinessKey;
+
+/**
+ * An implementation of {@link BusinessCrudDao} using Hibernate.
+ * @author alex
+ *
+ * @param <K>
+ * @param <M>
+ */
+public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Comparable<K>, M extends HasBusinessKey<K>>
+		extends GenericHibernateDaoSupport<M> implements BusinessCrudDao<K, M> {
+
 	/**
-	 * @param clazz
+	 * The name of the property that is the model's business key.
+	 */
+	private final String i_businessKeyProperty;
+
+	/**
+	 * @param clazz The class of the model.
+	 * @param businessKeyProperty The name of the property that is the model's business key.
 	 */
 	public BusinessKeyHibernateDaoSupport(Class<M> clazz, String businessKeyProperty) {
 		super(clazz);
@@ -51,8 +58,9 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 
 	@Override
 	public M findByKey(K key) {
-		Query query = 
-				getSession().createQuery("from " + getEntityName() + " where " + getBusinessKeyProperty() + " = :businessKey").setParameter("businessKey", key);
+		Query query = getSession().createQuery(
+				"from " + getEntityName() + " where " + getBusinessKeyProperty() + " = :businessKey").setParameter(
+				"businessKey", key);
 		return unique(query);
 	}
 
@@ -60,21 +68,29 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 	public void remove(K key) {
 		Session session = getSession();
 		Query query = session.createQuery(
-				"delete from " + getEntityName() + " where " + getBusinessKeyProperty() + " = :businessKey").
-				setParameter("businessKey", key);
+				"delete from " + getEntityName() + " where " + getBusinessKeyProperty() + " = :businessKey").setParameter(
+				"businessKey", key);
 		query.executeUpdate();
 		session.flush();
 	}
 
 	@Override
 	public Map<K, M> getAllByKey() {
-		return Maps.uniqueIndex(getAll(), this);
+		return Maps.uniqueIndex(getAll(), createBusinessKeyFunction());
 	}
-	
-	public K apply(M model) {
-		return model.getBusinessKey();
+
+	/**
+	 * Create a {@link Function} that gets a business key from a model.
+	 * @return A {@link Function} that gets a business key from a model.
+	 */
+	protected Function<M, K> createBusinessKeyFunction() {
+		return new Function<M, K>() {
+			public K apply(M model) {
+				return model.getBusinessKey();
+			}
+		};
 	}
-	
+
 	public String getBusinessKeyProperty() {
 		return i_businessKeyProperty;
 	}

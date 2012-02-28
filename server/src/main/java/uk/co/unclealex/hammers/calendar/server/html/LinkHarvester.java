@@ -45,5 +45,5 @@ public interface LinkHarvester {
 	 * @return A list of links to further scan for games.
 	 * @throws IOException Thrown if there are any issues reading the document.
 	 */
-	public List<URI> harvestLinks(URI pageUri, TagNode tagNode) throws IOException;
+	List<URI> harvestLinks(URI pageUri, TagNode tagNode) throws IOException;
 }

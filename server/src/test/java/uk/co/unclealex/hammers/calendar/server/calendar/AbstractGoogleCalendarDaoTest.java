@@ -37,7 +37,7 @@ import org.joda.time.Interval;
 import org.junit.Assert;
 import org.junit.Test;
 
-import uk.co.unclealex.hammers.calendar.server.calendar.DurationFindingAwareGoogleCalendarDao.StringAndDurationFieldType;
+import uk.co.unclealex.hammers.calendar.server.calendar.DurationFindingAwareGoogleCalendarDao.GameIdAndDurationFieldType;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
@@ -200,7 +200,8 @@ public abstract class AbstractGoogleCalendarDaoTest {
 		checker.update(true);
 		checker.busy = false;
 		checker.update(true);
-		// Check that updating an empty description with an empty description does not cause an update.
+		// Check that updating an empty description with an empty description does
+		// not cause an update.
 		checker.attendence = null;
 		checker.matchReport = null;
 		checker.televisionChannel = null;
@@ -242,23 +243,24 @@ public abstract class AbstractGoogleCalendarDaoTest {
 		tests.put(dateOf(11, 8, 1980, 15, 12), null);
 		for (Entry<DateTime, DurationFieldType> entry : tests.entrySet()) {
 			DateTime dateTime = entry.getKey();
-			StringAndDurationFieldType stringAndDurationFieldType = getGoogleCalendarDao().findGameAndDurationFieldType(
+			GameIdAndDurationFieldType gameIdAndDurationFieldType = getGoogleCalendarDao().findGameAndDurationFieldType(
 					calendarId, "1", dateTime);
-			Assert.assertNotNull("The game could not be found.", stringAndDurationFieldType.string);
-			Assert.assertEquals("The wrong game was found.", eventId, stringAndDurationFieldType.string);
+			Assert.assertNotNull("The game could not be found.", gameIdAndDurationFieldType.getGameId());
+			Assert.assertEquals("The wrong game was found.", eventId, gameIdAndDurationFieldType.getGameId());
 			DurationFieldType durationFieldType = entry.getValue();
 			if (durationFieldType == null) {
-				Assert.assertNull("The wrong duration was successful.", stringAndDurationFieldType.durationFieldType);
+				Assert.assertNull("The wrong duration was successful.", gameIdAndDurationFieldType.getDurationFieldType());
 			}
 			else {
 				Assert.assertEquals("The wrong duration was successful.", durationFieldType,
-						stringAndDurationFieldType.durationFieldType);
+						gameIdAndDurationFieldType.getDurationFieldType());
 			}
 		}
-		StringAndDurationFieldType stringAndDurationFieldType = getGoogleCalendarDao().findGameAndDurationFieldType(
+		GameIdAndDurationFieldType gameIdAndDurationFieldType = getGoogleCalendarDao().findGameAndDurationFieldType(
 				calendarId, "2", dateOf(11, 8, 1973, 15, 12));
-		Assert.assertNull("A game was found when it should not have been.", stringAndDurationFieldType.string);
-		Assert.assertNull("A game was found when it should not have been.", stringAndDurationFieldType.durationFieldType);
+		Assert.assertNull("A game was found when it should not have been.", gameIdAndDurationFieldType.getGameId());
+		Assert.assertNull("A game was found when it should not have been.",
+				gameIdAndDurationFieldType.getDurationFieldType());
 	}
 
 	@Test
@@ -358,7 +360,8 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	@Test
 	public void testListGameIdsByEventId() throws IOException, GoogleAuthenticationFailedException {
 		String calendarId = getPrimaryCalendarId();
-		DateTime nowish = new DateTime(DateTimeZone.forID("Europe/London")).withMinuteOfHour(0).withSecondOfMinute(0).withMillisOfSecond(0);
+		DateTime nowish = new DateTime(DateTimeZone.forID("Europe/London")).withMinuteOfHour(0).withSecondOfMinute(0)
+				.withMillisOfSecond(0);
 		int weeksToAdd = 26;
 		Map<String, String> expectedGameIdsByEventId = Maps.newTreeMap();
 		for (int idx = 0; idx < 30; idx++) {

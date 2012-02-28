@@ -33,6 +33,7 @@ import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFa
 
 import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpStatusCodes;
 
 /**
  * A handler to allow proxies to intercept {@link IOException} and see if what actually was
@@ -42,6 +43,9 @@ import com.google.api.client.http.HttpResponseException;
  */
 public class GoogleAuthenticationAwareInvocationHandler implements InvocationHandler {
 
+	/**
+	 * The {@link GoogleCalendarDao} that is being proxied.
+	 */
 	private final GoogleCalendarDao i_googleCalendarDao;
 
 	public GoogleAuthenticationAwareInvocationHandler(GoogleCalendarDao googleCalendarDao) {
@@ -58,7 +62,7 @@ public class GoogleAuthenticationAwareInvocationHandler implements InvocationHan
 			final Throwable targetException = e.getTargetException();
 			if (targetException instanceof HttpResponseException) {
 				final HttpResponse response = ((HttpResponseException) targetException).getResponse();
-				if (response.getStatusCode() == 403) {
+				if (response.getStatusCode() == HttpStatusCodes.STATUS_CODE_FORBIDDEN) {
 					throw new GoogleAuthenticationFailedException(response.getRequest().getMethod().name() + ": "
 							+ response.getRequest().getUrl().build(), targetException);
 				}

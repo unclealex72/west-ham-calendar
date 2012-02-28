@@ -40,17 +40,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The default implementation of {@link MainPageService}.
+ * 
  * @author alex
  * 
  */
 public class MainPageServiceImpl implements MainPageService {
 
 	private static final Logger log = LoggerFactory.getLogger(MainPageServiceImpl.class);
-	
+
+	/**
+	 * The URI for the main web page.
+	 */
 	private final URI i_mainPageUri;
+
+	/**
+	 * The URI for the tickets web page.
+	 */
 	private URI i_ticketsUri;
+
+	/**
+	 * The URI for the fixtures web page.
+	 */
 	private URI i_fixturesUri;
 
+	/**
+	 * The {@link HtmlPageLoader} used to load the main page.
+	 */
 	private HtmlPageLoader i_htmlPageLoader;
 
 	public MainPageServiceImpl(String mainPageUrl) throws URISyntaxException {
@@ -58,24 +74,35 @@ public class MainPageServiceImpl implements MainPageService {
 		i_mainPageUri = new URI(mainPageUrl);
 	}
 
+	/**
+	 * Initialise this service by finding the tickets and fixtures links.
+	 * 
+	 * @throws IOException
+	 */
 	@PostConstruct
 	public void initialise() throws IOException {
 		URL mainPageUrl = getMainPageUri().toURL();
 		initialise(mainPageUrl);
 	}
 
+	/**
+	 * Initialise this service by finding the tickets and fixtures links.
+	 * 
+	 * @param The
+	 *          URL of the main page.
+	 * @throws IOException
+	 */
 	public void initialise(URL mainPageUrl) throws IOException {
 		TagNode mainPage = getHtmlPageLoader().loadPage(mainPageUrl);
 		TagNodeFilter filter = new TagNodeFilter() {
-			
+
 			@Override
 			public boolean apply(TagNode tagNode) {
 				return "script".equals(tagNode.getName());
 			}
 		};
 		boolean linksFound = false;
-		for (Iterator<TagNode> iter = filter.list(mainPage).iterator(); !linksFound
-				&& iter.hasNext();) {
+		for (Iterator<TagNode> iter = filter.list(mainPage).iterator(); !linksFound && iter.hasNext();) {
 			linksFound |= searchForLinks(iter.next());
 		}
 		if (!linksFound) {
@@ -83,6 +110,14 @@ public class MainPageServiceImpl implements MainPageService {
 		}
 	}
 
+	/**
+	 * Search for and populate the ticket and fixtures link within a javascript
+	 * script element.
+	 * 
+	 * @param scriptNode
+	 *          The {@link TagNode} of the javascript element.
+	 * @return True if the links were found and populated, false otherwise.
+	 */
 	protected boolean searchForLinks(TagNode scriptNode) {
 		Context cx = Context.enter();
 		try {
@@ -104,10 +139,12 @@ public class MainPageServiceImpl implements MainPageService {
 						return false;
 					}
 				}
+
 				@Override
 				public Object get(String id) {
 					return scope.get(id, scope);
 				}
+
 				@Override
 				public Object get(int id) {
 					return scope.get(id, scope);
@@ -119,24 +156,68 @@ public class MainPageServiceImpl implements MainPageService {
 			Context.exit();
 		}
 	}
-	
+
+	/**
+	 * An {@link ObjectSearcher} is an abstract class that can be used to search
+	 * for links in a javascript array.
+	 * 
+	 * @author alex
+	 * 
+	 */
 	abstract class ObjectSearcher {
-		
+
+		/**
+		 * Search a javascript variable context for links.
+		 * 
+		 * @param ids
+		 *          The ids of each javascript variable.
+		 * @return True if a link is found, false otherwise.
+		 */
 		public boolean search(Object[] ids) {
 			boolean found = false;
 			for (int idx = 0; !found && idx < ids.length; idx++) {
 				Object id = ids[idx];
-				Object obj = (id instanceof Number)?get(((Number) id).intValue()):get(id.toString());
-					found |= search(obj);
-				}
-			return found;
+				Object obj = (id instanceof Number) ? get(((Number) id).intValue()) : get(id.toString());
+				found |= search(obj);
 			}
+			return found;
+		}
 
+		/**
+		 * Search an instance of a javascript variable.
+		 * 
+		 * @param obj
+		 *          The javascript variable to search.
+		 * @return True if whatever was being searched for was found, false
+		 *         otherwise.
+		 */
 		public abstract boolean search(Object obj);
+
+		/**
+		 * Get a javascript sub-variable by its interger id.
+		 * 
+		 * @param id
+		 *          The id of the sub-variable.
+		 * @return The value of the sub-variable.
+		 */
 		public abstract Object get(int id);
+
+		/**
+		 * Get a javascript sub-variable by its string id.
+		 * 
+		 * @param id
+		 *          The id of the sub-variable.
+		 * @return The value of the sub-variable.
+		 */
 		public abstract Object get(String id);
 	}
 
+	/**
+	 * Search for links in a javascript array.
+	 * @param array The array to search.
+	 * @param scope The original scope.
+	 * @return True if the links are found, false otherwise.
+	 */
 	protected boolean searchForLinks(final NativeArray array, final Scriptable scope) {
 		ObjectSearcher searcher = new ObjectSearcher() {
 			@Override
@@ -161,10 +242,12 @@ public class MainPageServiceImpl implements MainPageService {
 				}
 				return getFixturesUri() != null && getTicketsUri() != null;
 			}
+
 			@Override
 			public Object get(String id) {
 				return array.get(id);
 			}
+
 			@Override
 			public Object get(int id) {
 				return array.get(id);
@@ -172,7 +255,7 @@ public class MainPageServiceImpl implements MainPageService {
 		};
 		return searcher.search(array.getIds());
 	}
-	
+
 	public URI getTicketsUri() {
 		return i_ticketsUri;
 	}

@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.Strings;
 
 /**
+ * A link harvester that harvests links for ticket selling dates.
  * @author alex
  *
  */

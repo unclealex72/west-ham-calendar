@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A class containing the code to make sure that all Google calendars are synchronised with the database.
  * @author alex
  *
  */
@@ -35,6 +36,9 @@ public class UpdateRunnable implements Runnable {
 
 	private static final Logger log = LoggerFactory.getLogger(UpdateRunnable.class);
 	
+	/**
+	 * The {@link MainUpdateService} used to update the Google calendars.
+	 */
 	private MainUpdateService i_mainUpdateService;
 	
 	@Override

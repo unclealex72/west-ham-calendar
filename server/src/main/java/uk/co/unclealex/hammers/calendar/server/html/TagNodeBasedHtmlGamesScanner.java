@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.html;
@@ -44,8 +42,15 @@ import uk.co.unclealex.hammers.calendar.server.dates.DateService;
 public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 
 	private static final Logger log = LoggerFactory.getLogger(TagNodeBasedHtmlGamesScanner.class);
-	
+
+	/**
+	 * The {@link HtmlPageLoader} used to load web pages.
+	 */
 	private HtmlPageLoader i_htmlPageLoader;
+	
+	/**
+	 * The {@link DateService} to use for date and time manipulation.
+	 */
 	private DateService i_dateService;
 
 	/**

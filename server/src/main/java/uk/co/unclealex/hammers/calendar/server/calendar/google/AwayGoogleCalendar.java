@@ -26,6 +26,11 @@ package uk.co.unclealex.hammers.calendar.server.calendar.google;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
+/**
+ * The {@link GoogleCalendar} for away games.
+ * @author alex
+ *
+ */
 public class AwayGoogleCalendar extends GameGoogleCalendar {
 
 	@Override

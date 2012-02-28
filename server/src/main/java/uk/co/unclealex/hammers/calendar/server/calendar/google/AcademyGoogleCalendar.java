@@ -27,7 +27,11 @@ import org.joda.time.DateTime;
 
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 
-
+/**
+ * The {@link GoogleCalendar} for Academy members' ticket selling dates.
+ * @author alex
+ *
+ */
 public class AcademyGoogleCalendar extends TicketsGoogleCalendar {
 
 	@Override

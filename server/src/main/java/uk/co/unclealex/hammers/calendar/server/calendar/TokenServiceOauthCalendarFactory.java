@@ -33,21 +33,39 @@ import uk.co.unclealex.hammers.calendar.server.auth.TokenService;
  */
 public class TokenServiceOauthCalendarFactory extends AbstractOauthCalendarFactory {
 
+	/**
+	 * The {@link TokenService} used to persist and get Google tokens.
+	 */
 	private TokenService i_tokenService;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void installTokens(String accessToken, String refreshToken) {
 		getTokenService().installTokens(accessToken, refreshToken);
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getRefreshToken() {
 		return getTokenService().getCurrentTokens().getRefreshToken();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String getAccessToken() {
 		return getTokenService().getCurrentTokens().getAccessToken();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public void setAccessToken(String accessToken) {
 		getTokenService().updateAccessToken(accessToken);
 	}

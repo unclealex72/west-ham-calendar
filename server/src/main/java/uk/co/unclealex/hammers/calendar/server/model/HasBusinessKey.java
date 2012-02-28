@@ -1,12 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import java.io.Serializable;
-
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -29,9 +21,27 @@ import java.io.Serializable;
  * @author unclealex72
  *
  */
+package uk.co.unclealex.hammers.calendar.server.model;
+
+import java.io.Serializable;
+
+/**
+ * An interface for models that can be uniquely defined by a business key.
+ * @author alex
+ *
+ * @param <K> The type of the business key.
+ */
 public interface HasBusinessKey<K extends Comparable<K> & Serializable> extends HasIdentity {
 
-	public K getBusinessKey();
+	/**
+	 * Get the model's business key.
+	 * @return The model's business key.
+	 */
+	K getBusinessKey();
 	
-	public void setBusinessKey(K businessKey);
+	/**
+	 * Set the model's business key.
+	 * @param businessKey The model's new business key.
+	 */
+	void setBusinessKey(K businessKey);
 }

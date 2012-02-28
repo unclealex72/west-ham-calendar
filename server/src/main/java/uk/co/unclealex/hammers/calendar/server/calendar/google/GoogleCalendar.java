@@ -23,7 +23,6 @@
  */
 package uk.co.unclealex.hammers.calendar.server.calendar.google;
 
-import org.joda.time.DateTime;
 import org.joda.time.Interval;
 
 import uk.co.unclealex.hammers.calendar.server.model.Game;
@@ -31,17 +30,53 @@ import uk.co.unclealex.hammers.calendar.server.model.Game;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
+/**
+ * A {@link GoogleCalendar} represents a calendar within Google. It both
+ * describes how the calendar is shown in calendar applications as well as
+ * whether a game should be shown as an event in this calendar and, if so, how.
+ * 
+ * @author alex
+ * 
+ */
 public interface GoogleCalendar {
 
-	public String getCalendarTitle();
-	
-	public String getDescription();
-	
-	public Function<Game, Interval> toCalendarDateInterval();
+	/**
+	 * Get the calendar's title.
+	 * 
+	 * @return The calendar's title.
+	 */
+	String getCalendarTitle();
 
-	public Predicate<Game> toContainsGamePredicate();
-	
-	public DateTime getGameDate(Game game);
-	
-	public boolean isBusy();
+	/**
+	 * Get the calendar's description.
+	 * 
+	 * @return The calendar's description.
+	 */
+	String getDescription();
+
+	/**
+	 * Create a {@link Function} that describes the start and end time of a given
+	 * {@link Game}.
+	 * 
+	 * @return A {@link Function} that transforms a {@link Game} into an
+	 *         {@link Interval} describing its beginning and end time.
+	 */
+	Function<Game, Interval> toCalendarDateInterval();
+
+	/**
+	 * Create a {@link Predicate} that can be used to see if a {@link Game} should
+	 * be shown on this calendar.
+	 * 
+	 * @return A {@link Predicate} that can be used to see if a {@link Game}
+	 *         should be shown on this calendar.
+	 */
+	Predicate<Game> toContainsGamePredicate();
+
+	/**
+	 * A flag to indicate whether any games on this calendar should be marked as
+	 * busy.
+	 * 
+	 * @return True if games in this calendar are marked as busy, false otherwise.
+	 */
+	boolean isBusy();
 }

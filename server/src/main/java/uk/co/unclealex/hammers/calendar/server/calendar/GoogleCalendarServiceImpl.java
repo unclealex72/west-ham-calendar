@@ -43,7 +43,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 /**
- * The default implementation of {@link GoogleCalendarService}
+ * The default implementation of {@link GoogleCalendarService}.
  * 
  * @author alex
  * 
@@ -52,9 +52,27 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 
 	private static final Logger log = LoggerFactory.getLogger(GoogleCalendarServiceImpl.class);
 
+	/**
+	 * The {@link CalendarConfigurationDao} to use for persting and retrieving
+	 * Google Calendars.
+	 */
 	private CalendarConfigurationDao i_calendarConfigurationDao;
+
+	/**
+	 * The {@link GoogleCalendarUpdatingService} to use for updating calendars.
+	 */
 	private GoogleCalendarUpdatingService i_googleCalendarUpdatingService;
+
+	/**
+	 * The {@link GoogleCalendarDaoFactory} used for creating
+	 * {@link GoogleCalendarDao}s.
+	 */
 	private GoogleCalendarDaoFactory i_googleCalendarDaoFactory;
+
+	/**
+	 * The {@link GoogleCalendarFactory} used for getting instances of
+	 * {@link GoogleCalendar}s.
+	 */
 	private GoogleCalendarFactory i_googleCalendarFactory;
 
 	/**
@@ -82,10 +100,11 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 *          The source calendar type.
 	 * @param target
 	 *          The target calendar type.
-	 * @throws GoogleAuthenticationFailedException 
-	 * @throws IOException 
+	 * @throws GoogleAuthenticationFailedException
+	 * @throws IOException
 	 */
-	protected void moveGame(Game game, CalendarType source, CalendarType target) throws IOException, GoogleAuthenticationFailedException {
+	protected void moveGame(Game game, CalendarType source, CalendarType target) throws IOException,
+			GoogleAuthenticationFailedException {
 		String sourceCalendarId = getGoogleCalendarIdForCalendarType(source);
 		String targetCalendarId = getGoogleCalendarIdForCalendarType(target);
 		GoogleCalendarFactory googleCalendarFactory = getGoogleCalendarFactory();
@@ -94,10 +113,17 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 		log.info(String.format("Moving game %s from calendar %s to calendar %s", game,
 				sourceGoogleCalendar.getCalendarTitle(), targetGoogleCalendar.getCalendarTitle()));
 		GoogleCalendarDao googleCalendarDao = getGoogleCalendarDaoFactory().createGoogleCalendarDao();
-		String eventId = googleCalendarDao.findGame(sourceCalendarId, Integer.toString(game.getId()), game.getDateTimePlayed());
-		googleCalendarDao.moveGame(sourceCalendarId, targetCalendarId, eventId, Integer.toString(game.getId()), targetGoogleCalendar.isBusy());
+		String eventId = googleCalendarDao.findGame(sourceCalendarId, Integer.toString(game.getId()),
+				game.getDateTimePlayed());
+		googleCalendarDao.moveGame(sourceCalendarId, targetCalendarId, eventId, Integer.toString(game.getId()),
+				targetGoogleCalendar.isBusy());
 	}
 
+	/**
+	 * Find a calendar's id by it's calendar type.
+	 * @param calendarType The {@link CalendarType} to search for.
+	 * @return The id of the calendar.
+	 */
 	protected String getGoogleCalendarIdForCalendarType(CalendarType calendarType) {
 		return getCalendarConfigurationDao().findByKey(calendarType).getGoogleCalendarId();
 	}
@@ -106,11 +132,13 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SortedSet<UpdateChangeLog> updateCalendars(Iterable<Game> games) throws IOException, GoogleAuthenticationFailedException {
+	public SortedSet<UpdateChangeLog> updateCalendars(Iterable<Game> games) throws IOException,
+			GoogleAuthenticationFailedException {
 		SortedSet<UpdateChangeLog> updates = Sets.newTreeSet();
 		log.info("Updating all calendars.");
 		Map<String, GoogleCalendar> googleCalendarsByCalendarId = Maps.newLinkedHashMap();
-		for (Entry<CalendarType, GoogleCalendar> entry : getGoogleCalendarFactory().getGoogleCalendarsByCalendarType().entrySet()) {
+		for (Entry<CalendarType, GoogleCalendar> entry : getGoogleCalendarFactory().getGoogleCalendarsByCalendarType()
+				.entrySet()) {
 			CalendarType calendarType = entry.getKey();
 			GoogleCalendar googleCalendar = entry.getValue();
 			String googleCalendarId = getGoogleCalendarIdForCalendarType(calendarType);

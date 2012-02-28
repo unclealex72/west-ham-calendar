@@ -25,6 +25,11 @@ package uk.co.unclealex.hammers.calendar.server.calendar.google;
 
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 
+/**
+ * The base class for any {@link GoogleCalendar}s that display ticketing information.
+ * @author alex
+ *
+ */
 public abstract class TicketsGoogleCalendar extends AbstractGoogleCalendar {
 
 	@Override

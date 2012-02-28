@@ -1,4 +1,20 @@
 /**
+ * Copyright 2011 Alex Jones
+ * 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements. See the NOTICE file distributed with this
+ * work for additional information regarding copyright ownership. The ASF
+ * licenses this file to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  * 
  */
 package uk.co.unclealex.hammers.calendar.server.view;
@@ -34,41 +50,72 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
- * Copyright 2011 Alex Jones
+ * The default implementation of {@link AttendanceService}.
  * 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * 
- * @author unclealex72
+ * @author alex
  * 
  */
 @Transactional
 public class AttendanceServiceImpl implements AttendanceService {
 
+	/**
+	 * The {@link GameService} used to create sets of {@link GameView} instances
+	 * to be viewed by the GUI.
+	 */
 	private GameService i_gameService;
+
+	/**
+	 * The {@link SecurityInvalidator} for logging out.
+	 */
 	private SecurityInvalidator i_securityInvalidator;
+
+	/**
+	 * The {@link LeagueService} for creating leagues.
+	 */
 	private LeagueService i_leagueService;
+
+	/**
+	 * The {@link AuthenticationService} for user authentication.
+	 */
 	private AuthenticationService i_authenticationService;
+
+	/**
+	 * The {@link TicketingCalendarService} to get and set which calendar is to be
+	 * shown for ticketing information.
+	 */
 	private TicketingCalendarService i_ticketingCalendarService;
+
+	/**
+	 * The {@link MainUpdateService} used for updating Google calendars.
+	 */
 	private MainUpdateService i_mainUpdateService;
+
+	/**
+	 * The {@link UserService} used for updating users.
+	 */
 	private UserService i_userService;
+
+	/**
+	 * The {@link UserService} used for getting user information.
+	 */
 	private UserDao i_userDao;
+
+	/**
+	 * The {@link DefaultsService} used to make sure the minimal defaults exist.
+	 */
 	private DefaultsService i_defaultsService;
+
+	/**
+	 * The {@link CalendarFactory} used to install Google Calendar authorisation.
+	 */
 	private CalendarFactory i_calendarFactory;
+
+	/**
+	 * The {@link UpdateCalendarJob} used to trigger a full manual calendar
+	 * update.
+	 */
 	private UpdateCalendarJob i_updateCalendarJob;
-	
+
 	@Override
 	public Integer[] getAllSeasons() {
 		return Iterables.toArray(getGameService().getAllSeasons(), Integer.class);
@@ -103,8 +150,13 @@ public class AttendanceServiceImpl implements AttendanceService {
 	}
 
 	/**
+	 * Get all {@link GameView}s for a given season.
+	 * 
 	 * @param gameViewsFunction
-	 * @return
+	 *          A {@link Function} that returns a sorted set of {@link GameView}s
+	 *          that are enabled or disabled depending on the argument supplied to
+	 *          the function.
+	 * @return An array of {@link GameView}s.
 	 */
 	protected GameView[] getGameViewsForSeason(Function<Boolean, SortedSet<GameView>> gameViewsFunction) {
 		return Iterables.toArray(gameViewsFunction.apply(getAuthenticationService().isUserAuthenticated()), GameView.class);
@@ -134,7 +186,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	public void createCalendars() throws IOException, GoogleAuthenticationFailedException {
 		getDefaultsService().createCalendars();
 	}
-	
+
 	@Override
 	public void logout() {
 		getAuthenticationService().logout(getSecurityInvalidator());
@@ -154,7 +206,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 
 	@Override
 	public GameView unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException {
-		getMainUpdateService().attendGame(gameId);
+		getMainUpdateService().unattendGame(gameId);
 		return getGameService().getGameViewById(gameId, getAuthenticationService().isUserAuthenticated());
 	}
 
@@ -212,7 +264,8 @@ public class AttendanceServiceImpl implements AttendanceService {
 			}
 		};
 		final String userPrincipal = getUserPrincipal();
-		Function<uk.co.unclealex.hammers.calendar.server.model.User, User> userFunction = new Function<uk.co.unclealex.hammers.calendar.server.model.User, User>() {
+		Function<uk.co.unclealex.hammers.calendar.server.model.User, User> userFunction = 
+				new Function<uk.co.unclealex.hammers.calendar.server.model.User, User>() {
 			@Override
 			public User apply(uk.co.unclealex.hammers.calendar.server.model.User user) {
 				SortedSet<Role> roles = Sets.newTreeSet(Iterables.transform(user.getAuthorities(), authorityFunction));

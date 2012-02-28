@@ -31,12 +31,16 @@ import uk.co.unclealex.hammers.calendar.server.model.OauthToken;
 import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
 
 /**
+ * The default implementation of {@link TokenService}.
  * @author alex
  *
  */
 @Transactional
 public class TokenServiceImpl implements TokenService {
 
+	/**
+	 * The {@OauthTokenDao} to use for token persistence.
+	 */
 	private OauthTokenDao i_oauthTokenDao;
 	
 	/**
@@ -99,7 +103,7 @@ public class TokenServiceImpl implements TokenService {
 	 */
 	protected String findTokenByType(OauthTokenType oauthTokenType) {
 		OauthToken oauthToken = getOauthTokenDao().findByKey(oauthTokenType);
-		return oauthToken == null?null:oauthToken.getToken();
+		return oauthToken == null ? null : oauthToken.getToken();
 	}
 	
 	public OauthTokenDao getOauthTokenDao() {

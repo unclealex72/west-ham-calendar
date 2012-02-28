@@ -23,19 +23,40 @@
  */
 package uk.co.unclealex.hammers.calendar.server.dates;
 
+/**
+ * An exception that is thrown for date strings that are not parseable.
+ * @author alex
+ *
+ */
 public class UnparseableDateException extends Exception {
 
+	/**
+	 * @see Exception
+	 */
 	public UnparseableDateException() {
 	}
 
+	/**
+	 * @see Exception
+	 * @param message The exception's message.
+	 */
 	public UnparseableDateException(String message) {
 		super(message);
 	}
 
+	/**
+	 * @see Exception
+	 * @param cause The underlying cause of this exception.
+	 */
 	public UnparseableDateException(Throwable cause) {
 		super(cause);
 	}
 
+	/**
+	 * @see Exception
+	 * @param cause The underlying cause of this exception.
+	 * @param message The exception's message.
+	 */
 	public UnparseableDateException(String message, Throwable cause) {
 		super(message, cause);
 	}

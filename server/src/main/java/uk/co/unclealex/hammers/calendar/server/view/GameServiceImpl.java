@@ -44,14 +44,30 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
+ * The default implementation of {@link GameService}.
  * @author alex
  * 
  */
 public class GameServiceImpl implements GameService {
 
+	/**
+	 * The {@link GameDao} used to persist {@link Game}s.
+	 */
 	private GameDao i_gameDao;
+	
+	/**
+	 * The {@link TicketingCalendarService} used to interface with the selected ticketing calendar.
+	 */
 	private TicketingCalendarService i_ticketingCalendarService;
+	
+	/**
+	 * The {@link DateService} use to manipulate dates and times.
+	 */
 	private DateService i_dateService;
+	
+	/**
+	 * The {@link GoogleCalendarFactory} used to get information about {@link GoogleCalendar}s.
+	 */
 	private GoogleCalendarFactory i_googleCalendarFactory;
 
 	/**
@@ -89,6 +105,13 @@ public class GameServiceImpl implements GameService {
 		return getGameViewsForSeason(enabled, season, comparator);
 	}
 
+	/**
+	 * Get all the {@link GameView}s for a given season.
+	 * @param enabled True if these {@link GameView}s can be altered, false otherwise.
+	 * @param season The season for the {@link GameView}s.
+	 * @param comparator A {@link Comparator} to order the {@link GameView}s.
+	 * @return A sorted set of all the {@link GameView}s for a season.
+	 */
 	protected SortedSet<GameView> getGameViewsForSeason(boolean enabled, int season, Comparator<GameView> comparator) {
 		SortedSet<GameView> gameViewsForSeason = Sets.newTreeSet(comparator);
 		Iterables.addAll(gameViewsForSeason,
@@ -104,7 +127,12 @@ public class GameServiceImpl implements GameService {
 		Game game = getGameDao().findById(gameId);
 		return createGameViewFunction(enabled).apply(game);
 	}
-	
+
+	/**
+	 * Create a {@link Function} that transforms a {@link Game} into a {@link GameView}.
+	 * @param enabled True if the {@link GameView} can be edited, false otherwise.
+	 * @return A {@link Function} that transforms a {@link Game} into a {@link GameView}.
+	 */
 	protected Function<Game, GameView> createGameViewFunction(final boolean enabled) {
 		CalendarType selectedTicketingCalendarType = getTicketingCalendarService().getSelectedTicketingCalendar();
 		final GoogleCalendar googleCalendar = selectedTicketingCalendarType == null ? null : getGoogleCalendarFactory()
@@ -112,14 +140,14 @@ public class GameServiceImpl implements GameService {
 		return new Function<uk.co.unclealex.hammers.calendar.server.model.Game, GameView>() {
 			@Override
 			public GameView apply(uk.co.unclealex.hammers.calendar.server.model.Game game) {
-				Date ticketDate = googleCalendar == null ? null : googleCalendar.getGameDate(game).toDate();
+				Date ticketDate = googleCalendar == null ? null : googleCalendar.toCalendarDateInterval().apply(game)
+						.getStart().toDate();
 				DateTime datePlayed = game.getDateTimePlayed();
 				boolean weekGame = getDateService().isWeekday(datePlayed);
 				boolean nonStandardWeekendGame = !weekGame && !getDateService().isThreeOClockOnASaturday(datePlayed);
 				return new GameView(game.getId(), game.getCompetition(), game.getLocation(), game.getOpponents(),
 						game.getSeason(), datePlayed.toDate(), game.getResult(), game.getAttendence(), game.getMatchReport(),
-						game.getTelevisionChannel(), ticketDate, game.isAttended(), weekGame, nonStandardWeekendGame,
-						enabled);
+						game.getTelevisionChannel(), ticketDate, game.isAttended(), weekGame, nonStandardWeekendGame, enabled);
 			}
 		};
 	}

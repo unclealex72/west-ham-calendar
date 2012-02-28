@@ -1,12 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.dao;
-
-import uk.co.unclealex.hammers.calendar.server.model.OauthToken;
-import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,14 +18,20 @@ import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.server.dao;
+
+import uk.co.unclealex.hammers.calendar.server.model.OauthToken;
+import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
+
+/**
+ * The Hibernate implementation of {@link OauthTokenDao}.
+ * 
+ * @author alex
  *
  */
 public class HibernateOauthTokenDao extends BusinessKeyHibernateDaoSupport<OauthTokenType, OauthToken> implements OauthTokenDao {
 
-	/**
-	 * @param clazz
-	 */
 	public HibernateOauthTokenDao() {
 		super(OauthToken.class, "tokenType");
 	}

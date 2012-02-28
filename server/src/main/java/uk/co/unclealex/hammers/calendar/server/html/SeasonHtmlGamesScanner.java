@@ -53,6 +53,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 
 /**
+ * An {@link HtmlGamesScanner} that scans the season's fixtures page for game
+ * information.
+ * 
  * @author alex
  * 
  */
@@ -67,11 +70,29 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 	protected Scanner createScanner(URI uri, TagNode tagNode) {
 		return new SeasonScanner(uri, tagNode);
 	}
-	
+
+	/**
+	 * The {@link Scanner} that scans the season's fixtures page for game
+	 * information.
+	 * 
+	 * @author alex
+	 * 
+	 */
 	class SeasonScanner extends Scanner {
+
+		/**
+		 * The current season.
+		 */
 		private int i_season;
 
+		/**
+		 * The current month.
+		 */
 		private String i_month;
+
+		/**
+		 * The {@link DateTime} the season started.
+		 */
 		private DateTime i_startOfSeason;
 
 		public SeasonScanner(URI uri, TagNode tagNode) {
@@ -89,7 +110,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 				throw new IOException(e);
 			}
 			TagNodeFilter tableRowFilter = new TagNodeFilter() {
-				
+
 				@Override
 				public boolean apply(TagNode tagNode) {
 					return "tr".equals(tagNode.getName());
@@ -108,7 +129,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 					String classes = tagNode.getAttributeByName("class");
 					return classes != null && classes.contains(target);
 				}
-			};
+			}
 			Predicate<TagNode> isMonthRowPredicate = new ClassContainsPredicate("rowHeader");
 			Predicate<TagNode> isGameRow = new ClassContainsPredicate("fixture");
 			for (TagNode row : tableRowFilter.list(tableTagNode)) {
@@ -127,7 +148,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		protected void updateSeason() {
 			final Pattern seasonPattern = Pattern.compile("s\\.prop3=\"([0-9]+)\"");
 			new TagNodeWalker(getTagNode()) {
-				
+
 				@Override
 				public void execute(TagNode tagNode) {
 					if (getSeason() == 0 && "script".equals(tagNode.getName())) {
@@ -143,7 +164,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 				}
 			};
 		}
-		
+
 		/**
 		 * Update the month.
 		 * 
@@ -158,8 +179,10 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		}
 
 		/**
+		 * Update a game.
+		 * 
 		 * @param row
-		 * @param gameUpdateCommands
+		 *          The current row in the fixtures table.
 		 * @throws UnparseableDateException
 		 */
 		protected void updateGame(TagNode row) {
@@ -231,8 +254,9 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 				matchReport = null;
 			}
 			GameUpdateCommand matchReportUpdateCommand = GameUpdateCommand.matchReport(gameKeyLocator, matchReport);
-			getGameUpdateCommands().addAll(Arrays.asList(datePlayedGameUpdateCommand, resultGameUpdateCommand,
-					attendenceUpdateCommand, matchReportUpdateCommand));
+			getGameUpdateCommands().addAll(
+					Arrays.asList(datePlayedGameUpdateCommand, resultGameUpdateCommand, attendenceUpdateCommand,
+							matchReportUpdateCommand));
 		}
 
 		public int getSeason() {

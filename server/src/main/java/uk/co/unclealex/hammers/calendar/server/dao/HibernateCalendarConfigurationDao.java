@@ -1,14 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.dao;
-
-import org.hibernate.Query;
-
-import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,20 +21,29 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
  * @author unclealex72
  *
  */
-public class HibernateCalendarConfigurationDao extends BusinessKeyHibernateDaoSupport<CalendarType, CalendarConfiguration> implements CalendarConfigurationDao {
+package uk.co.unclealex.hammers.calendar.server.dao;
 
-	/**
-	 * @param clazz
-	 */
+import org.hibernate.Query;
+
+import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
+import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+
+/**
+ * The Hibernate implementation of {@link CalendarConfigurationDao}.
+ * @author alex
+ *
+ */
+public class HibernateCalendarConfigurationDao extends
+		BusinessKeyHibernateDaoSupport<CalendarType, CalendarConfiguration> implements CalendarConfigurationDao {
+
 	public HibernateCalendarConfigurationDao() {
 		super(CalendarConfiguration.class, "calendarType");
 	}
 
 	@Override
 	public CalendarConfiguration findByGoogleCalendarId(String googleCalendarId) {
-		Query query = getSession().createQuery(
-				"from CalendarConfiguration where googleCalendarId = :googleCalendarId").
-				setString("googleCalendarId", googleCalendarId);
+		Query query = getSession().createQuery("from CalendarConfiguration where googleCalendarId = :googleCalendarId")
+				.setString("googleCalendarId", googleCalendarId);
 		return unique(query);
-	}	
+	}
 }

@@ -45,14 +45,28 @@ import com.google.common.base.Function;
  */
 public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory, ApplicationContextAware {
 
+	/**
+	 * The current Spring {@link AutowireCapableBeanFactory}. 
+	 */
 	private AutowireCapableBeanFactory i_autowireCapableBeanFactory;
+	
+	/**
+	 * The {@link CalendarFactory} that will create the connection to the Google Calendar API.
+	 */
 	private CalendarFactory i_calendarFactory;
+
+	/**
+	 * A {@link Function} to print a calendar given its id.
+	 */
 	private Function<String, String> i_calendarFormatter;
+	
+	/**
+	 * A {@link Function} to print a calendar given its id.
+	 */
 	private Function<String, String> i_gameFormatter;
 
 	/**
 	 * {@inheritDoc}
-	 * @throws GoogleAuthenticationFailedException 
 	 */
 	@Override
 	public GoogleCalendarDao createGoogleCalendarDao() throws IOException, GoogleAuthenticationFailedException {

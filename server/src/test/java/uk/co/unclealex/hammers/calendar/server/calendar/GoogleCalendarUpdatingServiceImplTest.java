@@ -41,7 +41,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import uk.co.unclealex.hammers.calendar.server.calendar.MockGoogleCalendarDao.MockGame;
-import uk.co.unclealex.hammers.calendar.server.calendar.UpdateChangeLog.Action;
 import uk.co.unclealex.hammers.calendar.server.calendar.google.AbstractGoogleCalendar;
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
@@ -97,10 +96,9 @@ public class GoogleCalendarUpdatingServiceImplTest {
 		SortedSet<UpdateChangeLog> actualUpdateChangeLogs = googleCalendarUpdatingServiceImpl.updateCalendars(
 				googleCalendarsByCalendarId, games);
 		// Check the correct changes were logged.
-		SortedSet<UpdateChangeLog> expectedUpdateChangeLogs = Sets.newTreeSet(Arrays.asList(new UpdateChangeLog(
-				Action.ADDED, loadGame("3"), googleCalendar), new UpdateChangeLog(Action.REMOVED, loadGame("5").getId().toString(), googleCalendar),
-				new UpdateChangeLog(Action.REMOVED, loadGame("4"), googleCalendar), new UpdateChangeLog(Action.UPDATED,
-						gameOne, googleCalendar)));
+		SortedSet<UpdateChangeLog> expectedUpdateChangeLogs = Sets.newTreeSet(Arrays.asList((UpdateChangeLog) new AddedChangeLog(
+				googleCalendar, loadGame("3")), (UpdateChangeLog) new RemovedChangeLog(googleCalendar, loadGame("5").getId().toString()),
+				(UpdateChangeLog) new RemovedChangeLog(googleCalendar, loadGame("4").getId().toString()), (UpdateChangeLog) new UpdatedChangeLog(googleCalendar, gameOne)));
 		Assert.assertArrayEquals("The wrong updates were found.",
 				Iterables.toArray(expectedUpdateChangeLogs, UpdateChangeLog.class),
 				Iterables.toArray(actualUpdateChangeLogs, UpdateChangeLog.class));

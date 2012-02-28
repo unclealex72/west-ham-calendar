@@ -34,17 +34,20 @@ package uk.co.unclealex.hammers.calendar.server.calendar;
 public interface GameUpdateInformationVisitor {
 
 	/**
-	 * @param gameWasUpdatedInformation
+	 * Visit an instance of a {@link GameUpdateInformation}.
+	 * @param gameUpdateInformation The {@link GameUpdateInformation} to visit.
 	 */
 	void visit(GameUpdateInformation gameUpdateInformation);
 
 	/**
-	 * @param gameWasUpdatedInformation
+	 * Visit an instance of a {@link GameWasUpdatedInformation}.
+	 * @param gameWasUpdatedInformation The {@link GameWasUpdatedInformation} to visit.
 	 */
 	void visit(GameWasUpdatedInformation gameWasUpdatedInformation);
 
 	/**
-	 * @param gameWasCreatedInformation
+	 * Visit an instance of a {@link GameWasCreatedInformation}.
+	 * @param gameWasCreatedInformation The {@link GameWasCreatedInformation} to visit.
 	 */
 	void visit(GameWasCreatedInformation gameWasCreatedInformation);
 
@@ -58,7 +61,12 @@ public interface GameUpdateInformationVisitor {
 	 */
 	abstract class Default implements GameUpdateInformationVisitor {
 
-		public void visit(GameUpdateInformation gameUpdateInformation) {
+		/**
+		 * Always throw an {@link IllegalArgumentException}.
+		 * @param gameUpdateInformation An instance of an unknown type of {@link GameUpdateInformation}
+		 * @throws IllegalArgumentException Always thrown.
+		 */
+		public void visit(GameUpdateInformation gameUpdateInformation) throws IllegalArgumentException {
 			throw new IllegalArgumentException("The class " + gameUpdateInformation.getClass() + " is unrecognised.");
 		}
 	}

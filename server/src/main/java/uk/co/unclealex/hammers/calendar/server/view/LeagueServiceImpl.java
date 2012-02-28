@@ -36,11 +36,15 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
 /**
+ * The default implementation of {@link LeagueService}.
  * @author alex
  * 
  */
 public class LeagueServiceImpl implements LeagueService {
 
+	/**
+	 * The {@link GameService} to get information about games.
+	 */
 	private GameService i_gameService;
 
 	@Override

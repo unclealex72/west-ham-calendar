@@ -34,10 +34,10 @@ public interface PossiblyYearlessDateFormat {
 	/**
 	 * @return The date format to use with a year.
 	 */
-	public String getDateFormatWithYear();
+	String getDateFormatWithYear();
 	
 	/**
 	 * @return The date format to use without a year.
 	 */
-	public String getDateFormatWithoutYear();
+	String getDateFormatWithoutYear();
 }

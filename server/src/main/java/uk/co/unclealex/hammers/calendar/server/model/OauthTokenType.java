@@ -1,9 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,6 +21,20 @@ package uk.co.unclealex.hammers.calendar.server.model;
  * @author unclealex72
  *
  */
+package uk.co.unclealex.hammers.calendar.server.model;
+
+/**
+ * An enumeration that encapsulates the different type of Oauth tokens used by Google.
+ * @author alex
+ *
+ */
 public enum OauthTokenType {
-	ACCESS, REFRESH
+	/**
+	 * The short lived access tokens.
+	 */
+	ACCESS,
+	/**
+	 * The long lived refresh tokens.
+	 */
+	REFRESH
 }

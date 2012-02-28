@@ -28,9 +28,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import uk.co.unclealex.hammers.calendar.server.model.User;
 
+/**
+ * The Hibernate implementation of {@link UserDao}.
+ * @author alex
+ *
+ */
 @Transactional
 public class HibernateUserDao extends BusinessKeyHibernateDaoSupport<String, User> implements UserDao {
 
+	/**
+	 * Default constructor.
+	 */
 	public HibernateUserDao() {
 		super(User.class, "username");
 	}

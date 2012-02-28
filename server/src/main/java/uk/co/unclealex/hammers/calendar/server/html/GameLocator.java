@@ -64,14 +64,27 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 	 * @author alex
 	 *
 	 */
-	public static abstract class GameLocatorVisitor {
+	public abstract static class GameLocatorVisitor {
 
-		public final void visit(GameLocator gameLocator) {
+		/**
+		 * Visit an unknown type of {@link GameLocator}.
+		 * @param gameLocator The {@link GameLocator} to visit.
+		 * @throws IllegalArgumentException This is always thrown.
+		 */
+		public final void visit(GameLocator gameLocator) throws IllegalArgumentException {
 			throw new IllegalArgumentException(gameLocator.getClass() + " is invalid.");
 		}
 
+		/**
+		 * Visit a {@link GameKeyLocator}.
+		 * @param gameKeyLocator The {@link GameKeyLocator} to visit.
+		 */
 		public abstract void visit(GameKeyLocator gameKeyLocator);
 
+		/**
+		 * Visit a {@link DatePlayedLocator}.
+		 * @param datePlayedLocator The {@link DatePlayedLocator} to visit.
+		 */
 		public abstract void visit(DatePlayedLocator datePlayedLocator);
 	}
 
@@ -82,7 +95,11 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 	 * @param <E> The type of object that will be used to locate the game.
 	 */
 	@SuppressWarnings("rawtypes")
-	static abstract class InternalGameLocator<E extends Comparable> extends GameLocator {
+	abstract static class InternalGameLocator<E extends Comparable> extends GameLocator {
+		
+		/**
+		 * The object used to locate a game.
+		 */
 		private final E i_locator;
 
 		protected InternalGameLocator(E locator) {
@@ -113,7 +130,7 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 	}
 
 	/**
-	 * A {@link GameLocator} that locates games using a {@link GameKey}
+	 * A {@link GameLocator} that locates games using a {@link GameKey}.
 	 * @author alex
 	 *
 	 */
@@ -155,6 +172,7 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 	 *
 	 */
 	public static class DatePlayedLocator extends InternalGameLocator<DateTime> {
+
 		protected DatePlayedLocator(DateTime datePlayed) {
 			super(datePlayed);
 		}
@@ -185,6 +203,10 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 		}
 	}
 
+	/**
+	 * Accept a {@link GameLocatorVisitor}.
+	 * @param visitor The {@link GameLocatorVisitor} to accept.
+	 */
 	public abstract void accept(GameLocatorVisitor visitor);
 
 }

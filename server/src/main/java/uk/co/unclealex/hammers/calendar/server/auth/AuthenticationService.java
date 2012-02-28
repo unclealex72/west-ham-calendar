@@ -33,26 +33,30 @@ import uk.co.unclealex.hammers.calendar.shared.services.SecurityInvalidator;
 public interface AuthenticationService {
 
 	/**
-	 * @return
+	 * Get the logged in user's username.
+	 * @return The logged in user's username if someone is logged in, or null otherwise.
 	 */
-	public String getUserPrincipal();
+	String getUserPrincipal();
 
 	/**
-	 * @param securityInvalidator
+	 * Log out the current user.
+	 * @param securityInvalidator The {@link SecurityInvalidator} to use to log out the current user.
 	 */
-	public void logout(SecurityInvalidator securityInvalidator);
+	void logout(SecurityInvalidator securityInvalidator);
 
 	/**
-	 * @param username
-	 * @param password
-	 * @param securityInvalidator
-	 * @return
+	 * Authenticate a user.
+	 * @param username The user's username.
+	 * @param password The user's password.
+	 * @param securityInvalidator The {@link SecurityInvalidator} to use to log out the current user.
+	 * @return True if authentication succeeded, false otherwise.
 	 */
-	public boolean authenticate(String username, String password, SecurityInvalidator securityInvalidator);
+	boolean authenticate(String username, String password, SecurityInvalidator securityInvalidator);
 
 	/**
-	 * @return
+	 * Indicate whether someone is currently logged in.
+	 * @return True if someone is logged in, false otherwise.
 	 */
-	public boolean isUserAuthenticated();
+	boolean isUserAuthenticated();
 
 }

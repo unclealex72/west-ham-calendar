@@ -33,7 +33,6 @@ import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.unclealex.hammers.calendar.server.calendar.UpdateChangeLog.Action;
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
@@ -53,6 +52,10 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 
 	private static final Logger log = LoggerFactory.getLogger(GoogleCalendarUpdatingServiceImpl.class);
 
+	/**
+	 * The {@link GoogleCalendarDaoFactory} used to create
+	 * {@link GoogleCalendarDao}s.
+	 */
 	private GoogleCalendarDaoFactory i_googleCalendarDaoFactory;
 
 	/**
@@ -72,12 +75,20 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 	}
 
 	/**
+	 * Update a {@link GoogleCalendar}.
+	 * 
 	 * @param updates
+	 *          A set of {@link UpdateChangeLog}s in which changes can be stored.
 	 * @param googleCalendarDao
+	 *          The {@link GoogleCalendarDao} used to update events.
 	 * @param calendarId
+	 *          The id of the calendar to update.
 	 * @param googleCalendar
+	 *          The {@link GoogleCalendar} to update.
 	 * @param games
+	 *          The {@link Game}s to be used to update the calendar.
 	 * @param busy
+	 *          True if this calendar is marked as busy, false otherwise.
 	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
 	 */
@@ -118,20 +129,22 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 				log.info("Removing game " + game);
 			}
 			googleCalendarDao.removeGame(calendarId, eventId, gameId);
-			UpdateChangeLog updateChangeLog;
-			if (game == null) {
-				updateChangeLog = new UpdateChangeLog(Action.REMOVED, gameId, googleCalendar);
-			}
-			else {
-				updateChangeLog = new UpdateChangeLog(Action.REMOVED, game, googleCalendar);
-			}
-			updates.add(updateChangeLog);
+			updates.add(new RemovedChangeLog(googleCalendar, gameId));
 		}
 	}
 
 	/**
+	 * Add an {@link UpdateChangeLog} to the list of changes.
+	 * 
+	 * @param game
+	 *          The {@link Game} that was updated.
 	 * @param updates
+	 *          The list of changes to add to.
+	 * @param googleCalendar
+	 *          The calendar that was updated.
 	 * @param gameUpdateInformation
+	 *          The {@link GameUpdateInformation} describing how the game was
+	 *          changed.
 	 */
 	protected void updateChangeLog(final SortedSet<UpdateChangeLog> updates, final Game game,
 			final GoogleCalendar googleCalendar, GameUpdateInformation gameUpdateInformation) {
@@ -139,13 +152,13 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 
 			@Override
 			public void visit(GameWasCreatedInformation gameWasCreatedInformation) {
-				updates.add(new UpdateChangeLog(Action.ADDED, game, googleCalendar));
+				updates.add(new AddedChangeLog(googleCalendar, game));
 			}
 
 			@Override
 			public void visit(GameWasUpdatedInformation gameWasUpdatedInformation) {
 				if (gameWasUpdatedInformation.isUpdated()) {
-					updates.add(new UpdateChangeLog(Action.UPDATED, game, googleCalendar));
+					updates.add(new UpdatedChangeLog(googleCalendar, game));
 				}
 			}
 		};

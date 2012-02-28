@@ -31,11 +31,14 @@ package uk.co.unclealex.hammers.calendar.server.calendar;
  */
 public class GameWasUpdatedInformation implements GameUpdateInformation {
 
+	/**
+	 * True if the game was updated, false otherwise.
+	 */
 	private final boolean i_updated;
 	
 	/**
 	 * Create a new instance of this class.
-	 * @param True if the game was updated, false otherwise.
+	 * @param updated True if the game was updated, false otherwise.
 	 */
 	public GameWasUpdatedInformation(boolean updated) {
 		super();
@@ -50,9 +53,6 @@ public class GameWasUpdatedInformation implements GameUpdateInformation {
 		visitor.visit(this);
 	}
 
-	/**
-	 * @return True if the game was updated, false if it was left alone.
-	 */
 	public boolean isUpdated() {
 		return i_updated;
 	}

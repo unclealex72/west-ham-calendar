@@ -38,37 +38,57 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
+/**
+ * A {@link User} is someone who can log in to the West Ham Calender website.
+ * @author alex
+ *
+ */
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User extends AbstractBusinessKeyBasedModel<String, User> {
 
+	/**
+	 * The id of the user.
+	 */
 	private Integer i_id;
+	
+	/**
+	 * The user's username.
+	 */
 	private String i_username;
+	
+	/**
+	 * The user's encrypted password.
+	 */
 	private String i_password;
+	
+	/**
+	 * A flag indicating whether a user is enabled.
+	 */
 	private boolean i_enabled;
+	
+	/**
+	 * The set of authorities granted to this user.
+	 */
 	private Set<Authority> i_authorities;
 
 	@Override
 	public String toString() {
 		return getUsername();
 	}
-	
-	@Override @Transient
+
+	@Override
+	@Transient
 	public String getBusinessKey() {
 		return getUsername();
 	}
-	
+
 	@Override
 	public void setBusinessKey(String businessKey) {
 		setUsername(businessKey);
 	}
-	
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof User && isEqual((User) obj);
-	}
-	
-	@Column(nullable=false, name="username")
+
+	@Column(nullable = false, name = "username")
 	public String getUsername() {
 		return i_username;
 	}
@@ -77,7 +97,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 		i_username = username;
 	}
 
-	@Column(nullable=false, name="password")
+	@Column(nullable = false, name = "password")
 	public String getPassword() {
 		return i_password;
 	}
@@ -86,7 +106,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 		i_password = password;
 	}
 
-	@Column(name="enabled")
+	@Column(name = "enabled")
 	public boolean isEnabled() {
 		return i_enabled;
 	}
@@ -95,9 +115,9 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 		i_enabled = enabled;
 	}
 
-	@OneToMany(fetch=FetchType.EAGER, orphanRemoval=true)
+	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
 	@Cascade(CascadeType.ALL)
-	@JoinColumn(name="username", referencedColumnName="username")
+	@JoinColumn(name = "username", referencedColumnName = "username")
 	public Set<Authority> getAuthorities() {
 		return i_authorities;
 	}
@@ -106,7 +126,8 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 		i_authorities = authorities;
 	}
 
-	@Id @GeneratedValue
+	@Id
+	@GeneratedValue
 	public Integer getId() {
 		return i_id;
 	}

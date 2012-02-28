@@ -34,15 +34,25 @@ import com.google.api.client.json.jackson.JacksonFactory;
  */
 public class ConstantOauthCalendarFactory extends AbstractOauthCalendarFactory {
 
+	/**
+	 * The access token given by Google.
+	 */
 	private String i_accessToken;
 
 	
+	/**
+	 * Default constructor.
+	 */
 	public ConstantOauthCalendarFactory() {
 		super();
 		setHttpTransport(new NetHttpTransport());
 		setJsonFactory(new JacksonFactory());
 	}
 
+	/**
+	 * The constant refresh token to use.
+	 * @return A constant refresh token that is known to be authenticated.
+	 */
 	public String getRefreshToken() {
 		return "1/UcuXuqCOI1eV_1S8XlvVMsO2x6QOIqtMeZ-Qe7KeYXE";
 	}

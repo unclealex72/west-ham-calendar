@@ -1,13 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.dao;
-
-import uk.co.unclealex.hammers.calendar.server.model.TicketingCalendar;
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
-
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +18,16 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.server.dao;
+
+import uk.co.unclealex.hammers.calendar.server.model.TicketingCalendar;
+import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+
+/**
+ * A data access object used to determining the default calendar used for displaying ticketing information.
+ * s
+ * @author alex
  *
  */
 public interface TicketingCalendarDao extends BusinessCrudDao<CalendarType, TicketingCalendar> {

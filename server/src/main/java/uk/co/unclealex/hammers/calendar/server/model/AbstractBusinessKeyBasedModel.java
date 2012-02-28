@@ -1,11 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.model;
-
-import java.io.Serializable;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -25,25 +18,35 @@ import java.io.Serializable;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
-public abstract class AbstractBusinessKeyBasedModel<K extends Comparable<K> & Serializable, M extends HasBusinessKey<K>> implements HasBusinessKey<K>, Comparable<M> {
+package uk.co.unclealex.hammers.calendar.server.model;
+
+import java.io.Serializable;
+
+/**
+ * The base class for models that can be uniquely defined by a business key.
+ * @author alex
+ *
+ * @param <K> The type of the business key.
+ * @param <M> The type of the model.
+ */
+public abstract class AbstractBusinessKeyBasedModel<K extends Comparable<K> & Serializable, M extends HasBusinessKey<K>>
+		implements HasBusinessKey<K>, Comparable<M> {
 
 	@Override
-	public int compareTo(M o) {
+	public final int compareTo(M o) {
 		return getBusinessKey().compareTo(o.getBusinessKey());
 	}
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return getBusinessKey().hashCode();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public abstract boolean equals(Object obj);
-	
-	public boolean isEqual(M other) {
-		return getBusinessKey().equals(other.getBusinessKey());
+	public final boolean equals(Object obj) {
+		return getClass().equals(obj.getClass()) && getBusinessKey().equals(((M) obj).getBusinessKey());
 	}
+
 }

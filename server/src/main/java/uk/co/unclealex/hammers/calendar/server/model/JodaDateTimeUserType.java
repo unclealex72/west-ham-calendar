@@ -38,9 +38,11 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 
 /**
- * Store a {@link DateTime} as an ISO8601 formatted (yyyy-MM-ddTHH:mm:ss.SSSZZ) string.
+ * Store a {@link DateTime} as an ISO8601 formatted (yyyy-MM-ddTHH:mm:ss.SSSZZ)
+ * string.
+ * 
  * @author alex
- *
+ * 
  */
 public class JodaDateTimeUserType implements UserType {
 
@@ -68,13 +70,13 @@ public class JodaDateTimeUserType implements UserType {
 	public Object nullSafeGet(ResultSet rs, String[] names, SessionImplementor session, Object owner)
 			throws HibernateException, SQLException {
 		String xmlRepresentation = rs.getString(names[0]);
-		return xmlRepresentation == null?null:new DateTime(xmlRepresentation);
+		return xmlRepresentation == null ? null : new DateTime(xmlRepresentation);
 	}
 
 	@Override
 	public void nullSafeSet(PreparedStatement st, Object value, int index, SessionImplementor session)
 			throws HibernateException, SQLException {
-		String xmlRepresentation = value == null?null:value.toString();
+		String xmlRepresentation = value == null ? null : value.toString();
 		st.setString(index, xmlRepresentation);
 	}
 

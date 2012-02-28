@@ -33,17 +33,24 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
 
 /**
- * A {@link PossiblyYearlessDateFormat} that contains the optional year defining characters in square brackets.
+ * A {@link PossiblyYearlessDateFormat} that contains the optional year defining
+ * characters in square brackets.
+ * 
  * @author alex
- *
+ * 
  */
 public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFormatBean {
 
+	/**
+	 * The regular expression to find and remove the year part of format strings.
+	 */
 	private static final Pattern YEAR_STRIPPING_PATTERN = Pattern.compile("(.*?)\\[(.+)\\](.*)");
 
 	/**
 	 * Create a yearful date format.
-	 * @param dateFormat The date format to parse.
+	 * 
+	 * @param dateFormat
+	 *          The date format to parse.
 	 * @return The date format with years.
 	 */
 	protected static String yearful(String dateFormat) {
@@ -52,23 +59,29 @@ public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFor
 		}
 		else {
 			String makeFormat = makeFormat(dateFormat, 1, 2, 3);
-			return makeFormat==null?dateFormat:makeFormat;
+			return makeFormat == null ? dateFormat : makeFormat;
 		}
-	}	
-
-	/**
-	 * Create a yearless date format.
-	 * @param dateFormat The date format to parse.
-	 * @return The date format without years.
-	 */
-	protected static String yearless(String dateFormat) {
-		return dateFormat.contains("y")?makeFormat(dateFormat, 1, 3):dateFormat;
 	}
 
 	/**
-	 * Create a date format
-	 * @param dateFormat The date format to alter.
-	 * @param groups The matched groups that make up the format with respect to {@link #YEAR_STRIPPING_PATTERN}.
+	 * Create a yearless date format.
+	 * 
+	 * @param dateFormat
+	 *          The date format to parse.
+	 * @return The date format without years.
+	 */
+	protected static String yearless(String dateFormat) {
+		return dateFormat.contains("y") ? makeFormat(dateFormat, 1, 3) : dateFormat;
+	}
+
+	/**
+	 * Create a date format.
+	 * 
+	 * @param dateFormat
+	 *          The date format to alter.
+	 * @param groups
+	 *          The matched groups that make up the format with respect to
+	 *          {@link #YEAR_STRIPPING_PATTERN}.
 	 * @return A new date format.
 	 */
 	protected static String makeFormat(String dateFormat, Integer... groups) {
@@ -87,11 +100,11 @@ public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFor
 		}
 	}
 
-	private final String i_dateFormat;
-	
 	/**
-	 * @param dateFormatWithYear The year aware date format.
+	 * The date format string to use to parse dates.
 	 */
+	private final String i_dateFormat;
+
 	public AutomaticPossiblyYearlessDateFormat(String dateFormat) {
 		super(yearful(dateFormat), yearless(dateFormat));
 		i_dateFormat = dateFormat;
@@ -101,7 +114,7 @@ public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFor
 	public String toString() {
 		return "[:" + getDateFormat() + ":]";
 	}
-	
+
 	public String getDateFormat() {
 		return i_dateFormat;
 	}

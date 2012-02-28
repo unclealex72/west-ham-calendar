@@ -18,10 +18,7 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
-
 package uk.co.unclealex.hammers.calendar.server.html;
 
 import java.io.IOException;
@@ -34,17 +31,27 @@ import org.htmlcleaner.TagNode;
 import com.google.common.collect.Sets;
 
 /**
- * A base class for {@link HtmlGamesScanner}s that read a page and then delegates scanning to a set of other pages
- * that are links off of the original page.
+ * A base class for {@link HtmlGamesScanner}s that read a page and then
+ * delegates scanning to a set of other pages that are links off of the original
+ * page.
+ * 
  * @author alex
- *
+ * 
  */
 public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 
+	/**
+	 * The {@link LinkHarvester} used to find the links on a main page.
+	 */
 	private LinkHarvester i_linkHarvester;
+
+	/**
+	 * The {@link HtmlGamesScanner} used to find games on the child pages.
+	 */
 	private HtmlGamesScanner i_htmlGamesScanner;
-	
-	@Override SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException {
+
+	@Override
+	SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException {
 		SortedSet<GameUpdateCommand> gameUpdateCommands = Sets.newTreeSet();
 		List<URI> links = getLinkHarvester().harvestLinks(uri, tagNode);
 		for (URI link : links) {

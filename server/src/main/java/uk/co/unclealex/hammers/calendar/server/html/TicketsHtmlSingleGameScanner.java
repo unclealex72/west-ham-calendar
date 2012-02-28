@@ -42,6 +42,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
+ * A {@link HtmlGamesScanner} that scans a page for ticket sales.
  * @author alex
  * 
  */
@@ -49,10 +50,29 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 
 	private final static Logger log = LoggerFactory.getLogger(TicketsHtmlSingleGameScanner.class);
 
+	/**
+	 * The text that indicates the ticket selling date is for Bondholders.
+	 */
 	public static final String BOND_HOLDER_PATTERN = "Bondholders";
+	
+	/**
+	 * The text that indicates the ticket selling date is for priority point holders.
+	 */
 	public static final String PRIORITY_POINT_PATTERN = "Priority Point";
+	
+	/**
+	 * The text that indicates the ticket selling date is for season ticket holders.
+	 */	
 	public static final String SEASON_TICKET_PATTERN = "Season Ticket ";
+	
+	/**
+	 * The text that indicates the ticket selling date is for Academy members.
+	 */
 	public static final String ACADEMY_MEMBER_PATTERN = "Academy Members ";
+	
+	/**
+	 * The text that indicates the ticket selling date is for general sale.
+	 */	
 	public static final String GENERAL_SALE_PATTERN = "General Sale";
 
 	@Override
@@ -60,8 +80,21 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		return new TicketsScanner(uri, tagNode);
 	}
 	
+	/**
+	 * A {@link Scanner} that scans a page for ticket sale dates.
+	 * @author alex
+	 *
+	 */
 	class TicketsScanner extends Scanner {
+		
+		/**
+		 * The currently found {@link GameLocator}.
+		 */
 		private GameLocator i_gameLocator;
+		
+		/**
+		 * The currently found {@link DateTime} for the game played.
+		 */
 		private DateTime i_dateTimePlayed;
 
 		
@@ -69,8 +102,22 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			super(uri, tagNode);
 		}
 
+		/**
+		 * A parsing action is used to parse segments of text on a web page and, if a matching string is found,
+		 * a date is searched for and an action is executed.
+		 * @author alex
+		 *
+		 */
 		abstract class ParsingAction {
+			
+			/**
+			 * The text that must be contained in the segment of the web page.
+			 */
 			private final String i_containedText;
+			
+			/**
+			 * An array of date formats to look for a date to associate with this action.
+			 */
 			private final PossiblyYearlessDateFormat[] i_possiblyYearlessDateFormats;
 
 			public ParsingAction(String containedString, String... possiblyYearlessDateFormats) {
@@ -83,6 +130,10 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 				i_possiblyYearlessDateFormats = pydfs;
 			}
 
+			/**
+			 * Search for or parse text for a {@link DateTime} and, if one is found, do something.
+			 * @param dateText The dateText to search for or parse a date time.
+			 */
 			void execute(String dateText) {
 				try {
 					DateTime dateTime = parseDateTime(dateText);
@@ -98,13 +149,21 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 				}
 			}
 
+			/**
+			 * Parse or search for a {@link DateTime}.
+			 * @param dateText The text to search for or parse.
+			 * @return The found {@link DateTime} or nul if none could be found.
+			 * @throws UnparseableDateException
+			 */
 			abstract DateTime parseDateTime(String dateText) throws UnparseableDateException;
 
+			/**
+			 * With the premise that a {@link DateTime} has been found in a segment of the web page, do something with
+			 * that information.
+			 * @param dateTime The {@link DateTime} that has been found.
+			 */
 			abstract void execute(DateTime dateTime);
 
-			/**
-			 * @return the containedString
-			 */
 			public String getContainedText() {
 				return i_containedText;
 			}
@@ -114,6 +173,12 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			}
 		}
 
+		/**
+		 * A {@link ParsingAction} that looks for the date and time the game was played. This is identified by looking
+		 * for the string "k/o" and the date and time then precedes. that.
+		 * @author alex
+		 *
+		 */
 		class GameDatePlayedParsingAction extends ParsingAction {
 
 			public GameDatePlayedParsingAction() {
@@ -127,7 +192,13 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 						getPossiblyYearlessDateFormats());
 			}
 
-			@Override
+			/**
+			 * Make sure that {@link DateTime} the game was played and the corresponding {@link GameLocator} are populated
+			 * so that any {@link TicketParsingAction}s know which game to use to create a {@link GameUpdateCommand}.
+			 * 
+			 * @param dateTime The found {@link DateTime}.
+			 * 
+			 */
 			public void execute(DateTime dateTime) {
 				log.info("The game with tickets at URL " + getUri() + " is being played at " + dateTime);
 				setDateTimePlayed(dateTime);
@@ -135,10 +206,21 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			}
 		}
 
+		/**
+		 * A {@link ParsingAction} that looks for a ticket selling date (as identified by a string) and then creates
+		 * a {@link GameUpdateCommand} to be stored.
+		 * 
+		 * @author alex
+		 *
+		 */
 		abstract class TicketParsingAction extends ParsingAction {
 
-			public TicketParsingAction(String containedString) {
-				super(containedString, "hha EEE dd MMM", "ha EEE dd MMM", "hha EEE d MMM", "ha EEE d MMM");
+			/**
+			 * Create a new {@link TicketParsingAction}.
+			 * @param containedText The "magic text" which will identify which type of ticket is being sold.
+			 */
+			public TicketParsingAction(String containedText) {
+				super(containedText, "hha EEE dd MMM", "ha EEE dd MMM", "hha EEE d MMM", "ha EEE d MMM");
 			}
 
 			@Override
@@ -155,9 +237,20 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 				getGameUpdateCommands().add(gameUpdateCommand);
 			}
 
+			/**
+			 * Create the {@link GameUpdateCommand} that associates a game with a ticket sale date.
+			 * @param gameLocator The {@link GameLocator} created by the {@link GameDatePlayedParsingAction}.
+			 * @param dateTime The {@link DateTime} parsed in this text.
+			 * @return A {@link GameUpdateCommand} that describes the update required.
+			 */
 			protected abstract GameUpdateCommand createGameUpdateCommand(GameLocator gameLocator, DateTime dateTime);
 		}
 
+		/**
+		 * The {@link TicketParsingAction} that looks for Bondholder tickets.
+		 * @author alex
+		 *
+		 */
 		class BondHoldersTicketParsingAction extends TicketParsingAction {
 
 			public BondHoldersTicketParsingAction() {
@@ -170,6 +263,11 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			}
 		}
 
+		/**
+		 * The {@link TicketParsingAction} that looks for Priority pointholder tickets.
+		 * @author alex
+		 *
+		 */
 		class PriorityPointTicketParsingAction extends TicketParsingAction {
 
 			public PriorityPointTicketParsingAction() {
@@ -181,6 +279,12 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 				return GameUpdateCommand.priorityPointTickets(gameLocator, dateTime);
 			}
 		}
+
+		/**
+		 * The {@link TicketParsingAction} that looks for season ticket holder tickets.
+		 * @author alex
+		 *
+		 */
 
 		class SeasonTicketParsingAction extends TicketParsingAction {
 
@@ -194,6 +298,11 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			}
 		}
 
+		/**
+		 * The {@link TicketParsingAction} that looks for Academy members' tickets.
+		 * @author alex
+		 *
+		 */
 		class AcademyMemberTicketParsingAction extends TicketParsingAction {
 
 			public AcademyMemberTicketParsingAction() {
@@ -206,6 +315,11 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			}
 		}
 
+		/**
+		 * The {@link TicketParsingAction} that looks for general sale tickets.
+		 * @author alex
+		 *
+		 */
 		class GeneralSaleTicketParsingAction extends TicketParsingAction {
 
 			public GeneralSaleTicketParsingAction() {
@@ -218,7 +332,10 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			}
 		}
 
-		@Override
+		/**
+		 * Scan the page, first looking for the date the game was played and then looking for any ticket selling dates.
+		 * @throws IOException
+		 */
 		public void scan() throws IOException {
 			List<ParsingAction> parsingActions = Lists
 					.newArrayList(new GameDatePlayedParsingAction(), new BondHoldersTicketParsingAction(),

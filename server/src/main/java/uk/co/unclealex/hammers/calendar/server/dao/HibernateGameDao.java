@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 package uk.co.unclealex.hammers.calendar.server.dao;
 
@@ -35,12 +33,15 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 import com.google.common.collect.Sets;
 
+/**
+ * The Hibernate implementation of {@link GameDao}.
+ * 
+ * @author alex
+ * 
+ */
 @Transactional
 public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implements GameDao {
 
-	/**
-	 * @param clazz
-	 */
 	public HibernateGameDao() {
 		super(Game.class);
 	}
@@ -70,7 +71,8 @@ public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implement
 
 	@Override
 	public Iterable<Game> getAllForSeasonAndLocation(int season, Location location) {
-		Query query = getSession().createQuery("from Game where season = :season and location = :location").setInteger("season", season).setParameter("location", location);
+		Query query = getSession().createQuery("from Game where season = :season and location = :location")
+				.setInteger("season", season).setParameter("location", location);
 		return list(query);
 	}
 

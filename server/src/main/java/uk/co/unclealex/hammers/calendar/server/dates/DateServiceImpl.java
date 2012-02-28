@@ -42,7 +42,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 /**
- * The default implementation of {@link DateService}
+ * The default implementation of {@link DateService}.
  * 
  * @author alex
  * 
@@ -52,7 +52,16 @@ public class DateServiceImpl implements DateService {
 	/**
 	 * 
 	 */
+	private static final int THREE_PM = 15;
+
+	/**
+	 * The default (and only) time zone.
+	 */
 	private static final DateTimeZone EUROPE_LONDON = DateTimeZone.forID("Europe/London");
+
+	/**
+	 * The default (and only) chronology with the default time zone.
+	 */
 	private static final Chronology DEFAULT_CHRONOLOGY = ISOChronology.getInstance(EUROPE_LONDON);
 
 	/**
@@ -98,7 +107,7 @@ public class DateServiceImpl implements DateService {
 	}
 
 	/**
-	 * Throw an {@link UnparseableDateException}
+	 * Throw an {@link UnparseableDateException}.
 	 * 
 	 * @param verb
 	 *          The verb to use in the message.
@@ -107,6 +116,7 @@ public class DateServiceImpl implements DateService {
 	 * @param possiblyYearlessDateFormats
 	 *          The supplied date formats.
 	 * @throws UnparseableDateException
+	 *           Always thrown.
 	 */
 	protected void throwException(String verb, String dateTime, PossiblyYearlessDateFormat[] possiblyYearlessDateFormats)
 			throws UnparseableDateException {
@@ -120,11 +130,27 @@ public class DateServiceImpl implements DateService {
 				+ Joiner.on(", ").join(Iterables.filter(dateFormats, Predicates.notNull())));
 	}
 
-	protected DateTime findOrParsePossiblyYearlessDate(Function<String, DateTime> findOrParseFunction,
+	/**
+	 * Parse a date that may or may not have a year, taking the year from another
+	 * date if need be.
+	 * 
+	 * @param parseOrFindFunction
+	 *          A function that, given a date format string, will either try to
+	 *          fully parse or find a {@link DateTime}.
+	 * @param yearDeterminingDate
+	 *          The date to used to determine the year.
+	 * @param yearDeterminingDateIsLaterThanTheDate
+	 *          True if the date is earlier than the year determining date, false
+	 *          otherwise.
+	 * @param possiblyYearlessDateFormats
+	 *          The formats to try.
+	 * @return The parsed date or null if the date could not be parsed.
+	 */
+	protected DateTime findOrParsePossiblyYearlessDate(Function<String, DateTime> parseOrFindFunction,
 			DateTime yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate,
-			PossiblyYearlessDateFormat... possiblyYearlessDateFormats) throws UnparseableDateException {
+			PossiblyYearlessDateFormat... possiblyYearlessDateFormats) {
 		for (PossiblyYearlessDateFormat possiblyYearlessDateFormat : possiblyYearlessDateFormats) {
-			DateTime dateTime = findOrParsePossiblyYearlessDate(findOrParseFunction, yearDeterminingDate,
+			DateTime dateTime = findOrParsePossiblyYearlessDate(parseOrFindFunction, yearDeterminingDate,
 					yearDeterminingDateIsLaterThanTheDate, possiblyYearlessDateFormat);
 			if (dateTime != null) {
 				return dateTime;
@@ -137,15 +163,16 @@ public class DateServiceImpl implements DateService {
 	 * Parse a date that may or may not have a year, taking the year from another
 	 * date if need be.
 	 * 
-	 * @param date
-	 *          The date string to parse.
+	 * @param parseOrFindFunction
+	 *          A function that, given a date format string, will either try to
+	 *          fully parse or find a {@link DateTime}.
 	 * @param yearDeterminingDate
 	 *          The date to used to determine the year.
 	 * @param yearDeterminingDateIsLaterThanTheDate
 	 *          True if the date is earlier than the year determining date, false
 	 *          otherwise.
-	 * @param dateFormats
-	 *          The expected formats to try, year aware first.
+	 * @param possiblyYearlessDateFormat
+	 *          The format to try.
 	 * @return The parsed date or null if the date could not be parsed.
 	 */
 	protected DateTime findOrParsePossiblyYearlessDate(Function<String, DateTime> parseOrFindFunction,
@@ -226,14 +253,23 @@ public class DateServiceImpl implements DateService {
 		return findDate(date.substring(1), formatter, maxLength);
 	}
 
+	/**
+	 * Create a {@link DateTimeFormatter} from a given date format string.
+	 * 
+	 * @param dateFormat
+	 *          The date format string to use for formatting.
+	 * @return A {@link DateTimeFormatter} that will ignore days of the week and
+	 *         will always return dates in the Europe/London timezone.
+	 */
 	protected DateTimeFormatter makeFormatter(String dateFormat) {
 		return DateTimeFormat.forPattern(dateFormat).withZone(EUROPE_LONDON)
 				.withChronology(new DayOfWeekIgnoringChronology(DEFAULT_CHRONOLOGY));
 	}
 
 	/**
-	 * @param date
-	 *          The date to parse.
+	 * @param parseOrFindFunction
+	 *          A function that, given a date format string, will either try to
+	 *          fully parse or find a {@link DateTime}.
 	 * @param yearDeterminingDate
 	 *          The date that determines the current year.
 	 * @param yearDeterminingDateIsLaterThanTheDate
@@ -251,6 +287,18 @@ public class DateServiceImpl implements DateService {
 		return dateTime;
 	}
 
+	/**
+	 * Add a year to a {@link DateTime}.
+	 * 
+	 * @param yearDeterminingDate
+	 *          The {@link DateTime} that should be used to determine the year to
+	 *          add.
+	 * @param yearDeterminingDateIsLaterThanTheDate
+	 *          True if the year determining date is later than the date the year
+	 *          needs to be added to, false otherwise.
+	 * @param dateTime The original {@link DateTime}.
+	 * @return A {@link DateTime} with a new year.
+	 */
 	protected DateTime withYear(DateTime yearDeterminingDate, boolean yearDeterminingDateIsLaterThanTheDate,
 			DateTime dateTime) {
 		dateTime = dateTime.withYear(yearDeterminingDate.getYear());
@@ -271,7 +319,7 @@ public class DateServiceImpl implements DateService {
 
 	@Override
 	public boolean isThreeOClockOnASaturday(DateTime dateTime) {
-		return dateTime.getDayOfWeek() == DateTimeConstants.SATURDAY && dateTime.getHourOfDay() == 15
+		return dateTime.getDayOfWeek() == DateTimeConstants.SATURDAY && dateTime.getHourOfDay() == THREE_PM
 				&& dateTime.getMinuteOfHour() == 0;
 	}
 }

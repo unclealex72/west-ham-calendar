@@ -22,7 +22,7 @@
  *
  */
 
-package uk.co.unclealex.hammers.calendar.server.calendar.google;
+package uk.co.unclealex.hammers.calendar.server.calendar.formatter;
 
 import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
@@ -31,11 +31,15 @@ import com.google.common.base.Function;
 import com.google.common.base.Strings;
 
 /**
+ * A class that prints a game if it is known or its id otherwise.
  * @author alex
  *
  */
 public class GameFormatter implements Function<String, String> {
 
+	/**
+	 * The {@link GameDao} to use to look up persisted games.
+	 */
 	private GameDao i_gameDao;
 
 	@Override
@@ -46,9 +50,14 @@ public class GameFormatter implements Function<String, String> {
 		}
 		int id = Integer.valueOf(gameId);
 		Game game = getGameDao().findById(id);
-		return game == null?unknown(gameId):game.toString();
+		return game == null ? unknown(gameId) : game.toString();
 	}
 	
+	/**
+	 * Format an unknown game.
+	 * @param gameId The id of the unknown game.
+	 * @return A string containing the id, noting also the game is "unknown".
+	 */
 	protected String unknown(String gameId) {
 		return String.format("[%s:unknown]", gameId);
 	}

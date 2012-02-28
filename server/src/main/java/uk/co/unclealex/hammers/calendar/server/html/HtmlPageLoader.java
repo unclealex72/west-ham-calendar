@@ -42,5 +42,5 @@ public interface HtmlPageLoader {
 	 * @return A well formed XML document that represents the HTML page.
 	 * @throws IOException Thrown if there are any network problems.
 	 */
-	public TagNode loadPage(URL url) throws IOException;
+	TagNode loadPage(URL url) throws IOException;
 }

@@ -35,5 +35,5 @@ public interface GameUpdateInformation {
 	 * Accept a visitor.
 	 * @param visitor The visitor to accept.
 	 */
-	public void accept(GameUpdateInformationVisitor visitor);
+	void accept(GameUpdateInformationVisitor visitor);
 }

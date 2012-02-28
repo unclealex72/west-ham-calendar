@@ -23,6 +23,7 @@
  */
 package uk.co.unclealex.hammers.calendar.server.calendar.google;
 
+import org.joda.time.DateTime;
 import org.joda.time.Duration;
 import org.joda.time.Interval;
 
@@ -31,22 +32,42 @@ import uk.co.unclealex.hammers.calendar.server.model.Game;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 
+/**
+ * The base class for all {@link GoogleCalendar}s.
+ * @author alex
+ *
+ */
 public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 
+	/**
+	 * The title for this calendar.
+	 */
 	private String i_calendarTitle;
+	
+	/**
+	 * The description of this calendar.
+	 */
 	private String i_description;
+	
+	/**
+	 * The length of time (in hours) that a game takes in this calendar.
+	 */
 	private int i_durationInHours;
+	
+	/**
+	 * True if time in this calendar should be marked as busy, false otherwise.
+	 */
 	private boolean i_busy;
 
 	/**
-	 * Default constructor
+	 * Default constructor.
 	 */
 	protected AbstractGoogleCalendar() {
 		super();
 	}
 
 	/**
-	 * Constructor for testing
+	 * Constructor for testing.
 	 * 
 	 * @param calendarTitle
 	 *          The title of this calendar.
@@ -67,6 +88,9 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 		i_busy = busy;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Function<Game, Interval> toCalendarDateInterval() {
 		return new Function<Game, Interval>() {
@@ -77,6 +101,9 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 		};
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Predicate<Game> toContainsGamePredicate() {
 		return new Predicate<Game>() {
@@ -87,6 +114,18 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 		};
 	}
 
+	/**
+	 * Get the instant that a game starts should it appear on this calendar.
+	 * @param game The {@link Game} in question.
+	 * @return The instant that a game starts should it appear on this calendar.
+	 */
+	public abstract DateTime getGameDate(Game game);
+	
+	/**
+	 * Check to see if a game should appear on this calendar.
+	 * @param game The {@link Game} to check.
+	 * @return True if the given game should appear on this calendar, false otherwise.
+	 */
 	protected abstract boolean contains(Game game);
 
 	public String getDescription() {

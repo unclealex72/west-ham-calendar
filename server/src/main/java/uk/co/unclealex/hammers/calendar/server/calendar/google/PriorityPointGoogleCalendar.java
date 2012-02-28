@@ -28,6 +28,11 @@ import org.joda.time.DateTime;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 
+/**
+ * The {@link GoogleCalendar} for priority point ticket selling dates.
+ * @author alex
+ *
+ */
 public class PriorityPointGoogleCalendar extends TicketsGoogleCalendar {
 
 	@Override

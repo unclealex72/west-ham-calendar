@@ -166,7 +166,7 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 	}
 
 	@Override
-	public StringAndDurationFieldType findGameAndDurationFieldType(String calendarId, String gameId, DateTime searchDate) {
+	public GameIdAndDurationFieldType findGameAndDurationFieldType(String calendarId, String gameId, DateTime searchDate) {
 		MockGame mockGame = getGamesForCalendar(calendarId).get(gameId);
 		String eventId = null;
 		DurationFieldType durationFieldType = null;
@@ -182,7 +182,7 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 			};
 			durationFieldType = Iterables.find(Arrays.asList(durationFieldTypes()), predicate);
 		}
-		return new StringAndDurationFieldType(eventId, durationFieldType);
+		return new GameIdAndDurationFieldType(eventId, durationFieldType);
 	}
 
 	@Override

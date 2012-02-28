@@ -1,12 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.dao;
-
-import uk.co.unclealex.hammers.calendar.server.model.TicketingCalendar;
-import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,7 +18,16 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.server.dao;
+
+import uk.co.unclealex.hammers.calendar.server.model.TicketingCalendar;
+import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+
+/**
+ * The Hibernate implementation of {@link TicketingCalendarDao}.
+ * 
+ * @author alex
  *
  */
 public class HibernateTicketingCalendarDao extends BusinessKeyHibernateDaoSupport<CalendarType, TicketingCalendar> 

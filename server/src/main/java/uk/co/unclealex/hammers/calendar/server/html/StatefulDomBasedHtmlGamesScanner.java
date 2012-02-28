@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.html;
@@ -50,21 +48,33 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 	
 	/**
 	 * Create a scanner to scan the games.
+	 * @param uri The URI of the page being scanned.
 	 * @param tagNode The XML tagNode to scan.
 	 * @return A scanner as described above.
 	 */
 	protected abstract Scanner createScanner(URI uri, TagNode tagNode);
 
 	/**
-	 * An abstract to allow for scanning state to be stored, mainly so that there is
+	 * An abstract class to allow for scanning state to be stored, mainly so that there is
 	 * no need to muck around with spring-based factories.
 	 * @author alex
 	 *
 	 */
 	abstract class Scanner {
-		
+
+		/**
+		 * The set of {@link GameUpdateCommand}s to update.
+		 */
 		private final SortedSet<GameUpdateCommand> i_gameUpdateCommands = Sets.newTreeSet();
+		
+		/**
+		 * The URI of the page being scanned.
+		 */
 		private final URI i_uri;
+		
+		/**
+		 * The top-level {@link TagNode} of the page being scanned.
+		 */
 		private final TagNode i_tagNode;
 		
 		public Scanner(URI uri, TagNode tagNode) {
@@ -73,27 +83,20 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 			i_tagNode = tagNode;
 		}
 
+		/**
+		 * Scan the page for any information.
+		 * @throws IOException
+		 */
 		public abstract void scan() throws IOException;
 		
-		/**
-		 * @return the gameUpdateCommands
-		 */
 		public final SortedSet<GameUpdateCommand> getGameUpdateCommands() {
 			return i_gameUpdateCommands;
 		}
 
-		/**
-		 * 
-		 * @return The URI of the page being scanned.
-		 */
 		public final URI getUri() {
 			return i_uri;
 		}
 
-		/**
-		 * 
-		 * @return The tagNode being scanned.
-		 */
 		public final TagNode getTagNode() {
 			return i_tagNode;
 		};

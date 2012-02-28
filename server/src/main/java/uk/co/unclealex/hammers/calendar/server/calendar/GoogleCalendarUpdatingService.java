@@ -52,6 +52,6 @@ public interface GoogleCalendarUpdatingService {
 	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
 	 */
-	public SortedSet<UpdateChangeLog> updateCalendars(Map<String, GoogleCalendar> googleCalendarsByCalendarId,
+	SortedSet<UpdateChangeLog> updateCalendars(Map<String, GoogleCalendar> googleCalendarsByCalendarId,
 			Iterable<Game> games) throws IOException, GoogleAuthenticationFailedException;
 }

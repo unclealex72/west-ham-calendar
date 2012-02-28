@@ -1,13 +1,4 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.server.auth;
-
-import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
-import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
-import uk.co.unclealex.hammers.calendar.shared.model.Role;
-
-/**
  * Copyright 2011 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,14 +18,57 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
  * specific language governing permissions and limitations
  * under the License.   
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.server.auth;
+
+import uk.co.unclealex.hammers.calendar.shared.exceptions.NoSuchUsernameException;
+import uk.co.unclealex.hammers.calendar.shared.exceptions.UsernameAlreadyExistsException;
+import uk.co.unclealex.hammers.calendar.shared.model.Role;
+
+/**
+ * A service for adding, removing and altering users and their roles.
+ * @author alex
  *
  */
 public interface UserService {
 
-	public void ensureDefaultUsersExists(String username, String password);
-	public void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException;
-	public void removeUser(String username) throws NoSuchUsernameException;
-  public void alterUser(String username, String newPassword, Role newRole) throws NoSuchUsernameException;
-  public void alterPassword(String username, String newPassword) throws NoSuchUsernameException;
+	/**
+	 * Make sure that a default user exists.
+	 * @param username The username of the default user.
+	 * @param password The password of the default user.
+	 */
+	void ensureDefaultUsersExists(String username, String password);
+	
+	/**
+	 * Add a new user.
+	 * @param username The new user's username.
+	 * @param password The new user's password.
+	 * @param role The user's most authoritative role.
+	 * @throws UsernameAlreadyExistsException Thrown if a user with the given username already exists.
+	 */
+	void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException;
+	
+	/**
+	 * Remove a user.
+	 * @param username The username of the user to remove.
+	 * @throws NoSuchUsernameException Thrown if no such user exists.
+	 */
+	void removeUser(String username) throws NoSuchUsernameException;
+	
+	/**
+	 * Change a user.
+	 * @param username The username of the user to change.
+	 * @param newPassword The user's new password.
+	 * @param newRole The user's new most authoritative role.
+	 * @throws NoSuchUsernameException Thrown if no such user exists.
+	 */
+  void alterUser(String username, String newPassword, Role newRole) throws NoSuchUsernameException;
+
+  /**
+   * Alter a user's password.
+	 * @param username The username of the user to change.
+	 * @param newPassword The user's new password.
+	 * @throws NoSuchUsernameException Thrown if no such user exists.
+   */
+  void alterPassword(String username, String newPassword) throws NoSuchUsernameException;
 }
