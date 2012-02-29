@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -39,6 +37,7 @@ import org.mozilla.javascript.Scriptable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * The default implementation of {@link MainPageService}.
  * 
@@ -47,6 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MainPageServiceImpl implements MainPageService {
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(MainPageServiceImpl.class);
 
 	/**
@@ -69,15 +69,24 @@ public class MainPageServiceImpl implements MainPageService {
 	 */
 	private HtmlPageLoader i_htmlPageLoader;
 
+	/**
+	 * Instantiates a new main page service impl.
+	 * 
+	 * @param mainPageUrl
+	 *          the main page url
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	public MainPageServiceImpl(String mainPageUrl) throws URISyntaxException {
 		super();
 		i_mainPageUri = new URI(mainPageUrl);
 	}
 
 	/**
-	 * Initialise this service by finding the tickets and fixtures links.
+	 * Initialise i_service by finding the tickets and fixtures links.
 	 * 
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	@PostConstruct
 	public void initialise() throws IOException {
@@ -86,11 +95,12 @@ public class MainPageServiceImpl implements MainPageService {
 	}
 
 	/**
-	 * Initialise this service by finding the tickets and fixtures links.
+	 * Initialise i_service by finding the tickets and fixtures links.
 	 * 
-	 * @param The
-	 *          URL of the main page.
+	 * @param mainPageUrl
+	 *          the main page url
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	public void initialise(URL mainPageUrl) throws IOException {
 		TagNode mainPage = getHtmlPageLoader().loadPage(mainPageUrl);
@@ -256,30 +266,64 @@ public class MainPageServiceImpl implements MainPageService {
 		return searcher.search(array.getIds());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public URI getTicketsUri() {
 		return i_ticketsUri;
 	}
 
+	/**
+	 * Sets the URI for the tickets web page.
+	 * 
+	 * @param ticketsUri
+	 *          the new URI for the tickets web page
+	 */
 	public void setTicketsUri(URI ticketsUri) {
 		i_ticketsUri = ticketsUri;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public URI getFixturesUri() {
 		return i_fixturesUri;
 	}
 
+	/**
+	 * Sets the URI for the fixtures web page.
+	 * 
+	 * @param fixturesUri
+	 *          the new URI for the fixtures web page
+	 */
 	public void setFixturesUri(URI fixturesUri) {
 		i_fixturesUri = fixturesUri;
 	}
 
+	/**
+	 * Gets the {@link HtmlPageLoader} used to load the main page.
+	 * 
+	 * @return the {@link HtmlPageLoader} used to load the main page
+	 */
 	public HtmlPageLoader getHtmlPageLoader() {
 		return i_htmlPageLoader;
 	}
 
+	/**
+	 * Sets the {@link HtmlPageLoader} used to load the main page.
+	 * 
+	 * @param htmlPageLoader
+	 *          the new {@link HtmlPageLoader} used to load the main page
+	 */
 	public void setHtmlPageLoader(HtmlPageLoader htmlPageLoader) {
 		i_htmlPageLoader = htmlPageLoader;
 	}
 
+	/**
+	 * Gets the URI for the main web page.
+	 * 
+	 * @return the URI for the main web page
+	 */
 	public URI getMainPageUri() {
 		return i_mainPageUri;
 	}

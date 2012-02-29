@@ -44,8 +44,8 @@ public class AdminAttendanceServlet extends AbstractAttendanceServlet implements
 	}
 
 	@Override
-	public String createGoogleAuthorisationUrlIfRequired() {
-		return createAttendanceService().createGoogleAuthorisationUrlIfRequired();
+	public String createGoogleAuthorisationUrl() {
+		return createAttendanceService().createGoogleAuthorisationUrl();
 	}
 	
 	@Override

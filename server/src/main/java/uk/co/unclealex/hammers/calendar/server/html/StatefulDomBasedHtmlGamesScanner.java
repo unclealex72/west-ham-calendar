@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -30,8 +30,9 @@ import org.htmlcleaner.TagNode;
 
 import com.google.common.collect.Sets;
 
+
 /**
- * A base class for {@link HtmlGamesScanner}s that require state. Really, this is to avoid writing Spring factories. 
+ * A base class for {@link HtmlGamesScanner}s that require state. Really, i_is to avoid writing Spring factories. 
  * @author alex
  *
  */
@@ -77,6 +78,14 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 		 */
 		private final TagNode i_tagNode;
 		
+		/**
+		 * Instantiates a new scanner.
+		 * 
+		 * @param uri
+		 *          the uri
+		 * @param tagNode
+		 *          the tag node
+		 */
 		public Scanner(URI uri, TagNode tagNode) {
 			super();
 			i_uri = uri;
@@ -85,18 +94,35 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 
 		/**
 		 * Scan the page for any information.
+		 * 
 		 * @throws IOException
+		 *           Signals that an I/O exception has occurred.
 		 */
 		public abstract void scan() throws IOException;
 		
+		/**
+		 * Gets the set of {@link GameUpdateCommand}s to update.
+		 * 
+		 * @return the set of {@link GameUpdateCommand}s to update
+		 */
 		public final SortedSet<GameUpdateCommand> getGameUpdateCommands() {
 			return i_gameUpdateCommands;
 		}
 
+		/**
+		 * Gets the URI of the page being scanned.
+		 * 
+		 * @return the URI of the page being scanned
+		 */
 		public final URI getUri() {
 			return i_uri;
 		}
 
+		/**
+		 * Gets the top-level {@link TagNode} of the page being scanned.
+		 * 
+		 * @return the top-level {@link TagNode} of the page being scanned
+		 */
 		public final TagNode getTagNode() {
 			return i_tagNode;
 		};

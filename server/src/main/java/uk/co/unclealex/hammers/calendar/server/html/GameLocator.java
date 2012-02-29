@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.html;
@@ -29,6 +27,7 @@ import org.joda.time.DateTime;
 import com.google.common.base.Objects;
 
 import uk.co.unclealex.hammers.calendar.server.model.GameKey;
+
 
 /**
  * A game locator is an abstract class that presents a visitor so services can
@@ -90,9 +89,10 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 
 	/**
 	 * The base class for both types of game locator.
+	 * 
+	 * @param <E>
+	 *          The type of object that will be used to locate the game.
 	 * @author alex
-	 *
-	 * @param <E> The type of object that will be used to locate the game.
 	 */
 	@SuppressWarnings("rawtypes")
 	abstract static class InternalGameLocator<E extends Comparable> extends GameLocator {
@@ -102,26 +102,43 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 		 */
 		private final E i_locator;
 
+		/**
+		 * Instantiates a new internal game locator.
+		 * 
+		 * @param locator
+		 *          the locator
+		 */
 		protected InternalGameLocator(E locator) {
 			i_locator = locator;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public int hashCode() {
 			return Objects.hashCode(getClass(), getLocator());
 		}
 		
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String toString() {
 			return getLocator().toString();
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			return obj instanceof GameLocator && compareTo((GameLocator) obj) == 0;
 		}
 
 		/**
+		 * Gets the object used to locate a game.
+		 * 
 		 * @return the locator
 		 */
 		public E getLocator() {
@@ -136,10 +153,19 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 	 */
 	public static class GameKeyLocator extends InternalGameLocator<GameKey> {
 
+		/**
+		 * Instantiates a new game key locator.
+		 * 
+		 * @param gameKey
+		 *          the game key
+		 */
 		protected GameKeyLocator(GameKey gameKey) {
 			super(gameKey);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public int compareTo(GameLocator o) {
 			class ComparingVisitor extends GameLocatorVisitor {
@@ -160,6 +186,9 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 			return visitor.cmp;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void accept(GameLocatorVisitor visitor) {
 			visitor.visit(this);
@@ -173,10 +202,19 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 	 */
 	public static class DatePlayedLocator extends InternalGameLocator<DateTime> {
 
+		/**
+		 * Instantiates a new date played locator.
+		 * 
+		 * @param datePlayed
+		 *          the date played
+		 */
 		protected DatePlayedLocator(DateTime datePlayed) {
 			super(datePlayed);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public int compareTo(GameLocator o) {
 			class ComparingVisitor extends GameLocatorVisitor {
@@ -197,6 +235,9 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 			return visitor.cmp;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void accept(GameLocatorVisitor visitor) {
 			visitor.visit(this);

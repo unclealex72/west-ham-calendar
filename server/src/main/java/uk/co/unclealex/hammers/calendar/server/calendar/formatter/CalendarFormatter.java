@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 package uk.co.unclealex.hammers.calendar.server.calendar.formatter;
 
@@ -29,6 +27,7 @@ import uk.co.unclealex.hammers.calendar.server.dao.CalendarConfigurationDao;
 import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
 
 import com.google.common.base.Function;
+
 
 /**
  * A class to format {@link GoogleCalendar}s given their id.
@@ -47,6 +46,9 @@ public class CalendarFormatter implements Function<String, String> {
 	 */
 	private GoogleCalendarFactory i_googleCalendarFactory;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String apply(String googleCalendarId) {
 		CalendarConfiguration calendarConfiguration = getCalendarConfigurationDao()
@@ -59,18 +61,43 @@ public class CalendarFormatter implements Function<String, String> {
 		return String.format("{%s}", googleCalendar.getCalendarTitle());
 	}
 
+	/**
+	 * Gets the {@link CalendarConfigurationDao} used to look up calendar ids.
+	 * 
+	 * @return the {@link CalendarConfigurationDao} used to look up calendar ids
+	 */
 	public CalendarConfigurationDao getCalendarConfigurationDao() {
 		return i_calendarConfigurationDao;
 	}
 
+	/**
+	 * Sets the {@link CalendarConfigurationDao} used to look up calendar ids.
+	 * 
+	 * @param calendarConfigurationDao
+	 *          the new {@link CalendarConfigurationDao} used to look up calendar
+	 *          ids
+	 */
 	public void setCalendarConfigurationDao(CalendarConfigurationDao calendarConfigurationDao) {
 		i_calendarConfigurationDao = calendarConfigurationDao;
 	}
 
+	/**
+	 * Gets the {@link GoogleCalendarFactory} used to get {@link GoogleCalendar}s.
+	 * 
+	 * @return the {@link GoogleCalendarFactory} used to get
+	 *         {@link GoogleCalendar}s
+	 */
 	public GoogleCalendarFactory getGoogleCalendarFactory() {
 		return i_googleCalendarFactory;
 	}
 
+	/**
+	 * Sets the {@link GoogleCalendarFactory} used to get {@link GoogleCalendar}s.
+	 * 
+	 * @param googleCalendarFactory
+	 *          the new {@link GoogleCalendarFactory} used to get
+	 *          {@link GoogleCalendar}s
+	 */
 	public void setGoogleCalendarFactory(GoogleCalendarFactory googleCalendarFactory) {
 		i_googleCalendarFactory = googleCalendarFactory;
 	}

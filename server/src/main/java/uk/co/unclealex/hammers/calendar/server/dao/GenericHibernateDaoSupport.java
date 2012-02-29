@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -35,11 +35,14 @@ import uk.co.unclealex.hammers.calendar.server.model.HasIdentity;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 
+
 /**
- * An abstract class that can be used for classes that implement {@link CrudDao} and use Hibernate.
+ * An abstract class that can be used for classes that implement {@link CrudDao}
+ * and use Hibernate.
+ * 
+ * @param <M>
+ *          The type of the model that i_data access class is for.
  * @author alex
- *
- * @param <M> The type of the model that this data access class is for.
  */
 public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implements CrudDao<M>{
 
@@ -59,7 +62,7 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 	private SessionFactory i_sessionFactory;
 	
 	/**
-	 * Create a new instance of this class.
+	 * Create a new instance of i_class.
 	 * @param clazz The class of the model objects being persisted.
 	 */
 	public GenericHibernateDaoSupport(Class<M> clazz) {
@@ -80,6 +83,9 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 		}
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterable<M> getAll() {
 		Criteria c = createCriteria();
@@ -132,6 +138,9 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 		return (M) criteria.uniqueResult();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void remove(Integer id) {
 		Session session = getSession();
@@ -139,11 +148,17 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 		session.flush();
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void saveOrUpdate(M... models) {
 		saveOrUpdate(Arrays.asList(models));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void saveOrUpdate(Iterable<M> models) {
 		Session session = getSession();
@@ -153,6 +168,9 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 		session.flush();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public M findById(Integer key) {
@@ -169,10 +187,15 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 	}
 	
 	/**
-	 * Filter an unbounded {@link Iterable} so that it only contains objects with a given class.
-	 * @param iterable The unbounded {@link Iterable}
-	 * @param <C> The bound for the returned iterable.
-	 * @param clazz The class to filter with.
+	 * Filter an unbounded {@link Iterable} so that it only contains objects with
+	 * a given class.
+	 * 
+	 * @param <C>
+	 *          The bound for the returned iterable.
+	 * @param iterable
+	 *          The unbounded {@link Iterable}
+	 * @param clazz
+	 *          The class to filter with.
 	 * @return A correctly bound {@link Iterable}.
 	 */
 	protected <C> Iterable<C> filter(Iterable<?> iterable, Class<C> clazz) {
@@ -187,18 +210,39 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 		return getSessionFactory().getCurrentSession();
 	}
 	
+	/**
+	 * Gets the class of the model objects being persisted.
+	 * 
+	 * @return the class of the model objects being persisted
+	 */
 	public Class<M> getClazz() {
 		return i_clazz;
 	}
 
+	/**
+	 * Gets the Hibernate entity name of the model objects being persisted.
+	 * 
+	 * @return the Hibernate entity name of the model objects being persisted
+	 */
 	public String getEntityName() {
 		return i_entityName;
 	}
 
+	/**
+	 * Gets the a Hibernate {@link SessionFactory}.
+	 * 
+	 * @return the a Hibernate {@link SessionFactory}
+	 */
 	public SessionFactory getSessionFactory() {
 		return i_sessionFactory;
 	}
 
+	/**
+	 * Sets the a Hibernate {@link SessionFactory}.
+	 * 
+	 * @param sessionFactory
+	 *          the new a Hibernate {@link SessionFactory}
+	 */
 	public void setSessionFactory(SessionFactory sessionFactory) {
 		i_sessionFactory = sessionFactory;
 	}

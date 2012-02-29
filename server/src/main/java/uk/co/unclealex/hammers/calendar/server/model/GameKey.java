@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.model;
@@ -28,6 +26,7 @@ import com.google.common.base.Objects;
 
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
+
 
 /**
  * A class that encapsulates the immutable information that uniquely identifies
@@ -78,6 +77,9 @@ public class GameKey implements Comparable<GameKey> {
 		i_season = season;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int compareTo(GameKey o) {
 		int cmp = getSeason() - o.getSeason();
@@ -93,22 +95,33 @@ public class GameKey implements Comparable<GameKey> {
 		return cmp;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return String.format("%d %s %s %s", getSeason(), getCompetition(), getOpponents(), getLocation());
 	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof GameKey && compareTo((GameKey) obj) == 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(getSeason(), getCompetition(), getOpponents(), getLocation());
 	}
 	
 	/**
+	 * Gets the game's competition.
+	 * 
 	 * @return The game's competition.
 	 */
 	public Competition getCompetition() {
@@ -116,6 +129,8 @@ public class GameKey implements Comparable<GameKey> {
 	}
 
 	/**
+	 * Gets the game's location.
+	 * 
 	 * @return The game's location.
 	 */
 	public Location getLocation() {
@@ -123,6 +138,8 @@ public class GameKey implements Comparable<GameKey> {
 	}
 
 	/**
+	 * Gets the game's opponents.
+	 * 
 	 * @return The game's opponents.
 	 */
 	public String getOpponents() {
@@ -130,6 +147,8 @@ public class GameKey implements Comparable<GameKey> {
 	}
 
 	/**
+	 * Gets the game's season.
+	 * 
 	 * @return The game's season.
 	 */
 	public int getSeason() {

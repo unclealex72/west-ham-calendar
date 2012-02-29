@@ -1,12 +1,12 @@
 /**
- * Copyright 2010 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 package uk.co.unclealex.hammers.calendar.server.update;
@@ -41,6 +39,7 @@ import org.quartz.spi.TriggerFiredBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 /**
  * A class that schedules and executes runnable jobs.
  * @author alex
@@ -48,6 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdateCalendarJob implements JobFactory {
 
+	/** The log. */
 	private final Logger log = LoggerFactory.getLogger(UpdateCalendarJob.class);
 	
 	/**
@@ -110,6 +110,9 @@ public class UpdateCalendarJob implements JobFactory {
 		getScheduler().shutdown();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Job newJob(TriggerFiredBundle bundle, Scheduler scheduler) throws SchedulerException {
 		return new MyJob();
@@ -121,6 +124,10 @@ public class UpdateCalendarJob implements JobFactory {
 	 */
 	@DisallowConcurrentExecution
 	class MyJob implements Job {
+		
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void execute(JobExecutionContext context) throws JobExecutionException {
 			UpdateCalendarJob.this.execute();
@@ -142,34 +149,82 @@ public class UpdateCalendarJob implements JobFactory {
 		}
 	}
 
+	/**
+	 * Gets the a Quartz {@link Scheduler}.
+	 * 
+	 * @return the a Quartz {@link Scheduler}
+	 */
 	public Scheduler getScheduler() {
 		return i_scheduler;
 	}
 
+	/**
+	 * Sets the a Quartz {@link Scheduler}.
+	 * 
+	 * @param scheduler
+	 *          the new a Quartz {@link Scheduler}
+	 */
 	public void setScheduler(Scheduler scheduler) {
 		i_scheduler = scheduler;
 	}
 
+	/**
+	 * Gets the cron string used to control job scheduling or null if no job is to
+	 * be scheduled.
+	 * 
+	 * @return the cron string used to control job scheduling or null if no job is
+	 *         to be scheduled
+	 */
 	public String getCronString() {
 		return i_cronString;
 	}
 
+	/**
+	 * Sets the cron string used to control job scheduling or null if no job is to
+	 * be scheduled.
+	 * 
+	 * @param cronString
+	 *          the new cron string used to control job scheduling or null if no
+	 *          job is to be scheduled
+	 */
 	public void setCronString(String cronString) {
 		i_cronString = cronString;
 	}
 
+	/**
+	 * Gets the {@link Runnable} job to execute.
+	 * 
+	 * @return the {@link Runnable} job to execute
+	 */
 	public Runnable getRunnable() {
 		return i_runnable;
 	}
 
+	/**
+	 * Sets the {@link Runnable} job to execute.
+	 * 
+	 * @param runnable
+	 *          the new {@link Runnable} job to execute
+	 */
 	public void setRunnable(Runnable runnable) {
 		i_runnable = runnable;
 	}
 
+	/**
+	 * Gets the a Quartz {@link JobKey}.
+	 * 
+	 * @return the a Quartz {@link JobKey}
+	 */
 	public JobKey getJobKey() {
 		return i_jobKey;
 	}
 
+	/**
+	 * Sets the a Quartz {@link JobKey}.
+	 * 
+	 * @param jobKey
+	 *          the new a Quartz {@link JobKey}
+	 */
 	public void setJobKey(JobKey jobKey) {
 		i_jobKey = jobKey;
 	}

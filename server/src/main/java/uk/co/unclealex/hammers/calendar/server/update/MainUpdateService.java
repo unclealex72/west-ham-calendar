@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.update;
@@ -29,6 +27,7 @@ import java.util.SortedSet;
 
 import uk.co.unclealex.hammers.calendar.server.calendar.UpdateChangeLog;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
+
 
 /**
  * The service used to combine reading game information from the web and transforming that information
@@ -44,7 +43,9 @@ public interface MainUpdateService {
 	 * @param gameId
 	 *          The the id of the game to move.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	void attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
 
@@ -54,24 +55,33 @@ public interface MainUpdateService {
 	 * @param gameId
 	 *          The id of the game to move.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	void unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
 
 
 	/**
 	 * Update all calendars.
+	 * 
 	 * @return TODO
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
 	 */
 	SortedSet<UpdateChangeLog> updateAllCalendars() throws IOException, GoogleAuthenticationFailedException;
 
 	/**
 	 * Attend all home games in a season.
+	 * 
 	 * @param season
-	 * @throws IOException 
-	 * @throws GoogleAuthenticationFailedException 
+	 *          the season
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	void attendAllHomeGamesForSeason(int season) throws GoogleAuthenticationFailedException, IOException;	
 }

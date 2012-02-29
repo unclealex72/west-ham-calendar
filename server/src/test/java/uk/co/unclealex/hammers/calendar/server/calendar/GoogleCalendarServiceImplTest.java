@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -58,15 +56,18 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+
 /**
- * @author alex
+ * The Class GoogleCalendarServiceImplTest.
  * 
+ * @author alex
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "/application-contexts/calendar/test-dao.xml",
 		"/application-contexts/calendar/context.xml" })
 public class GoogleCalendarServiceImplTest {
 
+	/** The I d_ generator. */
 	static Function<CalendarType, String> ID_GENERATOR = new Function<CalendarType, String>() {
 		@Override
 		public String apply(CalendarType calendarType) {
@@ -74,24 +75,52 @@ public class GoogleCalendarServiceImplTest {
 		}
 	};
 
+	/** The UNATTENDE d_ calenda r_ id. */
 	static String UNATTENDED_CALENDAR_ID = "unattended";
 
+	/** The google calendar dao factory. */
 	@Inject
 	GoogleCalendarDaoFactory googleCalendarDaoFactory;
+	
+	/** The google calendar service. */
 	@Inject
 	GoogleCalendarServiceImpl googleCalendarService;
+	
+	/** The google calendar factory. */
 	@Inject
 	GoogleCalendarFactory googleCalendarFactory;
 	
+	/** The mock google calendar dao. */
 	MockGoogleCalendarDao mockGoogleCalendarDao;
+	
+	/** The game dao. */
 	GameDao gameDao;
 	
+	/** The game1. */
 	Game game1;
+	
+	/** The game2. */
 	Game game2;
+	
+	/** The game3. */
 	Game game3;
+	
+	/** The game2_altered. */
 	Game game2_altered;
+	
+	/** The game4. */
 	Game game4;
 	
+	/**
+	 * Sets the up.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws JAXBException
+	 *           the jAXB exception
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Before
 	public void setUp() throws IOException, JAXBException, GoogleAuthenticationFailedException {
 		mockGoogleCalendarDao = (MockGoogleCalendarDao) googleCalendarDaoFactory.createGoogleCalendarDao();
@@ -139,12 +168,14 @@ public class GoogleCalendarServiceImplTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarServiceImpl#attendGame(int)}
-	 * .
+	 * Test method for.
 	 * 
-	 * @throws IOException
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarServiceImpl#attendGame(int)}
+	 *           .
 	 */
 	@Test
 	public void testAttendGame() throws GoogleAuthenticationFailedException, IOException {
@@ -153,12 +184,14 @@ public class GoogleCalendarServiceImplTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarServiceImpl#unattendGame(int)}
-	 * .
+	 * Test method for.
 	 * 
-	 * @throws IOException
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarServiceImpl#unattendGame(int)}
+	 *           .
 	 */
 	@Test
 	public void testUnattendGame() throws GoogleAuthenticationFailedException, IOException {
@@ -166,6 +199,16 @@ public class GoogleCalendarServiceImplTest {
 		checkGame(1, CalendarType.UNATTENDED, CalendarType.ATTENDED);
 	}
 
+	/**
+	 * Check game.
+	 * 
+	 * @param gameId
+	 *          the game id
+	 * @param containingCalendarType
+	 *          the containing calendar type
+	 * @param previousCalendarType
+	 *          the previous calendar type
+	 */
 	protected void checkGame(final int gameId, CalendarType containingCalendarType, CalendarType previousCalendarType) {
 		String containingCalendarId = ID_GENERATOR.apply(containingCalendarType);
 		String previousCalendarId = ID_GENERATOR.apply(previousCalendarType);
@@ -182,12 +225,14 @@ public class GoogleCalendarServiceImplTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarServiceImpl#updateCalendars()}
-	 * .
+	 * Test method for.
 	 * 
-	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarServiceImpl#updateCalendars()}
+	 *           .
 	 */
 	@Test
 	public void testUpdateCalendars() throws IOException, GoogleAuthenticationFailedException {
@@ -219,8 +264,12 @@ public class GoogleCalendarServiceImplTest {
 	}
 
 	/**
+	 * Populate expected attended log.
+	 * 
 	 * @param googleCalendar
+	 *          the google calendar
 	 * @param expectedUpdateChangeLogs
+	 *          the expected update change logs
 	 */
 	protected void populateExpectedAttendedLog(GoogleCalendar googleCalendar,
 			SortedSet<UpdateChangeLog> expectedUpdateChangeLogs) {
@@ -229,8 +278,12 @@ public class GoogleCalendarServiceImplTest {
 	}
 
 	/**
+	 * Populate expected unattended log.
+	 * 
 	 * @param googleCalendar
+	 *          the google calendar
 	 * @param expectedUpdateChangeLogs
+	 *          the expected update change logs
 	 */
 	protected void populateExpectedUnattendedLog(GoogleCalendar googleCalendar,
 			SortedSet<UpdateChangeLog> expectedUpdateChangeLogs) {
@@ -239,8 +292,12 @@ public class GoogleCalendarServiceImplTest {
 	}
 
 	/**
+	 * Populate expected addition log.
+	 * 
 	 * @param googleCalendar
+	 *          the google calendar
 	 * @param expectedUpdateChangeLogs
+	 *          the expected update change logs
 	 */
 	protected void populateExpectedAdditionLog(final GoogleCalendar googleCalendar,
 			SortedSet<UpdateChangeLog> expectedUpdateChangeLogs) {

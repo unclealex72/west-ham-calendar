@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -45,24 +43,44 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
 import com.google.api.services.calendar.model.EventDateTime;
 import com.google.common.collect.Maps;
 
+
 /**
- * @author alex
+ * The Class AbstractGoogleCalendarDaoTest.
  * 
+ * @author alex
  */
 public abstract class AbstractGoogleCalendarDaoTest {
 
+	/**
+	 * Date of.
+	 * 
+	 * @param day
+	 *          the day
+	 * @param month
+	 *          the month
+	 * @param year
+	 *          the year
+	 * @param hour
+	 *          the hour
+	 * @param minute
+	 *          the minute
+	 * @return the date time
+	 */
 	protected DateTime dateOf(int day, int month, int year, int hour, int minute) {
 		return new DateTime(year, month, day, hour, minute, 0, 0, DateTimeZone.forID("Europe/London"));
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#createOrUpdateGame(java.lang.String, java.lang.String, java.lang.String, java.lang.String, uk.co.unclealex.hammers.calendar.shared.model.Competition, uk.co.unclealex.hammers.calendar.shared.model.Location, java.lang.String, java.util.Date, java.util.Date, java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, boolean)}
-	 * .
+	 * Test method for.
 	 * 
-	 * @throws ParseException
-	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 * @throws ParseException
+	 *           the parse exception
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#createOrUpdateGame(java.lang.String, java.lang.String, java.lang.String, java.lang.String, uk.co.unclealex.hammers.calendar.shared.model.Competition, uk.co.unclealex.hammers.calendar.shared.model.Location, java.lang.String, java.util.Date, java.util.Date, java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, boolean)}
+	 *           .
 	 */
 	@Test
 	public void testCreateOrUpdateGameCreate() throws IOException, GoogleAuthenticationFailedException, ParseException {
@@ -88,9 +106,9 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	 * @param location
 	 *          The game's location.
 	 * @param opponents
-	 *          The opponents for this game.
+	 *          The opponents for i_game.
 	 * @param gameInterval
-	 *          The start and end time of this game with respect to the calendar
+	 *          The start and end time of i_game with respect to the calendar
 	 *          type.
 	 * @param result
 	 *          The game's result.
@@ -134,12 +152,14 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#createOrUpdateGame(java.lang.String, java.lang.String, java.lang.String, java.lang.String, uk.co.unclealex.hammers.calendar.shared.model.Competition, uk.co.unclealex.hammers.calendar.shared.model.Location, java.lang.String, java.util.Date, java.util.Date, java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, boolean)}
-	 * .
+	 * Test method for.
 	 * 
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#createOrUpdateGame(java.lang.String, java.lang.String, java.lang.String, java.lang.String, uk.co.unclealex.hammers.calendar.shared.model.Competition, uk.co.unclealex.hammers.calendar.shared.model.Location, java.lang.String, java.util.Date, java.util.Date, java.lang.String, java.lang.Integer, java.lang.String, java.lang.String, boolean)}
+	 *           .
 	 */
 	@Test
 	public void testCreateOrUpdateGameUpdate() throws IOException, GoogleAuthenticationFailedException {
@@ -210,10 +230,52 @@ public abstract class AbstractGoogleCalendarDaoTest {
 		checker.update(false);
 	}
 
+	/**
+	 * Check game.
+	 * 
+	 * @param calendarId
+	 *          the calendar id
+	 * @param eventId
+	 *          the event id
+	 * @param gameId
+	 *          the game id
+	 * @param competition
+	 *          the competition
+	 * @param location
+	 *          the location
+	 * @param opponents
+	 *          the opponents
+	 * @param dateStarted
+	 *          the date started
+	 * @param dateFinished
+	 *          the date finished
+	 * @param result
+	 *          the result
+	 * @param attendence
+	 *          the attendence
+	 * @param matchReport
+	 *          the match report
+	 * @param televisionChannel
+	 *          the television channel
+	 * @param busy
+	 *          the busy
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 */
 	protected abstract void checkGame(String calendarId, String eventId, String gameId, Competition competition,
 			Location location, String opponents, DateTime dateStarted, DateTime dateFinished, String result,
 			Integer attendence, String matchReport, String televisionChannel, boolean busy) throws IOException;
 
+	/**
+	 * Check date.
+	 * 
+	 * @param errorMessage
+	 *          the error message
+	 * @param expected
+	 *          the expected
+	 * @param actual
+	 *          the actual
+	 */
 	protected void checkDate(String errorMessage, DateTime expected, EventDateTime actual) {
 		long googleInstant = actual.getDateTime().getValue() / 1000;
 		long expectedInstant = expected.getMillis() / 1000;
@@ -221,12 +283,14 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#findGame(java.lang.String, java.lang.String, java.util.Date)}
-	 * .
+	 * Test method for.
 	 * 
-	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#findGame(java.lang.String, java.lang.String, java.util.Date)}
+	 *           .
 	 */
 	@Test
 	public void testFindGame() throws IOException, GoogleAuthenticationFailedException {
@@ -263,6 +327,14 @@ public abstract class AbstractGoogleCalendarDaoTest {
 				gameIdAndDurationFieldType.getDurationFieldType());
 	}
 
+	/**
+	 * Test remove game.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Test
 	public void testRemoveGame() throws IOException, GoogleAuthenticationFailedException {
 		String calendarId = getPrimaryCalendarId();
@@ -281,9 +353,18 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	 * @param eventId
 	 *          The event id that should not exist.
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	protected abstract void checkGameRemoved(String calendarId, final String eventId) throws IOException;
 
+	/**
+	 * Test move game.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Test
 	public void testMoveGame() throws IOException, GoogleAuthenticationFailedException {
 		String primaryCalendarId = getPrimaryCalendarId();
@@ -300,12 +381,14 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#createOrUpdateCalendar(java.lang.String, java.lang.String, java.lang.String, boolean, boolean)}
-	 * .
+	 * Test method for.
 	 * 
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#createOrUpdateCalendar(java.lang.String, java.lang.String, java.lang.String, boolean, boolean)}
+	 *           .
 	 */
 	@Test
 	public void testCreateOrUpdateCalendarCreate() throws IOException, GoogleAuthenticationFailedException {
@@ -314,12 +397,14 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#createOrUpdateCalendar(java.lang.String, java.lang.String, java.lang.String, boolean, boolean)}
-	 * .
+	 * Test method for.
 	 * 
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#createOrUpdateCalendar(java.lang.String, java.lang.String, java.lang.String, boolean, boolean)}
+	 *           .
 	 */
 	@Test
 	public void testCreateOrUpdateCalendarUpdate() throws IOException, GoogleAuthenticationFailedException {
@@ -331,15 +416,28 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	}
 
 	/**
-	 * @param secondCalendarId
-	 * @param string
-	 * @param string2
-	 * @param b
-	 * @param c
+	 * Check calendar.
+	 * 
+	 * @param calendarId
+	 *          the calendar id
+	 * @param title
+	 *          the title
+	 * @param description
+	 *          the description
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	protected abstract void checkCalendar(String calendarId, String title, String description) throws IOException;
 
+	/**
+	 * To default.
+	 * 
+	 * @param value
+	 *          the value
+	 * @param defaultValue
+	 *          the default value
+	 * @return true, if successful
+	 */
 	protected boolean toDefault(Boolean value, boolean defaultValue) {
 		if (value == null) {
 			return defaultValue;
@@ -350,12 +448,14 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	}
 
 	/**
-	 * Test method for
-	 * {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#listGameIdsByEventId(java.lang.String)}
-	 * .
+	 * Test method for.
 	 * 
-	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 *           {@link uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarDaoImpl#listGameIdsByEventId(java.lang.String)}
+	 *           .
 	 */
 	@Test
 	public void testListGameIdsByEventId() throws IOException, GoogleAuthenticationFailedException {
@@ -380,9 +480,24 @@ public abstract class AbstractGoogleCalendarDaoTest {
 				.assertEquals("The wrong game event mappings were returned", expectedGameIdsByEventId, actualGameIdsByEventId);
 	}
 
+	/**
+	 * Gets the primary calendar id.
+	 * 
+	 * @return the primary calendar id
+	 */
 	protected abstract String getPrimaryCalendarId();
 
+	/**
+	 * Gets the secondary calendar id.
+	 * 
+	 * @return the secondary calendar id
+	 */
 	protected abstract String getSecondaryCalendarId();
 
+	/**
+	 * Gets the google calendar dao.
+	 * 
+	 * @return the google calendar dao
+	 */
 	protected abstract DurationFindingAwareGoogleCalendarDao getGoogleCalendarDao();
 }

@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 package uk.co.unclealex.hammers.calendar.server.dao;
 
@@ -27,6 +25,7 @@ import org.hibernate.Query;
 
 import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
+
 
 /**
  * The Hibernate implementation of {@link CalendarConfigurationDao}.
@@ -36,10 +35,16 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 public class HibernateCalendarConfigurationDao extends
 		BusinessKeyHibernateDaoSupport<CalendarType, CalendarConfiguration> implements CalendarConfigurationDao {
 
+	/**
+	 * Instantiates a new hibernate calendar configuration dao.
+	 */
 	public HibernateCalendarConfigurationDao() {
 		super(CalendarConfiguration.class, "calendarType");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public CalendarConfiguration findByGoogleCalendarId(String googleCalendarId) {
 		Query query = getSession().createQuery("from CalendarConfiguration where googleCalendarId = :googleCalendarId")

@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -36,12 +34,26 @@ import uk.co.unclealex.hammers.calendar.server.dates.DateServiceImpl;
 import com.google.common.base.Functions;
 import com.google.common.collect.Iterables;
 
+
 /**
- * @author alex
+ * The Class SeasonHtmlGamesScannerTest.
  * 
+ * @author alex
  */
 public class SeasonHtmlGamesScannerTest {
 
+	/**
+	 * Test season.
+	 * 
+	 * @param season
+	 *          the season
+	 * @param expectedUpdates
+	 *          the expected updates
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	public void testSeason(int season, String[] expectedUpdates) throws IOException, URISyntaxException {
 		SeasonHtmlGamesScanner seasonHtmlGamesScanner = new SeasonHtmlGamesScanner();
 		seasonHtmlGamesScanner.setHtmlPageLoader(new HtmlPageLoaderImpl());
@@ -53,6 +65,14 @@ public class SeasonHtmlGamesScannerTest {
 		Assert.assertArrayEquals("The wrong updates were returned for season " + season, expectedUpdates, actualUpdates);
 	}
 
+	/**
+	 * Test2007.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	@Test
 	public void test2007() throws IOException, URISyntaxException {
 		String[] expectedUpdates = new String[] { "{2007 PREM Arsenal HOME: DATE_PLAYED <- 2007-09-29T15:00:00.000+01:00}",
@@ -190,6 +210,14 @@ public class SeasonHtmlGamesScannerTest {
 		testSeason(2007, expectedUpdates);
 	}
 
+	/**
+	 * Test2011.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	@Test
 	public void test2011() throws IOException, URISyntaxException {
 		String[] expectedUpdates = new String[] {

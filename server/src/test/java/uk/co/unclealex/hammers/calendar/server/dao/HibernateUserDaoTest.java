@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -41,20 +39,30 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+
 /**
+ * The Class HibernateUserDaoTest.
+ * 
  * @author alex
- *
  */
 public class HibernateUserDaoTest extends DaoTest {
 
+	/** The authorities. */
 	private Map<Role, Authority> authorities;
 	
+	/** The user dao. */
 	@Autowired UserDao userDao;
 	
+	/**
+	 * Instantiates a new hibernate user dao test.
+	 */
 	public HibernateUserDaoTest() {
 		super(Authority.class, User.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected void doSetup() throws Exception {
 		authorities = Maps.newHashMap();
@@ -69,6 +77,15 @@ public class HibernateUserDaoTest extends DaoTest {
 		userDao.saveOrUpdate(user);
 	}
 
+	/**
+	 * Creates the user.
+	 * 
+	 * @param username
+	 *          the username
+	 * @param roles
+	 *          the roles
+	 * @return the user
+	 */
 	protected User createUser(String username, Role... roles) {
 		User user = new User();
 		user.setUsername(username);
@@ -78,11 +95,17 @@ public class HibernateUserDaoTest extends DaoTest {
 		return user;
 	}
 	
+	/**
+	 * Test count users.
+	 */
 	@Test
 	public void testCountUsers() {
 		Assert.assertEquals("The wrong number of users were returned.", 2, userDao.countUsers());
 	}
 
+	/**
+	 * Test find by key.
+	 */
 	@Test
 	public void testFindByKey() {
 		User user = userDao.findByKey("user");
@@ -91,6 +114,9 @@ public class HibernateUserDaoTest extends DaoTest {
 		Assert.assertArrayEquals("The user had the wrong roles.", new Role[] { Role.ROLE_USER }, rolesForUser(user));
 	}
 
+	/**
+	 * Test change authorities.
+	 */
 	@Test
 	public void testChangeAuthorities() {
 		User user = userDao.findByKey("user");
@@ -102,6 +128,13 @@ public class HibernateUserDaoTest extends DaoTest {
 		Assert.assertArrayEquals("User had the wrong roles.", Role.values(), actualRoles);
 	}
 
+	/**
+	 * Roles for user.
+	 * 
+	 * @param actualUser
+	 *          the actual user
+	 * @return the role[]
+	 */
 	protected Role[] rolesForUser(User actualUser) {
 		Function<Authority, Role> function = new Function<Authority, Role>() {
 			@Override

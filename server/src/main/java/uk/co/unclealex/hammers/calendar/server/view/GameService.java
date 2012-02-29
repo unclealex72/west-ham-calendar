@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.view;
@@ -27,6 +25,7 @@ package uk.co.unclealex.hammers.calendar.server.view;
 import java.util.SortedSet;
 
 import uk.co.unclealex.hammers.calendar.shared.model.GameView;
+
 
 /**
  * The service for creating sets of {@link GameView} instances to be viewed by the GUI.
@@ -60,7 +59,7 @@ public interface GameService {
 	/** 
 	 * Get a {@link GameView} that represents the {@link Game} with the given id.
 	 * @param gameId The id of the game.
-	 * @param enabled True if this {@link GameView} can be edited, false otherwise.
+	 * @param enabled True if i_{@link GameView} can be edited, false otherwise.
 	 * @return A {@link GameView} that represents the {@link Game} with the given id.
 	 */
 	GameView getGameViewById(int gameId, boolean enabled);

@@ -1,12 +1,12 @@
 /**
- * Copyright 2010 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 package uk.co.unclealex.hammers.calendar.server.dates;
@@ -41,6 +39,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+
 /**
  * The default implementation of {@link DateService}.
  * 
@@ -49,9 +48,7 @@ import com.google.common.collect.Lists;
  */
 public class DateServiceImpl implements DateService {
 
-	/**
-	 * 
-	 */
+	/** The Constant THREE_PM. */
 	private static final int THREE_PM = 15;
 
 	/**
@@ -236,8 +233,8 @@ public class DateServiceImpl implements DateService {
 	 *          The {@link DateTimeFormatter} to use.
 	 * @param maxLength
 	 *          The maximum length the date can be according to
-	 *          {@link DateTimeParser#estimateParsedLength()}
 	 * @return A date or null if none could be found.
+	 *         {@link DateTimeParser#estimateParsedLength()}
 	 */
 	protected DateTime findDate(String date, DateTimeFormatter formatter, int maxLength) {
 		if (date.isEmpty()) {
@@ -267,6 +264,8 @@ public class DateServiceImpl implements DateService {
 	}
 
 	/**
+	 * Find or parse yearless date.
+	 * 
 	 * @param parseOrFindFunction
 	 *          A function that, given a date format string, will either try to
 	 *          fully parse or find a {@link DateTime}.
@@ -311,12 +310,18 @@ public class DateServiceImpl implements DateService {
 		return dateTime;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isWeekday(DateTime dateTime) {
 		int dayOfWeek = dateTime.getDayOfWeek();
 		return dayOfWeek != DateTimeConstants.SATURDAY && dayOfWeek != DateTimeConstants.SUNDAY;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isThreeOClockOnASaturday(DateTime dateTime) {
 		return dateTime.getDayOfWeek() == DateTimeConstants.SATURDAY && dateTime.getHourOfDay() == THREE_PM

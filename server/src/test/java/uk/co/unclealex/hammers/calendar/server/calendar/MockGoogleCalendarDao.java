@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -46,6 +44,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
+
 /**
  * A mock object to simulate, in memory, google calendar storage. For simplicity
  * it is assumed that the returned event id is the same as the supplied game id.
@@ -56,19 +55,63 @@ import com.google.common.collect.Maps;
 public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao implements GoogleCalendarDao,
 		GoogleCalendarDaoFactory {
 
+	/** The games by calendar id. */
 	final Map<String, Map<String, MockGame>> gamesByCalendarId = Maps.newHashMap();
 
+	/**
+	 * The Class MockGame.
+	 */
 	static class MockGame {
+		
+		/** The competition. */
 		Competition competition;
+		
+		/** The location. */
 		Location location;
+		
+		/** The opponents. */
 		String opponents;
+		
+		/** The game interval. */
 		Interval gameInterval;
+		
+		/** The result. */
 		String result;
+		
+		/** The attendence. */
 		Integer attendence;
+		
+		/** The match report. */
 		String matchReport;
+		
+		/** The television channel. */
 		String televisionChannel;
+		
+		/** The busy. */
 		boolean busy;
 
+		/**
+		 * Instantiates a new mock game.
+		 * 
+		 * @param competition
+		 *          the competition
+		 * @param location
+		 *          the location
+		 * @param opponents
+		 *          the opponents
+		 * @param gameInterval
+		 *          the game interval
+		 * @param result
+		 *          the result
+		 * @param attendence
+		 *          the attendence
+		 * @param matchReport
+		 *          the match report
+		 * @param televisionChannel
+		 *          the television channel
+		 * @param busy
+		 *          the busy
+		 */
 		public MockGame(Competition competition, Location location, String opponents, Interval gameInterval, String result,
 				Integer attendence, String matchReport, String televisionChannel, boolean busy) {
 			super();
@@ -83,6 +126,9 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 			this.busy = busy;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof MockGame)) {
@@ -96,11 +142,17 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 					&& Objects.equal(busy, other.busy);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String toString() {
 			return ToStringBuilder.reflectionToString(this);
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public int hashCode() {
 			return HashCodeBuilder.reflectionHashCode(this);
@@ -131,6 +183,9 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 		return mockGamesById;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public GameUpdateInformation createOrUpdateGame(String calendarId, String eventId, String gameId,
 			Competition competition, Location location, String opponents, Interval gameInterval, String result,
@@ -156,6 +211,9 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 		getGamesForCalendar(calendarId).remove(eventId);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void moveGame(String sourceCalendarId, String targetCalendarId, String eventId, String gameId, boolean busy) {
 		Map<String, MockGame> sourceCalendarGames = getGamesForCalendar(sourceCalendarId);
@@ -165,6 +223,9 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 		getGamesForCalendar(targetCalendarId).put(eventId, mockGame);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public GameIdAndDurationFieldType findGameAndDurationFieldType(String calendarId, String gameId, DateTime searchDate) {
 		MockGame mockGame = getGamesForCalendar(calendarId).get(gameId);
@@ -185,6 +246,9 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 		return new GameIdAndDurationFieldType(eventId, durationFieldType);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String createOrUpdateCalendar(String calendarId, String calendarTitle, String calendarDescription) {
 		if (calendarId == null) {
@@ -194,6 +258,9 @@ public class MockGoogleCalendarDao extends DurationFindingAwareGoogleCalendarDao
 		return calendarId;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public BiMap<String, String> listGameIdsByEventId(String calendarId) {
 		BiMap<String, String> gameIdsByEventId = HashBiMap.create();

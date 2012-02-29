@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -33,6 +31,7 @@ import uk.co.unclealex.hammers.calendar.server.model.GameKey;
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
+
 /**
  * Test that game locator comparators are well behaved.
  * @author alex
@@ -40,6 +39,9 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
  */
 public class GameLocatorTest {
 
+	/**
+	 * Test game key is lower.
+	 */
 	@Test
 	public void testGameKeyIsLower() {
 		GameLocator gameKeyLocator = GameLocator.gameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents",
@@ -49,6 +51,9 @@ public class GameLocatorTest {
 		Assert.assertTrue("The game key comparator was not found to be smaller.", cmp < 0);
 	}
 
+	/**
+	 * Test date played is higher.
+	 */
 	@Test
 	public void testDatePlayedIsHigher() {
 		GameLocator gameKeyLocator = GameLocator.gameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents",
@@ -58,6 +63,9 @@ public class GameLocatorTest {
 		Assert.assertTrue("The date played comparator was not found to be larget.", cmp > 0);
 	}
 
+	/**
+	 * Test date played respects date time comparison.
+	 */
 	@Test
 	public void testDatePlayedRespectsDateTimeComparison() {
 		DateTime lowerDateTime = new DateTime(2000, 5, 1, 0, 0, 0, 0);
@@ -72,6 +80,9 @@ public class GameLocatorTest {
 				higherDatePlayedLocator.compareTo(higherDatePlayedLocator));
 	}
 
+	/**
+	 * Test game key respects game key comparison.
+	 */
 	@Test
 	public void testGameKeyRespectsGameKeyComparison() {
 		GameKey lowerGameKey = new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2011);

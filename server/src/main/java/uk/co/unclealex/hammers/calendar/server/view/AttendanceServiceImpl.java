@@ -1,21 +1,23 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use i_file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements. See the NOTICE file distributed with this
- * work for additional information regarding copyright ownership. The ASF
- * licenses this file to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.    
+ *
  */
 package uk.co.unclealex.hammers.calendar.server.view;
 
@@ -48,6 +50,7 @@ import uk.co.unclealex.hammers.calendar.shared.services.SecurityInvalidator;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+
 
 /**
  * The default implementation of {@link AttendanceService}.
@@ -116,6 +119,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 */
 	private UpdateCalendarJob i_updateCalendarJob;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Integer[] getAllSeasons() {
 		return Iterables.toArray(getGameService().getAllSeasons(), Integer.class);
@@ -162,69 +168,108 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return Iterables.toArray(gameViewsFunction.apply(getAuthenticationService().isUserAuthenticated()), GameView.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public LeagueRow[] getLeagueForSeason(int season) {
 		return Iterables.toArray(getLeagueService().getLeagueForSeason(season), LeagueRow.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean authenticate(String username, String password) {
 		return getAuthenticationService().authenticate(username, password, getSecurityInvalidator());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String getUserPrincipal() {
 		return getAuthenticationService().getUserPrincipal();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void ensureDefaultsExist() throws GoogleAuthenticationFailedException, IOException {
 		getDefaultsService().createDefaultUser();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void createCalendars() throws IOException, GoogleAuthenticationFailedException {
 		getDefaultsService().createCalendars();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void logout() {
 		getAuthenticationService().logout(getSecurityInvalidator());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public GameView[] attendAllHomeGameViewsForSeason(int season) throws GoogleAuthenticationFailedException, IOException {
 		getMainUpdateService().attendAllHomeGamesForSeason(season);
 		return getAllGameViewsChronologicallyForSeason(season);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public GameView attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException {
 		getMainUpdateService().attendGame(gameId);
 		return getGameService().getGameViewById(gameId, getAuthenticationService().isUserAuthenticated());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public GameView unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException {
 		getMainUpdateService().unattendGame(gameId);
 		return getGameService().getGameViewById(gameId, getAuthenticationService().isUserAuthenticated());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void forceLogin() {
 		// No need to do anything
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public String createGoogleAuthorisationUrlIfRequired() {
+	public String createGoogleAuthorisationUrl() {
 		return getCalendarFactory().getAuthorisationUrl();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void authorise(String authorisationToken) throws GoogleAuthenticationFailedException, IOException {
 		getCalendarFactory().installAuthorisationCode(authorisationToken);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void updateCalendars() {
 		try {
@@ -235,16 +280,25 @@ public class AttendanceServiceImpl implements AttendanceService {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void addUser(String username, String password, Role role) throws UsernameAlreadyExistsException {
 		getUserService().addUser(username, password, role);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void alterUser(String username, String newPassword, Role newRole) throws NoSuchUsernameException {
 		getUserService().alterUser(username, newPassword, newRole);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void changePassword(String newPassword) {
 		try {
@@ -255,6 +309,9 @@ public class AttendanceServiceImpl implements AttendanceService {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public User[] getAllUsers() {
 		final Function<Authority, Role> authorityFunction = new Function<Authority, Role>() {
@@ -276,105 +333,253 @@ public class AttendanceServiceImpl implements AttendanceService {
 		return Iterables.toArray(Iterables.transform(Sets.newTreeSet(getUserDao().getAll()), userFunction), User.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void removeUser(String username) throws NoSuchUsernameException {
 		getUserService().removeUser(username);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setSelectedTicketingCalendar(CalendarType calendarType) {
 		getTicketingCalendarService().setSelectedTicketingCalendar(calendarType);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public CalendarType getSelectedTicketingCalendar() {
 		return getTicketingCalendarService().getSelectedTicketingCalendar();
 	}
 
+	/**
+	 * Gets the {@link GameService} used to create sets of {@link GameView}
+	 * instances to be viewed by the GUI.
+	 * 
+	 * @return the {@link GameService} used to create sets of {@link GameView}
+	 *         instances to be viewed by the GUI
+	 */
 	public GameService getGameService() {
 		return i_gameService;
 	}
 
+	/**
+	 * Sets the {@link GameService} used to create sets of {@link GameView}
+	 * instances to be viewed by the GUI.
+	 * 
+	 * @param gameService
+	 *          the new {@link GameService} used to create sets of
+	 *          {@link GameView} instances to be viewed by the GUI
+	 */
 	public void setGameService(GameService gameService) {
 		i_gameService = gameService;
 	}
 
+	/**
+	 * Gets the {@link SecurityInvalidator} for logging out.
+	 * 
+	 * @return the {@link SecurityInvalidator} for logging out
+	 */
 	public SecurityInvalidator getSecurityInvalidator() {
 		return i_securityInvalidator;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setSecurityInvalidator(SecurityInvalidator securityInvalidator) {
 		i_securityInvalidator = securityInvalidator;
 	}
 
+	/**
+	 * Gets the {@link LeagueService} for creating leagues.
+	 * 
+	 * @return the {@link LeagueService} for creating leagues
+	 */
 	public LeagueService getLeagueService() {
 		return i_leagueService;
 	}
 
+	/**
+	 * Sets the {@link LeagueService} for creating leagues.
+	 * 
+	 * @param leagueService
+	 *          the new {@link LeagueService} for creating leagues
+	 */
 	public void setLeagueService(LeagueService leagueService) {
 		i_leagueService = leagueService;
 	}
 
+	/**
+	 * Gets the {@link AuthenticationService} for user authentication.
+	 * 
+	 * @return the {@link AuthenticationService} for user authentication
+	 */
 	public AuthenticationService getAuthenticationService() {
 		return i_authenticationService;
 	}
 
+	/**
+	 * Sets the {@link AuthenticationService} for user authentication.
+	 * 
+	 * @param authenticationService
+	 *          the new {@link AuthenticationService} for user authentication
+	 */
 	public void setAuthenticationService(AuthenticationService authenticationService) {
 		i_authenticationService = authenticationService;
 	}
 
+	/**
+	 * Gets the {@link TicketingCalendarService} to get and set which calendar is
+	 * to be shown for ticketing information.
+	 * 
+	 * @return the {@link TicketingCalendarService} to get and set which calendar
+	 *         is to be shown for ticketing information
+	 */
 	public TicketingCalendarService getTicketingCalendarService() {
 		return i_ticketingCalendarService;
 	}
 
+	/**
+	 * Sets the {@link TicketingCalendarService} to get and set which calendar is
+	 * to be shown for ticketing information.
+	 * 
+	 * @param ticketingCalendarService
+	 *          the new {@link TicketingCalendarService} to get and set which
+	 *          calendar is to be shown for ticketing information
+	 */
 	public void setTicketingCalendarService(TicketingCalendarService ticketingCalendarService) {
 		i_ticketingCalendarService = ticketingCalendarService;
 	}
 
+	/**
+	 * Gets the {@link MainUpdateService} used for updating Google calendars.
+	 * 
+	 * @return the {@link MainUpdateService} used for updating Google calendars
+	 */
 	public MainUpdateService getMainUpdateService() {
 		return i_mainUpdateService;
 	}
 
+	/**
+	 * Sets the {@link MainUpdateService} used for updating Google calendars.
+	 * 
+	 * @param mainUpdateService
+	 *          the new {@link MainUpdateService} used for updating Google
+	 *          calendars
+	 */
 	public void setMainUpdateService(MainUpdateService mainUpdateService) {
 		i_mainUpdateService = mainUpdateService;
 	}
 
+	/**
+	 * Gets the {@link UserService} used for updating users.
+	 * 
+	 * @return the {@link UserService} used for updating users
+	 */
 	public UserService getUserService() {
 		return i_userService;
 	}
 
+	/**
+	 * Sets the {@link UserService} used for updating users.
+	 * 
+	 * @param userService
+	 *          the new {@link UserService} used for updating users
+	 */
 	public void setUserService(UserService userService) {
 		i_userService = userService;
 	}
 
+	/**
+	 * Gets the {@link UserService} used for getting user information.
+	 * 
+	 * @return the {@link UserService} used for getting user information
+	 */
 	public UserDao getUserDao() {
 		return i_userDao;
 	}
 
+	/**
+	 * Sets the {@link UserService} used for getting user information.
+	 * 
+	 * @param userDao
+	 *          the new {@link UserService} used for getting user information
+	 */
 	public void setUserDao(UserDao userDao) {
 		i_userDao = userDao;
 	}
 
+	/**
+	 * Gets the {@link DefaultsService} used to make sure the minimal defaults
+	 * exist.
+	 * 
+	 * @return the {@link DefaultsService} used to make sure the minimal defaults
+	 *         exist
+	 */
 	public DefaultsService getDefaultsService() {
 		return i_defaultsService;
 	}
 
+	/**
+	 * Sets the {@link DefaultsService} used to make sure the minimal defaults
+	 * exist.
+	 * 
+	 * @param defaultsService
+	 *          the new {@link DefaultsService} used to make sure the minimal
+	 *          defaults exist
+	 */
 	public void setDefaultsService(DefaultsService defaultsService) {
 		i_defaultsService = defaultsService;
 	}
 
+	/**
+	 * Gets the {@link CalendarFactory} used to install Google Calendar
+	 * authorisation.
+	 * 
+	 * @return the {@link CalendarFactory} used to install Google Calendar
+	 *         authorisation
+	 */
 	public CalendarFactory getCalendarFactory() {
 		return i_calendarFactory;
 	}
 
+	/**
+	 * Sets the {@link CalendarFactory} used to install Google Calendar
+	 * authorisation.
+	 * 
+	 * @param calendarFactory
+	 *          the new {@link CalendarFactory} used to install Google Calendar
+	 *          authorisation
+	 */
 	public void setCalendarFactory(CalendarFactory calendarFactory) {
 		i_calendarFactory = calendarFactory;
 	}
 
+	/**
+	 * Gets the {@link UpdateCalendarJob} used to trigger a full manual calendar
+	 * update.
+	 * 
+	 * @return the {@link UpdateCalendarJob} used to trigger a full manual
+	 *         calendar update
+	 */
 	public UpdateCalendarJob getUpdateCalendarJob() {
 		return i_updateCalendarJob;
 	}
 
+	/**
+	 * Sets the {@link UpdateCalendarJob} used to trigger a full manual calendar
+	 * update.
+	 * 
+	 * @param updateCalendarJob
+	 *          the new {@link UpdateCalendarJob} used to trigger a full manual
+	 *          calendar update
+	 */
 	public void setUpdateCalendarJob(UpdateCalendarJob updateCalendarJob) {
 		i_updateCalendarJob = updateCalendarJob;
 	}

@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -48,6 +46,7 @@ import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 
 import com.google.common.collect.Maps;
 
+
 /**
  * A base class for DAO tests.
  * @author alex
@@ -58,15 +57,28 @@ import com.google.common.collect.Maps;
 @SuppressWarnings("deprecation")
 public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTests {
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(DaoTest.class);
 	
+	/** The simple jdbc template. */
 	@Autowired SimpleJdbcTemplate simpleJdbcTemplate;
+	
+	/** The session factory. */
 	@Autowired SessionFactory sessionFactory;
 	
+	/** The entity classes. */
 	@SuppressWarnings("rawtypes")
 	private final Class[] i_entityClasses;
+	
+	/** The blacklist. */
 	private final Map<Integer, String> blacklist = Maps.newHashMap();
 	
+	/**
+	 * Instantiates a new dao test.
+	 * 
+	 * @param entityClasses
+	 *          the entity classes
+	 */
 	@SuppressWarnings("rawtypes")
 	public DaoTest(Class... entityClasses) {
 		super();
@@ -88,6 +100,12 @@ public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTe
 
 	}
 	
+	/**
+	 * Setup.
+	 * 
+	 * @throws Exception
+	 *           the exception
+	 */
 	@Before
 	public final void setup() throws Exception {
 		@SuppressWarnings("rawtypes")
@@ -100,8 +118,17 @@ public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTe
 		doSetup();
 	}
 	
+	/**
+	 * Do setup.
+	 * 
+	 * @throws Exception
+	 *           the exception
+	 */
 	protected abstract void doSetup() throws Exception;
 	
+	/**
+	 * Test mappings.
+	 */
 	@Test
 	public void testMappings() {
 		for (Class<?> entityClass : getEntityClasses()) {
@@ -109,6 +136,12 @@ public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTe
 		}
 	}
 	
+	/**
+	 * Test mappings.
+	 * 
+	 * @param entityClass
+	 *          the entity class
+	 */
 	public void testMappings(Class<?> entityClass) {
 		log.info("Testing mappings for class " + entityClass);
 		ClassMetadata classMetadata = sessionFactory.getClassMetadata(entityClass);
@@ -122,7 +155,10 @@ public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTe
 			}
 		}
 	}
+	
 	/**
+	 * Gets the entity classes.
+	 * 
 	 * @return the entityClass
 	 */
 	@SuppressWarnings("rawtypes")

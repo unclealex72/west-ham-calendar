@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -36,32 +34,49 @@ import org.junit.Test;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
+
 /**
- * @author alex
+ * The Class DateServiceImplTest.
  * 
+ * @author alex
  */
 public class DateServiceImplTest {
 
+	/**
+	 * Test next year.
+	 */
 	@Test
 	public void testNextYear() {
 		testYear(dayOf(6, 1), dateOf(25, 12, 2012), false, dateOf(6, 1, 2013));
 	}
 
+	/**
+	 * Test i_year at expecting later.
+	 */
 	@Test
 	public void testThisYearAtExpectingLater() {
 		testYear(dayOf(6, 1), dateOf(5, 1, 2013), false, dateOf(6, 1, 2013));
 	}
 
+	/**
+	 * Test i_year at expecting earlier.
+	 */
 	@Test
 	public void testThisYearAtExpectingEarlier() {
 		testYear(dayOf(6, 1), dateOf(5, 9, 2012), true, dateOf(6, 1, 2012));
 	}
 
+	/**
+	 * Test last year.
+	 */
 	@Test
 	public void testLastYear() {
 		testYear(dayOf(25, 12), dateOf(6, 1, 2012), true, dateOf(25, 12, 2011));
 	}
 
+	/**
+	 * Test year aware parse.
+	 */
 	@Test
 	public void testYearAwareParse() {
 		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat(
@@ -70,6 +85,9 @@ public class DateServiceImplTest {
 				possiblyYearlessDateFormat);
 	}
 
+	/**
+	 * Test possibly yearless parse.
+	 */
 	@Test
 	public void testPossiblyYearlessParse() {
 		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat(
@@ -77,12 +95,18 @@ public class DateServiceImplTest {
 		testParseAndFind(minuteOf(5, 9, 2012, 9, 12), "05/09 9:12", dateOf(10, 10, 2012), true, possiblyYearlessDateFormat);
 	}
 
+	/**
+	 * Test definitely yearless parse.
+	 */
 	@Test
 	public void testDefinitelyYearlessParse() {
 		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat("dd/MM HH:mm");
 		testParseAndFind(minuteOf(5, 9, 2012, 9, 12), "05/09 9:12", dateOf(10, 10, 2012), true, possiblyYearlessDateFormat);
 	}
 
+	/**
+	 * Test second pass parse.
+	 */
 	@Test
 	public void testSecondPassParse() {
 		PossiblyYearlessDateFormat firstPossiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat(
@@ -93,6 +117,9 @@ public class DateServiceImplTest {
 				firstPossiblyYearlessDateFormat, secondPossiblyYearlessDateFormat);
 	}
 
+	/**
+	 * Test yearless with day of week parse.
+	 */
 	@Test
 	public void testYearlessWithDayOfWeekParse() {
 		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat("ha EEE dd MMM");
@@ -100,6 +127,9 @@ public class DateServiceImplTest {
 				possiblyYearlessDateFormat);
 	}
 
+	/**
+	 * Test failure to parse.
+	 */
 	@Test
 	public void testFailureToParse() {
 		PossiblyYearlessDateFormat possiblyYearlessDateFormat = new AutomaticPossiblyYearlessDateFormat(
@@ -107,6 +137,20 @@ public class DateServiceImplTest {
 		testParseAndFind(null, "05:09 9:12", dateOf(10, 10, 2012), true, possiblyYearlessDateFormat);
 	}
 
+	/**
+	 * Test parse and find.
+	 * 
+	 * @param expectedDateTime
+	 *          the expected date time
+	 * @param date
+	 *          the date
+	 * @param yearDeterminingDate
+	 *          the year determining date
+	 * @param yearDeterminingDateIsLaterThanTheDate
+	 *          the year determining date is later than the date
+	 * @param possiblyYearlessDateFormats
+	 *          the possibly yearless date formats
+	 */
 	public void testParseAndFind(DateTime expectedDateTime, String date, DateTime yearDeterminingDate,
 			boolean yearDeterminingDateIsLaterThanTheDate, PossiblyYearlessDateFormat... possiblyYearlessDateFormats) {
 		try {
@@ -132,6 +176,9 @@ public class DateServiceImplTest {
 		}
 	}
 
+	/**
+	 * Test week.
+	 */
 	@Test
 	public void testWeek() {
 		DateTime tuesday = dateOf(5, 9, 1972);
@@ -153,6 +200,9 @@ public class DateServiceImplTest {
 		}
 	}
 
+	/**
+	 * Test3pm saturday.
+	 */
 	@Test
 	public void test3pmSaturday() {
 		Map<DateTime, Boolean> expectedResultsByDateTime = Maps.newLinkedHashMap();
@@ -221,6 +271,18 @@ public class DateServiceImplTest {
 		return new DateTime(1970, month, day, 0, 0, 0, 0, DateTimeZone.forID("Europe/London"));
 	}
 
+	/**
+	 * Test year.
+	 * 
+	 * @param dateTime
+	 *          the date time
+	 * @param yearDeterminingDate
+	 *          the year determining date
+	 * @param yearDeterminingDateIsLaterThanTheDate
+	 *          the year determining date is later than the date
+	 * @param expectedDateTime
+	 *          the expected date time
+	 */
 	protected void testYear(DateTime dateTime, DateTime yearDeterminingDate,
 			boolean yearDeterminingDateIsLaterThanTheDate, DateTime expectedDateTime) {
 		DateServiceImpl dateServiceImpl = new DateServiceImpl();

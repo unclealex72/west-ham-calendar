@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -42,16 +40,44 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
+
 /**
- * @author alex
+ * A factory for creating ReadOnlyDao objects.
  * 
+ * @author alex
  */
 public class ReadOnlyDaoFactory {
 
+	/**
+	 * Creates a new ReadOnlyDao object.
+	 * 
+	 * @param <M>
+	 *          the generic type
+	 * @param <D>
+	 *          the generic type
+	 * @param iface
+	 *          the iface
+	 * @param elements
+	 *          the elements
+	 * @return the D
+	 */
 	public <M extends HasIdentity, D extends CrudDao<M>> D createCrudDao(Class<? extends D> iface, M... elements) {
 		return createCrudDao(iface, Arrays.asList(elements));
 	}
 	
+	/**
+	 * Creates a new ReadOnlyDao object.
+	 * 
+	 * @param <M>
+	 *          the generic type
+	 * @param <D>
+	 *          the generic type
+	 * @param iface
+	 *          the iface
+	 * @param elements
+	 *          the elements
+	 * @return the D
+	 */
 	@SuppressWarnings("unchecked")
 	public <M extends HasIdentity, D extends CrudDao<M>> D createCrudDao(Class<? extends D> iface, final Iterable<M> elements) {
 		final CrudDao<M> crudDao = new CrudDao<M>() {
@@ -98,11 +124,41 @@ public class ReadOnlyDaoFactory {
 		return (D) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[] { iface }, handler);
 	}
 
+	/**
+	 * Creates a new ReadOnlyDao object.
+	 * 
+	 * @param <K>
+	 *          the key type
+	 * @param <M>
+	 *          the generic type
+	 * @param <D>
+	 *          the generic type
+	 * @param iface
+	 *          the iface
+	 * @param elements
+	 *          the elements
+	 * @return the D
+	 */
 	public <K extends Serializable & Comparable<K>, M extends HasBusinessKey<K>, D extends BusinessCrudDao<K, M>> D createBusinessCrudDao(
 			Class<? extends D> iface, M... elements) {
 		return createBusinessCrudDao(iface, Arrays.asList(elements));
 	}
 	
+	/**
+	 * Creates a new ReadOnlyDao object.
+	 * 
+	 * @param <K>
+	 *          the key type
+	 * @param <M>
+	 *          the generic type
+	 * @param <D>
+	 *          the generic type
+	 * @param iface
+	 *          the iface
+	 * @param elements
+	 *          the elements
+	 * @return the D
+	 */
 	@SuppressWarnings("unchecked")
 	public <K extends Serializable & Comparable<K>, M extends HasBusinessKey<K>, D extends BusinessCrudDao<K, M>> D createBusinessCrudDao(
 			Class<? extends D> iface, final Iterable<M> elements) {

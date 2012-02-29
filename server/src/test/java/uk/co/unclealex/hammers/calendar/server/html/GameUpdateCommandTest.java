@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -50,35 +48,77 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+
 /**
- * @author alex
+ * The Class GameUpdateCommandTest.
  * 
+ * @author alex
  */
 public class GameUpdateCommandTest {
 
+	/**
+	 * Date of.
+	 * 
+	 * @param day
+	 *          the day
+	 * @param month
+	 *          the month
+	 * @param year
+	 *          the year
+	 * @return the date time
+	 */
 	static final DateTime dateOf(int day, int month, int year) {
 		return new DateTime(year, month, day, 15, 0, 0, 0, DateTimeZone.forID("Europe/London"));
 	}
 
+	/** The Constant DEFAULT_COMPETITION. */
 	private static final Competition DEFAULT_COMPETITION = Competition.FACP;
+	
+	/** The Constant DEFAULT_LOCATION. */
 	private static final Location DEFAULT_LOCATION = Location.HOME;
+	
+	/** The Constant DEFAULT_OPPONENTS. */
 	private static final String DEFAULT_OPPONENTS = "Them";
+	
+	/** The Constant DEFAULT_SEASON. */
 	private static final int DEFAULT_SEASON = 2012;
+	
+	/** The Constant DEFAULT_DATE_PLAYED. */
 	private static final DateTime DEFAULT_DATE_PLAYED = dateOf(5, 9, 1972);
+	
+	/** The Constant DEFAULT_BONDHOLDERS_AVAILABLE. */
 	private static final DateTime DEFAULT_BONDHOLDERS_AVAILABLE = dateOf(5, 9, 1973);
+	
+	/** The Constant DEFAULT_PRIORITY_POINT_POST_AVAILABLE. */
 	private static final DateTime DEFAULT_PRIORITY_POINT_POST_AVAILABLE = dateOf(5, 9, 1974);
+	
+	/** The Constant DEFAULT_SEASON_TICKETS_AVAILABLE. */
 	private static final DateTime DEFAULT_SEASON_TICKETS_AVAILABLE = dateOf(5, 9, 1975);
+	
+	/** The Constant DEFAULT_ACADEMY_TICKETS_AVAILABLE. */
 	private static final DateTime DEFAULT_ACADEMY_TICKETS_AVAILABLE = dateOf(5, 9, 1976);
+	
+	/** The Constant DEFAULT_GENERATE_SALE_TICKETS_AVAILABLE. */
 	private static final DateTime DEFAULT_GENERATE_SALE_TICKETS_AVAILABLE = dateOf(5, 9, 1977);
+	
+	/** The Constant DEFAULT_RESULT. */
 	private static final String DEFAULT_RESULT = "1-0";
+	
+	/** The Constant DEFAULT_ATTENDENCE. */
 	private static final Integer DEFAULT_ATTENDENCE = 100000;
+	
+	/** The Constant DEFAULT_MATCH_REPORT. */
 	private static final String DEFAULT_MATCH_REPORT = "Good";
+	
+	/** The Constant DEFAULT_TELEVISION_CHANNEL. */
 	private static final String DEFAULT_TELEVISION_CHANNEL = "BBC";
+	
+	/** The Constant DEFAULT_ATTENDED. */
 	private static final boolean DEFAULT_ATTENDED = false;
 
 	/**
 	 * Test there is a 1-1 mapping between orderings and game update command
-	 * instances
+	 * instances.
 	 */
 	@Test
 	public void testOrderingAndInstancesAreBijective() {
@@ -118,11 +158,17 @@ public class GameUpdateCommandTest {
 				gameUpdateCommands.size());
 	}
 
+	/**
+	 * The Interface GameUpdateCommandTestCase.
+	 */
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ ElementType.METHOD })
 	public @interface GameUpdateCommandTestCase {
 	}
 
+	/**
+	 * Test all game update commands are tested.
+	 */
 	@Test
 	public void testAllGameUpdateCommandsAreTested() {
 		Predicate<Method> isGameUpdateCommandTestCasePredicate = new Predicate<Method>() {
@@ -137,14 +183,53 @@ public class GameUpdateCommandTest {
 				Iterables.size(Iterables.filter(Arrays.asList(getClass().getMethods()), isGameUpdateCommandTestCasePredicate)));
 	}
 
+	/**
+	 * A factory for creating GameUpdateCommand objects.
+	 * 
+	 * @param <E>
+	 *          the element type
+	 */
 	abstract class GameUpdateCommandFactory<E> {
+		
+		/**
+		 * Creates a new GameUpdateCommand object.
+		 * 
+		 * @param gameLocator
+		 *          the game locator
+		 * @param value
+		 *          the value
+		 * @return the game update command
+		 */
 		public abstract GameUpdateCommand createGameUpdateCommand(GameLocator gameLocator, E value);
 
+		/**
+		 * Creates a new GameUpdateCommand object.
+		 * 
+		 * @param gameKey
+		 *          the game key
+		 * @param value
+		 *          the value
+		 * @return the game update command
+		 */
 		public GameUpdateCommand createGameUpdateCommand(GameKey gameKey, E value) {
 			return createGameUpdateCommand(GameLocator.gameKeyLocator(gameKey), value);
 		}
 	}
 
+	/**
+	 * Test game update command.
+	 * 
+	 * @param <E>
+	 *          the element type
+	 * @param gameUpdateCommandFactory
+	 *          the game update command factory
+	 * @param valueFunction
+	 *          the value function
+	 * @param currentValue
+	 *          the current value
+	 * @param newValue
+	 *          the new value
+	 */
 	public <E> void testGameUpdateCommand(GameUpdateCommandFactory<E> gameUpdateCommandFactory,
 			Function<Game, E> valueFunction, E currentValue, E newValue) {
 		testNoChangeForNull(gameUpdateCommandFactory, valueFunction);
@@ -153,6 +238,18 @@ public class GameUpdateCommandTest {
 		testChangeForDifferentValues(gameUpdateCommandFactory, valueFunction, newValue);
 	}
 
+	/**
+	 * Test null is handled correctly.
+	 * 
+	 * @param <E>
+	 *          the element type
+	 * @param gameUpdateCommandFactory
+	 *          the game update command factory
+	 * @param valueFunction
+	 *          the value function
+	 * @param newValue
+	 *          the new value
+	 */
 	protected <E> void testNullIsHandledCorrectly(GameUpdateCommandFactory<E> gameUpdateCommandFactory,
 			Function<Game, E> valueFunction, E newValue) {
 		Game game = new Game(1, DEFAULT_COMPETITION, DEFAULT_LOCATION, DEFAULT_OPPONENTS, DEFAULT_SEASON, null, null, null,
@@ -162,6 +259,16 @@ public class GameUpdateCommandTest {
 		Assert.assertNotNull("The changed value was null.", valueFunction.apply(game));
 	}
 
+	/**
+	 * Test no change for null.
+	 * 
+	 * @param <E>
+	 *          the element type
+	 * @param gameUpdateCommandFactory
+	 *          the game update command factory
+	 * @param valueFunction
+	 *          the value function
+	 */
 	protected <E> void testNoChangeForNull(GameUpdateCommandFactory<E> gameUpdateCommandFactory,
 			Function<Game, E> valueFunction) {
 		Game game = createFullyPopulatedGame();
@@ -170,6 +277,18 @@ public class GameUpdateCommandTest {
 		Assert.assertNotNull("The changed value was null.", valueFunction.apply(game));
 	}
 
+	/**
+	 * Test no change for equal value.
+	 * 
+	 * @param <E>
+	 *          the element type
+	 * @param gameUpdateCommandFactory
+	 *          the game update command factory
+	 * @param valueFunction
+	 *          the value function
+	 * @param currentValue
+	 *          the current value
+	 */
 	protected <E> void testNoChangeForEqualValue(GameUpdateCommandFactory<E> gameUpdateCommandFactory,
 			Function<Game, E> valueFunction, E currentValue) {
 		Game game = createFullyPopulatedGame();
@@ -180,6 +299,18 @@ public class GameUpdateCommandTest {
 		Assert.assertEquals("The changed value was incorrect.", currentValue, valueFunction.apply(game));
 	}
 
+	/**
+	 * Test change for different values.
+	 * 
+	 * @param <E>
+	 *          the element type
+	 * @param gameUpdateCommandFactory
+	 *          the game update command factory
+	 * @param valueFunction
+	 *          the value function
+	 * @param newValue
+	 *          the new value
+	 */
 	protected <E> void testChangeForDifferentValues(GameUpdateCommandFactory<E> gameUpdateCommandFactory,
 			Function<Game, E> valueFunction, E newValue) {
 		Game game = createFullyPopulatedGame();
@@ -189,6 +320,11 @@ public class GameUpdateCommandTest {
 		Assert.assertEquals("The changed value was incorrect.", newValue, valueFunction.apply(game));
 	}
 
+	/**
+	 * Creates the fully populated game.
+	 * 
+	 * @return the game
+	 */
 	protected Game createFullyPopulatedGame() {
 		return new Game(1, DEFAULT_COMPETITION, DEFAULT_LOCATION, DEFAULT_OPPONENTS, DEFAULT_SEASON, DEFAULT_DATE_PLAYED,
 				DEFAULT_BONDHOLDERS_AVAILABLE, DEFAULT_PRIORITY_POINT_POST_AVAILABLE, DEFAULT_SEASON_TICKETS_AVAILABLE,
@@ -196,6 +332,9 @@ public class GameUpdateCommandTest {
 				DEFAULT_MATCH_REPORT, DEFAULT_TELEVISION_CHANNEL, DEFAULT_ATTENDED);
 	}
 
+	/**
+	 * Test date played.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testDatePlayed() {
@@ -215,6 +354,9 @@ public class GameUpdateCommandTest {
 				DEFAULT_DATE_PLAYED.plusHours(1));
 	}
 
+	/**
+	 * Test result.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testResult() {
@@ -233,6 +375,9 @@ public class GameUpdateCommandTest {
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_RESULT, "1" + DEFAULT_RESULT);
 	}
 
+	/**
+	 * Test attendence.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testAttendence() {
@@ -251,6 +396,9 @@ public class GameUpdateCommandTest {
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_ATTENDENCE, DEFAULT_ATTENDENCE * 2);
 	}
 
+	/**
+	 * Test match report.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testMatchReport() {
@@ -269,6 +417,9 @@ public class GameUpdateCommandTest {
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_MATCH_REPORT, DEFAULT_MATCH_REPORT + "!");
 	}
 
+	/**
+	 * Test television channel.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testTelevisionChannel() {
@@ -288,6 +439,9 @@ public class GameUpdateCommandTest {
 				DEFAULT_TELEVISION_CHANNEL + "!");
 	}
 
+	/**
+	 * Test attended.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testAttended() {
@@ -306,6 +460,9 @@ public class GameUpdateCommandTest {
 		testGameUpdateCommand(gameUpdateCommandFactory, valueFunction, DEFAULT_ATTENDED, !DEFAULT_ATTENDED);
 	}
 
+	/**
+	 * Test bond holder.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testBondHolder() {
@@ -325,6 +482,9 @@ public class GameUpdateCommandTest {
 				DEFAULT_BONDHOLDERS_AVAILABLE.plusHours(1));
 	}
 
+	/**
+	 * Test priority tickets.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testPriorityTickets() {
@@ -344,6 +504,9 @@ public class GameUpdateCommandTest {
 				DEFAULT_PRIORITY_POINT_POST_AVAILABLE.plusHours(1));
 	}
 
+	/**
+	 * Test season tickets.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testSeasonTickets() {
@@ -363,6 +526,9 @@ public class GameUpdateCommandTest {
 				DEFAULT_SEASON_TICKETS_AVAILABLE.plusHours(1));
 	}
 
+	/**
+	 * Test academy tickets.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testAcademyTickets() {
@@ -382,6 +548,9 @@ public class GameUpdateCommandTest {
 				DEFAULT_ACADEMY_TICKETS_AVAILABLE.plusHours(1));
 	}
 
+	/**
+	 * Test general sale tickets.
+	 */
 	@Test
 	@GameUpdateCommandTestCase
 	public void testGeneralSaleTickets() {

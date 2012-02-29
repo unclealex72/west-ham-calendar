@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -42,12 +40,22 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+
 /**
- * @author alex
+ * The Class TicketsHtmlGamesScannerTest.
  * 
+ * @author alex
  */
 public class TicketsHtmlGamesScannerTest {
 
+	/**
+	 * Test blackpool away.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	@Test
 	public void testBlackpoolAway() throws IOException, URISyntaxException {
 		Function<GameLocator, List<GameUpdateCommand>> expectedGameUpdateCommandsFunction = new Function<GameLocator, List<GameUpdateCommand>>() {
@@ -63,6 +71,14 @@ public class TicketsHtmlGamesScannerTest {
 		test("tickets-blackpool-away.html", dateOf(18, 2, 2012, 15, 0), expectedGameUpdateCommandsFunction);
 	}
 
+	/**
+	 * Test southampton home.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	@Test
 	public void testSouthamptonHome() throws IOException, URISyntaxException {
 		Function<GameLocator, List<GameUpdateCommand>> expectedGameUpdateCommandsFunction = new Function<GameLocator, List<GameUpdateCommand>>() {
@@ -77,6 +93,14 @@ public class TicketsHtmlGamesScannerTest {
 		test("tickets-southampton-home.html", dateOf(14, 2, 2012, 19, 45), expectedGameUpdateCommandsFunction);
 	}
 
+	/**
+	 * Test palace home.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	@Test
 	public void testPalaceHome() throws IOException, URISyntaxException {
 		Function<GameLocator, List<GameUpdateCommand>> expectedGameUpdateCommandsFunction = new Function<GameLocator, List<GameUpdateCommand>>() {
@@ -88,6 +112,14 @@ public class TicketsHtmlGamesScannerTest {
 		test("tickets-palace-home.html", dateOf(25, 2, 2012, 12, 45), expectedGameUpdateCommandsFunction);
 	}
 
+	/**
+	 * Test peterborough away.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	@Test
 	public void testPeterboroughAway() throws IOException, URISyntaxException {
 		Function<GameLocator, List<GameUpdateCommand>> expectedGameUpdateCommandsFunction = new Function<GameLocator, List<GameUpdateCommand>>() {
@@ -99,6 +131,20 @@ public class TicketsHtmlGamesScannerTest {
 		test("tickets-peterborough-away.html", dateOf(25, 2, 2012, 12, 45), expectedGameUpdateCommandsFunction);
 	}
 
+	/**
+	 * Test.
+	 * 
+	 * @param resourceName
+	 *          the resource name
+	 * @param dateTime
+	 *          the date time
+	 * @param expectedGameUpdateCommandsFunction
+	 *          the expected game update commands function
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws URISyntaxException
+	 *           the uRI syntax exception
+	 */
 	protected void test(String resourceName, DateTime dateTime,
 			Function<GameLocator, List<GameUpdateCommand>> expectedGameUpdateCommandsFunction) throws IOException, URISyntaxException {
 		TicketsHtmlSingleGameScanner ticketsHtmlSingleGameScanner = new TicketsHtmlSingleGameScanner();
@@ -113,6 +159,21 @@ public class TicketsHtmlGamesScannerTest {
 				Iterables.toArray(actualGameUpdateCommands, GameUpdateCommand.class));
 	}
 
+	/**
+	 * Date of.
+	 * 
+	 * @param day
+	 *          the day
+	 * @param month
+	 *          the month
+	 * @param year
+	 *          the year
+	 * @param hour
+	 *          the hour
+	 * @param minute
+	 *          the minute
+	 * @return the date time
+	 */
 	protected DateTime dateOf(int day, int month, int year, int hour, int minute) {
 		return new DateTime(year, month, day, hour, minute).withZone(DateTimeZone.forID("Europe/London"));
 	}

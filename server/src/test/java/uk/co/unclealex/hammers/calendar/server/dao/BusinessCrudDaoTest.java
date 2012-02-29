@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -41,26 +39,36 @@ import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
+
 /**
- * @author alex
+ * The Class BusinessCrudDaoTest.
  * 
+ * @author alex
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/application-contexts/dao/test-hibernate.xml", "/application-contexts/dao/test-db.xml" })
 @SuppressWarnings("deprecation")
 public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContextTests {
 
+	/** The model dao. */
 	@Autowired
 	private ModelDao modelDao;
 
+	/** The simple jdbc template. */
 	@Autowired
 	private SimpleJdbcTemplate simpleJdbcTemplate;
 
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, "model");
 	}
 
+	/**
+	 * Test insert new.
+	 */
 	@Test
 	public void testInsertNew() {
 		ModelBean modelBean = new ModelBean("One", "Two");
@@ -70,6 +78,9 @@ public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContex
 		Assert.assertNotNull("The model's id was not set.", modelBean);
 	}
 
+	/**
+	 * Test find by id.
+	 */
 	@Test
 	public void testFindById() {
 		ModelBean modelBean1 = new ModelBean("One", "Two");
@@ -83,6 +94,9 @@ public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContex
 				.assertEquals("The stored model bean had the wrong value.", modelBean1.getValue(), storedModelBean.getValue());
 	}
 
+	/**
+	 * Test update.
+	 */
 	@Test
 	public void testUpdate() {
 		ModelBean modelBean = new ModelBean("One", "Two");
@@ -96,6 +110,9 @@ public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContex
 		Assert.assertEquals("The stored model bean had the wrong value.", modelBean.getValue(), storedModelBean.getValue());
 	}
 
+	/**
+	 * Test get all.
+	 */
 	@Test
 	public void testGetAll() {
 		ModelBean modelBean1 = new ModelBean("One", "Two");
@@ -106,6 +123,9 @@ public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContex
 		Assert.assertArrayEquals("The wrong model beans were found.", expectedModelBeans, actualModelBeans);
 	}
 
+	/**
+	 * Test remove by id.
+	 */
 	@Test
 	public void testRemoveById() {
 		ModelBean modelBean1 = new ModelBean("One", "Two");
@@ -117,6 +137,9 @@ public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContex
 		Assert.assertArrayEquals("The wrong model beans were found.", expectedModelBeans, actualModelBeans);
 	}
 
+	/**
+	 * Test find by key.
+	 */
 	@Test
 	public void testFindByKey() {
 		ModelBean modelBean1 = new ModelBean("One", "Two");
@@ -130,6 +153,9 @@ public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContex
 				.assertEquals("The stored model bean had the wrong value.", modelBean1.getValue(), storedModelBean.getValue());
 	}
 
+	/**
+	 * Test get all by key.
+	 */
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetAllByKey() {
@@ -144,6 +170,9 @@ public class BusinessCrudDaoTest extends AbstractTransactionalJUnit4SpringContex
 				Iterables.toArray(expectedModelBeans.entrySet(), Entry.class), actualModelBeans);
 	}
 
+	/**
+	 * Test remove by key.
+	 */
 	@Test
 	public void testRemoveByKey() {
 		ModelBean modelBean1 = new ModelBean("One", "Two");

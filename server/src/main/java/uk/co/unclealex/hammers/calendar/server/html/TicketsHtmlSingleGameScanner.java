@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -41,6 +39,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+
 /**
  * A {@link HtmlGamesScanner} that scans a page for ticket sales.
  * @author alex
@@ -48,6 +47,7 @@ import com.google.common.collect.Lists;
  */
 public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScanner {
 
+	/** The logger for this class. */
 	private final static Logger log = LoggerFactory.getLogger(TicketsHtmlSingleGameScanner.class);
 
 	/**
@@ -75,6 +75,9 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 	 */	
 	public static final String GENERAL_SALE_PATTERN = "General Sale";
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected Scanner createScanner(URI uri, TagNode tagNode) {
 		return new TicketsScanner(uri, tagNode);
@@ -98,6 +101,14 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		private DateTime i_dateTimePlayed;
 
 		
+		/**
+		 * Instantiates a new tickets scanner.
+		 * 
+		 * @param uri
+		 *          the uri
+		 * @param tagNode
+		 *          the tag node
+		 */
 		public TicketsScanner(URI uri, TagNode tagNode) {
 			super(uri, tagNode);
 		}
@@ -116,10 +127,18 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			private final String i_containedText;
 			
 			/**
-			 * An array of date formats to look for a date to associate with this action.
+			 * An array of date formats to look for a date to associate with i_action.
 			 */
 			private final PossiblyYearlessDateFormat[] i_possiblyYearlessDateFormats;
 
+			/**
+			 * Instantiates a new parsing action.
+			 * 
+			 * @param containedString
+			 *          the contained string
+			 * @param possiblyYearlessDateFormats
+			 *          the possibly yearless date formats
+			 */
 			public ParsingAction(String containedString, String... possiblyYearlessDateFormats) {
 				super();
 				i_containedText = containedString;
@@ -151,9 +170,12 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 
 			/**
 			 * Parse or search for a {@link DateTime}.
-			 * @param dateText The text to search for or parse.
+			 * 
+			 * @param dateText
+			 *          The text to search for or parse.
 			 * @return The found {@link DateTime} or nul if none could be found.
 			 * @throws UnparseableDateException
+			 *           the unparseable date exception
 			 */
 			abstract DateTime parseDateTime(String dateText) throws UnparseableDateException;
 
@@ -164,10 +186,22 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			 */
 			abstract void execute(DateTime dateTime);
 
+			/**
+			 * Gets the text that must be contained in the segment of the web page.
+			 * 
+			 * @return the text that must be contained in the segment of the web page
+			 */
 			public String getContainedText() {
 				return i_containedText;
 			}
 
+			/**
+			 * Gets the an array of date formats to look for a date to associate with
+			 * i_action.
+			 * 
+			 * @return the an array of date formats to look for a date to associate
+			 *         with i_action
+			 */
 			public PossiblyYearlessDateFormat[] getPossiblyYearlessDateFormats() {
 				return i_possiblyYearlessDateFormats;
 			}
@@ -181,11 +215,17 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		 */
 		class GameDatePlayedParsingAction extends ParsingAction {
 
+			/**
+			 * Instantiates a new game date played parsing action.
+			 */
 			public GameDatePlayedParsingAction() {
 				super("k/o", "EEEE dd MMMM yyyy - hha", "EEEE d MMMM yyyy - hha", "EEEE dd MMMM yyyy - hh.mma",
 						"EEEE d MMMM yyyy - hh.mma");
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			DateTime parseDateTime(String dateText) throws UnparseableDateException {
 				return getDateService().findPossiblyYearlessDate(dateText, new DateTime(), false,
@@ -223,12 +263,18 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 				super(containedText, "hha EEE dd MMM", "ha EEE dd MMM", "hha EEE d MMM", "ha EEE d MMM");
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			DateTime parseDateTime(String dateText) throws UnparseableDateException {
 				return getDateService().findPossiblyYearlessDate(dateText, getDateTimePlayed(), true,
 						getPossiblyYearlessDateFormats());
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			public void execute(DateTime dateTime) {
 				log.info("Found ticket type " + getContainedText().trim() + " for game at " + getDateTimePlayed()
@@ -240,7 +286,7 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			/**
 			 * Create the {@link GameUpdateCommand} that associates a game with a ticket sale date.
 			 * @param gameLocator The {@link GameLocator} created by the {@link GameDatePlayedParsingAction}.
-			 * @param dateTime The {@link DateTime} parsed in this text.
+			 * @param dateTime The {@link DateTime} parsed in i_text.
 			 * @return A {@link GameUpdateCommand} that describes the update required.
 			 */
 			protected abstract GameUpdateCommand createGameUpdateCommand(GameLocator gameLocator, DateTime dateTime);
@@ -253,10 +299,16 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		 */
 		class BondHoldersTicketParsingAction extends TicketParsingAction {
 
+			/**
+			 * Instantiates a new bond holders ticket parsing action.
+			 */
 			public BondHoldersTicketParsingAction() {
 				super(BOND_HOLDER_PATTERN);
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			protected GameUpdateCommand createGameUpdateCommand(GameLocator gameLocator, DateTime dateTime) {
 				return GameUpdateCommand.bondHolderTickets(gameLocator, dateTime);
@@ -270,10 +322,16 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		 */
 		class PriorityPointTicketParsingAction extends TicketParsingAction {
 
+			/**
+			 * Instantiates a new priority point ticket parsing action.
+			 */
 			public PriorityPointTicketParsingAction() {
 				super(PRIORITY_POINT_PATTERN);
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			protected GameUpdateCommand createGameUpdateCommand(GameLocator gameLocator, DateTime dateTime) {
 				return GameUpdateCommand.priorityPointTickets(gameLocator, dateTime);
@@ -288,10 +346,16 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 
 		class SeasonTicketParsingAction extends TicketParsingAction {
 
+			/**
+			 * Instantiates a new season ticket parsing action.
+			 */
 			public SeasonTicketParsingAction() {
 				super(SEASON_TICKET_PATTERN);
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			protected GameUpdateCommand createGameUpdateCommand(GameLocator gameLocator, DateTime dateTime) {
 				return GameUpdateCommand.seasonTickets(gameLocator, dateTime);
@@ -305,10 +369,16 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		 */
 		class AcademyMemberTicketParsingAction extends TicketParsingAction {
 
+			/**
+			 * Instantiates a new academy member ticket parsing action.
+			 */
 			public AcademyMemberTicketParsingAction() {
 				super(ACADEMY_MEMBER_PATTERN);
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			protected GameUpdateCommand createGameUpdateCommand(GameLocator gameLocator, DateTime dateTime) {
 				return GameUpdateCommand.academyTickets(gameLocator, dateTime);
@@ -322,10 +392,16 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		 */
 		class GeneralSaleTicketParsingAction extends TicketParsingAction {
 
+			/**
+			 * Instantiates a new general sale ticket parsing action.
+			 */
 			public GeneralSaleTicketParsingAction() {
 				super(GENERAL_SALE_PATTERN);
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			protected GameUpdateCommand createGameUpdateCommand(GameLocator gameLocator, DateTime dateTime) {
 				return GameUpdateCommand.generalSaleTickets(gameLocator, dateTime);
@@ -333,8 +409,11 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 		}
 
 		/**
-		 * Scan the page, first looking for the date the game was played and then looking for any ticket selling dates.
+		 * Scan the page, first looking for the date the game was played and then
+		 * looking for any ticket selling dates.
+		 * 
 		 * @throws IOException
+		 *           Signals that an I/O exception has occurred.
 		 */
 		public void scan() throws IOException {
 			List<ParsingAction> parsingActions = Lists
@@ -366,18 +445,40 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			}
 		}
 
+		/**
+		 * Gets the currently found {@link GameLocator}.
+		 * 
+		 * @return the currently found {@link GameLocator}
+		 */
 		public GameLocator getGameLocator() {
 			return i_gameLocator;
 		}
 
+		/**
+		 * Sets the currently found {@link GameLocator}.
+		 * 
+		 * @param gameLocator
+		 *          the new currently found {@link GameLocator}
+		 */
 		public void setGameLocator(GameLocator gameLocator) {
 			i_gameLocator = gameLocator;
 		}
 
+		/**
+		 * Gets the currently found {@link DateTime} for the game played.
+		 * 
+		 * @return the currently found {@link DateTime} for the game played
+		 */
 		public DateTime getDateTimePlayed() {
 			return i_dateTimePlayed;
 		}
 
+		/**
+		 * Sets the currently found {@link DateTime} for the game played.
+		 * 
+		 * @param dateTimePlayed
+		 *          the new currently found {@link DateTime} for the game played
+		 */
 		public void setDateTimePlayed(DateTime dateTimePlayed) {
 			i_dateTimePlayed = dateTimePlayed;
 		}

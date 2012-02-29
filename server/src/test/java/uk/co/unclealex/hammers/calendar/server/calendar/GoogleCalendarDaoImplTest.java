@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -51,23 +49,32 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+
 /**
- * @author alex
+ * The Class GoogleCalendarDaoImplTest.
  * 
+ * @author alex
  */
 public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(AbstractGoogleCalendarDaoTest.class);
 
+	/** The s_google calendar dao impl. */
 	private static DurationFindingAwareGoogleCalendarDao s_googleCalendarDaoImpl;
+	
+	/** The s_calendar service. */
 	private static com.google.api.services.calendar.Calendar s_calendarService;
+	
+	/** The s_primary calendar. */
 	private static Calendar s_primaryCalendar;
+	
+	/** The s_secondary calendar. */
 	private static Calendar s_secondaryCalendar;
 
 	/**
 	 * Create a calendar dao to test.
 	 * 
-	 * @throws Exception
 	 */
 	@BeforeClass
 	public static void setUpClass() {
@@ -87,11 +94,20 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 			setSecondaryCalendar(findOrCreateUnitTestCalendar("Unit Test Calendar (Secondary)"));
 		}
 		catch (Throwable t) {
-			log.error("Could not set up this test class.", t);
+			log.error("Could not set up i_test class.", t);
 			throw new RuntimeException("Could not set up a test class.", t);
 		}
 	}
 
+	/**
+	 * Find or create unit test calendar.
+	 * 
+	 * @param title
+	 *          the title
+	 * @return the calendar
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 */
 	protected static Calendar findOrCreateUnitTestCalendar(String title) throws IOException {
 		Calendar calendar = null;
 		String pageToken = null;
@@ -117,6 +133,12 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 		return calendar;
 	}
 
+	/**
+	 * Tear down.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 */
 	@After
 	public void tearDown() throws IOException {
 		String pageToken = null;
@@ -136,6 +158,9 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 		}
 	}
 
+	/**
+	 * Tear down class.
+	 */
 	@AfterClass
 	public static void tearDownClass() {
 		try {
@@ -177,7 +202,7 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 			}
 		}
 		catch (Throwable t) {
-			log.error("Could not set up this test.", t);
+			log.error("Could not set up i_test.", t);
 			throw new RuntimeException("Could not set up a test.", t);
 		}
 		finally {
@@ -186,6 +211,9 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void checkGame(String calendarId, String eventId, String gameId, Competition competition,
 			Location location, String opponents, DateTime dateStarted, DateTime dateFinished, String result,
 			Integer attendence, String matchReport, String televisionChannel, boolean busy) throws IOException {
@@ -234,6 +262,9 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 		Assert.assertEquals("The game's transparency was wrong", busy ? "opaque" : "transparent", transparency);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void checkGameRemoved(String calendarId, final String eventId) throws IOException {
 		try {
 			Event e = getCalendarService().events().get(calendarId, eventId).execute();
@@ -259,55 +290,111 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	protected void checkCalendar(String calendarId, String title, String description) throws IOException {
 		Calendar calendar = getCalendarService().calendars().get(calendarId).execute();
 		Assert.assertEquals("The calendar has the wrong title", title, calendar.getSummary());
 		Assert.assertEquals("The calendar has the wrong description", description, calendar.getDescription());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected DurationFindingAwareGoogleCalendarDao getGoogleCalendarDao() {
 		return getGoogleCalendarDaoImpl();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected String getPrimaryCalendarId() {
 		return getPrimaryCalendar().getId();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected String getSecondaryCalendarId() {
 		return getSecondaryCalendar().getId();
 	}
 
+	/**
+	 * Gets the google calendar dao impl.
+	 * 
+	 * @return the google calendar dao impl
+	 */
 	public static DurationFindingAwareGoogleCalendarDao getGoogleCalendarDaoImpl() {
 		return s_googleCalendarDaoImpl;
 	}
 
+	/**
+	 * Sets the google calendar dao impl.
+	 * 
+	 * @param googleCalendarDaoImpl
+	 *          the new google calendar dao impl
+	 */
 	public static void setGoogleCalendarDaoImpl(DurationFindingAwareGoogleCalendarDao googleCalendarDaoImpl) {
 		s_googleCalendarDaoImpl = googleCalendarDaoImpl;
 	}
 
+	/**
+	 * Gets the calendar service.
+	 * 
+	 * @return the calendar service
+	 */
 	public static com.google.api.services.calendar.Calendar getCalendarService() {
 		return s_calendarService;
 	}
 
+	/**
+	 * Sets the calendar service.
+	 * 
+	 * @param calendarService
+	 *          the new calendar service
+	 */
 	public static void setCalendarService(com.google.api.services.calendar.Calendar calendarService) {
 		s_calendarService = calendarService;
 	}
 
+	/**
+	 * Gets the primary calendar.
+	 * 
+	 * @return the primary calendar
+	 */
 	public static Calendar getPrimaryCalendar() {
 		return s_primaryCalendar;
 	}
 
+	/**
+	 * Sets the primary calendar.
+	 * 
+	 * @param calendar
+	 *          the new primary calendar
+	 */
 	public static void setPrimaryCalendar(Calendar calendar) {
 		s_primaryCalendar = calendar;
 	}
 
+	/**
+	 * Gets the secondary calendar.
+	 * 
+	 * @return the secondary calendar
+	 */
 	public static Calendar getSecondaryCalendar() {
 		return s_secondaryCalendar;
 	}
 
+	/**
+	 * Sets the secondary calendar.
+	 * 
+	 * @param secondaryCalendar
+	 *          the new secondary calendar
+	 */
 	public static void setSecondaryCalendar(Calendar secondaryCalendar) {
 		s_secondaryCalendar = secondaryCalendar;
 	}

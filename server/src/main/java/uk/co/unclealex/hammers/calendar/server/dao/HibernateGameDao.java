@@ -1,12 +1,12 @@
 /**
- * Copyright 2010 Alex Jones
- * 
+ * Copyright 2010-2012 Alex Jones
+ *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -33,6 +33,7 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 import com.google.common.collect.Sets;
 
+
 /**
  * The Hibernate implementation of {@link GameDao}.
  * 
@@ -42,10 +43,16 @@ import com.google.common.collect.Sets;
 @Transactional
 public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implements GameDao {
 
+	/**
+	 * Instantiates a new hibernate game dao.
+	 */
 	public HibernateGameDao() {
 		super(Game.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Game findByDatePlayed(DateTime datePlayed) {
 		Query query = getSession().createQuery("from Game g " + "where " + "g.dateTimePlayed = :datePlayed").setParameter(
@@ -53,6 +60,9 @@ public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implement
 		return unique(query);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Game findByBusinessKey(Competition competition, Location location, String opponents, int season) {
 		Query query = getSession()
@@ -63,12 +73,18 @@ public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implement
 		return (Game) query.uniqueResult();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterable<Game> getAllForSeason(int season) {
 		Query query = getSession().createQuery("from Game " + "where " + "season = :season").setInteger("season", season);
 		return list(query);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterable<Game> getAllForSeasonAndLocation(int season, Location location) {
 		Query query = getSession().createQuery("from Game where season = :season and location = :location")
@@ -76,12 +92,18 @@ public class HibernateGameDao extends GenericHibernateDaoSupport<Game> implement
 		return list(query);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public SortedSet<Integer> getAllSeasons() {
 		Query query = getSession().createQuery("select distinct season from Game");
 		return Sets.newTreeSet(filter(query.list(), Integer.class));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Integer getLatestSeason() {
 		Query query = getSession().createQuery("select distinct max(season) from Game");

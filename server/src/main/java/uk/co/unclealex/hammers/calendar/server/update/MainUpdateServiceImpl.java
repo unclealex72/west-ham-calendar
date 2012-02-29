@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -63,12 +61,15 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.Sets;
 import com.google.common.collect.SortedSetMultimap;
 
+
 /**
- * @author alex
+ * The Class MainUpdateServiceImpl.
  * 
+ * @author alex
  */
 public class MainUpdateServiceImpl implements MainUpdateService {
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(MainUpdateServiceImpl.class);
 
 	/**
@@ -107,6 +108,18 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 		return getGoogleCalendarService().updateCalendars(getGameDao().getAll());
 	}
 
+	/**
+	 * Process updates.
+	 * 
+	 * @param updatesType
+	 *          the updates type
+	 * @param uri
+	 *          the uri
+	 * @param scanner
+	 *          the scanner
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 */
 	protected void processUpdates(String updatesType, URI uri, HtmlGamesScanner scanner) throws IOException {
 		log.info("Scanning for " + updatesType + " changes.");
 		SortedSet<GameUpdateCommand> allGameUpdateCommands = scanner.scan(uri);
@@ -154,9 +167,13 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	
 	/**
 	 * Attend a game.
-	 * @param game The game to attend.
+	 * 
+	 * @param game
+	 *          The game to attend.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	protected void attendGame(Game game) throws GoogleAuthenticationFailedException, IOException {
 		getGoogleCalendarService().attendGame(game);
@@ -203,6 +220,9 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 		 */
 		List<Game> newGames = Lists.newArrayList();
 		
+		/**
+		 * Instantiates a new dao game locator.
+		 */
 		public DaoGameLocator() {
 			games = getGameDao().getAll();
 		}
@@ -226,7 +246,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 		}
 		
 		/**
-		 * A {@link GameLocatorVisitor} used to find games from this cache.
+		 * A {@link GameLocatorVisitor} used to find games from i_cache.
 		 * @author alex
 		 *
 		 */
@@ -237,6 +257,9 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 			 */
 			Game game;
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			public void visit(DatePlayedLocator datePlayedLocator) {
 				if (gamesByDatePlayed == null) {
@@ -253,6 +276,9 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 				game = gamesByDatePlayed.get(datePlayedLocator.getLocator());
 			}
 
+			/**
+			 * {@inheritDoc}
+			 */
 			@Override
 			public void visit(GameKeyLocator gameKeyLocator) {
 				if (gamesByGameKey == null) {
@@ -287,42 +313,103 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 		}
 	}
 
+	/**
+	 * Gets the {@link GameDao} for getting persisted {@link Game} information.
+	 * 
+	 * @return the {@link GameDao} for getting persisted {@link Game} information
+	 */
 	public GameDao getGameDao() {
 		return i_gameDao;
 	}
 
+	/**
+	 * Sets the {@link GameDao} for getting persisted {@link Game} information.
+	 * 
+	 * @param gameDao
+	 *          the new {@link GameDao} for getting persisted {@link Game}
+	 *          information
+	 */
 	public void setGameDao(GameDao gameDao) {
 		i_gameDao = gameDao;
 	}
 
+	/**
+	 * Gets the {@link MainPageService} for finding the links off the main page.
+	 * 
+	 * @return the {@link MainPageService} for finding the links off the main page
+	 */
 	public MainPageService getMainPageService() {
 		return i_mainPageService;
 	}
 
+	/**
+	 * Sets the {@link MainPageService} for finding the links off the main page.
+	 * 
+	 * @param mainPageService
+	 *          the new {@link MainPageService} for finding the links off the main
+	 *          page
+	 */
 	public void setMainPageService(MainPageService mainPageService) {
 		i_mainPageService = mainPageService;
 	}
 
+	/**
+	 * Gets the {@link HtmlGamesScanner} for getting ticketing information.
+	 * 
+	 * @return the {@link HtmlGamesScanner} for getting ticketing information
+	 */
 	public HtmlGamesScanner getTicketsHtmlGamesScanner() {
 		return i_ticketsHtmlGamesScanner;
 	}
 
+	/**
+	 * Sets the {@link HtmlGamesScanner} for getting ticketing information.
+	 * 
+	 * @param ticketsHtmlGameScanner
+	 *          the new {@link HtmlGamesScanner} for getting ticketing information
+	 */
 	public void setTicketsHtmlGamesScanner(HtmlGamesScanner ticketsHtmlGameScanner) {
 		i_ticketsHtmlGamesScanner = ticketsHtmlGameScanner;
 	}
 
+	/**
+	 * Gets the {@link HtmlGamesScanner} for getting fixture information.
+	 * 
+	 * @return the {@link HtmlGamesScanner} for getting fixture information
+	 */
 	public HtmlGamesScanner getFixturesHtmlGamesScanner() {
 		return i_fixturesHtmlGamesScanner;
 	}
 
+	/**
+	 * Sets the {@link HtmlGamesScanner} for getting fixture information.
+	 * 
+	 * @param fixturesHtmlGameScanner
+	 *          the new {@link HtmlGamesScanner} for getting fixture information
+	 */
 	public void setFixturesHtmlGamesScanner(HtmlGamesScanner fixturesHtmlGameScanner) {
 		i_fixturesHtmlGamesScanner = fixturesHtmlGameScanner;
 	}
 
+	/**
+	 * Gets the {@link GoogleCalendarService} used for updating the Google
+	 * calendars.
+	 * 
+	 * @return the {@link GoogleCalendarService} used for updating the Google
+	 *         calendars
+	 */
 	public GoogleCalendarService getGoogleCalendarService() {
 		return i_googleCalendarService;
 	}
 
+	/**
+	 * Sets the {@link GoogleCalendarService} used for updating the Google
+	 * calendars.
+	 * 
+	 * @param googleCalendarService
+	 *          the new {@link GoogleCalendarService} used for updating the Google
+	 *          calendars
+	 */
 	public void setGoogleCalendarService(GoogleCalendarService googleCalendarService) {
 		i_googleCalendarService = googleCalendarService;
 	}

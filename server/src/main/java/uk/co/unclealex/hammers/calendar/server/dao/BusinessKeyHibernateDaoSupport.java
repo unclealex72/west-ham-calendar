@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -32,12 +32,15 @@ import com.google.common.collect.Maps;
 
 import uk.co.unclealex.hammers.calendar.server.model.HasBusinessKey;
 
+
 /**
  * An implementation of {@link BusinessCrudDao} using Hibernate.
- * @author alex
- *
+ * 
  * @param <K>
+ *          the key type
  * @param <M>
+ *          the generic type
+ * @author alex
  */
 public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Comparable<K>, M extends HasBusinessKey<K>>
 		extends GenericHibernateDaoSupport<M> implements BusinessCrudDao<K, M> {
@@ -48,14 +51,21 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 	private final String i_businessKeyProperty;
 
 	/**
-	 * @param clazz The class of the model.
-	 * @param businessKeyProperty The name of the property that is the model's business key.
+	 * Instantiates a new business key hibernate dao support.
+	 * 
+	 * @param clazz
+	 *          The class of the model.
+	 * @param businessKeyProperty
+	 *          The name of the property that is the model's business key.
 	 */
 	public BusinessKeyHibernateDaoSupport(Class<M> clazz, String businessKeyProperty) {
 		super(clazz);
 		i_businessKeyProperty = businessKeyProperty;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public M findByKey(K key) {
 		Query query = getSession().createQuery(
@@ -64,6 +74,9 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 		return unique(query);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void remove(K key) {
 		Session session = getSession();
@@ -74,6 +87,9 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 		session.flush();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Map<K, M> getAllByKey() {
 		return Maps.uniqueIndex(getAll(), createBusinessKeyFunction());
@@ -91,6 +107,11 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 		};
 	}
 
+	/**
+	 * Gets the name of the property that is the model's business key.
+	 * 
+	 * @return the name of the property that is the model's business key
+	 */
 	public String getBusinessKeyProperty() {
 		return i_businessKeyProperty;
 	}

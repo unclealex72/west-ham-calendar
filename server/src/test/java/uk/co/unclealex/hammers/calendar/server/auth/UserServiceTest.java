@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -56,9 +54,11 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+
 /**
- * @author alex
+ * The Class UserServiceTest.
  * 
+ * @author alex
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/application-contexts/dao/context.xml", "/application-contexts/dao/test-db.xml",
@@ -66,24 +66,39 @@ import com.google.common.collect.Sets;
 @SuppressWarnings("deprecation")
 public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
+	/** The Constant AUTHORITY_TABLE_NAME. */
 	private static final String AUTHORITY_TABLE_NAME = Authority.class.getAnnotation(Table.class).name();
+	
+	/** The Constant USERS_TABLE_NAME. */
 	private static final String USERS_TABLE_NAME = User.class.getAnnotation(Table.class).name();
 
+	/** The simple jdbc template. */
 	@Autowired
 	private SimpleJdbcTemplate simpleJdbcTemplate;
 
+	/** The user service. */
 	@Autowired
 	private UserService userService;
+	
+	/** The user dao. */
 	@Autowired
 	private UserDao userDao;
+	
+	/** The authentication manager. */
 	@Autowired
 	private AuthenticationManager authenticationManager;
 	
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, USERS_TABLE_NAME, AUTHORITY_TABLE_NAME);
 	}
 
+	/**
+	 * Cannot alter nonexisting user.
+	 */
 	@Test
 	public void cannotAlterNonexistingUser() {
 		try {
@@ -95,6 +110,9 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		}
 	}
 	
+	/**
+	 * Cannot remove nonexisting user.
+	 */
 	@Test
 	public void cannotRemoveNonexistingUser() {
 		try {
@@ -106,6 +124,9 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		}
 	}
 
+	/**
+	 * Cannot alter nonexisting user password.
+	 */
 	@Test
 	public void cannotAlterNonexistingUserPassword() {
 		try {
@@ -117,6 +138,12 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		}
 	}
 
+	/**
+	 * Test add user.
+	 * 
+	 * @throws UsernameAlreadyExistsException
+	 *           the username already exists exception
+	 */
 	@Test
 	public void testAddUser() throws UsernameAlreadyExistsException {
 		userService.addUser("user", "user password", Role.ROLE_USER);
@@ -126,6 +153,12 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		Assert.assertEquals("The wrong number of users were found.", 2, SimpleJdbcTestUtils.countRowsInTable(simpleJdbcTemplate, USERS_TABLE_NAME));
 	}
 
+	/**
+	 * Test add same user fails.
+	 * 
+	 * @throws UsernameAlreadyExistsException
+	 *           the username already exists exception
+	 */
 	@Test
 	public void testAddSameUserFails() throws UsernameAlreadyExistsException {
 		userService.addUser("user", "user password", Role.ROLE_USER);
@@ -138,6 +171,14 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		}
 	}
 	
+	/**
+	 * Test alter user.
+	 * 
+	 * @throws NoSuchUsernameException
+	 *           the no such username exception
+	 * @throws UsernameAlreadyExistsException
+	 *           the username already exists exception
+	 */
 	@Test
 	public void testAlterUser() throws NoSuchUsernameException, UsernameAlreadyExistsException {
 		userService.addUser("me", "beef", Role.ROLE_ADMIN);
@@ -147,6 +188,14 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		checkUser("me", "cake", Role.ROLE_USER, Role.ROLE_ADMIN);
 	}
 
+	/**
+	 * Test alter user password.
+	 * 
+	 * @throws NoSuchUsernameException
+	 *           the no such username exception
+	 * @throws UsernameAlreadyExistsException
+	 *           the username already exists exception
+	 */
 	@Test
 	public void testAlterUserPassword() throws NoSuchUsernameException, UsernameAlreadyExistsException {
 		userService.addUser("me", "beef", Role.ROLE_ADMIN);
@@ -154,6 +203,9 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		checkUser("me", "stew", Role.ROLE_USER, Role.ROLE_ADMIN);
 	}
 
+	/**
+	 * Test nonexistent user cannot login.
+	 */
 	@Test
 	public void testNonexistentUserCannotLogin() {
 		try {
@@ -165,6 +217,12 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		}
 	}
 
+	/**
+	 * Test inccorect password cannot login.
+	 * 
+	 * @throws UsernameAlreadyExistsException
+	 *           the username already exists exception
+	 */
 	@Test
 	public void testInccorectPasswordCannotLogin() throws UsernameAlreadyExistsException {
 		userService.addUser("me", "you", Role.ROLE_USER);
@@ -177,6 +235,9 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		}
 	}
 	
+	/**
+	 * Test ensure default user exists.
+	 */
 	@Test
 	public void testEnsureDefaultUserExists() {
 		userService.ensureDefaultUsersExists("username", "password");
@@ -185,6 +246,14 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		checkUser("username", "password", Role.ROLE_USER, Role.ROLE_ADMIN);
 	}
 
+	/**
+	 * Test remove user.
+	 * 
+	 * @throws NoSuchUsernameException
+	 *           the no such username exception
+	 * @throws UsernameAlreadyExistsException
+	 *           the username already exists exception
+	 */
 	@Test
 	public void testRemoveUser() throws NoSuchUsernameException, UsernameAlreadyExistsException {
 		userService.addUser("username", "password", Role.ROLE_ADMIN);
@@ -201,9 +270,14 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 	}
 	
 	/**
+	 * Check user.
+	 * 
 	 * @param username
+	 *          the username
 	 * @param password
+	 *          the password
 	 * @param expectedRoles
+	 *          the expected roles
 	 */
 	protected void checkUser(String username, String password, Role... expectedRoles) {
 		User user = userDao.findByKey(username);
@@ -223,6 +297,15 @@ public class UserServiceTest extends AbstractTransactionalJUnit4SpringContextTes
 		Assert.assertArrayEquals("The wrong roles were found.", expectedRoles, Iterables.toArray(actualRoles, Role.class));
 	}
 
+	/**
+	 * Authenticate.
+	 * 
+	 * @param username
+	 *          the username
+	 * @param password
+	 *          the password
+	 * @return the authentication
+	 */
 	protected Authentication authenticate(String username, String password) {
 		return authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 	}

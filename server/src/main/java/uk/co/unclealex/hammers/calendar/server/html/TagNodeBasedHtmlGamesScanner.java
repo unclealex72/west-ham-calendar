@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import uk.co.unclealex.hammers.calendar.server.dates.DateService;
 
+
 /**
  * A base class for {@link HtmlGamesScanner}s that first parse a URL into an XML
  * document.
@@ -41,6 +42,7 @@ import uk.co.unclealex.hammers.calendar.server.dates.DateService;
  */
 public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(TagNodeBasedHtmlGamesScanner.class);
 
 	/**
@@ -75,18 +77,40 @@ public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 	 */
 	abstract SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException;
 
+	/**
+	 * Gets the {@link HtmlPageLoader} used to load web pages.
+	 * 
+	 * @return the {@link HtmlPageLoader} used to load web pages
+	 */
 	public HtmlPageLoader getHtmlPageLoader() {
 		return i_htmlPageLoader;
 	}
 
+	/**
+	 * Sets the {@link HtmlPageLoader} used to load web pages.
+	 * 
+	 * @param htmlPageLoader
+	 *          the new {@link HtmlPageLoader} used to load web pages
+	 */
 	public void setHtmlPageLoader(HtmlPageLoader htmlPageLoader) {
 		i_htmlPageLoader = htmlPageLoader;
 	}
 
+	/**
+	 * Gets the {@link DateService} to use for date and time manipulation.
+	 * 
+	 * @return the {@link DateService} to use for date and time manipulation
+	 */
 	public DateService getDateService() {
 		return i_dateService;
 	}
 
+	/**
+	 * Sets the {@link DateService} to use for date and time manipulation.
+	 * 
+	 * @param dateService
+	 *          the new {@link DateService} to use for date and time manipulation
+	 */
 	public void setDateService(DateService dateService) {
 		i_dateService = dateService;
 	}

@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -32,19 +30,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.co.unclealex.hammers.calendar.server.model.CalendarConfiguration;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 
+
 /**
- * @author alex
+ * The Class HibernateCalendarConfigurationDaoTest.
  * 
+ * @author alex
  */
 public class HibernateCalendarConfigurationDaoTest extends DaoTest {
 
+	/** The calendar configuration dao. */
 	@Autowired
 	CalendarConfigurationDao calendarConfigurationDao;
 
+	/**
+	 * Instantiates a new hibernate calendar configuration dao test.
+	 */
 	public HibernateCalendarConfigurationDaoTest() {
 		super(CalendarConfiguration.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void doSetup() {
 		CalendarConfiguration attendedCalendarConfiguration = new CalendarConfiguration(null, CalendarType.ATTENDED, "attended");
 		CalendarConfiguration unattendedCalendarConfiguration = new CalendarConfiguration(null, CalendarType.UNATTENDED,
@@ -52,16 +59,28 @@ public class HibernateCalendarConfigurationDaoTest extends DaoTest {
 		calendarConfigurationDao.saveOrUpdate(attendedCalendarConfiguration, unattendedCalendarConfiguration);
 	}
 
+	/**
+	 * Test find by google calendar id.
+	 */
 	@Test
 	public void testFindByGoogleCalendarId() {
 		checkCalendar(calendarConfigurationDao.findByGoogleCalendarId("attended"));
 	}
 
+	/**
+	 * Test find by key.
+	 */
 	@Test
 	public void testFindByKey() {
 		checkCalendar(calendarConfigurationDao.findByKey(CalendarType.ATTENDED));
 	}
 
+	/**
+	 * Check calendar.
+	 * 
+	 * @param actualCalendarConfiguration
+	 *          the actual calendar configuration
+	 */
 	protected void checkCalendar(CalendarConfiguration actualCalendarConfiguration) {
 		Assert.assertNotNull("Could not find the attended calendar.", actualCalendarConfiguration);
 		Assert.assertEquals("The attended calendar had the wrong calendar type.", CalendarType.ATTENDED,

@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 package uk.co.unclealex.hammers.calendar.server.auth;
@@ -51,6 +49,7 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
+
 /**
  * The default implementation of {@link UserService}.
  * @author alex
@@ -59,6 +58,7 @@ import com.google.common.collect.Iterables;
 @Transactional
 public class UserServiceImpl implements UserService {
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(HibernateUserDao.class);
 	
 	/**
@@ -270,42 +270,97 @@ public class UserServiceImpl implements UserService {
 	}
 
 
+	/**
+	 * Gets the {@link PasswordEncoder} to use to encode passwords.
+	 * 
+	 * @return the {@link PasswordEncoder} to use to encode passwords
+	 */
 	public PasswordEncoder getPasswordEncoder() {
 		return i_passwordEncoder;
 	}
 
+	/**
+	 * Sets the {@link PasswordEncoder} to use to encode passwords.
+	 * 
+	 * @param passwordEncoder
+	 *          the new {@link PasswordEncoder} to use to encode passwords
+	 */
 	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
 		i_passwordEncoder = passwordEncoder;
 	}
 
+	/**
+	 * Gets the all roles, in order of authority.
+	 * 
+	 * @return the all roles, in order of authority
+	 */
 	public SortedSet<Role> getAllRoles() {
 		return i_allRoles;
 	}
 
+	/**
+	 * Gets the least authoratitive role.
+	 * 
+	 * @return the least authoratitive role
+	 */
 	public Role getSmallestRole() {
 		return i_smallestRole;
 	}
 
+	/**
+	 * Sets the least authoratitive role.
+	 * 
+	 * @param smallestRole
+	 *          the new least authoratitive role
+	 */
 	public void setSmallestRole(Role smallestRole) {
 		i_smallestRole = smallestRole;
 	}
 
+	/**
+	 * Sets the all roles, in order of authority.
+	 * 
+	 * @param allRoles
+	 *          the new all roles, in order of authority
+	 */
 	public void setAllRoles(SortedSet<Role> allRoles) {
 		i_allRoles = allRoles;
 	}
 
+	/**
+	 * Gets the {@link SaltSource} used by the password encoder.
+	 * 
+	 * @return the {@link SaltSource} used by the password encoder
+	 */
 	public SaltSource getSaltSource() {
 		return i_saltSource;
 	}
 
+	/**
+	 * Sets the {@link SaltSource} used by the password encoder.
+	 * 
+	 * @param saltSource
+	 *          the new {@link SaltSource} used by the password encoder
+	 */
 	public void setSaltSource(SaltSource saltSource) {
 		i_saltSource = saltSource;
 	}
 
+	/**
+	 * Gets the {@link UserDao} used for user persistence.
+	 * 
+	 * @return the {@link UserDao} used for user persistence
+	 */
 	public UserDao getUserDao() {
 		return i_userDao;
 	}
 
+	/**
+	 * Sets the {@link UserDao} used for user persistence.
+	 * 
+	 * @param userDao
+	 *          the new {@link UserDao} used for user persistence
+	 */
 	public void setUserDao(UserDao userDao) {
 		i_userDao = userDao;
 	}

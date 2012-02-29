@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -41,9 +39,11 @@ import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 import uk.co.unclealex.hammers.calendar.server.model.TicketingCalendar;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 
+
 /**
- * @author alex
+ * The Class TicketingCalendarServiceTest.
  * 
+ * @author alex
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/application-contexts/dao/context.xml", "/application-contexts/dao/test-db.xml",
@@ -51,27 +51,37 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 @SuppressWarnings("deprecation")
 public class TicketingCalendarServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-	/**
-	 * 
-	 */
+	/** The Constant TABLE_NAME. */
 	private static final String TABLE_NAME = TicketingCalendar.class.getAnnotation(Table.class).name();
 
+	/** The simple jdbc template. */
 	@Autowired
 	private SimpleJdbcTemplate simpleJdbcTemplate;
+	
+	/** The ticketing calendar service. */
 	@Autowired
 	private TicketingCalendarService ticketingCalendarService;
 
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, TABLE_NAME);
 	}
 
+	/**
+	 * Test default is null.
+	 */
 	@Test
 	public void testDefaultIsNull() {
 		Assert.assertNull("By default, the selected ticketing calendar was not null.",
 				ticketingCalendarService.getSelectedTicketingCalendar());
 	}
 
+	/**
+	 * Test all calendar types.
+	 */
 	@Test
 	public void testAllCalendarTypes() {
 		for (CalendarType calendarType : CalendarType.values()) {
@@ -92,6 +102,9 @@ public class TicketingCalendarServiceTest extends AbstractTransactionalJUnit4Spr
 		}
 	}
 
+	/**
+	 * Test clear.
+	 */
 	@Test
 	public void testClear() {
 		ticketingCalendarService.setSelectedTicketingCalendar(CalendarType.TICKETS_ACADEMY);

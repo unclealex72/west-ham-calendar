@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.update;
@@ -28,14 +26,20 @@ import uk.co.unclealex.hammers.calendar.server.dao.OauthTokenDao;
 import uk.co.unclealex.hammers.calendar.server.model.OauthToken;
 import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
 
+
 /**
+ * The Class UpdateCalendarJobTransactionalTestRunnable.
+ * 
  * @author alex
- *
  */
 public class UpdateCalendarJobTransactionalTestRunnable implements Runnable {
 
+	/** The oauth token dao. */
 	private OauthTokenDao i_oauthTokenDao;
 	
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void run() {
 		clear();
@@ -44,6 +48,9 @@ public class UpdateCalendarJobTransactionalTestRunnable implements Runnable {
 		clear();
 	}
 
+	/**
+	 * Clear.
+	 */
 	protected void clear() {
 		OauthTokenDao oauthTokenDao = getOauthTokenDao();
 		for (OauthToken oauthToken : oauthTokenDao.getAll()) {
@@ -51,10 +58,21 @@ public class UpdateCalendarJobTransactionalTestRunnable implements Runnable {
 		}
 	}
 	
+	/**
+	 * Gets the oauth token dao.
+	 * 
+	 * @return the oauth token dao
+	 */
 	public OauthTokenDao getOauthTokenDao() {
 		return i_oauthTokenDao;
 	}
 
+	/**
+	 * Sets the oauth token dao.
+	 * 
+	 * @param oauthTokenDao
+	 *          the new oauth token dao
+	 */
 	public void setOauthTokenDao(OauthTokenDao oauthTokenDao) {
 		i_oauthTokenDao = oauthTokenDao;
 	}

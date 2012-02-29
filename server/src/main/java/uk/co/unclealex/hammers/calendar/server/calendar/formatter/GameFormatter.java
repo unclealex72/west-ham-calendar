@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.calendar.formatter;
@@ -29,6 +27,7 @@ import uk.co.unclealex.hammers.calendar.server.model.Game;
 
 import com.google.common.base.Function;
 import com.google.common.base.Strings;
+
 
 /**
  * A class that prints a game if it is known or its id otherwise.
@@ -42,6 +41,9 @@ public class GameFormatter implements Function<String, String> {
 	 */
 	private GameDao i_gameDao;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String apply(String gameId) {
 		gameId = Strings.nullToEmpty(gameId).trim();
@@ -62,10 +64,21 @@ public class GameFormatter implements Function<String, String> {
 		return String.format("[%s:unknown]", gameId);
 	}
 	
+	/**
+	 * Gets the {@link GameDao} to use to look up persisted games.
+	 * 
+	 * @return the {@link GameDao} to use to look up persisted games
+	 */
 	public GameDao getGameDao() {
 		return i_gameDao;
 	}
 
+	/**
+	 * Sets the {@link GameDao} to use to look up persisted games.
+	 * 
+	 * @param gameDao
+	 *          the new {@link GameDao} to use to look up persisted games
+	 */
 	public void setGameDao(GameDao gameDao) {
 		i_gameDao = gameDao;
 	}

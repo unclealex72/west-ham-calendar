@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -30,6 +30,7 @@ import org.htmlcleaner.TagNode;
 
 import com.google.common.collect.Sets;
 
+
 /**
  * A base class for {@link HtmlGamesScanner}s that read a page and then
  * delegates scanning to a set of other pages that are links off of the original
@@ -50,6 +51,9 @@ public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 	 */
 	private HtmlGamesScanner i_htmlGamesScanner;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException {
 		SortedSet<GameUpdateCommand> gameUpdateCommands = Sets.newTreeSet();
@@ -60,18 +64,42 @@ public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 		return gameUpdateCommands;
 	}
 
+	/**
+	 * Gets the {@link LinkHarvester} used to find the links on a main page.
+	 * 
+	 * @return the {@link LinkHarvester} used to find the links on a main page
+	 */
 	public LinkHarvester getLinkHarvester() {
 		return i_linkHarvester;
 	}
 
+	/**
+	 * Sets the {@link LinkHarvester} used to find the links on a main page.
+	 * 
+	 * @param linkHarvester
+	 *          the new {@link LinkHarvester} used to find the links on a main
+	 *          page
+	 */
 	public void setLinkHarvester(LinkHarvester linkHarvester) {
 		i_linkHarvester = linkHarvester;
 	}
 
+	/**
+	 * Gets the {@link HtmlGamesScanner} used to find games on the child pages.
+	 * 
+	 * @return the {@link HtmlGamesScanner} used to find games on the child pages
+	 */
 	public HtmlGamesScanner getHtmlGamesScanner() {
 		return i_htmlGamesScanner;
 	}
 
+	/**
+	 * Sets the {@link HtmlGamesScanner} used to find games on the child pages.
+	 * 
+	 * @param htmlGamesScanner
+	 *          the new {@link HtmlGamesScanner} used to find games on the child
+	 *          pages
+	 */
 	public void setHtmlGamesScanner(HtmlGamesScanner htmlGamesScanner) {
 		i_htmlGamesScanner = htmlGamesScanner;
 	}

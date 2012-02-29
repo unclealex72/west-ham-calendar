@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -28,13 +28,13 @@ import com.google.common.base.Objects;
 import uk.co.unclealex.hammers.calendar.server.html.GameLocator.DatePlayedLocator;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 
+
 /**
+ * A class used to encapsulate a possible update to a game as directed by an.
  * 
- * A class used to encapsulate a possible update to a game as directed by an
  * {@link HtmlGamesScanner}.
  * 
  * @author alex
- * 
  */
 public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand> {
 
@@ -364,15 +364,23 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * The {@link GameLocator} to use for finding which game this {@link GameUpdateCommand} will update.
+	 * The {@link GameLocator} to use for finding which game i_{@link GameUpdateCommand} will update.
 	 */
 	private final GameLocator i_gameLocator;
 	
 	/**
-	 * The {@link Type} of this {@link GameUpdateCommand}.
+	 * The {@link Type} of i_{@link GameUpdateCommand}.
 	 */
 	private final Type i_type;
 
+	/**
+	 * Instantiates a new game update command.
+	 * 
+	 * @param type
+	 *          the type
+	 * @param gameLocator
+	 *          the game locator
+	 */
 	protected GameUpdateCommand(Type type, GameLocator gameLocator) {
 		super();
 		i_gameLocator = gameLocator;
@@ -389,6 +397,9 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	 */
 	public abstract boolean update(Game game);
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int compareTo(GameUpdateCommand o) {
 		int cmp = getGameLocator().compareTo(o.getGameLocator());
@@ -398,11 +409,17 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		return cmp;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof GameUpdateCommand && compareTo((GameUpdateCommand) obj) == 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hashCode(getType(), getGameLocator());
@@ -412,10 +429,9 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	 * A subclass of {@link GameUpdateCommand} that actually attempts to update a
 	 * game.
 	 * 
-	 * @author alex
-	 * 
 	 * @param <V>
 	 *          The type of the value that may be updated.
+	 * @author alex
 	 */
 	protected abstract static class InternalGameUpdateCommand<V> extends GameUpdateCommand {
 
@@ -424,16 +440,32 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		 */
 		private final V i_newValue;
 
+		/**
+		 * Instantiates a new internal game update command.
+		 * 
+		 * @param type
+		 *          the type
+		 * @param gameLocator
+		 *          the game locator
+		 * @param newValue
+		 *          the new value
+		 */
 		protected InternalGameUpdateCommand(Type type, GameLocator gameLocator, V newValue) {
 			super(type, gameLocator);
 			i_newValue = newValue;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String toString() {
 			return String.format("{%s: %s <- %s}", getGameLocator(), getType(), getNewValue());
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public boolean update(Game game) {
 			if (getNewValue() == null || getNewValue().equals(getCurrentValue(game))) {
@@ -444,6 +476,8 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		}
 
 		/**
+		 * Gets the current value.
+		 * 
 		 * @param game
 		 *          The game to check.
 		 * @return The current value of the current game.
@@ -461,6 +495,8 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		protected abstract void setNewValue(Game game, V newValue);
 
 		/**
+		 * Gets the new value to that will be used to update the game.
+		 * 
 		 * @return the newValue
 		 */
 		public V getNewValue() {
@@ -469,6 +505,9 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
+	 * Gets the {@link GameLocator} to use for finding which game this
+	 * {@link GameUpdateCommand} will update.
+	 * 
 	 * @return The required {@link GameLocator} of any game to change.
 	 */
 	public GameLocator getGameLocator() {
@@ -476,7 +515,9 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	}
 
 	/**
-	 * @return The ordering of this {@link GameUpdateCommand}.
+	 * Gets the {@link Type} of i_{@link GameUpdateCommand}.
+	 * 
+	 * @return The ordering of i_{@link GameUpdateCommand}.
 	 */
 	protected Type getType() {
 		return i_type;

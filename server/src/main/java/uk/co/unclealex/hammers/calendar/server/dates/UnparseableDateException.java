@@ -1,12 +1,12 @@
 /**
- * Copyright 2010 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,10 +18,9 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 package uk.co.unclealex.hammers.calendar.server.dates;
+
 
 /**
  * An exception that is thrown for date strings that are not parseable.
@@ -31,31 +30,43 @@ package uk.co.unclealex.hammers.calendar.server.dates;
 public class UnparseableDateException extends Exception {
 
 	/**
+	 * Instantiates a new unparseable date exception.
+	 * 
 	 * @see Exception
 	 */
 	public UnparseableDateException() {
 	}
 
 	/**
+	 * Instantiates a new unparseable date exception.
+	 * 
+	 * @param message
+	 *          The exception's message.
 	 * @see Exception
-	 * @param message The exception's message.
 	 */
 	public UnparseableDateException(String message) {
 		super(message);
 	}
 
 	/**
+	 * Instantiates a new unparseable date exception.
+	 * 
+	 * @param cause
+	 *          The underlying cause of i_exception.
 	 * @see Exception
-	 * @param cause The underlying cause of this exception.
 	 */
 	public UnparseableDateException(Throwable cause) {
 		super(cause);
 	}
 
 	/**
+	 * Instantiates a new unparseable date exception.
+	 * 
+	 * @param message
+	 *          The exception's message.
+	 * @param cause
+	 *          The underlying cause of i_exception.
 	 * @see Exception
-	 * @param cause The underlying cause of this exception.
-	 * @param message The exception's message.
 	 */
 	public UnparseableDateException(String message, Throwable cause) {
 		super(message, cause);

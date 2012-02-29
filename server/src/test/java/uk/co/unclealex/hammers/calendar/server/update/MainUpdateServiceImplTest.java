@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -72,9 +70,11 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+
 /**
- * @author alex
+ * The Class MainUpdateServiceImplTest.
  * 
+ * @author alex
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration({ "/application-contexts/update/context.xml", "/application-contexts/dao/context.xml",
@@ -83,19 +83,33 @@ import com.google.common.collect.Sets;
 @SuppressWarnings({ "unchecked", "deprecation" })
 public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4SpringContextTests {
 
+	/** The main update service. */
 	@Autowired
 	MainUpdateServiceImpl mainUpdateService;
+	
+	/** The simple jdbc template. */
 	@Autowired
 	SimpleJdbcTemplate simpleJdbcTemplate;
+	
+	/** The calendar configuration dao. */
 	@Autowired
 	CalendarConfigurationDao calendarConfigurationDao;
+	
+	/** The google calendar factory. */
 	@Autowired
 	GoogleCalendarFactory googleCalendarFactory;
+	
+	/** The game dao. */
 	@Autowired
 	GameDao gameDao;
+	
+	/** The mock google calendar dao. */
 	@Autowired
 	MockGoogleCalendarDao mockGoogleCalendarDao;
 
+	/**
+	 * Setup.
+	 */
 	@Before
 	public void setup() {
 		mockGoogleCalendarDao.clear();
@@ -107,6 +121,14 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 		}
 	}
 
+	/**
+	 * Test one update.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Test
 	public void testOneUpdate() throws IOException, GoogleAuthenticationFailedException {
 		makeUpdates(GameUpdateCommand.datePlayed(createGameLocator(Competition.FACP, Location.HOME, "Them", 2011),
@@ -116,6 +138,14 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 				createUpdatedChangeLog(CalendarType.UNATTENDED, Competition.FACP, Location.HOME, "Them", 2011));
 	}
 
+	/**
+	 * Test same updates are idempotent.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Test
 	public void testSameUpdatesAreIdempotent() throws IOException, GoogleAuthenticationFailedException {
 		GameLocator nonTicketGameLocator = createGameLocator(Competition.FACP, Location.HOME, "Them", 2011);
@@ -140,6 +170,14 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 		expect();
 	}
 
+	/**
+	 * Test change of date.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Test
 	public void testChangeOfDate() throws IOException, GoogleAuthenticationFailedException {
 		makeUpdates(GameUpdateCommand.datePlayed(createGameLocator(Competition.FACP, Location.AWAY, "Them", 2011),
@@ -152,6 +190,14 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 				createUpdatedChangeLog(CalendarType.UNATTENDED, Competition.FACP, Location.AWAY, "Them", 2011));
 	}
 
+	/**
+	 * Test tickets added.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Test
 	public void testTicketsAdded() throws IOException, GoogleAuthenticationFailedException {
 		makeUpdates(GameUpdateCommand.datePlayed(createGameLocator(Competition.FACP, Location.AWAY, "Them", 2011),
@@ -163,6 +209,14 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 				createAddedChangeLog(CalendarType.TICKETS_GENERAL_SALE, Competition.FACP, Location.AWAY, "Them", 2011));
 	}
 
+	/**
+	 * Test game played.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Test
 	public void testGamePlayed() throws IOException, GoogleAuthenticationFailedException {
 		makeUpdates(GameUpdateCommand.datePlayed(createGameLocator(Competition.FACP, Location.AWAY, "Them", 2011),
@@ -174,6 +228,14 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 				createUpdatedChangeLog(CalendarType.UNATTENDED, Competition.FACP, Location.AWAY, "Them", 2011));
 	}
 
+	/**
+	 * Test game attended.
+	 * 
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	@Test
 	public void testGameAttended() throws IOException, GoogleAuthenticationFailedException {
 		makeUpdates(GameUpdateCommand.datePlayed(createGameLocator(Competition.FACP, Location.AWAY, "Them", 2011),
@@ -187,6 +249,16 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 				createRemovedChangeLog(CalendarType.UNATTENDED, Competition.FACP, Location.AWAY, "Them", 2011));
 	}
 
+	/**
+	 * Expect.
+	 * 
+	 * @param expectedUpdateChangeLogSuppliers
+	 *          the expected update change log suppliers
+	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
+	 */
 	protected void expect(Supplier<UpdateChangeLog>... expectedUpdateChangeLogSuppliers) throws IOException,
 			GoogleAuthenticationFailedException {
 		SortedSet<UpdateChangeLog> actualUpdateChangeLogs = mainUpdateService.updateAllCalendars();
@@ -206,6 +278,12 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 				Iterables.toArray(actualUpdateChangeLogs, UpdateChangeLog.class));
 	}
 
+	/**
+	 * Make updates.
+	 * 
+	 * @param gameUpdateCommands
+	 *          the game update commands
+	 */
 	protected void makeUpdates(GameUpdateCommand... gameUpdateCommands) {
 		final SortedSet<GameUpdateCommand> fixtureUpdateCommands = Sets.newTreeSet();
 		final SortedSet<GameUpdateCommand> ticketsUpdateCommands = Sets.newTreeSet();
@@ -240,14 +318,59 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 		mainUpdateService.setMainPageService(new MainPageServiceImpl());
 	}
 
+	/**
+	 * Creates the game locator.
+	 * 
+	 * @param day
+	 *          the day
+	 * @param month
+	 *          the month
+	 * @param year
+	 *          the year
+	 * @param hour
+	 *          the hour
+	 * @param minute
+	 *          the minute
+	 * @return the game locator
+	 */
 	protected GameLocator createGameLocator(int day, int month, int year, int hour, int minute) {
 		return GameLocator.datePlayedLocator(dateOf(day, month, year, hour, minute));
 	}
 
+	/**
+	 * Date of.
+	 * 
+	 * @param day
+	 *          the day
+	 * @param month
+	 *          the month
+	 * @param year
+	 *          the year
+	 * @param hour
+	 *          the hour
+	 * @param minute
+	 *          the minute
+	 * @return the date time
+	 */
 	protected DateTime dateOf(int day, int month, int year, int hour, int minute) {
 		return new DateTime(year, month, day, hour, minute, 0, 0, DateTimeZone.forID("Europe/London"));
 	}
 
+	/**
+	 * Creates the added change log.
+	 * 
+	 * @param calendarType
+	 *          the calendar type
+	 * @param competition
+	 *          the competition
+	 * @param location
+	 *          the location
+	 * @param opponents
+	 *          the opponents
+	 * @param season
+	 *          the season
+	 * @return the supplier
+	 */
 	protected Supplier<UpdateChangeLog> createAddedChangeLog(final CalendarType calendarType,
 			final Competition competition, final Location location, final String opponents, final int season) {
 		return new Supplier<UpdateChangeLog>() {
@@ -259,6 +382,21 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 		};
 	}
 
+	/**
+	 * Creates the updated change log.
+	 * 
+	 * @param calendarType
+	 *          the calendar type
+	 * @param competition
+	 *          the competition
+	 * @param location
+	 *          the location
+	 * @param opponents
+	 *          the opponents
+	 * @param season
+	 *          the season
+	 * @return the supplier
+	 */
 	protected Supplier<UpdateChangeLog> createUpdatedChangeLog(final CalendarType calendarType,
 			final Competition competition, final Location location, final String opponents, final int season) {
 		return new Supplier<UpdateChangeLog>() {
@@ -270,6 +408,21 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 		};
 	}
 
+	/**
+	 * Creates the removed change log.
+	 * 
+	 * @param calendarType
+	 *          the calendar type
+	 * @param competition
+	 *          the competition
+	 * @param location
+	 *          the location
+	 * @param opponents
+	 *          the opponents
+	 * @param season
+	 *          the season
+	 * @return the supplier
+	 */
 	protected Supplier<UpdateChangeLog> createRemovedChangeLog(final CalendarType calendarType,
 			final Competition competition, final Location location, final String opponents, final int season) {
 		return new Supplier<UpdateChangeLog>() {
@@ -281,16 +434,39 @@ public class MainUpdateServiceImplTest extends AbstractTransactionalJUnit4Spring
 		};
 	}
 
+	/**
+	 * Creates the game locator.
+	 * 
+	 * @param competition
+	 *          the competition
+	 * @param location
+	 *          the location
+	 * @param opponents
+	 *          the opponents
+	 * @param season
+	 *          the season
+	 * @return the game locator
+	 */
 	protected GameLocator createGameLocator(Competition competition, Location location, String opponents, int season) {
 		return GameLocator.gameKeyLocator(new GameKey(competition, location, opponents, season));
 	}
 
+	/**
+	 * The Class MainPageServiceImpl.
+	 */
 	class MainPageServiceImpl implements MainPageService {
+		
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public URI getFixturesUri() {
 			return URI.create("http://localhost:8081");
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public URI getTicketsUri() {
 			return URI.create("http://localhost:8082");

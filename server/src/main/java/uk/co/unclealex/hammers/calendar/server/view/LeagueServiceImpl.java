@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -35,6 +33,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 
+
 /**
  * The default implementation of {@link LeagueService}.
  * @author alex
@@ -47,6 +46,9 @@ public class LeagueServiceImpl implements LeagueService {
 	 */
 	private GameService i_gameService;
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public SortedSet<LeagueRow> getLeagueForSeason(int season) {
 		Predicate<GameView> isLeagueGameViewPredicate = new Predicate<GameView>() {
@@ -83,10 +85,21 @@ public class LeagueServiceImpl implements LeagueService {
 		return league;
 	}
 
+	/**
+	 * Gets the {@link GameService} to get information about games.
+	 * 
+	 * @return the {@link GameService} to get information about games
+	 */
 	public GameService getGameService() {
 		return i_gameService;
 	}
 
+	/**
+	 * Sets the {@link GameService} to get information about games.
+	 * 
+	 * @param gameService
+	 *          the new {@link GameService} to get information about games
+	 */
 	public void setGameService(GameService gameService) {
 		i_gameService = gameService;
 	}

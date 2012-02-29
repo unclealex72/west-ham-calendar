@@ -1,17 +1,12 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.shared.model;
-
-/**
- * Copyright 2011 Alex Jones
+ * Copyright 2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -21,42 +16,110 @@ package uk.co.unclealex.hammers.calendar.shared.model;
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.
+ * under the License.    
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.shared.model;
+
+
+/**
+ * The different types of calendars that are available.
+ * @author alex
  *
  */
 public enum CalendarType {
-	ATTENDED(true, false, "Attended games"),
-	UNATTENDED(true, false, "Unattended games"), 
-	HOME(false, false, "Home games"),
-	AWAY(false, false, "Away games"),
-	ALL(false, false, "All games"),
-	TELEVISED(false, false, "Televised games"),
-	TICKETS_GENERAL_SALE(false, true, "General sale"),
-	TICKETS_ACADEMY(false, true, "Academy members"),
-	TICKETS_SEASON(false, true, "Season ticket holders"), 
-	TICKETS_PRIORITY(false, true, "Priority point holders"), 
-	TICKETS_BONDHOLDERS(false, true, "Bondholders");
+	/**
+	 * The calendar type for attended games.
+	 */
+	ATTENDED(false, "Attended games"),
 	
-	private final boolean i_mandatory;
+	/**
+	 * The calendar type for unattended games.
+	 */
+	UNATTENDED(false, "Unattended games"),
+	
+	/**
+	 * The calendar type fo home games.
+	 */
+	HOME(false, "Home games"),
+	
+	/**
+	 * The calendar type for away games.
+	 */
+	AWAY(false, "Away games"),
+	
+	/**
+	 * The calendar type for all games.
+	 */
+	ALL(false, "All games"),
+	
+	/**
+	 * The calendar type for all games.
+	 */
+	TELEVISED(false, "Televised games"),
+	
+	/**
+	 * The calendar type for general sale ticket sales.
+	 */
+	TICKETS_GENERAL_SALE(true, "General sale"),
+	
+	/**
+	 * The calendar type for Academy member ticket sales.
+	 */
+	TICKETS_ACADEMY(true, "Academy members"),
+	
+	/**
+	 * The calendar type for season ticket holder ticket sales.
+	 */
+	TICKETS_SEASON(true, "Season ticket holders"),
+	
+	/**
+	 * The calendar type for priority point holder ticket sales.
+	 */
+	TICKETS_PRIORITY(true, "Priority point holders"),
+	
+	/**
+	 * The calendar type for Bondholder ticket sales.
+	 */
+	TICKETS_BONDHOLDERS(true, "Bondholders");
+
+	/**
+	 * True if i_calendar is for ticket sales, false otherwise.
+	 */
 	private final boolean i_ticketCalendar;
+	
+	/**
+	 * The display name for i_calendar type.
+	 */
 	private final String i_displayName;
 	
-	private CalendarType(boolean mandatory, boolean ticketCalendar, String displayName) {
-		i_mandatory = mandatory;
+	/**
+	 * Instantiates a new calendar type.
+	 * 
+	 * @param ticketCalendar
+	 *          the ticket calendar
+	 * @param displayName
+	 *          the display name
+	 */
+	private CalendarType(boolean ticketCalendar, String displayName) {
 		i_ticketCalendar = ticketCalendar;
 		i_displayName = displayName;
 	}
 	
-	public boolean isMandatory() {
-		return i_mandatory;
-	}
-	
+	/**
+	 * Checks if is true if i_calendar is for ticket sales, false otherwise.
+	 * 
+	 * @return the true if i_calendar is for ticket sales, false otherwise
+	 */
 	public boolean isTicketCalendar() {
 		return i_ticketCalendar;
 	}
 
+  /**
+	 * Gets the display name for i_calendar type.
+	 * 
+	 * @return the display name for i_calendar type
+	 */
   public String getDisplayName() {
     return i_displayName;
   }

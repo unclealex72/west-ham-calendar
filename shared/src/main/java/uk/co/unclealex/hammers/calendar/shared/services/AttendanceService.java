@@ -1,18 +1,12 @@
 /**
- * 
- */
-package uk.co.unclealex.hammers.calendar.shared.services;
-
-
-/**
- * Copyright 2011 Alex Jones
+ * Copyright 2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -24,11 +18,22 @@ package uk.co.unclealex.hammers.calendar.shared.services;
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
+ */
+package uk.co.unclealex.hammers.calendar.shared.services;
+
+
+/**
+ * The amalgam of all three GUI based services.
+ * 
+ * @author alex
  *
  */
 public interface AttendanceService extends AnonymousAttendanceService, UserAttendanceService, AdminAttendanceService {
 	
-	public void setSecurityInvalidator(SecurityInvalidator securityInvalidator);
+	/**
+	 * Provide the {@link SecurityInvalidator} required to log out a user.
+	 * @param securityInvalidator The {@link SecurityInvalidator} required to log out a user.
+	 */
+	void setSecurityInvalidator(SecurityInvalidator securityInvalidator);
 
 }

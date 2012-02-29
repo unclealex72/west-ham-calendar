@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author alex
  *
  */
 
@@ -38,6 +36,7 @@ import com.google.api.client.googleapis.auth.oauth2.draft10.GoogleAuthorizationR
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.services.calendar.Calendar;
+
 
 /**
  * A calendar factory that uses an Oauth 2 access and refresh token. Subclasses are responsible for storage
@@ -67,6 +66,7 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	 */
 	private static final String SCOPE = "https://www.googleapis.com/auth/calendar";
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(AbstractOauthCalendarFactory.class);
 	
 	/**
@@ -81,9 +81,12 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	
 	/**
 	 * Create a new {@link Calendar} using Oauth.
+	 * 
 	 * @return A new Google {@link Calendar} object.
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
 	 */
 	@Override
 	public Calendar createCalendar() throws IOException, GoogleAuthenticationFailedException {
@@ -132,11 +135,15 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	protected abstract void installTokens(String accessToken, String refreshToken);
 	
 	/**
+	 * Gets the refresh token.
+	 * 
 	 * @return The refresh token to use.
 	 */
 	protected abstract String getRefreshToken();
 
 	/**
+	 * Gets the access token.
+	 * 
 	 * @return The access token to use.
 	 */
 	protected abstract String getAccessToken();
@@ -147,18 +154,40 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	 */
 	protected abstract void setAccessToken(String accessToken);
 
+	/**
+	 * Gets the {@link HttpTransport} used to connect to Google.
+	 * 
+	 * @return the {@link HttpTransport} used to connect to Google
+	 */
 	public HttpTransport getHttpTransport() {
 		return i_httpTransport;
 	}
 
+	/**
+	 * Sets the {@link HttpTransport} used to connect to Google.
+	 * 
+	 * @param httpTransport
+	 *          the new {@link HttpTransport} used to connect to Google
+	 */
 	public void setHttpTransport(HttpTransport httpTransport) {
 		i_httpTransport = httpTransport;
 	}
 
+	/**
+	 * Gets the {@link JsonFactory} used by the Google client.
+	 * 
+	 * @return the {@link JsonFactory} used by the Google client
+	 */
 	public JsonFactory getJsonFactory() {
 		return i_jsonFactory;
 	}
 
+	/**
+	 * Sets the {@link JsonFactory} used by the Google client.
+	 * 
+	 * @param jsonFactory
+	 *          the new {@link JsonFactory} used by the Google client
+	 */
 	public void setJsonFactory(JsonFactory jsonFactory) {
 		i_jsonFactory = jsonFactory;
 	}

@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,11 +18,10 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.calendar;
+
 
 /**
  * A {@link GameUpdateInformation} bean that can be used to say whether a game was updated or not.
@@ -37,7 +36,7 @@ public class GameWasCreatedInformation implements GameUpdateInformation {
 	private final String i_eventId;
 	
 	/**
-	 * Create a new instance of this class.
+	 * Create a new instance of i_class.
 	 * @param eventId The id of the created event.
 	 */
 	public GameWasCreatedInformation(String eventId) {
@@ -53,6 +52,11 @@ public class GameWasCreatedInformation implements GameUpdateInformation {
 		visitor.visit(this);
 	}
 
+	/**
+	 * Gets the Google Calendar event id of the game that was created.
+	 * 
+	 * @return the Google Calendar event id of the game that was created
+	 */
 	public String getEventId() {
 		return i_eventId;
 	}

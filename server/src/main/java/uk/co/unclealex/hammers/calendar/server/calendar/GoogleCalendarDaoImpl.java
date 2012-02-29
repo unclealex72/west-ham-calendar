@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -54,17 +52,18 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
+
 /**
- * @author alex
+ * The Class GoogleCalendarDaoImpl.
  * 
+ * @author alex
  */
 public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao {
 
-	/**
-	 * 
-	 */
+	/** The Constant MILLIS_IN_A_SECOND. */
 	private static final int MILLIS_IN_A_SECOND = 1000;
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(GoogleCalendarDaoImpl.class);
 
 	/**
@@ -77,9 +76,7 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 */
 	private static final String ID_PROPERTY = "hammersId";
 
-	/**
-	 * COYI!
-	 */
+	/** COYI!. */
 	private static final String WEST_HAM = "West Ham";
 
 	/**
@@ -98,6 +95,16 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 */
 	private final Function<String, String> i_gameFormatter;
 
+	/**
+	 * Instantiates a new google calendar dao impl.
+	 * 
+	 * @param calendarService
+	 *          the calendar service
+	 * @param calendarFormatter
+	 *          the calendar formatter
+	 * @param gameFormatter
+	 *          the game formatter
+	 */
 	public GoogleCalendarDaoImpl(com.google.api.services.calendar.Calendar calendarService,
 			Function<String, String> calendarFormatter, Function<String, String> gameFormatter) {
 		super();
@@ -315,6 +322,7 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 *          which to search or null to search all events.
 	 * @return The event id of the game or null if no game could be found.
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 */
 	protected String findGame(String calendarId, String gameId, DateTime searchDate, DurationFieldType durationFieldType)
 			throws IOException {
@@ -424,9 +432,13 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 
 	/**
 	 * Convert a null {@link Iterable} into an empty {@link Iterable}.
-	 * @param items The original {@link Iterable}.
-	 * @param <I> The generic parameter of the {@link Iterable}.
-	 * @return The original {@link Iterable} if it was not null or an empty {@link Iterable} if it was.
+	 * 
+	 * @param <I>
+	 *          The generic parameter of the {@link Iterable}.
+	 * @param items
+	 *          The original {@link Iterable}.
+	 * @return The original {@link Iterable} if it was not null or an empty
+	 *         {@link Iterable} if it was.
 	 */
 	protected <I> Iterable<I> notEmpty(Iterable<I> items) {
 		return items == null ? new ArrayList<I>() : items;
@@ -441,14 +453,32 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 		return new com.google.api.client.util.DateTime(dateTime.toDate(), dateTime.getZone().toTimeZone());
 	}
 
+	/**
+	 * Gets the {@link com.
+	 *
+	 * @return the {@link com
+	 */
 	public com.google.api.services.calendar.Calendar getCalendarService() {
 		return i_calendarService;
 	}
 
+	/**
+	 * Gets the {@link Function} used to format a calendar for printing given its
+	 * id.
+	 * 
+	 * @return the {@link Function} used to format a calendar for printing given
+	 *         its id
+	 */
 	public Function<String, String> getCalendarFormatter() {
 		return i_calendarFormatter;
 	}
 
+	/**
+	 * Gets the {@link Function} used to format a game for printing given its id.
+	 * 
+	 * @return the {@link Function} used to format a game for printing given its
+	 *         id
+	 */
 	public Function<String, String> getGameFormatter() {
 		return i_gameFormatter;
 	}

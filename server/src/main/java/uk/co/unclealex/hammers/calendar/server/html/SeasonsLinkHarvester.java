@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
 
+
 /**
  * Find all the links for every season's fixtures.
  * @author alex
@@ -37,12 +38,19 @@ import com.google.common.base.Strings;
  */
 public class SeasonsLinkHarvester extends ElementLinkHarvester {
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(SeasonsLinkHarvester.class);
 	
+	/**
+	 * Instantiates a new seasons link harvester.
+	 */
 	public SeasonsLinkHarvester() {
 		super("option");
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	protected URI checkForLink(URI uri, TagNode tagNode) {
 		String value = Strings.nullToEmpty(tagNode.getAttributeByName("value"));

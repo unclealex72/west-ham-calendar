@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -43,18 +41,40 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
 import com.google.api.client.http.GoogleJsonResponseExceptionFactory;
 import com.google.common.collect.BiMap;
 
+
 /**
+ * The Class GoogleAuthenticationAwareInvocationHandlerTest.
+ * 
  * @author alex
- *
  */
 public class GoogleAuthenticationAwareInvocationHandlerTest {
 
+	/**
+	 * The Interface MethodRunner.
+	 */
 	interface MethodRunner {
+		
+		/**
+		 * Run method.
+		 * 
+		 * @param googleCalendarDao
+		 *          the google calendar dao
+		 * @throws IOException
+		 *           Signals that an I/O exception has occurred.
+		 * @throws GoogleAuthenticationFailedException
+		 *           Thrown if authentication with the Google servers fails.
+		 */
 		public void runMethod(GoogleCalendarDao googleCalendarDao) throws IOException, GoogleAuthenticationFailedException;
 	}
 
+	/**
+	 * The Class TestGoogleCalendarDao.
+	 */
 	class TestGoogleCalendarDao implements GoogleCalendarDao {
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public GameUpdateInformation createOrUpdateGame(String calendarId, String eventId, String gameId, Competition competition,
 				Location location, String opponents, Interval gameInterval, String result,
@@ -63,29 +83,44 @@ public class GoogleAuthenticationAwareInvocationHandlerTest {
 			throw GoogleJsonResponseExceptionFactory.createGoogleJsonResponseException();
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String findGame(String calendarId, String gameId, DateTime searchDate) throws IOException,
 				GoogleAuthenticationFailedException {
 			throw new IOException("Darn");
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void moveGame(String sourceCalendarId, String targetCalendarId, String eventId, String gameId, boolean busy)
 				throws IOException, GoogleAuthenticationFailedException {
 			// Do nothing
 		}
 		
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public void removeGame(String calendarId, String eventId, String gameId) throws IOException, GoogleAuthenticationFailedException {
 			// Do nothing
 		}
 		
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public String createOrUpdateCalendar(String calendarId, String calendarTitle, String calendarDescription)
 				throws IOException, GoogleAuthenticationFailedException {
 			return null;
 		}
 
+		/**
+		 * {@inheritDoc}
+		 */
 		@Override
 		public BiMap<String, String> listGameIdsByEventId(String calendarId) throws IOException,
 				GoogleAuthenticationFailedException {
@@ -94,6 +129,9 @@ public class GoogleAuthenticationAwareInvocationHandlerTest {
 		
 	}
 	
+	/**
+	 * Test no exception.
+	 */
 	@Test
 	public void testNoException() {
 		MethodRunner methodRunner = new MethodRunner() {
@@ -106,6 +144,9 @@ public class GoogleAuthenticationAwareInvocationHandlerTest {
 		runTest(methodRunner, null);
 	}
 
+	/**
+	 * Test io exception.
+	 */
 	@Test
 	public void testIoException() {
 		MethodRunner methodRunner = new MethodRunner() {
@@ -118,6 +159,9 @@ public class GoogleAuthenticationAwareInvocationHandlerTest {
 		runTest(methodRunner, IOException.class);
 	}
 
+	/**
+	 * Test runtime exception.
+	 */
 	@Test
 	public void testRuntimeException() {
 		MethodRunner methodRunner = new MethodRunner() {
@@ -130,6 +174,9 @@ public class GoogleAuthenticationAwareInvocationHandlerTest {
 		runTest(methodRunner, RuntimeException.class);
 	}
 
+	/**
+	 * Test google authentication failed exception.
+	 */
 	@Test
 	public void testGoogleAuthenticationFailedException() {
 		MethodRunner methodRunner = new MethodRunner() {
@@ -143,8 +190,12 @@ public class GoogleAuthenticationAwareInvocationHandlerTest {
 	}
 
 	/**
+	 * Run test.
+	 * 
 	 * @param methodRunner
-	 * @param class1
+	 *          the method runner
+	 * @param expectedExceptionClass
+	 *          the expected exception class
 	 */
 	protected void runTest(MethodRunner methodRunner, Class<? extends Throwable> expectedExceptionClass) {
 		try {

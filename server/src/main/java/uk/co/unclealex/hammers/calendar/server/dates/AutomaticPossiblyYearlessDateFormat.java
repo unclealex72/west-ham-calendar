@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -31,6 +29,7 @@ import java.util.regex.Pattern;
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Iterables;
+
 
 /**
  * A {@link PossiblyYearlessDateFormat} that contains the optional year defining
@@ -81,8 +80,7 @@ public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFor
 	 *          The date format to alter.
 	 * @param groups
 	 *          The matched groups that make up the format with respect to
-	 *          {@link #YEAR_STRIPPING_PATTERN}.
-	 * @return A new date format.
+	 * @return A new date format. {@link #YEAR_STRIPPING_PATTERN}.
 	 */
 	protected static String makeFormat(String dateFormat, Integer... groups) {
 		final Matcher matcher = YEAR_STRIPPING_PATTERN.matcher(dateFormat);
@@ -105,16 +103,30 @@ public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFor
 	 */
 	private final String i_dateFormat;
 
+	/**
+	 * Instantiates a new automatic possibly yearless date format.
+	 * 
+	 * @param dateFormat
+	 *          the date format
+	 */
 	public AutomaticPossiblyYearlessDateFormat(String dateFormat) {
 		super(yearful(dateFormat), yearless(dateFormat));
 		i_dateFormat = dateFormat;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public String toString() {
 		return "[:" + getDateFormat() + ":]";
 	}
 
+	/**
+	 * Gets the date format string to use to parse dates.
+	 * 
+	 * @return the date format string to use to parse dates
+	 */
 	public String getDateFormat() {
 		return i_dateFormat;
 	}

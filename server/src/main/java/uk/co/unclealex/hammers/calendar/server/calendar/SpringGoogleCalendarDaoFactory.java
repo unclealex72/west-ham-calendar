@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -36,6 +34,7 @@ import org.springframework.context.ApplicationContextAware;
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 
 import com.google.common.base.Function;
+
 
 /**
  * Create a new {@link GoogleCalendarDao} using Spring.
@@ -86,34 +85,82 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 		setAutowireCapableBeanFactory(applicationContext.getAutowireCapableBeanFactory());
 	}
 
+	/**
+	 * Gets the current Spring {@link AutowireCapableBeanFactory}.
+	 * 
+	 * @return the current Spring {@link AutowireCapableBeanFactory}
+	 */
 	public AutowireCapableBeanFactory getAutowireCapableBeanFactory() {
 		return i_autowireCapableBeanFactory;
 	}
 
+	/**
+	 * Sets the current Spring {@link AutowireCapableBeanFactory}.
+	 * 
+	 * @param autowireCapableBeanFactory
+	 *          the new current Spring {@link AutowireCapableBeanFactory}
+	 */
 	public void setAutowireCapableBeanFactory(AutowireCapableBeanFactory autowireCapableBeanFactory) {
 		i_autowireCapableBeanFactory = autowireCapableBeanFactory;
 	}
 
+	/**
+	 * Gets the {@link CalendarFactory} that will create the connection to the
+	 * Google Calendar API.
+	 * 
+	 * @return the {@link CalendarFactory} that will create the connection to the
+	 *         Google Calendar API
+	 */
 	public CalendarFactory getCalendarFactory() {
 		return i_calendarFactory;
 	}
 
+	/**
+	 * Sets the {@link CalendarFactory} that will create the connection to the
+	 * Google Calendar API.
+	 * 
+	 * @param calendarFactory
+	 *          the new {@link CalendarFactory} that will create the connection to
+	 *          the Google Calendar API
+	 */
 	public void setCalendarFactory(CalendarFactory calendarFactory) {
 		i_calendarFactory = calendarFactory;
 	}
 
+	/**
+	 * Gets the a {@link Function} to print a calendar given its id.
+	 * 
+	 * @return the a {@link Function} to print a calendar given its id
+	 */
 	public Function<String, String> getCalendarFormatter() {
 		return i_calendarFormatter;
 	}
 
+	/**
+	 * Sets the a {@link Function} to print a calendar given its id.
+	 * 
+	 * @param calendarFormatter
+	 *          the new a {@link Function} to print a calendar given its id
+	 */
 	public void setCalendarFormatter(Function<String, String> calendarFormatter) {
 		i_calendarFormatter = calendarFormatter;
 	}
 
+	/**
+	 * Gets the a {@link Function} to print a calendar given its id.
+	 * 
+	 * @return the a {@link Function} to print a calendar given its id
+	 */
 	public Function<String, String> getGameFormatter() {
 		return i_gameFormatter;
 	}
 
+	/**
+	 * Sets the a {@link Function} to print a calendar given its id.
+	 * 
+	 * @param gameFormatter
+	 *          the new a {@link Function} to print a calendar given its id
+	 */
 	public void setGameFormatter(Function<String, String> gameFormatter) {
 		i_gameFormatter = gameFormatter;
 	}

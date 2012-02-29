@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.calendar;
@@ -28,6 +26,7 @@ import java.util.Comparator;
 import java.util.Objects;
 
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
+
 
 /**
  * The base class for all {@link UpdateChangeLog}s.
@@ -42,11 +41,20 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 	 */
 	private final GoogleCalendar i_googleCalendar;
 
+	/**
+	 * Instantiates a new abstract update change log.
+	 * 
+	 * @param googleCalendar
+	 *          the google calendar
+	 */
 	public AbstractUpdateChangeLog(GoogleCalendar googleCalendar) {
 		super();
 		i_googleCalendar = googleCalendar;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final int compareTo(UpdateChangeLog o) {
 		int cmp = getGoogleCalendar().getCalendarTitle().compareTo(o.getGoogleCalendar().getCalendarTitle());
@@ -56,11 +64,17 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 		return cmp;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final boolean equals(Object obj) {
 		return obj instanceof UpdateChangeLog && compareTo((UpdateChangeLog) obj) == 0;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public final int hashCode() {
 		return Objects.hash(getClass(), gameToHashCode(), getGoogleCalendar());
@@ -91,18 +105,17 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 	protected abstract String gameToString();
 
 	/**
-	 * Produce a string that describes what action was taken in this update.
+	 * Produce a string that describes what action was taken in i_update.
 	 * 
 	 * @return The action as a string.
 	 */
 	protected abstract String action();
 
 	/**
-	 * Create a comparator that can be used to compare this instance to another
-	 * {@link UpdateChangeLog}.
+	 * Create a comparator that can be used to compare i_instance to another.
 	 * 
-	 * @return A comparator that can be used to compare this instance to another
-	 *         {@link UpdateChangeLog}.
+	 * @return A comparator that can be used to compare i_instance to another
+	 *         {@link UpdateChangeLog}. {@link UpdateChangeLog}.
 	 */
 	protected abstract UpdateChangeLogComparator createCompareVisitor();
 
@@ -120,21 +133,21 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 		private int cmp;
 
 		/**
-		 * Compare this {@link UpdateChangeLog} to an {@link AddedChangeLog}.
+		 * Compare i_{@link UpdateChangeLog} to an {@link AddedChangeLog}.
 		 * @param addedChangeLog The change log to compare to.
 		 * @return {@see Comparable#compareTo(Object)}.
 		 */
 		protected abstract int compareTo(AddedChangeLog addedChangeLog);
 
 		/**
-		 * Compare this {@link UpdateChangeLog} to an {@link UpdatedChangeLog}.
+		 * Compare i_{@link UpdateChangeLog} to an {@link UpdatedChangeLog}.
 		 * @param updatedChangeLog The change log to compare to.
 		 * @return {@see Comparable#compareTo(Object)}.
 		 */
 		protected abstract int compareTo(UpdatedChangeLog updatedChangeLog);
 
 		/**
-		 * Compare this {@link UpdateChangeLog} to an {@link RemovedChangeLog}.
+		 * Compare i_{@link UpdateChangeLog} to an {@link RemovedChangeLog}.
 		 * @param removedChangeLog The change log to compare to.
 		 * @return {@see Comparable#compareTo(Object)}.
 		 */
@@ -167,6 +180,9 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public final GoogleCalendar getGoogleCalendar() {
 		return i_googleCalendar;
 	}

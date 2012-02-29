@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -17,8 +17,6 @@
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
  * under the License.    
- *
- * @author unclealex72
  *
  */
 
@@ -42,6 +40,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+
 /**
  * The default implementation of {@link GoogleCalendarUpdatingService}.
  * 
@@ -50,10 +49,11 @@ import com.google.common.collect.Sets;
  */
 public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdatingService {
 
+	/** The logger for this class. */
 	private static final Logger log = LoggerFactory.getLogger(GoogleCalendarUpdatingServiceImpl.class);
 
 	/**
-	 * The {@link GoogleCalendarDaoFactory} used to create
+	 * The {@link GoogleCalendarDaoFactory} used to create.
 	 * {@link GoogleCalendarDao}s.
 	 */
 	private GoogleCalendarDaoFactory i_googleCalendarDaoFactory;
@@ -88,9 +88,11 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 	 * @param games
 	 *          The {@link Game}s to be used to update the calendar.
 	 * @param busy
-	 *          True if this calendar is marked as busy, false otherwise.
-	 * @throws GoogleAuthenticationFailedException
+	 *          True if i_calendar is marked as busy, false otherwise.
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
+	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
 	 */
 	protected void updateCalendar(SortedSet<UpdateChangeLog> updates, GoogleCalendarDao googleCalendarDao,
 			String calendarId, final GoogleCalendar googleCalendar, Iterable<Game> games, boolean busy) throws IOException,
@@ -136,10 +138,10 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 	/**
 	 * Add an {@link UpdateChangeLog} to the list of changes.
 	 * 
-	 * @param game
-	 *          The {@link Game} that was updated.
 	 * @param updates
 	 *          The list of changes to add to.
+	 * @param game
+	 *          The {@link Game} that was updated.
 	 * @param googleCalendar
 	 *          The calendar that was updated.
 	 * @param gameUpdateInformation
@@ -165,10 +167,21 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 		gameUpdateInformation.accept(visitor);
 	}
 
+	/**
+	 * Gets the {@link GoogleCalendarDaoFactory} used to create.
+	 * 
+	 * @return the {@link GoogleCalendarDaoFactory} used to create
+	 */
 	public GoogleCalendarDaoFactory getGoogleCalendarDaoFactory() {
 		return i_googleCalendarDaoFactory;
 	}
 
+	/**
+	 * Sets the {@link GoogleCalendarDaoFactory} used to create.
+	 * 
+	 * @param googleCalendarDaoFactory
+	 *          the new {@link GoogleCalendarDaoFactory} used to create
+	 */
 	public void setGoogleCalendarDaoFactory(GoogleCalendarDaoFactory googleCalendarDaoFactory) {
 		i_googleCalendarDaoFactory = googleCalendarDaoFactory;
 	}

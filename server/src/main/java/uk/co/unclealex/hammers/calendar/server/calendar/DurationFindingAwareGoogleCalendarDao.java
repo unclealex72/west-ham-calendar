@@ -1,12 +1,12 @@
 /**
- * Copyright 2011 Alex Jones
+ * Copyright 2010-2012 Alex Jones
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
+ * distributed with i_work for additional information
+ * regarding copyright ownership.  The ASF licenses i_file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may not use i_file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.    
  *
- * @author unclealex72
- *
  */
 
 package uk.co.unclealex.hammers.calendar.server.calendar;
@@ -30,6 +28,7 @@ import org.joda.time.DateTime;
 import org.joda.time.DurationFieldType;
 
 import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
+
 
 /**
  * A stub class for calendars that can also return the required duration needed
@@ -52,7 +51,9 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 	 *          The search date to try first.
 	 * @return The found game id (if any) and the used duration (if any).
 	 * @throws IOException
+	 *           Signals that an I/O exception has occurred.
 	 * @throws GoogleAuthenticationFailedException
+	 *           Thrown if authentication with the Google servers fails.
 	 */
 	public abstract GameIdAndDurationFieldType findGameAndDurationFieldType(String calendarId, String gameId,
 			DateTime searchDate) throws IOException, GoogleAuthenticationFailedException;
@@ -68,6 +69,8 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 	}
 
 	/**
+	 * Duration field types.
+	 * 
 	 * @return The array of {@link DurationFieldType}s to use when searching for a
 	 *         game.
 	 */
@@ -94,16 +97,34 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 		 */
 		private final DurationFieldType i_durationFieldType;
 
+		/**
+		 * Instantiates a new game id and duration field type.
+		 * 
+		 * @param gameId
+		 *          the game id
+		 * @param durationFieldType
+		 *          the duration field type
+		 */
 		public GameIdAndDurationFieldType(String gameId, DurationFieldType durationFieldType) {
 			super();
 			i_gameId = gameId;
 			i_durationFieldType = durationFieldType;
 		}
 
+		/**
+		 * Gets the game id.
+		 * 
+		 * @return the game id
+		 */
 		public String getGameId() {
 			return i_gameId;
 		}
 
+		/**
+		 * Gets the {@link DurationFieldType} that found the game.
+		 * 
+		 * @return the {@link DurationFieldType} that found the game
+		 */
 		public DurationFieldType getDurationFieldType() {
 			return i_durationFieldType;
 		}
