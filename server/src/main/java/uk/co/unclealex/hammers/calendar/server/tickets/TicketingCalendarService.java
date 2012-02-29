@@ -38,11 +38,11 @@ public interface TicketingCalendarService {
 	 * @param calendarType The {@link CalendarType} that is to be the ticketing calendar or null to clear.
 	 * @throws IllegalArgumentException Thrown if the calendar type is not a ticketing calendar type.
 	 */
-	public void setSelectedTicketingCalendar(CalendarType calendarType) throws IllegalArgumentException;
+	void setSelectedTicketingCalendar(CalendarType calendarType) throws IllegalArgumentException;
 	
 	/**
 	 * @return The {@link CalendarType} that has been selected as the primary ticketing calendar or null if one
 	 * has not been selected.
 	 */
-	public CalendarType getSelectedTicketingCalendar();
+	CalendarType getSelectedTicketingCalendar();
 }

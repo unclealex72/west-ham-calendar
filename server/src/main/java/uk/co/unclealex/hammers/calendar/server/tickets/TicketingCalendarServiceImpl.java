@@ -36,6 +36,9 @@ import com.google.common.collect.Iterables;
  */
 public class TicketingCalendarServiceImpl implements TicketingCalendarService {
 
+	/**
+	 * The {@link TicketingCalendarDao} use to persist the ticketing calendar.
+	 */
 	private TicketingCalendarDao i_ticketingCalendarDao;
 	
 	/**

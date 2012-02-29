@@ -46,7 +46,7 @@ public interface MainUpdateService {
 	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
 	 */
-	public void attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
+	void attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
 
 	/**
 	 * Move a game to the unattendend calendar.
@@ -56,7 +56,7 @@ public interface MainUpdateService {
 	 * @throws GoogleAuthenticationFailedException
 	 * @throws IOException
 	 */
-	public void unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
+	void unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
 
 
 	/**
@@ -65,7 +65,7 @@ public interface MainUpdateService {
 	 * @throws IOException
 	 * @throws GoogleAuthenticationFailedException
 	 */
-	public SortedSet<UpdateChangeLog> updateAllCalendars() throws IOException, GoogleAuthenticationFailedException;
+	SortedSet<UpdateChangeLog> updateAllCalendars() throws IOException, GoogleAuthenticationFailedException;
 
 	/**
 	 * Attend all home games in a season.
@@ -73,5 +73,5 @@ public interface MainUpdateService {
 	 * @throws IOException 
 	 * @throws GoogleAuthenticationFailedException 
 	 */
-	public void attendAllHomeGamesForSeason(int season) throws GoogleAuthenticationFailedException, IOException;	
+	void attendAllHomeGamesForSeason(int season) throws GoogleAuthenticationFailedException, IOException;	
 }

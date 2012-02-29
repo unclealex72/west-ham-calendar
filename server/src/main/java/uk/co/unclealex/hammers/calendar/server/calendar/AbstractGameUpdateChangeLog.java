@@ -64,9 +64,7 @@ public abstract class AbstractGameUpdateChangeLog extends AbstractUpdateChangeLo
 	protected String gameToString() {
 		return getGame().toString();
 	}
-	/**
-	 * @return the game
-	 */
+
 	public Game getGame() {
 		return i_game;
 	}

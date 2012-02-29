@@ -71,10 +71,29 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 
 	private static final Logger log = LoggerFactory.getLogger(MainUpdateServiceImpl.class);
 
+	/**
+	 * The {@link GameDao} for getting persisted {@link Game} information.
+	 */
 	private GameDao i_gameDao;
+	
+	/**
+	 * The {@link MainPageService} for finding the links off the main page.
+	 */
 	private MainPageService i_mainPageService;
+	
+	/**
+	 * The {@link HtmlGamesScanner} for getting ticketing information.
+	 */
 	private HtmlGamesScanner i_ticketsHtmlGamesScanner;
+	
+	/**
+	 * The {@link HtmlGamesScanner} for getting fixture information.
+	 */
 	private HtmlGamesScanner i_fixturesHtmlGamesScanner;
+	
+	/**
+	 * The {@link GoogleCalendarService} used for updating the Google calendars.
+	 */
 	private GoogleCalendarService i_googleCalendarService;
 
 	/**
@@ -133,6 +152,12 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 		attendGame(game);
 	}
 	
+	/**
+	 * Attend a game.
+	 * @param game The game to attend.
+	 * @throws GoogleAuthenticationFailedException
+	 * @throws IOException
+	 */
 	protected void attendGame(Game game) throws GoogleAuthenticationFailedException, IOException {
 		getGoogleCalendarService().attendGame(game);
 		game.setAttended(true);
@@ -150,27 +175,66 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 		getGameDao().saveOrUpdate(game);
 	}
 
+	/**
+	 * A class that uses the {@link GameLocator} to finds games and also caches results.
+	 * @author alex
+	 *
+	 */
 	class DaoGameLocator {
+		
+		/**
+		 * The cache of {@link Games} found by their {@link GameKey}.
+		 */
 		Map<GameKey, Game> gamesByGameKey;
+		
+		
+		/**
+		 * The cache of {@link Games} found by their date played.
+		 */
 		Map<DateTime, Game> gamesByDatePlayed;
+
+		/**
+		 * All {@link Game}s.
+		 */
 		Iterable<Game> games;
+		
+		/**
+		 * A list of games that could not be found but need to be created.
+		 */
 		List<Game> newGames = Lists.newArrayList();
 		
 		public DaoGameLocator() {
 			games = getGameDao().getAll();
 		}
 
+		/**
+		 * Find a game using a {@link GameLocator}.
+		 * @param gameLocator The {@link GameLocator} used to find the game.
+		 * @return A game that matches the {@link GameLocator} or a new game if none exist.
+		 */
 		public Game locate(GameLocator gameLocator) {
 			DaoGameLocatorVisitor visitor = new DaoGameLocatorVisitor();
 			gameLocator.accept(visitor);
 			return visitor.game;
 		}
 
+		/**
+		 * Persist all new games.
+		 */
 		public void synchronise() {
 			getGameDao().saveOrUpdate(newGames);
 		}
 		
+		/**
+		 * A {@link GameLocatorVisitor} used to find games from this cache.
+		 * @author alex
+		 *
+		 */
 		class DaoGameLocatorVisitor extends GameLocatorVisitor {
+			
+			/**
+			 * The found or new game.
+			 */
 			Game game;
 
 			@Override
