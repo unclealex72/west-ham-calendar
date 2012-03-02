@@ -17,6 +17,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>west-ham-calendar-jndi</artifactId>
 			<version>${project.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
