@@ -57,7 +57,7 @@ public enum Competition {
 	/**
 	 * The Championship play-offs.
 	 */
-	FLCPO("Play-Offs", false, "FLD1 P/O");
+	FLCPO("Play-Offs", false, "FLD1 P/O", "FLC P/O");
 
 	/**
 	 * Map all competitions by their token.
