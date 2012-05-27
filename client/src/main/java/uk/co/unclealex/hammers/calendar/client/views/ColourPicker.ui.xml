@@ -1,0 +1,14 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder 
+  xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+  <ui:style type='uk.co.unclealex.hammers.calendar.client.views.ColourPicker.Style'>
+    .colourPicker { display: block; width: 20px; height: 20px; }
+    .alreadyUsed { width: 14px; height: 14px; vertical-align: middle; margin-left: 3px; }
+  </ui:style>
+	
+	<g:PopupPanel ui:field="popupPanel" animationEnabled="false" autoHideEnabled="true" modal="false">  
+		<g:FlexTable ui:field="mainTable"/>
+	</g:PopupPanel>
+</ui:UiBinder>

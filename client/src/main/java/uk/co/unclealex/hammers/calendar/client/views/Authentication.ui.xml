@@ -1,0 +1,10 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder 
+  xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+  <g:HTMLPanel>
+    <p><g:Label ui:field="message"/></p>
+    <p><g:Anchor ui:field="changePasswordLink" visible="false" href="javascript:;">Change password</g:Anchor></p>
+  </g:HTMLPanel>
+</ui:UiBinder>

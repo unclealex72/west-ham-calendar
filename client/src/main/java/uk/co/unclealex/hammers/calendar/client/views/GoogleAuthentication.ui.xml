@@ -1,0 +1,29 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder 
+  xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<g:DialogBox ui:field="popupPanel" animationEnabled="true" autoHideEnabled="false" modal="true" glassEnabled="true">
+		<g:caption>Google Authentication Required</g:caption>
+		<g:HTMLPanel width="400px">
+			<p>
+				Copy and paste the code supplied below.
+			</p>
+			<p>
+				 If a popup window has not appeared then
+				either click <g:Anchor ui:field="authenticationAnchor" href="javascript:;" target="_blank">here</g:Anchor> 
+				or please make sure your browser is not blocking popups which are required to
+				authenticate this application with Google.
+			</p>
+			<p>Once you have successfully authenticated,
+				popup windows will not be used again by this application.
+			</p>
+			<div>
+				<g:TextBox ui:field="successCode" width="300px"/>
+				<div class="buttonbar">
+				  <g:Button ui:field="submitButton">Proceed</g:Button>
+				</div>			
+			</div>
+		</g:HTMLPanel>		
+	</g:DialogBox>
+</ui:UiBinder>
