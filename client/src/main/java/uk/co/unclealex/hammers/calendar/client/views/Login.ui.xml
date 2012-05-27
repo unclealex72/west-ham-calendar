@@ -1,0 +1,30 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder 
+  xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+  <ui:style>
+    .failed { color: red; text-align: center; }
+  </ui:style>
+  
+	<g:DialogBox ui:field="popupPanel" modal="true" autoHideEnabled="false" glassEnabled="true" animationEnabled="true">
+		<g:caption>Login</g:caption>
+		<g:HTMLPanel>
+		  <g:Label ui:field="failureLabel" addStyleNames="{style.failed}" visible="false">Login failed</g:Label>
+			<g:Grid>
+				<g:row>
+					<g:cell>Username</g:cell>
+					<g:customCell><g:TextBox ui:field="username"/></g:customCell>
+				</g:row>
+				<g:row>
+					<g:cell>Password</g:cell>
+					<g:customCell><g:PasswordTextBox ui:field="password"/></g:customCell>
+				</g:row>
+			</g:Grid>
+			<div class="buttonbar">
+        <g:Button ui:field="login">Login</g:Button>
+        <g:Button ui:field="cancel">Cancel</g:Button>
+			</div>
+		</g:HTMLPanel>
+	</g:DialogBox>
+</ui:UiBinder>

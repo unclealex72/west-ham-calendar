@@ -1,0 +1,12 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder 
+  xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui"
+  xmlns:a="urn:import:uk.co.unclealex.hammers.calendar.client.ui">
+
+	<g:HTMLPanel>
+		<a:UnorderedListPanel ui:field="calendarListPanel"/>
+		<g:ListBox ui:field="otherCalendarNames"/>
+		<g:Button ui:field="addNewCalendar">Add</g:Button>
+	</g:HTMLPanel>
+</ui:UiBinder>

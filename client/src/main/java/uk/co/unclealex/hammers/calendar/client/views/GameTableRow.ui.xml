@@ -1,0 +1,17 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder 
+  xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	
+	<g:FlowPanel ui:field="container">
+		<g:Label styleName="indicator">&nbsp;</g:Label>
+		<g:Label ui:field="date">Date</g:Label>
+		<g:Label ui:field="location">Where</g:Label>
+		<g:Label ui:field="competition">Competition</g:Label>
+		<g:Label ui:field="opponents">Opponents</g:Label>
+		<g:Label ui:field="result">Result</g:Label>
+		<g:Label ui:field="televisionChannel">TV</g:Label>
+		<g:Label ui:field="ticketsAvailable">Tickets</g:Label>
+		<g:CheckBox ui:field="attended"/>
+	</g:FlowPanel>
+</ui:UiBinder> 
