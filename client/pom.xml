@@ -1,39 +1,41 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>uk.co.unclealex</groupId>
-		<artifactId>west-ham-calendar-parent</artifactId>
-		<version> 5.0.5</version>
+		<groupId>uk.co.unclealex.west-ham-calendar</groupId>
+		<artifactId>parent</artifactId>
+		<version> 5.0.6-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>west-ham-calendar-client</artifactId>
+	
+	<artifactId>client</artifactId>
 	<packaging>war</packaging>
-	<name>west-ham-calendar-client</name>
+	<name>client</name>
 	<description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
 	<url>http://code.google.com/p/west-ham-calendar/</url>
 
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>west-ham-calendar-jndi</artifactId>
+			<artifactId>jndi</artifactId>
 			<version>${project.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>west-ham-calendar-shared</artifactId>
+			<artifactId>shared</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>west-ham-calendar-shared</artifactId>
+			<artifactId>shared</artifactId>
 			<version>${project.version}</version>
 			<classifier>sources</classifier>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>west-ham-calendar-server</artifactId>
+			<artifactId>server</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

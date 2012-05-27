@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.unclealex</groupId>
-  <artifactId>west-ham-calendar-parent</artifactId>
+  <groupId>uk.co.unclealex.west-ham-calendar</groupId>
+  <artifactId>parent</artifactId>
   <packaging>pom</packaging>
   <name>west-ham-calendar</name>
-  <version> 5.0.5</version>
+  <version> 5.0.6-SNAPSHOT</version>
   <description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
   <url>http://code.google.com/p/west-ham-calendar/</url>
   <licenses>
@@ -69,9 +69,16 @@
   	</snapshotRepository>
   </distributionManagement>
 
+  <repositories>
+    <repository>
+      <id>google-api-services</id>
+      <url>http://mavenrepo.google-api-java-client.googlecode.com/hg</url>
+    </repository>
+  </repositories>
+
   <scm>
-    <connection>scm:svn:https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-parent-5.0.5</connection>
-    <developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-parent-5.0.5</developerConnection>
-    <url>https://west-ham-calendar.googlecode.com/svn/tags/west-ham-calendar-parent-5.0.5</url>
+    <connection>scm:svn:https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</connection>
+    <developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</developerConnection>
+    <url>https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</url>
   </scm>
 </project>

@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>uk.co.unclealex</groupId>
-		<artifactId>west-ham-calendar-parent</artifactId>
-		<version> 5.0.5</version>
+  <groupId>uk.co.unclealex.west-ham-calendar</groupId>
+  <artifactId>parent</artifactId>
+		<version>5.0.6-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
-	<artifactId>west-ham-calendar-server</artifactId>
+	<artifactId>server</artifactId>
 	<packaging>jar</packaging>
 	<name>west-ham-calendar-server</name>
 	<description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
@@ -22,7 +22,7 @@
 
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>west-ham-calendar-shared</artifactId>
+			<artifactId>shared</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
