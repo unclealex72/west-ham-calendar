@@ -8,7 +8,7 @@
   <artifactId>west-ham-calendar</artifactId>
   <packaging>pom</packaging>
   <name>west-ham-calendar</name>
-  <version> 5.0.6</version>
+  <version> 5.0.7-SNAPSHOT</version>
   <description>A Java web application that reads up-to-date fixture and ticketing information and places it in Google calendars.</description>
   <url>http://code.google.com/p/west-ham-calendar/</url>
   <licenses>
