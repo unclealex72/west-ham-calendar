@@ -69,8 +69,9 @@
   </repositories>
 
   <scm>
-    <connection>scm:svn:https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</connection>
-    <developerConnection>scm:svn:https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</developerConnection>
-    <url>https://west-ham-calendar.googlecode.com/svn/trunk/west-ham-calendar</url>
+    <connection>scm:git:git@github.com:dcs3apj/west-ham-calendar.git</connection>
+    <url>https://github.com/dcs3apj/west-ham-calendar</url>
+    <developerConnection>scm:git:git@github.com:dcs3apj/west-ham-calendar.git</developerConnection>
   </scm>
+
 </project>
