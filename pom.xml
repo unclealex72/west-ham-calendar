@@ -1,7 +1,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>uk.co.unclealex.west-ham-calendar</groupId>
-  <artifactId>parent</artifactId>
+  <parent>
+    <groupId>uk.co.unclealex</groupId>
+    <artifactId>parent</artifactId>
+    <version>3.0.2</version>
+  </parent>
+  <artifactId>west-ham-calendar</artifactId>
   <packaging>pom</packaging>
   <name>west-ham-calendar</name>
   <version> 5.0.6-SNAPSHOT</version>
@@ -23,10 +27,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <modules>
-    <module>server</module>
-    <module>client</module>
-    <module>shared</module>
-    <module>jndi</module>
+    <module>calendar-server</module>
+    <module>calendar-client</module>
+    <module>calendar-shared</module>
+    <module>calendar-jndi</module>
   </modules>
   <reporting>
     <plugins>
@@ -56,18 +60,6 @@
       <email>alex.jones@unclealex.co.uk</email>
     </developer>
   </developers>
-  <distributionManagement>
-  	<repository>
-  		<id>release</id>
-  		<name>My Release Repository</name>
-  		<url>http://hurst/nexus/content/repositories/releases/</url>
-  	</repository>
-  	<snapshotRepository>
-  		<id>snapshot</id>
-  		<name>My Snapshot Repository</name>
-  		<url>http://hurst/nexus/content/repositories/snapshots/</url>
-  	</snapshotRepository>
-  </distributionManagement>
 
   <repositories>
     <repository>
