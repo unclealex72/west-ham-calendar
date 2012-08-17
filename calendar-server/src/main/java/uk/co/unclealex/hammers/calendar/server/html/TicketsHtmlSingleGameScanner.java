@@ -260,7 +260,9 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 			 * @param containedText The "magic text" which will identify which type of ticket is being sold.
 			 */
 			public TicketParsingAction(String containedText) {
-				super(containedText, "hha EEE dd MMM", "ha EEE dd MMM", "hha EEE d MMM", "ha EEE d MMM");
+				super(containedText, "hha EEE dd MMM", "ha EEE dd MMM", "hha EEE d MMM", "ha EEE d MMM", "hha 'on' EEEE dd MMMM",
+				    "hh.mma 'on' EEE dd MMM",
+				    "HH'noon on' EEEE dd MMMM", "hh.mma'noon on' EEE dd MMM");
 			}
 
 			/**
