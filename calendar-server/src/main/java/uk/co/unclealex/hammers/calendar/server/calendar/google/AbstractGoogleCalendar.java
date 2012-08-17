@@ -95,7 +95,8 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 		return new Function<Game, Interval>() {
 			@Override
 			public Interval apply(Game game) {
-				return new Interval(getGameDate(game), Duration.standardHours(getDurationInHours()));
+				DateTime gameDate = getGameDate(game);
+        return gameDate == null ? null : new Interval(gameDate, Duration.standardHours(getDurationInHours()));
 			}
 		};
 	}

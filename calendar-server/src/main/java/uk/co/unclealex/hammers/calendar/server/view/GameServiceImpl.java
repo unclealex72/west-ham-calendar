@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.SortedSet;
 
 import org.joda.time.DateTime;
+import org.joda.time.Interval;
 
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendar;
 import uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendarFactory;
@@ -139,8 +140,14 @@ public class GameServiceImpl implements GameService {
 		return new Function<uk.co.unclealex.hammers.calendar.server.model.Game, GameView>() {
 			@Override
 			public GameView apply(uk.co.unclealex.hammers.calendar.server.model.Game game) {
-				Date ticketDate = googleCalendar == null ? null : googleCalendar.toCalendarDateInterval().apply(game)
-						.getStart().toDate();
+				Date ticketDate;
+			  if (googleCalendar == null) {
+			    ticketDate = null;
+			  }
+			  else {
+			    Interval interval = googleCalendar.toCalendarDateInterval().apply(game);
+			    ticketDate = interval == null ? null : interval.getStart().toDate();
+			  }
 				DateTime datePlayed = game.getDateTimePlayed();
 				boolean weekGame = getDateService().isWeekday(datePlayed);
 				boolean nonStandardWeekendGame = !weekGame && !getDateService().isThreeOClockOnASaturday(datePlayed);

@@ -134,7 +134,10 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 		DaoGameLocator gameLocator = new DaoGameLocator();
 		for (GameUpdateCommand gameUpdateCommand : allGameUpdateCommands) {
 			Game game = gameLocator.locate(gameUpdateCommand.getGameLocator());
-			updatesByGame.put(game, gameUpdateCommand);
+			// Make sure that games that are not listed but ticket availability has been mentioned aren't added.
+			if (game != null) {
+  			updatesByGame.put(game, gameUpdateCommand);
+			}
 		}
 		gameLocator.synchronise();
 		List<Game> updatedGames = Lists.newArrayList();
