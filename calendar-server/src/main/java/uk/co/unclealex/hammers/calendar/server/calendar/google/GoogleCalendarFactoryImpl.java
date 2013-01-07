@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -37,7 +37,7 @@ public class GoogleCalendarFactoryImpl implements GoogleCalendarFactory {
 	/**
 	 * The map of {@link GoogleCalendar}s by the {@link CalendarType} they represent.
 	 */
-	private Map<CalendarType, GoogleCalendar> i_googleCalendarsByCalendarType;
+	private Map<CalendarType, GoogleCalendar> googleCalendarsByCalendarType;
 
 	/**
 	 * {@inheritDoc}
@@ -51,7 +51,7 @@ public class GoogleCalendarFactoryImpl implements GoogleCalendarFactory {
 	 * {@inheritDoc}
 	 */
 	public Map<CalendarType, GoogleCalendar> getGoogleCalendarsByCalendarType() {
-		return i_googleCalendarsByCalendarType;
+		return googleCalendarsByCalendarType;
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class GoogleCalendarFactoryImpl implements GoogleCalendarFactory {
 	 *          they represent
 	 */
 	public void setGoogleCalendarsByCalendarType(Map<CalendarType, GoogleCalendar> googleCalendarsByCalendarType) {
-		i_googleCalendarsByCalendarType = googleCalendarsByCalendarType;
+		this.googleCalendarsByCalendarType = googleCalendarsByCalendarType;
 	}
 
 	

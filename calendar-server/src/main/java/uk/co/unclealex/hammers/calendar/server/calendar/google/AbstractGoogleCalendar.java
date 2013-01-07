@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -39,24 +39,24 @@ import com.google.common.base.Predicate;
 public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 
 	/**
-	 * The title for i_calendar.
+	 * The title for calendar.
 	 */
-	private String i_calendarTitle;
+	private String calendarTitle;
 	
 	/**
-	 * The description of i_calendar.
+	 * The description of calendar.
 	 */
-	private String i_description;
+	private String description;
 	
 	/**
-	 * The length of time (in hours) that a game takes in i_calendar.
+	 * The length of time (in hours) that a game takes in calendar.
 	 */
-	private int i_durationInHours;
+	private int durationInHours;
 	
 	/**
-	 * True if time in i_calendar should be marked as busy, false otherwise.
+	 * True if time in calendar should be marked as busy, false otherwise.
 	 */
-	private boolean i_busy;
+	private boolean busy;
 
 	/**
 	 * Default constructor.
@@ -69,22 +69,22 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 	 * Constructor for testing.
 	 * 
 	 * @param calendarTitle
-	 *          The title of i_calendar.
+	 *          The title of calendar.
 	 * @param description
-	 *          The description of i_calendar.
+	 *          The description of calendar.
 	 * @param durationInHours
 	 *          The duration, in hours, of how long an event takes in this
 	 *          calendar.
 	 * @param busy
-	 *          True if the time in i_calendar should be marked as busy, false
+	 *          True if the time in calendar should be marked as busy, false
 	 *          otherwise.
 	 */
 	public AbstractGoogleCalendar(String calendarTitle, String description, int durationInHours, boolean busy) {
 		super();
-		i_calendarTitle = calendarTitle;
-		i_description = description;
-		i_durationInHours = durationInHours;
-		i_busy = busy;
+		this.calendarTitle = calendarTitle;
+		this.description = description;
+		this.durationInHours = durationInHours;
+		this.busy = busy;
 	}
 
 	/**
@@ -115,16 +115,16 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 	}
 
 	/**
-	 * Get the instant that a game starts should it appear on i_calendar.
+	 * Get the instant that a game starts should it appear on calendar.
 	 * @param game The {@link Game} in question.
-	 * @return The instant that a game starts should it appear on i_calendar.
+	 * @return The instant that a game starts should it appear on calendar.
 	 */
 	public abstract DateTime getGameDate(Game game);
 	
 	/**
-	 * Check to see if a game should appear on i_calendar.
+	 * Check to see if a game should appear on calendar.
 	 * @param game The {@link Game} to check.
-	 * @return True if the given game should appear on i_calendar, false otherwise.
+	 * @return True if the given game should appear on calendar, false otherwise.
 	 */
 	protected abstract boolean contains(Game game);
 
@@ -132,73 +132,73 @@ public abstract class AbstractGoogleCalendar implements GoogleCalendar {
 	 * {@inheritDoc}
 	 */
 	public String getDescription() {
-		return i_description;
+		return description;
 	}
 
 	/**
-	 * Sets the description of i_calendar.
+	 * Sets the description of calendar.
 	 * 
 	 * @param description
-	 *          the new description of i_calendar
+	 *          the new description of calendar
 	 */
 	public void setDescription(String description) {
-		i_description = description;
+		this.description = description;
 	}
 
 	/**
-	 * Gets the length of time (in hours) that a game takes in i_calendar.
+	 * Gets the length of time (in hours) that a game takes in calendar.
 	 * 
-	 * @return the length of time (in hours) that a game takes in i_calendar
+	 * @return the length of time (in hours) that a game takes in calendar
 	 */
 	public int getDurationInHours() {
-		return i_durationInHours;
+		return durationInHours;
 	}
 
 	/**
-	 * Sets the length of time (in hours) that a game takes in i_calendar.
+	 * Sets the length of time (in hours) that a game takes in calendar.
 	 * 
 	 * @param durationInHours
 	 *          the new length of time (in hours) that a game takes in this
 	 *          calendar
 	 */
 	public void setDurationInHours(int durationInHours) {
-		i_durationInHours = durationInHours;
+		this.durationInHours = durationInHours;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getCalendarTitle() {
-		return i_calendarTitle;
+		return calendarTitle;
 	}
 
 	/**
-	 * Sets the title for i_calendar.
+	 * Sets the title for calendar.
 	 * 
 	 * @param calendarTitle
-	 *          the new title for i_calendar
+	 *          the new title for calendar
 	 */
 	public void setCalendarTitle(String calendarTitle) {
-		i_calendarTitle = calendarTitle;
+		this.calendarTitle = calendarTitle;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean isBusy() {
-		return i_busy;
+		return busy;
 	}
 
 	/**
-	 * Sets the true if time in i_calendar should be marked as busy, false
+	 * Sets the true if time in calendar should be marked as busy, false
 	 * otherwise.
 	 * 
 	 * @param busy
-	 *          the new true if time in i_calendar should be marked as busy,
+	 *          the new true if time in calendar should be marked as busy,
 	 *          false otherwise
 	 */
 	public void setBusy(boolean busy) {
-		i_busy = busy;
+		this.busy = busy;
 	}
 
 }

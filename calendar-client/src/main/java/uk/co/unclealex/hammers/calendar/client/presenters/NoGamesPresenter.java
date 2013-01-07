@@ -55,14 +55,14 @@ public class NoGamesPresenter extends AbstractActivity {
 		
 	}
 	
-	private final Display i_display;
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
+	private final Display display;
+	private final AsyncCallbackExecutor asyncCallbackExecutor;
 	
 	@Inject
 	public NoGamesPresenter(Display display, AsyncCallbackExecutor asyncCallbackExecutor) {
 		super();
-		i_display = display;
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
+		this.display = display;
+		this.asyncCallbackExecutor = asyncCallbackExecutor;
 	}
 
 
@@ -116,11 +116,11 @@ public class NoGamesPresenter extends AbstractActivity {
 	 * @return the display
 	 */
 	public Display getDisplay() {
-		return i_display;
+		return display;
 	}
 
 
 	public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-		return i_asyncCallbackExecutor;
+		return asyncCallbackExecutor;
 	}
 }

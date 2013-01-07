@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -40,7 +40,7 @@ public class TokenServiceImpl implements TokenService {
 	/**
 	 * The {@OauthTokenDao} to use for token persistence.
 	 */
-	private OauthTokenDao i_oauthTokenDao;
+	private OauthTokenDao oauthTokenDao;
 	
 	/**
 	 * {@inheritDoc}
@@ -111,7 +111,7 @@ public class TokenServiceImpl implements TokenService {
 	 * @return the {@OauthTokenDao} to use for token persistence
 	 */
 	public OauthTokenDao getOauthTokenDao() {
-		return i_oauthTokenDao;
+		return oauthTokenDao;
 	}
 
 	/**
@@ -122,7 +122,7 @@ public class TokenServiceImpl implements TokenService {
 	 *          persistence
 	 */
 	public void setOauthTokenDao(OauthTokenDao oauthTokenDao) {
-		i_oauthTokenDao = oauthTokenDao;
+		this.oauthTokenDao = oauthTokenDao;
 	}
 
 }

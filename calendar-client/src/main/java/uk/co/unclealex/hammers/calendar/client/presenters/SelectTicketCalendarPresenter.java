@@ -52,15 +52,15 @@ public class SelectTicketCalendarPresenter {
     ListBox getTicketCalendarsListBox();
   }
   
-  private final Display i_display;
-  private final AsyncCallbackExecutor i_asyncCallbackExecutor;
-  private boolean i_initialised = false;
+  private final Display display;
+  private final AsyncCallbackExecutor asyncCallbackExecutor;
+  private boolean initialised = false;
   
   @Inject
   public SelectTicketCalendarPresenter(Display display, AsyncCallbackExecutor asyncCallbackExecutor) {
     super();
-    i_display = display;
-    i_asyncCallbackExecutor = asyncCallbackExecutor;
+    this.display = display;
+    this.asyncCallbackExecutor = asyncCallbackExecutor;
   }
   
   protected void prepare() {
@@ -120,18 +120,18 @@ public class SelectTicketCalendarPresenter {
   }
 
   public Display getDisplay() {
-    return i_display;
+    return display;
   }
 
   public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-    return i_asyncCallbackExecutor;
+    return asyncCallbackExecutor;
   }
 
   public boolean isInitialised() {
-    return i_initialised;
+    return initialised;
   }
 
   public void setInitialised(boolean initialised) {
-    i_initialised = initialised;
+    this.initialised = initialised;
   }
 }

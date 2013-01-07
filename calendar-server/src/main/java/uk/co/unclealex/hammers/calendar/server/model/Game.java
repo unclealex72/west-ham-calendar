@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -41,7 +41,7 @@ import com.google.common.base.Objects;
 
 
 /**
- * A game is the main model in i_application. It encapsulates all possible
+ * A game is the main model in application. It encapsulates all possible
  * information for a given game.
  * 
  * @author alex
@@ -56,82 +56,82 @@ public class Game implements HasIdentity, Comparable<Game> {
 	/**
 	 * The primary key of the game.
 	 */
-	private Integer i_id;
+	private Integer id;
 
 	/**
 	 * The game's {@link Competition}.
 	 */
-	private Competition i_competition;
+	private Competition competition;
 
 	/**
 	 * The game's {@link Location}.
 	 */
-	private Location i_location;
+	private Location location;
 
 	/**
 	 * The game's opponents.
 	 */
-	private String i_opponents;
+	private String opponents;
 
 	/**
 	 * The season the game was played in.
 	 */
-	private int i_season;
+	private int season;
 
 	/**
 	 * The {@link DateTime} the game was played.
 	 */
-	private DateTime i_dateTimePlayed;
+	private DateTime dateTimePlayed;
 
 	/**
 	 * The {@link DateTime} that Bondholder tickets went on sale.
 	 */
-	private DateTime i_dateTimeBondholdersAvailable;
+	private DateTime dateTimeBondholdersAvailable;
 
 	/**
 	 * The {@link DateTime} that priority point tickets went on sale.
 	 */
-	private DateTime i_dateTimePriorityPointPostAvailable;
+	private DateTime dateTimePriorityPointPostAvailable;
 
 	/**
 	 * The {@link DateTime} that season ticker holder tickets went on sale.
 	 */
-	private DateTime i_dateTimeSeasonTicketsAvailable;
+	private DateTime dateTimeSeasonTicketsAvailable;
 
 	/**
 	 * The {@link DateTime} that Academy members' tickets went on sale.
 	 */
-	private DateTime i_dateTimeAcademyMembersAvailable;
+	private DateTime dateTimeAcademyMembersAvailable;
 
 	/**
 	 * The {@link DateTime} that tickets went on general sale.
 	 */
-	private DateTime i_dateTimeGeneralSaleAvailable;
+	private DateTime dateTimeGeneralSaleAvailable;
 
 	/**
 	 * The game's result.
 	 */
-	private String i_result;
+	private String result;
 	
 	/**
 	 * The game's attendence.
 	 */
-	private Integer i_attendence;
+	private Integer attendence;
 	
 	/**
 	 * The game's match report.
 	 */
-	private String i_matchReport;
+	private String matchReport;
 	
 	/**
 	 * The TV channel that showed the match.
 	 */
-	private String i_televisionChannel;
+	private String televisionChannel;
 
 	/**
 	 * True if the game has been marked as attended, false otherwise.
 	 */
-	private boolean i_attended;
+	private boolean attended;
 
 	/**
 	 * Default constructor.
@@ -181,27 +181,27 @@ public class Game implements HasIdentity, Comparable<Game> {
 			DateTime seasonTicketsAvailable, DateTime academyMembersAvailable, DateTime generalSaleAvailable, String result,
 			Integer attendence, String matchReport, String televisionChannel, boolean attended) {
 		super();
-		i_id = id;
-		i_competition = competition;
-		i_location = location;
-		i_opponents = opponents;
-		i_season = season;
-		i_dateTimePlayed = datePlayed;
-		i_dateTimeBondholdersAvailable = bondholdersAvailable;
-		i_dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
-		i_dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
-		i_dateTimeAcademyMembersAvailable = academyMembersAvailable;
-		i_dateTimeGeneralSaleAvailable = generalSaleAvailable;
-		i_result = result;
-		i_attendence = attendence;
-		i_matchReport = matchReport;
-		i_televisionChannel = televisionChannel;
-		i_attended = attended;
+		this.id = id;
+		this.competition = competition;
+		this.location = location;
+		this.opponents = opponents;
+		this.season = season;
+		dateTimePlayed = datePlayed;
+		dateTimeBondholdersAvailable = bondholdersAvailable;
+		dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
+		dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
+		dateTimeAcademyMembersAvailable = academyMembersAvailable;
+		dateTimeGeneralSaleAvailable = generalSaleAvailable;
+		this.result = result;
+		this.attendence = attendence;
+		this.matchReport = matchReport;
+		this.televisionChannel = televisionChannel;
+		this.attended = attended;
 	}
 
 	/**
-	 * Get the {@link GameKey} that uniquely identifies i_game.
-	 * @return The {@link GameKey} that uniquely identifies i_game
+	 * Get the {@link GameKey} that uniquely identifies game.
+	 * @return The {@link GameKey} that uniquely identifies game
 	 */
 	@Transient
 	public GameKey getGameKey() {
@@ -247,7 +247,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	@Id
 	@GeneratedValue
 	public Integer getId() {
-		return i_id;
+		return id;
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new primary key of the game
 	 */
 	public void setId(Integer id) {
-		i_id = id;
+		this.id = id;
 	}
 
 	/**
@@ -268,7 +268,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	public Competition getCompetition() {
-		return i_competition;
+		return competition;
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new game's {@link Competition}
 	 */
 	public void setCompetition(Competition competition) {
-		i_competition = competition;
+		this.competition = competition;
 	}
 
 	/**
@@ -289,7 +289,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	public Location getLocation() {
-		return i_location;
+		return location;
 	}
 
 	/**
@@ -299,7 +299,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new game's {@link Location}
 	 */
 	public void setLocation(Location location) {
-		i_location = location;
+		this.location = location;
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 */
 	@Column(nullable = false)
 	public String getOpponents() {
-		return i_opponents;
+		return opponents;
 	}
 
 	/**
@@ -319,7 +319,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new game's opponents
 	 */
 	public void setOpponents(String opponents) {
-		i_opponents = opponents;
+		this.opponents = opponents;
 	}
 
 	/**
@@ -329,7 +329,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 */
 	@Column(nullable = false)
 	public int getSeason() {
-		return i_season;
+		return season;
 	}
 
 	/**
@@ -339,7 +339,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new season the game was played in
 	 */
 	public void setSeason(int season) {
-		i_season = season;
+		this.season = season;
 	}
 
 	/**
@@ -348,7 +348,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the {@link DateTime} the game was played
 	 */
 	public DateTime getDateTimePlayed() {
-		return i_dateTimePlayed;
+		return dateTimePlayed;
 	}
 
 	/**
@@ -359,7 +359,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 */
 	@Column(nullable = false)
 	public void setDateTimePlayed(DateTime datePlayed) {
-		i_dateTimePlayed = datePlayed;
+		dateTimePlayed = datePlayed;
 	}
 
 	/**
@@ -368,7 +368,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the game's result
 	 */
 	public String getResult() {
-		return i_result;
+		return result;
 	}
 
 	/**
@@ -378,7 +378,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new game's result
 	 */
 	public void setResult(String result) {
-		i_result = result;
+		this.result = result;
 	}
 
 	/**
@@ -387,7 +387,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the game's attendence
 	 */
 	public Integer getAttendence() {
-		return i_attendence;
+		return attendence;
 	}
 
 	/**
@@ -397,7 +397,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new game's attendence
 	 */
 	public void setAttendence(Integer attendence) {
-		i_attendence = attendence;
+		this.attendence = attendence;
 	}
 
 	/**
@@ -406,7 +406,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the game's match report
 	 */
 	public String getMatchReport() {
-		return i_matchReport;
+		return matchReport;
 	}
 
 	/**
@@ -416,7 +416,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new game's match report
 	 */
 	public void setMatchReport(String matchReport) {
-		i_matchReport = matchReport;
+		this.matchReport = matchReport;
 	}
 
 	/**
@@ -425,7 +425,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the true if the game has been marked as attended, false otherwise
 	 */
 	public boolean isAttended() {
-		return i_attended;
+		return attended;
 	}
 
 	/**
@@ -436,7 +436,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          otherwise
 	 */
 	public void setAttended(boolean attended) {
-		i_attended = attended;
+		this.attended = attended;
 	}
 
 	/**
@@ -445,7 +445,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the {@link DateTime} that season ticker holder tickets went on sale
 	 */
 	public DateTime getDateTimeSeasonTicketsAvailable() {
-		return i_dateTimeSeasonTicketsAvailable;
+		return dateTimeSeasonTicketsAvailable;
 	}
 
 	/**
@@ -456,7 +456,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          sale
 	 */
 	public void setDateTimeSeasonTicketsAvailable(DateTime seasonTicketsAvailable) {
-		i_dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
+		dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
 	}
 
 	/**
@@ -465,7 +465,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the {@link DateTime} that Bondholder tickets went on sale
 	 */
 	public DateTime getDateTimeBondholdersAvailable() {
-		return i_dateTimeBondholdersAvailable;
+		return dateTimeBondholdersAvailable;
 	}
 
 	/**
@@ -475,7 +475,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new {@link DateTime} that Bondholder tickets went on sale
 	 */
 	public void setDateTimeBondholdersAvailable(DateTime bondholdersAvailable) {
-		i_dateTimeBondholdersAvailable = bondholdersAvailable;
+		dateTimeBondholdersAvailable = bondholdersAvailable;
 	}
 
 	/**
@@ -484,7 +484,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the {@link DateTime} that priority point tickets went on sale
 	 */
 	public DateTime getDateTimePriorityPointPostAvailable() {
-		return i_dateTimePriorityPointPostAvailable;
+		return dateTimePriorityPointPostAvailable;
 	}
 
 	/**
@@ -494,7 +494,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new {@link DateTime} that priority point tickets went on sale
 	 */
 	public void setDateTimePriorityPointPostAvailable(DateTime priorityPointPostAvailable) {
-		i_dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
+		dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
 	}
 
 	/**
@@ -503,7 +503,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the {@link DateTime} that Academy members' tickets went on sale
 	 */
 	public DateTime getDateTimeAcademyMembersAvailable() {
-		return i_dateTimeAcademyMembersAvailable;
+		return dateTimeAcademyMembersAvailable;
 	}
 
 	/**
@@ -514,7 +514,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          sale
 	 */
 	public void setDateTimeAcademyMembersAvailable(DateTime academyMembersAvailable) {
-		i_dateTimeAcademyMembersAvailable = academyMembersAvailable;
+		dateTimeAcademyMembersAvailable = academyMembersAvailable;
 	}
 
 	/**
@@ -523,7 +523,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the {@link DateTime} that tickets went on general sale
 	 */
 	public DateTime getDateTimeGeneralSaleAvailable() {
-		return i_dateTimeGeneralSaleAvailable;
+		return dateTimeGeneralSaleAvailable;
 	}
 
 	/**
@@ -533,7 +533,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new {@link DateTime} that tickets went on general sale
 	 */
 	public void setDateTimeGeneralSaleAvailable(DateTime generalSaleAvailable) {
-		i_dateTimeGeneralSaleAvailable = generalSaleAvailable;
+		dateTimeGeneralSaleAvailable = generalSaleAvailable;
 	}
 
 	/**
@@ -542,7 +542,7 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 * @return the TV channel that showed the match
 	 */
 	public String getTelevisionChannel() {
-		return i_televisionChannel;
+		return televisionChannel;
 	}
 
 	/**
@@ -552,6 +552,6 @@ public class Game implements HasIdentity, Comparable<Game> {
 	 *          the new TV channel that showed the match
 	 */
 	public void setTelevisionChannel(String televisionChannel) {
-		i_televisionChannel = televisionChannel;
+		this.televisionChannel = televisionChannel;
 	}
 }

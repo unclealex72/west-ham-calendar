@@ -38,19 +38,19 @@ import com.google.inject.Provider;
  */
 public class LoginPresenterFactoryImpl implements LoginPresenterFactory {
 
-	private final Provider<Display> i_displayProvider;
-	private final Provider<AnonymousAttendanceServiceAsync> i_anonymousAttendanceServiceProvider;
-	private final Provider<AuthenticationManager> i_authenticationManagerProvider;
-	private final Provider<ClickHelper> i_clickHelperProvider;
+	private final Provider<Display> displayProvider;
+	private final Provider<AnonymousAttendanceServiceAsync> anonymousAttendanceServiceProvider;
+	private final Provider<AuthenticationManager> authenticationManagerProvider;
+	private final Provider<ClickHelper> clickHelperProvider;
 	@Inject
 	public LoginPresenterFactoryImpl(Provider<Display> displayProvider,
 			Provider<AnonymousAttendanceServiceAsync> anonymousAttendanceServiceProvider,
 			Provider<AuthenticationManager> authenticationManagerProvider, Provider<ClickHelper> clickHelperProvider) {
 		super();
-		i_displayProvider = displayProvider;
-		i_anonymousAttendanceServiceProvider = anonymousAttendanceServiceProvider;
-		i_authenticationManagerProvider = authenticationManagerProvider;
-		i_clickHelperProvider = clickHelperProvider;
+		this.displayProvider = displayProvider;
+		this.anonymousAttendanceServiceProvider = anonymousAttendanceServiceProvider;
+		this.authenticationManagerProvider = authenticationManagerProvider;
+		this.clickHelperProvider = clickHelperProvider;
 	}
 
 
@@ -66,22 +66,22 @@ public class LoginPresenterFactoryImpl implements LoginPresenterFactory {
 
 
 	public Provider<Display> getDisplayProvider() {
-		return i_displayProvider;
+		return displayProvider;
 	}
 
 
 	public Provider<AnonymousAttendanceServiceAsync> getAnonymousAttendanceServiceProvider() {
-		return i_anonymousAttendanceServiceProvider;
+		return anonymousAttendanceServiceProvider;
 	}
 
 
 	public Provider<AuthenticationManager> getAuthenticationManagerProvider() {
-		return i_authenticationManagerProvider;
+		return authenticationManagerProvider;
 	}
 
 
   public Provider<ClickHelper> getClickHelperProvider() {
-    return i_clickHelperProvider;
+    return clickHelperProvider;
   }
 
 }

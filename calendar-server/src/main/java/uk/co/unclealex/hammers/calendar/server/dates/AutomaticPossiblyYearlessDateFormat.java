@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -101,7 +101,7 @@ public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFor
 	/**
 	 * The date format string to use to parse dates.
 	 */
-	private final String i_dateFormat;
+	private final String dateFormat;
 
 	/**
 	 * Instantiates a new automatic possibly yearless date format.
@@ -111,7 +111,7 @@ public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFor
 	 */
 	public AutomaticPossiblyYearlessDateFormat(String dateFormat) {
 		super(yearful(dateFormat), yearless(dateFormat));
-		i_dateFormat = dateFormat;
+		this.dateFormat = dateFormat;
 	}
 
 	/**
@@ -128,7 +128,7 @@ public class AutomaticPossiblyYearlessDateFormat extends PossiblyYearlessDateFor
 	 * @return the date format string to use to parse dates
 	 */
 	public String getDateFormat() {
-		return i_dateFormat;
+		return dateFormat;
 	}
 
 }

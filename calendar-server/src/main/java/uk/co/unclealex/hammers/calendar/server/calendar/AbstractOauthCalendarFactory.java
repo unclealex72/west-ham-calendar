@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -72,12 +72,12 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	/**
 	 * The {@link HttpTransport} used to connect to Google.
 	 */
-	private HttpTransport i_httpTransport;
+	private HttpTransport httpTransport;
 	
 	/**
 	 * The {@link JsonFactory} used by the Google client.
 	 */
-	private JsonFactory i_jsonFactory;
+	private JsonFactory jsonFactory;
 	
 	/**
 	 * Create a new {@link Calendar} using Oauth.
@@ -160,7 +160,7 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	 * @return the {@link HttpTransport} used to connect to Google
 	 */
 	public HttpTransport getHttpTransport() {
-		return i_httpTransport;
+		return httpTransport;
 	}
 
 	/**
@@ -170,7 +170,7 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	 *          the new {@link HttpTransport} used to connect to Google
 	 */
 	public void setHttpTransport(HttpTransport httpTransport) {
-		i_httpTransport = httpTransport;
+		this.httpTransport = httpTransport;
 	}
 
 	/**
@@ -179,7 +179,7 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	 * @return the {@link JsonFactory} used by the Google client
 	 */
 	public JsonFactory getJsonFactory() {
-		return i_jsonFactory;
+		return jsonFactory;
 	}
 
 	/**
@@ -189,6 +189,6 @@ public abstract class AbstractOauthCalendarFactory implements CalendarFactory {
 	 *          the new {@link JsonFactory} used by the Google client
 	 */
 	public void setJsonFactory(JsonFactory jsonFactory) {
-		i_jsonFactory = jsonFactory;
+		this.jsonFactory = jsonFactory;
 	}
 }

@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -49,27 +49,27 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	/**
 	 * The id of the user.
 	 */
-	private Integer i_id;
+	private Integer id;
 	
 	/**
 	 * The user's username.
 	 */
-	private String i_username;
+	private String username;
 	
 	/**
 	 * The user's encrypted password.
 	 */
-	private String i_password;
+	private String password;
 	
 	/**
 	 * A flag indicating whether a user is enabled.
 	 */
-	private boolean i_enabled;
+	private boolean enabled;
 	
 	/**
-	 * The set of authorities granted to i_user.
+	 * The set of authorities granted to user.
 	 */
-	private Set<Authority> i_authorities;
+	private Set<Authority> authorities;
 
 	/**
 	 * {@inheritDoc}
@@ -103,7 +103,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	 */
 	@Column(nullable = false, name = "username")
 	public String getUsername() {
-		return i_username;
+		return username;
 	}
 
 	/**
@@ -113,7 +113,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	 *          the new user's username
 	 */
 	public void setUsername(String username) {
-		i_username = username;
+		this.username = username;
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	 */
 	@Column(nullable = false, name = "password")
 	public String getPassword() {
-		return i_password;
+		return password;
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	 *          the new user's encrypted password
 	 */
 	public void setPassword(String password) {
-		i_password = password;
+		this.password = password;
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	 */
 	@Column(name = "enabled")
 	public boolean isEnabled() {
-		return i_enabled;
+		return enabled;
 	}
 
 	/**
@@ -153,29 +153,29 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	 *          the new a flag indicating whether a user is enabled
 	 */
 	public void setEnabled(boolean enabled) {
-		i_enabled = enabled;
+		this.enabled = enabled;
 	}
 
 	/**
-	 * Gets the set of authorities granted to i_user.
+	 * Gets the set of authorities granted to user.
 	 * 
-	 * @return the set of authorities granted to i_user
+	 * @return the set of authorities granted to user
 	 */
 	@OneToMany(fetch = FetchType.EAGER, orphanRemoval = true)
 	@Cascade(CascadeType.ALL)
 	@JoinColumn(name = "username", referencedColumnName = "username")
 	public Set<Authority> getAuthorities() {
-		return i_authorities;
+		return authorities;
 	}
 
 	/**
-	 * Sets the set of authorities granted to i_user.
+	 * Sets the set of authorities granted to user.
 	 * 
 	 * @param authorities
-	 *          the new set of authorities granted to i_user
+	 *          the new set of authorities granted to user
 	 */
 	public void setAuthorities(Set<Authority> authorities) {
-		i_authorities = authorities;
+		this.authorities = authorities;
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	@Id
 	@GeneratedValue
 	public Integer getId() {
-		return i_id;
+		return id;
 	}
 
 	/**
@@ -194,6 +194,6 @@ public class User extends AbstractBusinessKeyBasedModel<String, User> {
 	 *          the new id of the user
 	 */
 	public void setId(Integer id) {
-		i_id = id;
+		this.id = id;
 	}
 }

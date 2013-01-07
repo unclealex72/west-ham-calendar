@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -106,9 +106,9 @@ public abstract class AbstractGoogleCalendarDaoTest {
 	 * @param location
 	 *          The game's location.
 	 * @param opponents
-	 *          The opponents for i_game.
+	 *          The opponents for game.
 	 * @param gameInterval
-	 *          The start and end time of i_game with respect to the calendar
+	 *          The start and end time of game with respect to the calendar
 	 *          type.
 	 * @param result
 	 *          The game's result.

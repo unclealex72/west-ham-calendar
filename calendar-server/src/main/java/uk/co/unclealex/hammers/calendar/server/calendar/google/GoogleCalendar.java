@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -32,7 +32,7 @@ import com.google.common.base.Predicate;
 /**
  * A {@link GoogleCalendar} represents a calendar within Google. It both
  * describes how the calendar is shown in calendar applications as well as
- * whether a game should be shown as an event in i_calendar and, if so, how.
+ * whether a game should be shown as an event in calendar and, if so, how.
  * 
  * @author alex
  * 
@@ -64,18 +64,18 @@ public interface GoogleCalendar {
 
 	/**
 	 * Create a {@link Predicate} that can be used to see if a {@link Game} should
-	 * be shown on i_calendar.
+	 * be shown on calendar.
 	 * 
 	 * @return A {@link Predicate} that can be used to see if a {@link Game}
-	 *         should be shown on i_calendar.
+	 *         should be shown on calendar.
 	 */
 	Predicate<Game> toContainsGamePredicate();
 
 	/**
-	 * A flag to indicate whether any games on i_calendar should be marked as
+	 * A flag to indicate whether any games on calendar should be marked as
 	 * busy.
 	 * 
-	 * @return True if games in i_calendar are marked as busy, false otherwise.
+	 * @return True if games in calendar are marked as busy, false otherwise.
 	 */
 	boolean isBusy();
 }

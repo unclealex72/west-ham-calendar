@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -53,22 +53,22 @@ public class UpdateCalendarJob implements JobFactory {
 	/**
 	 * The {@link Runnable} job to execute.
 	 */
-	private Runnable i_runnable;
+	private Runnable runnable;
 	
 	/**
 	 * The cron string used to control job scheduling or null if no job is to be scheduled.
 	 */
-	private String i_cronString;
+	private String cronString;
 	
 	/**
 	 * A Quartz {@link Scheduler}.
 	 */
-	private Scheduler i_scheduler;
+	private Scheduler scheduler;
 	
 	/**
 	 * A Quartz {@link JobKey}.
 	 */
-	private JobKey i_jobKey;
+	private JobKey jobKey;
 	
 	/**
 	 * Initialise the {@link Scheduler} and {@link JobKey}.
@@ -155,7 +155,7 @@ public class UpdateCalendarJob implements JobFactory {
 	 * @return the a Quartz {@link Scheduler}
 	 */
 	public Scheduler getScheduler() {
-		return i_scheduler;
+		return scheduler;
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class UpdateCalendarJob implements JobFactory {
 	 *          the new a Quartz {@link Scheduler}
 	 */
 	public void setScheduler(Scheduler scheduler) {
-		i_scheduler = scheduler;
+		this.scheduler = scheduler;
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class UpdateCalendarJob implements JobFactory {
 	 *         to be scheduled
 	 */
 	public String getCronString() {
-		return i_cronString;
+		return cronString;
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class UpdateCalendarJob implements JobFactory {
 	 *          job is to be scheduled
 	 */
 	public void setCronString(String cronString) {
-		i_cronString = cronString;
+		this.cronString = cronString;
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class UpdateCalendarJob implements JobFactory {
 	 * @return the {@link Runnable} job to execute
 	 */
 	public Runnable getRunnable() {
-		return i_runnable;
+		return runnable;
 	}
 
 	/**
@@ -207,7 +207,7 @@ public class UpdateCalendarJob implements JobFactory {
 	 *          the new {@link Runnable} job to execute
 	 */
 	public void setRunnable(Runnable runnable) {
-		i_runnable = runnable;
+		this.runnable = runnable;
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class UpdateCalendarJob implements JobFactory {
 	 * @return the a Quartz {@link JobKey}
 	 */
 	public JobKey getJobKey() {
-		return i_jobKey;
+		return jobKey;
 	}
 
 	/**
@@ -226,6 +226,6 @@ public class UpdateCalendarJob implements JobFactory {
 	 *          the new a Quartz {@link JobKey}
 	 */
 	public void setJobKey(JobKey jobKey) {
-		i_jobKey = jobKey;
+		this.jobKey = jobKey;
 	}
 }

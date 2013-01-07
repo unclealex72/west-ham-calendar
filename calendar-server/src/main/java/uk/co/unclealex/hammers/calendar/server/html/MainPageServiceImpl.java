@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -52,22 +52,22 @@ public class MainPageServiceImpl implements MainPageService {
 	/**
 	 * The URI for the main web page.
 	 */
-	private final URI i_mainPageUri;
+	private final URI mainPageUri;
 
 	/**
 	 * The URI for the tickets web page.
 	 */
-	private URI i_ticketsUri;
+	private URI ticketsUri;
 
 	/**
 	 * The URI for the fixtures web page.
 	 */
-	private URI i_fixturesUri;
+	private URI fixturesUri;
 
 	/**
 	 * The {@link HtmlPageLoader} used to load the main page.
 	 */
-	private HtmlPageLoader i_htmlPageLoader;
+	private HtmlPageLoader htmlPageLoader;
 
 	/**
 	 * Instantiates a new main page service impl.
@@ -79,11 +79,11 @@ public class MainPageServiceImpl implements MainPageService {
 	 */
 	public MainPageServiceImpl(String mainPageUrl) throws URISyntaxException {
 		super();
-		i_mainPageUri = new URI(mainPageUrl);
+		mainPageUri = new URI(mainPageUrl);
 	}
 
 	/**
-	 * Initialise i_service by finding the tickets and fixtures links.
+	 * Initialise service by finding the tickets and fixtures links.
 	 * 
 	 * @throws IOException
 	 *           Signals that an I/O exception has occurred.
@@ -95,7 +95,7 @@ public class MainPageServiceImpl implements MainPageService {
 	}
 
 	/**
-	 * Initialise i_service by finding the tickets and fixtures links.
+	 * Initialise service by finding the tickets and fixtures links.
 	 * 
 	 * @param mainPageUrl
 	 *          the main page url
@@ -270,7 +270,7 @@ public class MainPageServiceImpl implements MainPageService {
 	 * {@inheritDoc}
 	 */
 	public URI getTicketsUri() {
-		return i_ticketsUri;
+		return ticketsUri;
 	}
 
 	/**
@@ -280,14 +280,14 @@ public class MainPageServiceImpl implements MainPageService {
 	 *          the new URI for the tickets web page
 	 */
 	public void setTicketsUri(URI ticketsUri) {
-		i_ticketsUri = ticketsUri;
+		this.ticketsUri = ticketsUri;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public URI getFixturesUri() {
-		return i_fixturesUri;
+		return fixturesUri;
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class MainPageServiceImpl implements MainPageService {
 	 *          the new URI for the fixtures web page
 	 */
 	public void setFixturesUri(URI fixturesUri) {
-		i_fixturesUri = fixturesUri;
+		this.fixturesUri = fixturesUri;
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class MainPageServiceImpl implements MainPageService {
 	 * @return the {@link HtmlPageLoader} used to load the main page
 	 */
 	public HtmlPageLoader getHtmlPageLoader() {
-		return i_htmlPageLoader;
+		return htmlPageLoader;
 	}
 
 	/**
@@ -316,7 +316,7 @@ public class MainPageServiceImpl implements MainPageService {
 	 *          the new {@link HtmlPageLoader} used to load the main page
 	 */
 	public void setHtmlPageLoader(HtmlPageLoader htmlPageLoader) {
-		i_htmlPageLoader = htmlPageLoader;
+		this.htmlPageLoader = htmlPageLoader;
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class MainPageServiceImpl implements MainPageService {
 	 * @return the URI for the main web page
 	 */
 	public URI getMainPageUri() {
-		return i_mainPageUri;
+		return mainPageUri;
 	}
 
 }

@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -44,13 +44,13 @@ import uk.co.unclealex.hammers.calendar.server.model.HasBusinessKey;
 public class ModelBean implements HasBusinessKey<String> {
 
 	/** The id. */
-	private Integer i_id;
+	private Integer id;
 	
 	/** The business key. */
-	private String i_businessKey;
+	private String businessKey;
 	
 	/** The value. */
-	private String i_value;
+	private String value;
 
 	/**
 	 * Instantiates a new model bean.
@@ -69,8 +69,8 @@ public class ModelBean implements HasBusinessKey<String> {
 	 */
 	public ModelBean(String businessKey, String value) {
 		super();
-		i_businessKey = businessKey;
-		i_value = value;
+		this.businessKey = businessKey;
+		this.value = value;
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class ModelBean implements HasBusinessKey<String> {
 	@GeneratedValue
 	@Column(name = "id")
 	public Integer getId() {
-		return i_id;
+		return id;
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class ModelBean implements HasBusinessKey<String> {
 	 *          the new id
 	 */
 	public void setId(Integer id) {
-		i_id = id;
+		this.id = id;
 	}
 
 	/**
@@ -115,14 +115,14 @@ public class ModelBean implements HasBusinessKey<String> {
 	 */
 	@Column(name = "businesskey", unique = true)
 	public String getBusinessKey() {
-		return i_businessKey;
+		return businessKey;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setBusinessKey(String businessKey) {
-		i_businessKey = businessKey;
+		this.businessKey = businessKey;
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class ModelBean implements HasBusinessKey<String> {
 	 */
 	@Column(name = "value")
 	public String getValue() {
-		return i_value;
+		return value;
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class ModelBean implements HasBusinessKey<String> {
 	 *          the new value
 	 */
 	public void setValue(String value) {
-		i_value = value;
+		this.value = value;
 	}
 
 }

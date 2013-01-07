@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -48,7 +48,7 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 	/**
 	 * The name of the property that is the model's business key.
 	 */
-	private final String i_businessKeyProperty;
+	private final String businessKeyProperty;
 
 	/**
 	 * Instantiates a new business key hibernate dao support.
@@ -60,7 +60,7 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 	 */
 	public BusinessKeyHibernateDaoSupport(Class<M> clazz, String businessKeyProperty) {
 		super(clazz);
-		i_businessKeyProperty = businessKeyProperty;
+		this.businessKeyProperty = businessKeyProperty;
 	}
 
 	/**
@@ -113,7 +113,7 @@ public abstract class BusinessKeyHibernateDaoSupport<K extends Serializable & Co
 	 * @return the name of the property that is the model's business key
 	 */
 	public String getBusinessKeyProperty() {
-		return i_businessKeyProperty;
+		return businessKeyProperty;
 	}
 
 }

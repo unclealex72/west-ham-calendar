@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -56,7 +56,7 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 	 * The {@link GoogleCalendarDaoFactory} used to create.
 	 * {@link GoogleCalendarDao}s.
 	 */
-	private GoogleCalendarDaoFactory i_googleCalendarDaoFactory;
+	private GoogleCalendarDaoFactory googleCalendarDaoFactory;
 
 	/**
 	 * {@inheritDoc}
@@ -88,7 +88,7 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 	 * @param games
 	 *          The {@link Game}s to be used to update the calendar.
 	 * @param busy
-	 *          True if i_calendar is marked as busy, false otherwise.
+	 *          True if calendar is marked as busy, false otherwise.
 	 * @throws IOException
 	 *           Signals that an I/O exception has occurred.
 	 * @throws GoogleAuthenticationFailedException
@@ -173,7 +173,7 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 	 * @return the {@link GoogleCalendarDaoFactory} used to create
 	 */
 	public GoogleCalendarDaoFactory getGoogleCalendarDaoFactory() {
-		return i_googleCalendarDaoFactory;
+		return googleCalendarDaoFactory;
 	}
 
 	/**
@@ -183,7 +183,7 @@ public class GoogleCalendarUpdatingServiceImpl implements GoogleCalendarUpdating
 	 *          the new {@link GoogleCalendarDaoFactory} used to create
 	 */
 	public void setGoogleCalendarDaoFactory(GoogleCalendarDaoFactory googleCalendarDaoFactory) {
-		i_googleCalendarDaoFactory = googleCalendarDaoFactory;
+		this.googleCalendarDaoFactory = googleCalendarDaoFactory;
 	}
 
 }

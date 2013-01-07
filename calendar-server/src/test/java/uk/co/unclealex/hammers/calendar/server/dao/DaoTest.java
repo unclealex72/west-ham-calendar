@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -68,7 +68,7 @@ public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTe
 	
 	/** The entity classes. */
 	@SuppressWarnings("rawtypes")
-	private final Class[] i_entityClasses;
+	private final Class[] entityClasses;
 	
 	/** The blacklist. */
 	private final Map<Integer, String> blacklist = Maps.newHashMap();
@@ -82,7 +82,7 @@ public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTe
 	@SuppressWarnings("rawtypes")
 	public DaoTest(Class... entityClasses) {
 		super();
-		i_entityClasses = entityClasses;
+		this.entityClasses = entityClasses;
 		blacklist.put(Types.DATE, "DATE");
 		blacklist.put(Types.TIME, "TIME");
 		blacklist.put(Types.TIMESTAMP, "TIMESTAMP");
@@ -163,6 +163,6 @@ public abstract class DaoTest extends AbstractTransactionalJUnit4SpringContextTe
 	 */
 	@SuppressWarnings("rawtypes")
 	public Class[] getEntityClasses() {
-		return i_entityClasses;
+		return entityClasses;
 	}
 }

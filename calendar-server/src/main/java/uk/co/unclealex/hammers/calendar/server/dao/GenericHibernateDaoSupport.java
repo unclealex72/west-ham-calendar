@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -41,7 +41,7 @@ import com.google.common.collect.Iterables;
  * and use Hibernate.
  * 
  * @param <M>
- *          The type of the model that i_data access class is for.
+ *          The type of the model that data access class is for.
  * @author alex
  */
 public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implements CrudDao<M>{
@@ -49,37 +49,37 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 	/**
 	 * The class of the model objects being persisted.
 	 */
-	private final Class<M> i_clazz;
+	private final Class<M> clazz;
 	
 	/**
 	 * The Hibernate entity name of the model objects being persisted.
 	 */
-	private final String i_entityName;
+	private final String entityName;
 	
 	/**
 	 * A Hibernate {@link SessionFactory}.
 	 */
-	private SessionFactory i_sessionFactory;
+	private SessionFactory sessionFactory;
 	
 	/**
-	 * Create a new instance of i_class.
+	 * Create a new instance of class.
 	 * @param clazz The class of the model objects being persisted.
 	 */
 	public GenericHibernateDaoSupport(Class<M> clazz) {
 		super();
-		i_clazz = clazz;
+		this.clazz = clazz;
 		Entity entity = clazz.getAnnotation(Entity.class);
 		if (entity != null) {
 			String name = entity.name();
 			if (!Strings.isNullOrEmpty(name)) {
-				i_entityName = name;
+				entityName = name;
 			}
 			else {
-				i_entityName = clazz.getName();
+				entityName = clazz.getName();
 			}
 		}
 		else {
-			i_entityName = clazz.getName();
+			entityName = clazz.getName();
 		}
 	}
 	
@@ -216,7 +216,7 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 	 * @return the class of the model objects being persisted
 	 */
 	public Class<M> getClazz() {
-		return i_clazz;
+		return clazz;
 	}
 
 	/**
@@ -225,7 +225,7 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 	 * @return the Hibernate entity name of the model objects being persisted
 	 */
 	public String getEntityName() {
-		return i_entityName;
+		return entityName;
 	}
 
 	/**
@@ -234,7 +234,7 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 	 * @return the a Hibernate {@link SessionFactory}
 	 */
 	public SessionFactory getSessionFactory() {
-		return i_sessionFactory;
+		return sessionFactory;
 	}
 
 	/**
@@ -244,6 +244,6 @@ public abstract class GenericHibernateDaoSupport<M extends HasIdentity> implemen
 	 *          the new a Hibernate {@link SessionFactory}
 	 */
 	public void setSessionFactory(SessionFactory sessionFactory) {
-		i_sessionFactory = sessionFactory;
+		this.sessionFactory = sessionFactory;
 	}
 }

@@ -43,13 +43,13 @@ public abstract class AbstractTablePresenter<M, V, D extends Display<M, V>> exte
 		void setTitleText(String text);
 	}
 	
-	private final D i_display;
-	private final HammersMessages i_hammersMessages;
+	private final D display;
+	private final HammersMessages hammersMessages;
 	
 	public AbstractTablePresenter(PlaceController placeController, D display, HammersMessages hammersMessages) {
 		super(placeController);
-		i_display = display;
-		i_hammersMessages = hammersMessages;
+		this.display = display;
+		this.hammersMessages = hammersMessages;
 	}
 
 	@Override
@@ -64,10 +64,10 @@ public abstract class AbstractTablePresenter<M, V, D extends Display<M, V>> exte
 	protected abstract void start(D display, int season);
 
 	public D getDisplay() {
-		return i_display;
+		return display;
 	}
 
 	public HammersMessages getHammersMessages() {
-		return i_hammersMessages;
+		return hammersMessages;
 	}
 }

@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -39,12 +39,12 @@ public class CalendarFormatter implements Function<String, String> {
 	/**
 	 * The {@link CalendarConfigurationDao} used to look up calendar ids.
 	 */
-	private CalendarConfigurationDao i_calendarConfigurationDao;
+	private CalendarConfigurationDao calendarConfigurationDao;
 	
 	/**
 	 * The {@link GoogleCalendarFactory} used to get {@link GoogleCalendar}s.
 	 */
-	private GoogleCalendarFactory i_googleCalendarFactory;
+	private GoogleCalendarFactory googleCalendarFactory;
 
 	/**
 	 * {@inheritDoc}
@@ -67,7 +67,7 @@ public class CalendarFormatter implements Function<String, String> {
 	 * @return the {@link CalendarConfigurationDao} used to look up calendar ids
 	 */
 	public CalendarConfigurationDao getCalendarConfigurationDao() {
-		return i_calendarConfigurationDao;
+		return calendarConfigurationDao;
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class CalendarFormatter implements Function<String, String> {
 	 *          ids
 	 */
 	public void setCalendarConfigurationDao(CalendarConfigurationDao calendarConfigurationDao) {
-		i_calendarConfigurationDao = calendarConfigurationDao;
+		this.calendarConfigurationDao = calendarConfigurationDao;
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class CalendarFormatter implements Function<String, String> {
 	 *         {@link GoogleCalendar}s
 	 */
 	public GoogleCalendarFactory getGoogleCalendarFactory() {
-		return i_googleCalendarFactory;
+		return googleCalendarFactory;
 	}
 
 	/**
@@ -99,6 +99,6 @@ public class CalendarFormatter implements Function<String, String> {
 	 *          {@link GoogleCalendar}s
 	 */
 	public void setGoogleCalendarFactory(GoogleCalendarFactory googleCalendarFactory) {
-		i_googleCalendarFactory = googleCalendarFactory;
+		this.googleCalendarFactory = googleCalendarFactory;
 	}
 }

@@ -56,20 +56,20 @@ public class GoogleAuthenticationPresenter extends AbstractPopupPresenter<PopupP
     Anchor getAuthenticationAnchor();
 	}
 	
-	private final Display i_display;
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
-	private final String i_authenticationUrl;
-	private final Runnable i_originalAction;
+	private final Display display;
+	private final AsyncCallbackExecutor asyncCallbackExecutor;
+	private final String authenticationUrl;
+	private final Runnable originalAction;
 	
 	@Inject
 	public GoogleAuthenticationPresenter(
 	    Display display, AsyncCallbackExecutor asyncCallbackExecutor, 
 	    @Assisted String authenticationUrl, @Assisted Runnable originalAction) {
 		super();
-		i_display = display;
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
-		i_authenticationUrl = authenticationUrl;
-		i_originalAction = originalAction;
+		this.display = display;
+		this.asyncCallbackExecutor = asyncCallbackExecutor;
+		this.authenticationUrl = authenticationUrl;
+		this.originalAction = originalAction;
 	}
 
 	@Override
@@ -100,18 +100,18 @@ public class GoogleAuthenticationPresenter extends AbstractPopupPresenter<PopupP
 	}
 
 	public Display getDisplay() {
-		return i_display;
+		return display;
 	}
 
 	public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-		return i_asyncCallbackExecutor;
+		return asyncCallbackExecutor;
 	}
 
 	public String getAuthenticationUrl() {
-		return i_authenticationUrl;
+		return authenticationUrl;
 	}
 
   public Runnable getOriginalAction() {
-    return i_originalAction;
+    return originalAction;
   }
 }

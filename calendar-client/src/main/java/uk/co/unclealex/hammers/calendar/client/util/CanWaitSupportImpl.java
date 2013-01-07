@@ -40,8 +40,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class CanWaitSupportImpl implements CanWaitSupport {
 
-	private final Map<HasEnabled, Boolean> i_statesByHasEnabled = new HashMap<HasEnabled, Boolean>();
-	private final List<HasEnabled> i_hasEnableds = new ArrayList<HasEnabled>();
+	private final Map<HasEnabled, Boolean> statesByHasEnabled = new HashMap<HasEnabled, Boolean>();
+	private final List<HasEnabled> hasEnableds = new ArrayList<HasEnabled>();
 	
 	@Override
 	public void startWaiting() {
@@ -81,11 +81,11 @@ public class CanWaitSupportImpl implements CanWaitSupport {
 	}
 	
 	public Map<HasEnabled, Boolean> getStatesByHasEnabled() {
-		return i_statesByHasEnabled;
+		return statesByHasEnabled;
 	}
 
 	public List<HasEnabled> getHasEnableds() {
-		return i_hasEnableds;
+		return hasEnableds;
 	}
 
 }

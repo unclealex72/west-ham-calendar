@@ -41,13 +41,13 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 
-	private final ListBox i_listBox;
-	private final String i_nullText;
+	private final ListBox listBox;
+	private final String nullText;
 	
 	public ValueListBoxAdaptor(ListBox listBox, String nullValue) {
 		super();
-		i_listBox = listBox;
-		i_nullText = nullValue;
+		this.listBox = listBox;
+		nullText = nullValue;
 	}
 
 	@Override
@@ -132,11 +132,11 @@ public abstract class ValueListBoxAdaptor<T> implements IsWidget, HasValue<T> {
 	}
 
 	public ListBox getListBox() {
-		return i_listBox;
+		return listBox;
 	}
 
   public String getNullText() {
-    return i_nullText;
+    return nullText;
   }
 
 }

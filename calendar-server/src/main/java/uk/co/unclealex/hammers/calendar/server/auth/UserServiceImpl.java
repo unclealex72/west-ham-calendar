@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -64,27 +64,27 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * The {@link PasswordEncoder} to use to encode passwords.
 	 */
-	private PasswordEncoder i_passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
 	/**
 	 * The {@link SaltSource} used by the password encoder.
 	 */
-	private SaltSource i_saltSource;
+	private SaltSource saltSource;
 	
 	/**
 	 * The {@link UserDao} used for user persistence.
 	 */
-	private UserDao i_userDao;
+	private UserDao userDao;
 	
 	/**
 	 * All roles, in order of authority.
 	 */
-	private SortedSet<Role> i_allRoles;
+	private SortedSet<Role> allRoles;
 
 	/**
 	 * The least authoratitive role.
 	 */
-	private Role i_smallestRole;
+	private Role smallestRole;
 
 	/**
 	 * Initialise the set of roles and their order of authority.
@@ -276,7 +276,7 @@ public class UserServiceImpl implements UserService {
 	 * @return the {@link PasswordEncoder} to use to encode passwords
 	 */
 	public PasswordEncoder getPasswordEncoder() {
-		return i_passwordEncoder;
+		return passwordEncoder;
 	}
 
 	/**
@@ -286,7 +286,7 @@ public class UserServiceImpl implements UserService {
 	 *          the new {@link PasswordEncoder} to use to encode passwords
 	 */
 	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-		i_passwordEncoder = passwordEncoder;
+		this.passwordEncoder = passwordEncoder;
 	}
 
 	/**
@@ -295,7 +295,7 @@ public class UserServiceImpl implements UserService {
 	 * @return the all roles, in order of authority
 	 */
 	public SortedSet<Role> getAllRoles() {
-		return i_allRoles;
+		return allRoles;
 	}
 
 	/**
@@ -304,7 +304,7 @@ public class UserServiceImpl implements UserService {
 	 * @return the least authoratitive role
 	 */
 	public Role getSmallestRole() {
-		return i_smallestRole;
+		return smallestRole;
 	}
 
 	/**
@@ -314,7 +314,7 @@ public class UserServiceImpl implements UserService {
 	 *          the new least authoratitive role
 	 */
 	public void setSmallestRole(Role smallestRole) {
-		i_smallestRole = smallestRole;
+		this.smallestRole = smallestRole;
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class UserServiceImpl implements UserService {
 	 *          the new all roles, in order of authority
 	 */
 	public void setAllRoles(SortedSet<Role> allRoles) {
-		i_allRoles = allRoles;
+		this.allRoles = allRoles;
 	}
 
 	/**
@@ -333,7 +333,7 @@ public class UserServiceImpl implements UserService {
 	 * @return the {@link SaltSource} used by the password encoder
 	 */
 	public SaltSource getSaltSource() {
-		return i_saltSource;
+		return saltSource;
 	}
 
 	/**
@@ -343,7 +343,7 @@ public class UserServiceImpl implements UserService {
 	 *          the new {@link SaltSource} used by the password encoder
 	 */
 	public void setSaltSource(SaltSource saltSource) {
-		i_saltSource = saltSource;
+		this.saltSource = saltSource;
 	}
 
 	/**
@@ -352,7 +352,7 @@ public class UserServiceImpl implements UserService {
 	 * @return the {@link UserDao} used for user persistence
 	 */
 	public UserDao getUserDao() {
-		return i_userDao;
+		return userDao;
 	}
 
 	/**
@@ -362,7 +362,7 @@ public class UserServiceImpl implements UserService {
 	 *          the new {@link UserDao} used for user persistence
 	 */
 	public void setUserDao(UserDao userDao) {
-		i_userDao = userDao;
+		this.userDao = userDao;
 	}
 
 }

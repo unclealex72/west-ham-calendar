@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -83,17 +83,17 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		/**
 		 * The current season.
 		 */
-		private int i_season;
+		private int season;
 
 		/**
 		 * The current month.
 		 */
-		private String i_month;
+		private String month;
 
 		/**
 		 * The {@link DateTime} the season started.
 		 */
-		private DateTime i_startOfSeason;
+		private DateTime startOfSeason;
 
 		/**
 		 * Instantiates a new season scanner.
@@ -154,7 +154,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		}
 
 		/**
-		 * Find which season i_page represents.
+		 * Find which season page represents.
 		 */
 		protected void updateSeason() {
 			final Pattern seasonPattern = Pattern.compile("s\\.prop3=\"([0-9]+)\"");
@@ -275,7 +275,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 * @return the current season
 		 */
 		public int getSeason() {
-			return i_season;
+			return season;
 		}
 
 		/**
@@ -284,7 +284,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 * @return the current month
 		 */
 		public String getMonth() {
-			return i_month;
+			return month;
 		}
 
 		/**
@@ -294,7 +294,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 *          the new current month
 		 */
 		public void setMonth(String month) {
-			i_month = month;
+			this.month = month;
 		}
 
 		/**
@@ -303,7 +303,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 * @return the {@link DateTime} the season started
 		 */
 		public DateTime getStartOfSeason() {
-			return i_startOfSeason;
+			return startOfSeason;
 		}
 
 		/**
@@ -313,7 +313,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 *          the new {@link DateTime} the season started
 		 */
 		public void setStartOfSeason(DateTime startOfSeason) {
-			i_startOfSeason = startOfSeason;
+			this.startOfSeason = startOfSeason;
 		}
 
 		/**
@@ -323,7 +323,7 @@ public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 		 *          the new current season
 		 */
 		public void setSeason(int season) {
-			i_season = season;
+			this.season = season;
 		}
 	}
 }

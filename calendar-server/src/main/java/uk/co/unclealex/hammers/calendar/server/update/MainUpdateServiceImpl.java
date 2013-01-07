@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -75,27 +75,27 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	/**
 	 * The {@link GameDao} for getting persisted {@link Game} information.
 	 */
-	private GameDao i_gameDao;
+	private GameDao gameDao;
 	
 	/**
 	 * The {@link MainPageService} for finding the links off the main page.
 	 */
-	private MainPageService i_mainPageService;
+	private MainPageService mainPageService;
 	
 	/**
 	 * The {@link HtmlGamesScanner} for getting ticketing information.
 	 */
-	private HtmlGamesScanner i_ticketsHtmlGamesScanner;
+	private HtmlGamesScanner ticketsHtmlGamesScanner;
 	
 	/**
 	 * The {@link HtmlGamesScanner} for getting fixture information.
 	 */
-	private HtmlGamesScanner i_fixturesHtmlGamesScanner;
+	private HtmlGamesScanner fixturesHtmlGamesScanner;
 	
 	/**
 	 * The {@link GoogleCalendarService} used for updating the Google calendars.
 	 */
-	private GoogleCalendarService i_googleCalendarService;
+	private GoogleCalendarService googleCalendarService;
 
 	/**
 	 * {@inheritDoc}
@@ -249,7 +249,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 		}
 		
 		/**
-		 * A {@link GameLocatorVisitor} used to find games from i_cache.
+		 * A {@link GameLocatorVisitor} used to find games from cache.
 		 * @author alex
 		 *
 		 */
@@ -322,7 +322,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 * @return the {@link GameDao} for getting persisted {@link Game} information
 	 */
 	public GameDao getGameDao() {
-		return i_gameDao;
+		return gameDao;
 	}
 
 	/**
@@ -333,7 +333,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 *          information
 	 */
 	public void setGameDao(GameDao gameDao) {
-		i_gameDao = gameDao;
+		this.gameDao = gameDao;
 	}
 
 	/**
@@ -342,7 +342,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 * @return the {@link MainPageService} for finding the links off the main page
 	 */
 	public MainPageService getMainPageService() {
-		return i_mainPageService;
+		return mainPageService;
 	}
 
 	/**
@@ -353,7 +353,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 *          page
 	 */
 	public void setMainPageService(MainPageService mainPageService) {
-		i_mainPageService = mainPageService;
+		this.mainPageService = mainPageService;
 	}
 
 	/**
@@ -362,7 +362,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 * @return the {@link HtmlGamesScanner} for getting ticketing information
 	 */
 	public HtmlGamesScanner getTicketsHtmlGamesScanner() {
-		return i_ticketsHtmlGamesScanner;
+		return ticketsHtmlGamesScanner;
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 *          the new {@link HtmlGamesScanner} for getting ticketing information
 	 */
 	public void setTicketsHtmlGamesScanner(HtmlGamesScanner ticketsHtmlGameScanner) {
-		i_ticketsHtmlGamesScanner = ticketsHtmlGameScanner;
+		ticketsHtmlGamesScanner = ticketsHtmlGameScanner;
 	}
 
 	/**
@@ -381,7 +381,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 * @return the {@link HtmlGamesScanner} for getting fixture information
 	 */
 	public HtmlGamesScanner getFixturesHtmlGamesScanner() {
-		return i_fixturesHtmlGamesScanner;
+		return fixturesHtmlGamesScanner;
 	}
 
 	/**
@@ -391,7 +391,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 *          the new {@link HtmlGamesScanner} for getting fixture information
 	 */
 	public void setFixturesHtmlGamesScanner(HtmlGamesScanner fixturesHtmlGameScanner) {
-		i_fixturesHtmlGamesScanner = fixturesHtmlGameScanner;
+		fixturesHtmlGamesScanner = fixturesHtmlGameScanner;
 	}
 
 	/**
@@ -402,7 +402,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 *         calendars
 	 */
 	public GoogleCalendarService getGoogleCalendarService() {
-		return i_googleCalendarService;
+		return googleCalendarService;
 	}
 
 	/**
@@ -414,7 +414,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
 	 *          calendars
 	 */
 	public void setGoogleCalendarService(GoogleCalendarService googleCalendarService) {
-		i_googleCalendarService = googleCalendarService;
+		this.googleCalendarService = googleCalendarService;
 	}
 
 }

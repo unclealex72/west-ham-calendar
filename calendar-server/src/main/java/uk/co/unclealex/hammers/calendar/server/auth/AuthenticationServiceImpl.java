@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -48,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	/**
 	 * The Spring {@link AuthenticationManager} used to authenticate users.
 	 */
-	private AuthenticationManager i_authenticationManager;
+	private AuthenticationManager authenticationManager;
 
 	/**
 	 * {@inheritDoc}
@@ -129,7 +129,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	 * @return the Spring {@link AuthenticationManager} used to authenticate users
 	 */
 	public AuthenticationManager getAuthenticationManager() {
-		return i_authenticationManager;
+		return authenticationManager;
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	 *          users
 	 */
 	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
-		i_authenticationManager = authenticationManager;
+		this.authenticationManager = authenticationManager;
 	}
 
 }

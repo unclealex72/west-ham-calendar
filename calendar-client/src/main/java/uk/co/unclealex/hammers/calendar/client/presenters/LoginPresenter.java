@@ -50,21 +50,21 @@ public class LoginPresenter extends AbstractPopupPresenter<PopupPanel, Display> 
 		public Label getFailureLabel();
 	}
 
-	private final Display i_display;
-	private final AnonymousAttendanceServiceAsync i_anonymousAttendanceService;
-	private final AuthenticationManager i_authenticationManager;
-	private final Runnable i_originalAction;
-	private final ClickHelper i_clickHelper;
+	private final Display display;
+	private final AnonymousAttendanceServiceAsync anonymousAttendanceService;
+	private final AuthenticationManager authenticationManager;
+	private final Runnable originalAction;
+	private final ClickHelper clickHelper;
 	
 	public LoginPresenter(
 			Display display, AnonymousAttendanceServiceAsync anonymousAttendanceService, 
 			AuthenticationManager authenticationManager, ClickHelper clickHelper, Runnable originalAction) {
 		super();
-		i_display = display;
-		i_anonymousAttendanceService = anonymousAttendanceService;
-		i_authenticationManager = authenticationManager;
-		i_originalAction = originalAction;
-		i_clickHelper = clickHelper;
+		this.display = display;
+		this.anonymousAttendanceService = anonymousAttendanceService;
+		this.authenticationManager = authenticationManager;
+		this.originalAction = originalAction;
+		this.clickHelper = clickHelper;
 	}
 
 	
@@ -119,24 +119,24 @@ public class LoginPresenter extends AbstractPopupPresenter<PopupPanel, Display> 
 
 	
 	public Display getDisplay() {
-		return i_display;
+		return display;
 	}
 
 
 	public AnonymousAttendanceServiceAsync getAnonymousAttendanceService() {
-		return i_anonymousAttendanceService;
+		return anonymousAttendanceService;
 	}
 
 	public AuthenticationManager getAuthenticationManager() {
-		return i_authenticationManager;
+		return authenticationManager;
 	}
 
 	public Runnable getOriginalAction() {
-		return i_originalAction;
+		return originalAction;
 	}
 
 
   public ClickHelper getClickHelper() {
-    return i_clickHelper;
+    return clickHelper;
   }
 }

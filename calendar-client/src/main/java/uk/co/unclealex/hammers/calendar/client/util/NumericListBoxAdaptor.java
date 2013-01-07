@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.ListBox;
  */
 public class NumericListBoxAdaptor extends ValueListBoxAdaptor<Integer> {
 
-	private int i_maxDigitsSoFar = 0;
+	private int maxDigitsSoFar = 0;
 	
 	/**
 	 * @param listBox
@@ -89,11 +89,11 @@ public class NumericListBoxAdaptor extends ValueListBoxAdaptor<Integer> {
 	}
 	
 	protected int getMaxDigitsSoFar() {
-		return i_maxDigitsSoFar;
+		return maxDigitsSoFar;
 	}
 
 	protected void setMaxDigitsSoFar(int maxDigitsSoFar) {
-		i_maxDigitsSoFar = maxDigitsSoFar;
+		this.maxDigitsSoFar = maxDigitsSoFar;
 	}
 
 	

@@ -56,18 +56,18 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 		HasWidgets getUpdateUsersPanel();
 	}
 	
-	private final Display i_display;
-	private final SelectTicketCalendarPresenter i_selectTicketCalendarPresenter;
-	private final UpdateUsersPresenter i_updateUsersPresenter;
+	private final Display display;
+	private final SelectTicketCalendarPresenter selectTicketCalendarPresenter;
+	private final UpdateUsersPresenter updateUsersPresenter;
 
 	@Inject
 	public AdminPresenter(AsyncCallbackExecutor asyncCallbackExecutor, Display display,
 			SelectTicketCalendarPresenter selectTicketCalendarPresenter,
 			UpdateUsersPresenter updateUsersPresenter) {
 		super(asyncCallbackExecutor);
-		i_display = display;
-		i_updateUsersPresenter = updateUsersPresenter;
-		i_selectTicketCalendarPresenter = selectTicketCalendarPresenter;
+		this.display = display;
+		this.updateUsersPresenter = updateUsersPresenter;
+		this.selectTicketCalendarPresenter = selectTicketCalendarPresenter;
 	}
 
 	@Override
@@ -106,15 +106,15 @@ public class AdminPresenter extends RequiresPrerequisiteRemoteActionPresenter {
 	}
 	
 	public Display getDisplay() {
-		return i_display;
+		return display;
 	}
 
   public UpdateUsersPresenter getUpdateUsersPresenter() {
-    return i_updateUsersPresenter;
+    return updateUsersPresenter;
   }
 
   public SelectTicketCalendarPresenter getSelectTicketCalendarPresenter() {
-    return i_selectTicketCalendarPresenter;
+    return selectTicketCalendarPresenter;
   }
 
 }

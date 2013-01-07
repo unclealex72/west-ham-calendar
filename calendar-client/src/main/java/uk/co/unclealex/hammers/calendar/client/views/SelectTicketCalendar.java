@@ -48,13 +48,13 @@ public class SelectTicketCalendar extends Composite implements Display {
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
-  private final CanWaitSupport i_canWaitSupport;
+  private final CanWaitSupport canWaitSupport;
   	
 	@UiField ListBox ticketCalendarsListBox; 
 
 	@Inject
 	public SelectTicketCalendar(CanWaitSupport canWaitSupport) {
-	  i_canWaitSupport = canWaitSupport;
+	  this.canWaitSupport = canWaitSupport;
 		initWidget(binder.createAndBindUi(this));
     canWaitSupport.wrap(ticketCalendarsListBox);
 	}
@@ -71,7 +71,7 @@ public class SelectTicketCalendar extends Composite implements Display {
 	}
 	
   public CanWaitSupport getCanWaitSupport() {
-    return i_canWaitSupport;
+    return canWaitSupport;
   }
 
   public ListBox getTicketCalendarsListBox() {

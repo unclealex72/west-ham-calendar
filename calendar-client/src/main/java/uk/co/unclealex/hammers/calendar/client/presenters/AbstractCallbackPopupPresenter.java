@@ -45,20 +45,20 @@ public abstract class AbstractCallbackPopupPresenter<P extends PopupPanel, D ext
     // Empty interface.
   }
 
-  private final AsyncCallbackExecutor i_asyncCallbackExecutor;
+  private final AsyncCallbackExecutor asyncCallbackExecutor;
   
   public AbstractCallbackPopupPresenter(AsyncCallbackExecutor asyncCallbackExecutor) {
     super();
-    i_asyncCallbackExecutor = asyncCallbackExecutor;
+    this.asyncCallbackExecutor = asyncCallbackExecutor;
   }
 
   protected abstract class AsyncRunnable<T> extends FailureAsPopupExecutableAsyncCallback<T> implements Runnable {
 
-    private final boolean i_hideOnExit;
+    private final boolean hideOnExit;
     
     public AsyncRunnable(boolean hideOnExit) {
       super();
-      i_hideOnExit = hideOnExit;
+      this.hideOnExit = hideOnExit;
     }
 
 
@@ -82,7 +82,7 @@ public abstract class AbstractCallbackPopupPresenter<P extends PopupPanel, D ext
 
 
     public boolean isHideOnExit() {
-      return i_hideOnExit;
+      return hideOnExit;
     }
   }
 
@@ -115,7 +115,7 @@ public abstract class AbstractCallbackPopupPresenter<P extends PopupPanel, D ext
 
 
   public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-    return i_asyncCallbackExecutor;
+    return asyncCallbackExecutor;
   }
 
 }

@@ -15,13 +15,13 @@ public class WaitingPresenter {
     public PopupPanel getPopupPanel();
   }
   
-  private final Display i_display;
-  private int i_registrations;  
+  private final Display display;
+  private int registrations;  
   
   @Inject
   public WaitingPresenter(Display display) {
     super();
-    i_display = display;
+    this.display = display;
     Window.ScrollHandler windowScrollHandler = new Window.ScrollHandler() {
       @Override
       public void onWindowScroll(ScrollEvent event) {
@@ -48,14 +48,14 @@ public class WaitingPresenter {
   }
 
   protected int getRegistrations() {
-    return i_registrations;
+    return registrations;
   }
 
   protected void setRegistrations(int registrations) {
-    i_registrations = registrations;
+    this.registrations = registrations;
   }
 
   public Display getDisplay() {
-    return i_display;
+    return display;
   }
 }

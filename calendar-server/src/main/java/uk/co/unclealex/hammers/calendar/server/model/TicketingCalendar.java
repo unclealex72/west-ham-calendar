@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -47,12 +47,12 @@ public class TicketingCalendar extends AbstractBusinessKeyBasedModel<CalendarTyp
 	/**
 	 * The primary key of the ticketing calendar.
 	 */
-	private Integer i_id;
+	private Integer id;
 
 	/**
 	 * The {@link CalendarType} of the ticketing calendar.
 	 */
-	private CalendarType i_calendarType;
+	private CalendarType calendarType;
 
 	/**
 	 * Instantiates a new ticketing calendar.
@@ -69,7 +69,7 @@ public class TicketingCalendar extends AbstractBusinessKeyBasedModel<CalendarTyp
 	 */
 	public TicketingCalendar(CalendarType calendarType) {
 		super();
-		i_calendarType = calendarType;
+		this.calendarType = calendarType;
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class TicketingCalendar extends AbstractBusinessKeyBasedModel<CalendarTyp
 	@Enumerated(EnumType.STRING)
 	@Column(unique = true, nullable = false)
 	public CalendarType getCalendarType() {
-		return i_calendarType;
+		return calendarType;
 	}
 
 	/**
@@ -107,7 +107,7 @@ public class TicketingCalendar extends AbstractBusinessKeyBasedModel<CalendarTyp
 	 *          the new {@link CalendarType} of the ticketing calendar
 	 */
 	public void setCalendarType(CalendarType calendarType) {
-		i_calendarType = calendarType;
+		this.calendarType = calendarType;
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class TicketingCalendar extends AbstractBusinessKeyBasedModel<CalendarTyp
 	@Id
 	@GeneratedValue
 	public Integer getId() {
-		return i_id;
+		return id;
 	}
 
 	/**
@@ -126,6 +126,6 @@ public class TicketingCalendar extends AbstractBusinessKeyBasedModel<CalendarTyp
 	 *          the new primary key of the ticketing calendar
 	 */
 	public void setId(Integer id) {
-		i_id = id;
+		this.id = id;
 	}
 }

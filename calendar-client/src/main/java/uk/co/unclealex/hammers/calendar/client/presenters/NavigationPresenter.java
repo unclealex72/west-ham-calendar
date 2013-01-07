@@ -66,22 +66,22 @@ public class NavigationPresenter implements AuthenticationEventListener {
 		SelectableListPanel getOptions();
 	}
 
-	private final PlaceController i_placeController;
-	private final Display i_display;
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
-	private final HammersMessages i_hammersMessages;
-	private final AuthenticationManager i_authenticationManager;
+	private final PlaceController placeController;
+	private final Display display;
+	private final AsyncCallbackExecutor asyncCallbackExecutor;
+	private final HammersMessages hammersMessages;
+	private final AuthenticationManager authenticationManager;
 	
 	@Inject
 	public NavigationPresenter(
 			PlaceController placeController, Display display, AuthenticationManager authenticationManager,
 			AsyncCallbackExecutor asyncCallbackExecutor, HammersMessages hammersMessages) {
 		super();
-		i_placeController = placeController;
-		i_display = display;
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
-		i_hammersMessages = hammersMessages;
-		i_authenticationManager = authenticationManager;
+		this.placeController = placeController;
+		this.display = display;
+		this.asyncCallbackExecutor = asyncCallbackExecutor;
+		this.hammersMessages = hammersMessages;
+		this.authenticationManager = authenticationManager;
 		getAuthenticationManager().addAuthenticationEventListener(this);
 		bind();
 	}
@@ -153,23 +153,23 @@ public class NavigationPresenter implements AuthenticationEventListener {
 	}
 	
 	public PlaceController getPlaceController() {
-		return i_placeController;
+		return placeController;
 	}
 	
 	public Display getDisplay() {
-		return i_display;
+		return display;
 	}
 
 	public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-		return i_asyncCallbackExecutor;
+		return asyncCallbackExecutor;
 	}
 
 	public HammersMessages getHammersMessages() {
-		return i_hammersMessages;
+		return hammersMessages;
 	}
 
 	public AuthenticationManager getAuthenticationManager() {
-		return i_authenticationManager;
+		return authenticationManager;
 	}
 	
 }

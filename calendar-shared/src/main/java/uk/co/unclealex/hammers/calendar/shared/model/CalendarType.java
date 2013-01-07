@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -84,14 +84,14 @@ public enum CalendarType {
 	TICKETS_BONDHOLDERS(true, "Bondholders");
 
 	/**
-	 * True if i_calendar is for ticket sales, false otherwise.
+	 * True if calendar is for ticket sales, false otherwise.
 	 */
-	private final boolean i_ticketCalendar;
+	private final boolean ticketCalendar;
 	
 	/**
-	 * The display name for i_calendar type.
+	 * The display name for calendar type.
 	 */
-	private final String i_displayName;
+	private final String displayName;
 	
 	/**
 	 * Instantiates a new calendar type.
@@ -102,25 +102,25 @@ public enum CalendarType {
 	 *          the display name
 	 */
 	private CalendarType(boolean ticketCalendar, String displayName) {
-		i_ticketCalendar = ticketCalendar;
-		i_displayName = displayName;
+		this.ticketCalendar = ticketCalendar;
+		this.displayName = displayName;
 	}
 	
 	/**
-	 * Checks if is true if i_calendar is for ticket sales, false otherwise.
+	 * Checks if is true if calendar is for ticket sales, false otherwise.
 	 * 
-	 * @return the true if i_calendar is for ticket sales, false otherwise
+	 * @return the true if calendar is for ticket sales, false otherwise
 	 */
 	public boolean isTicketCalendar() {
-		return i_ticketCalendar;
+		return ticketCalendar;
 	}
 
   /**
-	 * Gets the display name for i_calendar type.
+	 * Gets the display name for calendar type.
 	 * 
-	 * @return the display name for i_calendar type
+	 * @return the display name for calendar type
 	 */
   public String getDisplayName() {
-    return i_displayName;
+    return displayName;
   }
 }

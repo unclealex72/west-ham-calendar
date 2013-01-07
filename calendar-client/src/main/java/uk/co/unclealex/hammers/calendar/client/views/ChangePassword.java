@@ -52,7 +52,7 @@ public class ChangePassword extends SimplePanel implements Display {
   
 	private static final Binder binder = GWT.create(Binder.class);
 
-	private final CanWaitSupport i_canWaitSupport;
+	private final CanWaitSupport canWaitSupport;
 	
   public interface Style extends CssResource {
     String colourPicker();
@@ -69,7 +69,7 @@ public class ChangePassword extends SimplePanel implements Display {
   @Inject
   public ChangePassword(CanWaitSupport canWaitSupport) {
     add(binder.createAndBindUi(this));
-    i_canWaitSupport = canWaitSupport;
+    this.canWaitSupport = canWaitSupport;
     canWaitSupport.wrap(newPassword1, newPassword2, change, cancel);
   }
 
@@ -114,6 +114,6 @@ public class ChangePassword extends SimplePanel implements Display {
   }
 
   public CanWaitSupport getCanWaitSupport() {
-    return i_canWaitSupport;
+    return canWaitSupport;
   }
 }

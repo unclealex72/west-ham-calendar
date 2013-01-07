@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -33,15 +33,15 @@ public class GameWasUpdatedInformation implements GameUpdateInformation {
 	/**
 	 * True if the game was updated, false otherwise.
 	 */
-	private final boolean i_updated;
+	private final boolean updated;
 	
 	/**
-	 * Create a new instance of i_class.
+	 * Create a new instance of class.
 	 * @param updated True if the game was updated, false otherwise.
 	 */
 	public GameWasUpdatedInformation(boolean updated) {
 		super();
-		i_updated = updated;
+		this.updated = updated;
 	}
 
 	/**
@@ -58,6 +58,6 @@ public class GameWasUpdatedInformation implements GameUpdateInformation {
 	 * @return the true if the game was updated, false otherwise
 	 */
 	public boolean isUpdated() {
-		return i_updated;
+		return updated;
 	}
 }

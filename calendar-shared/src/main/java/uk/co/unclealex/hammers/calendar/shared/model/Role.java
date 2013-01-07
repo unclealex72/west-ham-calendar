@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -39,9 +39,9 @@ public enum Role {
 	ROLE_ADMIN("Administrator");
 	
 	/**
-	 * The displayable name for i_role.
+	 * The displayable name for role.
 	 */
-	private final String i_displayableName;
+	private final String displayableName;
 
   /**
 	 * Instantiates a new role.
@@ -50,16 +50,16 @@ public enum Role {
 	 *          the displayable name
 	 */
   private Role(String displayableName) {
-    i_displayableName = displayableName;
+    this.displayableName = displayableName;
   }
 
   /**
-	 * Gets the displayable name for i_role.
+	 * Gets the displayable name for role.
 	 * 
-	 * @return the displayable name for i_role
+	 * @return the displayable name for role
 	 */
   public String getDisplayableName() {
-    return i_displayableName;
+    return displayableName;
   }
 	
 	

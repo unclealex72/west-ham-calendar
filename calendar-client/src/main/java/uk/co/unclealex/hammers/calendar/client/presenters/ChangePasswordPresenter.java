@@ -60,17 +60,17 @@ public class ChangePasswordPresenter extends AbstractPopupPresenter<PopupPanel, 
     HasText getPasswordsDontMatch();
 	}
 
-	private final HammersMessages i_messages;
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
-	private final Display i_display;
+	private final HammersMessages messages;
+	private final AsyncCallbackExecutor asyncCallbackExecutor;
+	private final Display display;
 	
 	@Inject
 	public ChangePasswordPresenter(
 	    Display display, AuthenticationManager authenticationManager,
 	    AsyncCallbackExecutor asyncCallbackExecutor, HammersMessages messages) {
-		i_display = display;
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
-		i_messages = messages;
+		this.display = display;
+		this.asyncCallbackExecutor = asyncCallbackExecutor;
+		this.messages = messages;
 		bind();
 	}
 
@@ -153,15 +153,15 @@ public class ChangePasswordPresenter extends AbstractPopupPresenter<PopupPanel, 
   }
   
 	public Display getDisplay() {
-		return i_display;
+		return display;
 	}
 
   public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-    return i_asyncCallbackExecutor;
+    return asyncCallbackExecutor;
   }
 
   public HammersMessages getMessages() {
-    return i_messages;
+    return messages;
   }
 
 }

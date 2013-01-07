@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -45,7 +45,7 @@ public class GoogleAuthenticationAwareInvocationHandler implements InvocationHan
 	/**
 	 * The {@link GoogleCalendarDao} that is being proxied.
 	 */
-	private final GoogleCalendarDao i_googleCalendarDao;
+	private final GoogleCalendarDao googleCalendarDao;
 
 	/**
 	 * Instantiates a new google authentication aware invocation handler.
@@ -55,7 +55,7 @@ public class GoogleAuthenticationAwareInvocationHandler implements InvocationHan
 	 */
 	public GoogleAuthenticationAwareInvocationHandler(GoogleCalendarDao googleCalendarDao) {
 		super();
-		i_googleCalendarDao = googleCalendarDao;
+		this.googleCalendarDao = googleCalendarDao;
 	}
 
 	/**
@@ -85,7 +85,7 @@ public class GoogleAuthenticationAwareInvocationHandler implements InvocationHan
 	 * @return the {@link GoogleCalendarDao} that is being proxied
 	 */
 	public GoogleCalendarDao getGoogleCalendarDao() {
-		return i_googleCalendarDao;
+		return googleCalendarDao;
 	}
 
 }

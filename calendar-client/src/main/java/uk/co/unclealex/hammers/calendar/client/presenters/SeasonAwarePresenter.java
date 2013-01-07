@@ -36,11 +36,11 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
  */
 public abstract class SeasonAwarePresenter extends AbstractActivity {
 
-	private final PlaceController i_placeController;
+	private final PlaceController placeController;
 	
 	public SeasonAwarePresenter(PlaceController placeController) {
 		super();
-		i_placeController = placeController;
+		this.placeController = placeController;
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public abstract class SeasonAwarePresenter extends AbstractActivity {
 	protected abstract void start(AcceptsOneWidget panel, int season);
 	
 	public PlaceController getPlaceController() {
-		return i_placeController;
+		return placeController;
 	}
 
 }

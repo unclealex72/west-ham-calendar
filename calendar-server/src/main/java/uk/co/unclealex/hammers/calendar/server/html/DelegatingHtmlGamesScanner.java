@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -44,12 +44,12 @@ public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 	/**
 	 * The {@link LinkHarvester} used to find the links on a main page.
 	 */
-	private LinkHarvester i_linkHarvester;
+	private LinkHarvester linkHarvester;
 
 	/**
 	 * The {@link HtmlGamesScanner} used to find games on the child pages.
 	 */
-	private HtmlGamesScanner i_htmlGamesScanner;
+	private HtmlGamesScanner htmlGamesScanner;
 
 	/**
 	 * {@inheritDoc}
@@ -70,7 +70,7 @@ public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 	 * @return the {@link LinkHarvester} used to find the links on a main page
 	 */
 	public LinkHarvester getLinkHarvester() {
-		return i_linkHarvester;
+		return linkHarvester;
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 	 *          page
 	 */
 	public void setLinkHarvester(LinkHarvester linkHarvester) {
-		i_linkHarvester = linkHarvester;
+		this.linkHarvester = linkHarvester;
 	}
 
 	/**
@@ -90,7 +90,7 @@ public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 	 * @return the {@link HtmlGamesScanner} used to find games on the child pages
 	 */
 	public HtmlGamesScanner getHtmlGamesScanner() {
-		return i_htmlGamesScanner;
+		return htmlGamesScanner;
 	}
 
 	/**
@@ -101,6 +101,6 @@ public class DelegatingHtmlGamesScanner extends TagNodeBasedHtmlGamesScanner {
 	 *          pages
 	 */
 	public void setHtmlGamesScanner(HtmlGamesScanner htmlGamesScanner) {
-		i_htmlGamesScanner = htmlGamesScanner;
+		this.htmlGamesScanner = htmlGamesScanner;
 	}
 }

@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -39,7 +39,7 @@ public class GameFormatter implements Function<String, String> {
 	/**
 	 * The {@link GameDao} to use to look up persisted games.
 	 */
-	private GameDao i_gameDao;
+	private GameDao gameDao;
 
 	/**
 	 * {@inheritDoc}
@@ -70,7 +70,7 @@ public class GameFormatter implements Function<String, String> {
 	 * @return the {@link GameDao} to use to look up persisted games
 	 */
 	public GameDao getGameDao() {
-		return i_gameDao;
+		return gameDao;
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class GameFormatter implements Function<String, String> {
 	 *          the new {@link GameDao} to use to look up persisted games
 	 */
 	public void setGameDao(GameDao gameDao) {
-		i_gameDao = gameDao;
+		this.gameDao = gameDao;
 	}
 	
 	

@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -83,17 +83,17 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 * The {@link com.google.api.services.calendar.Calendar} object used to
 	 * communicate with Google.
 	 */
-	private final com.google.api.services.calendar.Calendar i_calendarService;
+	private final com.google.api.services.calendar.Calendar calendarService;
 
 	/**
 	 * The {@link Function} used to format a calendar for printing given its id.
 	 */
-	private final Function<String, String> i_calendarFormatter;
+	private final Function<String, String> calendarFormatter;
 
 	/**
 	 * The {@link Function} used to format a game for printing given its id.
 	 */
-	private final Function<String, String> i_gameFormatter;
+	private final Function<String, String> gameFormatter;
 
 	/**
 	 * Instantiates a new google calendar dao impl.
@@ -108,9 +108,9 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	public GoogleCalendarDaoImpl(com.google.api.services.calendar.Calendar calendarService,
 			Function<String, String> calendarFormatter, Function<String, String> gameFormatter) {
 		super();
-		i_calendarService = calendarService;
-		i_calendarFormatter = calendarFormatter;
-		i_gameFormatter = gameFormatter;
+		this.calendarService = calendarService;
+		this.calendarFormatter = calendarFormatter;
+		this.gameFormatter = gameFormatter;
 	}
 
 	/**
@@ -459,7 +459,7 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 * @return the {@link com
 	 */
 	public com.google.api.services.calendar.Calendar getCalendarService() {
-		return i_calendarService;
+		return calendarService;
 	}
 
 	/**
@@ -470,7 +470,7 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 *         its id
 	 */
 	public Function<String, String> getCalendarFormatter() {
-		return i_calendarFormatter;
+		return calendarFormatter;
 	}
 
 	/**
@@ -480,7 +480,7 @@ public class GoogleCalendarDaoImpl extends DurationFindingAwareGoogleCalendarDao
 	 *         id
 	 */
 	public Function<String, String> getGameFormatter() {
-		return i_gameFormatter;
+		return gameFormatter;
 	}
 
 }

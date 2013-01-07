@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -35,79 +35,79 @@ public class GameView implements Serializable, Comparable<GameView> {
 	/**
 	 * The game's id.
 	 */
-	private Integer i_id;
+	private Integer id;
 	
 	/**
 	 * The game's {@link Competition}.
 	 */
-	private Competition i_competition;
+	private Competition competition;
 	
 	/**
 	 * The game's {@link Location}.
 	 */
-	private Location i_location;
+	private Location location;
 	
 	/**
 	 * The game's opponents.
 	 */
-	private String i_opponents;
+	private String opponents;
 	
 	/**
 	 * The game's season.
 	 */
-	private int i_season;
+	private int season;
 
 	/**
 	 * The date and time the game was played.
 	 */
-	private Date i_datePlayed;
+	private Date datePlayed;
 
 	/**
 	 * The game's result or null if it has yet to be played.
 	 */
-	private String i_result;
+	private String result;
 	
 	/**
 	 * The game's attendance or null if it has yet to be played.
 	 */
-	private Integer i_attendence;
+	private Integer attendence;
 
 	/**
 	 * The game's match report or null if it has yet to be played.
 	 */
-	private String i_matchReport;
+	private String matchReport;
 
 	/**
 	 * The game's television channel or null if it has not been televised.
 	 */
-	private String i_televisionChannel;
+	private String televisionChannel;
 	
 
 	/**
-	 * The date tickets are available or null if i_is not known.
+	 * The date tickets are available or null if is not known.
 	 */
-	private Date i_ticketsAvailable;
+	private Date ticketsAvailable;
 	
 	/**
-	 * True if i_game has been attended, false otherwise.
+	 * True if game has been attended, false otherwise.
 	 */
-	private boolean i_attended;
+	private boolean attended;
 	
 	/**
-	 * True if i_game is being played during the week, false otherwise.
+	 * True if game is being played during the week, false otherwise.
 	 */
-	private boolean i_weekGame;
+	private boolean weekGame;
 	
 
 	/**
-	 * True if i_game is being played at the weekend but not at 3pm, false otherwise.
+	 * True if game is being played at the weekend but not at 3pm, false otherwise.
 	 */
-	private boolean i_nonStandardWeekendGame;
+	private boolean nonStandardWeekendGame;
 	
 	/**
-	 * True if i_game is editable, false otherwise.
+	 * True if game is editable, false otherwise.
 	 */
-	private boolean i_enabled;
+	private boolean enabled;
 	
 	/**
 	 * Instantiates a new game view.
@@ -154,21 +154,21 @@ public class GameView implements Serializable, Comparable<GameView> {
 			String result, Integer attendence, String matchReport, String televisionChannel, Date ticketsAvailable, 
 			boolean attended, boolean weekGame, boolean nonStandardWeekendGame, boolean enabled) {
 		super();
-		i_id = id;
-		i_competition = competition;
-		i_location = location;
-		i_opponents = opponents;
-		i_season = season;
-		i_datePlayed = datePlayed;
-		i_result = result;
-		i_attendence = attendence;
-		i_matchReport = matchReport;
-		i_televisionChannel = televisionChannel;
-		i_ticketsAvailable = ticketsAvailable;
-		i_attended = attended;
-		i_weekGame = weekGame;
-		i_nonStandardWeekendGame = nonStandardWeekendGame;
-		i_enabled = enabled;
+		this.id = id;
+		this.competition = competition;
+		this.location = location;
+		this.opponents = opponents;
+		this.season = season;
+		this.datePlayed = datePlayed;
+		this.result = result;
+		this.attendence = attendence;
+		this.matchReport = matchReport;
+		this.televisionChannel = televisionChannel;
+		this.ticketsAvailable = ticketsAvailable;
+		this.attended = attended;
+		this.weekGame = weekGame;
+		this.nonStandardWeekendGame = nonStandardWeekendGame;
+		this.enabled = enabled;
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's id
 	 */
 	public Integer getId() {
-		return i_id;
+		return id;
 	}
 
 	/**
@@ -211,7 +211,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new game's id
 	 */
 	public void setId(Integer id) {
-		i_id = id;
+		this.id = id;
 	}
 
 	/**
@@ -220,7 +220,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's {@link Competition}
 	 */
 	public Competition getCompetition() {
-		return i_competition;
+		return competition;
 	}
 
 	/**
@@ -230,7 +230,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new game's {@link Competition}
 	 */
 	public void setCompetition(Competition competition) {
-		i_competition = competition;
+		this.competition = competition;
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's {@link Location}
 	 */
 	public Location getLocation() {
-		return i_location;
+		return location;
 	}
 
 	/**
@@ -249,7 +249,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new game's {@link Location}
 	 */
 	public void setLocation(Location location) {
-		i_location = location;
+		this.location = location;
 	}
 
 	/**
@@ -258,7 +258,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's opponents
 	 */
 	public String getOpponents() {
-		return i_opponents;
+		return opponents;
 	}
 
 	/**
@@ -268,7 +268,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new game's opponents
 	 */
 	public void setOpponents(String opponents) {
-		i_opponents = opponents;
+		this.opponents = opponents;
 	}
 
 	/**
@@ -277,7 +277,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's season
 	 */
 	public int getSeason() {
-		return i_season;
+		return season;
 	}
 
 	/**
@@ -287,7 +287,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new game's season
 	 */
 	public void setSeason(int season) {
-		i_season = season;
+		this.season = season;
 	}
 
 	/**
@@ -296,7 +296,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the date and time the game was played
 	 */
 	public Date getDatePlayed() {
-		return i_datePlayed;
+		return datePlayed;
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new date and time the game was played
 	 */
 	public void setDatePlayed(Date datePlayed) {
-		i_datePlayed = datePlayed;
+		this.datePlayed = datePlayed;
 	}
 
 	/**
@@ -315,7 +315,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's result or null if it has yet to be played
 	 */
 	public String getResult() {
-		return i_result;
+		return result;
 	}
 
 	/**
@@ -325,7 +325,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new game's result or null if it has yet to be played
 	 */
 	public void setResult(String result) {
-		i_result = result;
+		this.result = result;
 	}
 
 	/**
@@ -334,7 +334,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's attendance or null if it has yet to be played
 	 */
 	public Integer getAttendence() {
-		return i_attendence;
+		return attendence;
 	}
 
 	/**
@@ -344,7 +344,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new game's attendance or null if it has yet to be played
 	 */
 	public void setAttendence(Integer attendence) {
-		i_attendence = attendence;
+		this.attendence = attendence;
 	}
 
 	/**
@@ -353,7 +353,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's match report or null if it has yet to be played
 	 */
 	public String getMatchReport() {
-		return i_matchReport;
+		return matchReport;
 	}
 
 	/**
@@ -363,7 +363,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          the new game's match report or null if it has yet to be played
 	 */
 	public void setMatchReport(String matchReport) {
-		i_matchReport = matchReport;
+		this.matchReport = matchReport;
 	}
 
 	/**
@@ -372,7 +372,7 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 * @return the game's television channel or null if it has not been televised
 	 */
 	public String getTelevisionChannel() {
-		return i_televisionChannel;
+		return televisionChannel;
 	}
 
 	/**
@@ -383,109 +383,109 @@ public class GameView implements Serializable, Comparable<GameView> {
 	 *          televised
 	 */
 	public void setTelevisionChannel(String televisionChannel) {
-		i_televisionChannel = televisionChannel;
+		this.televisionChannel = televisionChannel;
 	}
 
 	/**
-	 * Checks if is true if i_game has been attended, false otherwise.
+	 * Checks if is true if game has been attended, false otherwise.
 	 * 
-	 * @return the true if i_game has been attended, false otherwise
+	 * @return the true if game has been attended, false otherwise
 	 */
 	public boolean isAttended() {
-		return i_attended;
+		return attended;
 	}
 
 	/**
-	 * Sets the true if i_game has been attended, false otherwise.
+	 * Sets the true if game has been attended, false otherwise.
 	 * 
 	 * @param attended
-	 *          the new true if i_game has been attended, false otherwise
+	 *          the new true if game has been attended, false otherwise
 	 */
 	public void setAttended(boolean attended) {
-		i_attended = attended;
+		this.attended = attended;
 	}
 
 	/**
-	 * Checks if is true if i_game is being played during the week, false
+	 * Checks if is true if game is being played during the week, false
 	 * otherwise.
 	 * 
-	 * @return the true if i_game is being played during the week, false
+	 * @return the true if game is being played during the week, false
 	 *         otherwise
 	 */
 	public boolean isWeekGame() {
-		return i_weekGame;
+		return weekGame;
 	}
 
 	/**
-	 * Sets the true if i_game is being played during the week, false
+	 * Sets the true if game is being played during the week, false
 	 * otherwise.
 	 * 
 	 * @param weekGame
-	 *          the new true if i_game is being played during the week, false
+	 *          the new true if game is being played during the week, false
 	 *          otherwise
 	 */
 	public void setWeekGame(boolean weekGame) {
-		i_weekGame = weekGame;
+		this.weekGame = weekGame;
 	}
 
 	/**
-	 * Checks if is true if i_game is being played at the weekend but not at
+	 * Checks if is true if game is being played at the weekend but not at
 	 * 3pm, false otherwise.
 	 * 
-	 * @return the true if i_game is being played at the weekend but not at
+	 * @return the true if game is being played at the weekend but not at
 	 *         3pm, false otherwise
 	 */
 	public boolean isNonStandardWeekendGame() {
-		return i_nonStandardWeekendGame;
+		return nonStandardWeekendGame;
 	}
 
 	/**
-	 * Sets the true if i_game is being played at the weekend but not at 3pm,
+	 * Sets the true if game is being played at the weekend but not at 3pm,
 	 * false otherwise.
 	 * 
 	 * @param nonStandardWeekendGame
-	 *          the new true if i_game is being played at the weekend but not
+	 *          the new true if game is being played at the weekend but not
 	 *          at 3pm, false otherwise
 	 */
 	public void setNonStandardWeekendGame(boolean nonStandardWeekendGame) {
-		i_nonStandardWeekendGame = nonStandardWeekendGame;
+		this.nonStandardWeekendGame = nonStandardWeekendGame;
 	}
 
 	/**
-	 * Gets the date tickets are available or null if i_is not known.
+	 * Gets the date tickets are available or null if is not known.
 	 * 
-	 * @return the date tickets are available or null if i_is not known
+	 * @return the date tickets are available or null if is not known
 	 */
 	public Date getTicketsAvailable() {
-		return i_ticketsAvailable;
+		return ticketsAvailable;
 	}
 
 	/**
-	 * Sets the date tickets are available or null if i_is not known.
+	 * Sets the date tickets are available or null if is not known.
 	 * 
 	 * @param ticketsAvailable
-	 *          the new date tickets are available or null if i_is not known
+	 *          the new date tickets are available or null if is not known
 	 */
 	public void setTicketsAvailable(Date ticketsAvailable) {
-		i_ticketsAvailable = ticketsAvailable;
+		this.ticketsAvailable = ticketsAvailable;
 	}
 
 	/**
-	 * Checks if is true if i_game is editable, false otherwise.
+	 * Checks if is true if game is editable, false otherwise.
 	 * 
-	 * @return the true if i_game is editable, false otherwise
+	 * @return the true if game is editable, false otherwise
 	 */
 	public boolean isEnabled() {
-		return i_enabled;
+		return enabled;
 	}
 
 	/**
-	 * Sets the true if i_game is editable, false otherwise.
+	 * Sets the true if game is editable, false otherwise.
 	 * 
 	 * @param enabled
-	 *          the new true if i_game is editable, false otherwise
+	 *          the new true if game is editable, false otherwise
 	 */
 	public void setEnabled(boolean enabled) {
-		i_enabled = enabled;
+		this.enabled = enabled;
 	}
 }

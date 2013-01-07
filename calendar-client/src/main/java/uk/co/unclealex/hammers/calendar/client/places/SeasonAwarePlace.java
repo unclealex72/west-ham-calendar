@@ -4,11 +4,11 @@ import com.google.gwt.place.shared.PlaceTokenizer;
 
 public abstract class SeasonAwarePlace extends HammersPlace {
 
-	private final int i_season;
+	private final int season;
 
 	public SeasonAwarePlace(int season) {
 		super();
-		i_season = season;
+		this.season = season;
 	}
 
 	public abstract boolean equals(Object other);
@@ -34,7 +34,7 @@ public abstract class SeasonAwarePlace extends HammersPlace {
 		
 	}
 	public int getSeason() {
-		return i_season;
+		return season;
 	}
 		
 }

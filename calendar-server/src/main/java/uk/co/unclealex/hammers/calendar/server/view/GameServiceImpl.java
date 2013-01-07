@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -53,22 +53,22 @@ public class GameServiceImpl implements GameService {
 	/**
 	 * The {@link GameDao} used to persist {@link Game}s.
 	 */
-	private GameDao i_gameDao;
+	private GameDao gameDao;
 	
 	/**
 	 * The {@link TicketingCalendarService} used to interface with the selected ticketing calendar.
 	 */
-	private TicketingCalendarService i_ticketingCalendarService;
+	private TicketingCalendarService ticketingCalendarService;
 	
 	/**
 	 * The {@link DateService} use to manipulate dates and times.
 	 */
-	private DateService i_dateService;
+	private DateService dateService;
 	
 	/**
 	 * The {@link GoogleCalendarFactory} used to get information about {@link GoogleCalendar}s.
 	 */
-	private GoogleCalendarFactory i_googleCalendarFactory;
+	private GoogleCalendarFactory googleCalendarFactory;
 
 	/**
 	 * {@inheritDoc}
@@ -172,7 +172,7 @@ public class GameServiceImpl implements GameService {
 	 * @return the {@link GameDao} used to persist {@link Game}s
 	 */
 	public GameDao getGameDao() {
-		return i_gameDao;
+		return gameDao;
 	}
 
 	/**
@@ -182,7 +182,7 @@ public class GameServiceImpl implements GameService {
 	 *          the new {@link GameDao} used to persist {@link Game}s
 	 */
 	public void setGameDao(GameDao gameDao) {
-		i_gameDao = gameDao;
+		this.gameDao = gameDao;
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class GameServiceImpl implements GameService {
 	 *         selected ticketing calendar
 	 */
 	public TicketingCalendarService getTicketingCalendarService() {
-		return i_ticketingCalendarService;
+		return ticketingCalendarService;
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class GameServiceImpl implements GameService {
 	 *          the selected ticketing calendar
 	 */
 	public void setTicketingCalendarService(TicketingCalendarService ticketingCalendarService) {
-		i_ticketingCalendarService = ticketingCalendarService;
+		this.ticketingCalendarService = ticketingCalendarService;
 	}
 
 	/**
@@ -214,7 +214,7 @@ public class GameServiceImpl implements GameService {
 	 * @return the {@link DateService} use to manipulate dates and times
 	 */
 	public DateService getDateService() {
-		return i_dateService;
+		return dateService;
 	}
 
 	/**
@@ -224,7 +224,7 @@ public class GameServiceImpl implements GameService {
 	 *          the new {@link DateService} use to manipulate dates and times
 	 */
 	public void setDateService(DateService dateService) {
-		i_dateService = dateService;
+		this.dateService = dateService;
 	}
 
 	/**
@@ -235,7 +235,7 @@ public class GameServiceImpl implements GameService {
 	 *         {@link GoogleCalendar}s
 	 */
 	public GoogleCalendarFactory getGoogleCalendarFactory() {
-		return i_googleCalendarFactory;
+		return googleCalendarFactory;
 	}
 
 	/**
@@ -247,7 +247,7 @@ public class GameServiceImpl implements GameService {
 	 *          about {@link GoogleCalendar}s
 	 */
 	public void setGoogleCalendarFactory(GoogleCalendarFactory googleCalendarFactory) {
-		i_googleCalendarFactory = googleCalendarFactory;
+		this.googleCalendarFactory = googleCalendarFactory;
 	}
 
 }

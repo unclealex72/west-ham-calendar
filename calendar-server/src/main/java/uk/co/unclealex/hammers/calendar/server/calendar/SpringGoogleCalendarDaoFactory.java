@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -47,22 +47,22 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	/**
 	 * The current Spring {@link AutowireCapableBeanFactory}. 
 	 */
-	private AutowireCapableBeanFactory i_autowireCapableBeanFactory;
+	private AutowireCapableBeanFactory autowireCapableBeanFactory;
 	
 	/**
 	 * The {@link CalendarFactory} that will create the connection to the Google Calendar API.
 	 */
-	private CalendarFactory i_calendarFactory;
+	private CalendarFactory calendarFactory;
 
 	/**
 	 * A {@link Function} to print a calendar given its id.
 	 */
-	private Function<String, String> i_calendarFormatter;
+	private Function<String, String> calendarFormatter;
 	
 	/**
 	 * A {@link Function} to print a calendar given its id.
 	 */
-	private Function<String, String> i_gameFormatter;
+	private Function<String, String> gameFormatter;
 
 	/**
 	 * {@inheritDoc}
@@ -91,7 +91,7 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	 * @return the current Spring {@link AutowireCapableBeanFactory}
 	 */
 	public AutowireCapableBeanFactory getAutowireCapableBeanFactory() {
-		return i_autowireCapableBeanFactory;
+		return autowireCapableBeanFactory;
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	 *          the new current Spring {@link AutowireCapableBeanFactory}
 	 */
 	public void setAutowireCapableBeanFactory(AutowireCapableBeanFactory autowireCapableBeanFactory) {
-		i_autowireCapableBeanFactory = autowireCapableBeanFactory;
+		this.autowireCapableBeanFactory = autowireCapableBeanFactory;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	 *         Google Calendar API
 	 */
 	public CalendarFactory getCalendarFactory() {
-		return i_calendarFactory;
+		return calendarFactory;
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	 *          the Google Calendar API
 	 */
 	public void setCalendarFactory(CalendarFactory calendarFactory) {
-		i_calendarFactory = calendarFactory;
+		this.calendarFactory = calendarFactory;
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	 * @return the a {@link Function} to print a calendar given its id
 	 */
 	public Function<String, String> getCalendarFormatter() {
-		return i_calendarFormatter;
+		return calendarFormatter;
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	 *          the new a {@link Function} to print a calendar given its id
 	 */
 	public void setCalendarFormatter(Function<String, String> calendarFormatter) {
-		i_calendarFormatter = calendarFormatter;
+		this.calendarFormatter = calendarFormatter;
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	 * @return the a {@link Function} to print a calendar given its id
 	 */
 	public Function<String, String> getGameFormatter() {
-		return i_gameFormatter;
+		return gameFormatter;
 	}
 
 	/**
@@ -162,6 +162,6 @@ public class SpringGoogleCalendarDaoFactory implements GoogleCalendarDaoFactory,
 	 *          the new a {@link Function} to print a calendar given its id
 	 */
 	public void setGameFormatter(Function<String, String> gameFormatter) {
-		i_gameFormatter = gameFormatter;
+		this.gameFormatter = gameFormatter;
 	}
 }

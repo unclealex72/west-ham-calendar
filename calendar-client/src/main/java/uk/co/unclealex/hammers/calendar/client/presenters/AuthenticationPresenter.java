@@ -48,17 +48,17 @@ public class AuthenticationPresenter implements AuthenticationEventListener {
     Anchor getChangePasswordLink();
 	}
 
-	private final HammersMessages i_hammersMessages;
-	private final ChangePasswordPresenter i_changePasswordPresenter;
-	private final Display i_display;
+	private final HammersMessages hammersMessages;
+	private final ChangePasswordPresenter changePasswordPresenter;
+	private final Display display;
 	
 	@Inject
 	public AuthenticationPresenter(
 	    ChangePasswordPresenter changePasswordPresenter,
 	    Display display, HammersMessages hammersMessages, AuthenticationManager authenticationManager) {
-	  i_changePasswordPresenter = changePasswordPresenter;
-		i_hammersMessages = hammersMessages;
-		i_display = display;
+	  this.changePasswordPresenter = changePasswordPresenter;
+		this.hammersMessages = hammersMessages;
+		this.display = display;
     authenticationManager.addAuthenticationEventListener(this);
 		bind();
 	}
@@ -85,15 +85,15 @@ public class AuthenticationPresenter implements AuthenticationEventListener {
 	}
 
 	public HammersMessages getHammersMessages() {
-		return i_hammersMessages;
+		return hammersMessages;
 	}
 
 	public Display getDisplay() {
-		return i_display;
+		return display;
 	}
 
   public ChangePasswordPresenter getChangePasswordPresenter() {
-    return i_changePasswordPresenter;
+    return changePasswordPresenter;
   }
 
 }

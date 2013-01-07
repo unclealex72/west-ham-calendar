@@ -48,12 +48,12 @@ import com.google.gwt.user.client.rpc.StatusCodeException;
  */
 public class SecureAsyncCallbackExecutor implements AsyncCallbackExecutor {
 
-  private final WaitingPresenter i_waitingPresenter;
-	private final LoginPresenterFactory i_loginPresenterFactory;
-	private final AnonymousAttendanceServiceAsync i_anonymousAttendanceService;
-	private final UserAttendanceServiceAsync i_userAttendanceService;
-	private final AdminAttendanceServiceAsync i_adminAttendanceService;
-	private final GoogleAuthenticationPresenterFactory i_googleAuthenticationPresenterFactory;
+  private final WaitingPresenter waitingPresenter;
+	private final LoginPresenterFactory loginPresenterFactory;
+	private final AnonymousAttendanceServiceAsync anonymousAttendanceService;
+	private final UserAttendanceServiceAsync userAttendanceService;
+	private final AdminAttendanceServiceAsync adminAttendanceService;
+	private final GoogleAuthenticationPresenterFactory googleAuthenticationPresenterFactory;
 	
 	@Inject
 	public SecureAsyncCallbackExecutor(LoginPresenterFactory loginPresenterFactory,
@@ -61,12 +61,12 @@ public class SecureAsyncCallbackExecutor implements AsyncCallbackExecutor {
 			AnonymousAttendanceServiceAsync anonymousAttendanceService, UserAttendanceServiceAsync userAttendanceService,
 			AdminAttendanceServiceAsync adminAttendanceService, WaitingPresenter waitingPresenter) {
 		super();
-		i_googleAuthenticationPresenterFactory = googleAuthenticationPresenterFactory;
-		i_loginPresenterFactory = loginPresenterFactory;
-		i_anonymousAttendanceService = anonymousAttendanceService;
-		i_userAttendanceService = userAttendanceService;
-		i_adminAttendanceService = adminAttendanceService;
-		i_waitingPresenter = waitingPresenter;
+		this.googleAuthenticationPresenterFactory = googleAuthenticationPresenterFactory;
+		this.loginPresenterFactory = loginPresenterFactory;
+		this.anonymousAttendanceService = anonymousAttendanceService;
+		this.userAttendanceService = userAttendanceService;
+		this.adminAttendanceService = adminAttendanceService;
+		this.waitingPresenter = waitingPresenter;
 	}
 
 	@Override
@@ -186,30 +186,30 @@ public class SecureAsyncCallbackExecutor implements AsyncCallbackExecutor {
 	}
 	
 	public AnonymousAttendanceServiceAsync getAnonymousAttendanceService() {
-		return i_anonymousAttendanceService;
+		return anonymousAttendanceService;
 	}
 
 
 	public UserAttendanceServiceAsync getUserAttendanceService() {
-		return i_userAttendanceService;
+		return userAttendanceService;
 	}
 
 
 	public AdminAttendanceServiceAsync getAdminAttendanceService() {
-		return i_adminAttendanceService;
+		return adminAttendanceService;
 	}
 
 
 	public LoginPresenterFactory getLoginPresenterFactory() {
-		return i_loginPresenterFactory;
+		return loginPresenterFactory;
 	}
 
 
   public WaitingPresenter getWaitingPresenter() {
-    return i_waitingPresenter;
+    return waitingPresenter;
   }
 
   public GoogleAuthenticationPresenterFactory getGoogleAuthenticationPresenterFactory() {
-    return i_googleAuthenticationPresenterFactory;
+    return googleAuthenticationPresenterFactory;
   }
 }

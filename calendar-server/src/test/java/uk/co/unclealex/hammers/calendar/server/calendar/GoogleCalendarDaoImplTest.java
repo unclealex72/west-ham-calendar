@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -94,7 +94,7 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 			setSecondaryCalendar(findOrCreateUnitTestCalendar("Unit Test Calendar (Secondary)"));
 		}
 		catch (Throwable t) {
-			log.error("Could not set up i_test class.", t);
+			log.error("Could not set up test class.", t);
 			throw new RuntimeException("Could not set up a test class.", t);
 		}
 	}
@@ -202,7 +202,7 @@ public class GoogleCalendarDaoImplTest extends AbstractGoogleCalendarDaoTest {
 			}
 		}
 		catch (Throwable t) {
-			log.error("Could not set up i_test.", t);
+			log.error("Could not set up test.", t);
 			throw new RuntimeException("Could not set up a test.", t);
 		}
 		finally {

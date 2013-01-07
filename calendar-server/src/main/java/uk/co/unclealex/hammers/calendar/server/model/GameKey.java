@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -40,22 +40,22 @@ public class GameKey implements Comparable<GameKey> {
 	/**
 	 * The game's competition.
 	 */
-	private final Competition i_competition;
+	private final Competition competition;
 	
 	/**
 	 * The game's location.
 	 */
-	private final Location i_location;
+	private final Location location;
 	
 	/**
 	 * The game's opponents.
 	 */
-	private final String i_opponents;
+	private final String opponents;
 	
 	/**
 	 * The game's season.
 	 */
-	private final int i_season;
+	private final int season;
 
 	/**
 	 * Create a new game key.
@@ -71,10 +71,10 @@ public class GameKey implements Comparable<GameKey> {
 	 */
 	public GameKey(Competition competition, Location location, String opponents, int season) {
 		super();
-		i_competition = competition;
-		i_location = location;
-		i_opponents = opponents;
-		i_season = season;
+		this.competition = competition;
+		this.location = location;
+		this.opponents = opponents;
+		this.season = season;
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class GameKey implements Comparable<GameKey> {
 	 * @return The game's competition.
 	 */
 	public Competition getCompetition() {
-		return i_competition;
+		return competition;
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class GameKey implements Comparable<GameKey> {
 	 * @return The game's location.
 	 */
 	public Location getLocation() {
-		return i_location;
+		return location;
 	}
 
 	/**
@@ -143,7 +143,7 @@ public class GameKey implements Comparable<GameKey> {
 	 * @return The game's opponents.
 	 */
 	public String getOpponents() {
-		return i_opponents;
+		return opponents;
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class GameKey implements Comparable<GameKey> {
 	 * @return The game's season.
 	 */
 	public int getSeason() {
-		return i_season;
+		return season;
 	}
 
 }

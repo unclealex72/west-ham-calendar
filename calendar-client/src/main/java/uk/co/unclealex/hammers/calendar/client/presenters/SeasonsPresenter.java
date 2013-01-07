@@ -59,21 +59,21 @@ public class SeasonsPresenter {
 		
 	}
 
-	private boolean i_initialised;
-	private final Display i_display;
-	private final PlaceController i_placeController;
-	private final HammersMessages i_hammersMessages;
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
+	private boolean initialised;
+	private final Display display;
+	private final PlaceController placeController;
+	private final HammersMessages hammersMessages;
+	private final AsyncCallbackExecutor asyncCallbackExecutor;
 	
 	@Inject
 	public SeasonsPresenter(Display display, PlaceController placeController,
 			HammersMessages hammersMessages,
 			AsyncCallbackExecutor asyncCallbackExecutor) {
 		super();
-		i_display = display;
-		i_placeController = placeController;
-		i_hammersMessages = hammersMessages;
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
+		this.display = display;
+		this.placeController = placeController;
+		this.hammersMessages = hammersMessages;
+		this.asyncCallbackExecutor = asyncCallbackExecutor;
 		bind();
 	}
 
@@ -130,26 +130,26 @@ public class SeasonsPresenter {
 	}
 
 	public Display getDisplay() {
-		return i_display;
+		return display;
 	}
 
 	public PlaceController getPlaceController() {
-		return i_placeController;
+		return placeController;
 	}
 
 	public HammersMessages getHammersMessages() {
-		return i_hammersMessages;
+		return hammersMessages;
 	}
 
 	protected boolean isInitialised() {
-		return i_initialised;
+		return initialised;
 	}
 
 	protected void setInitialised(boolean initialised) {
-		i_initialised = initialised;
+		this.initialised = initialised;
 	}
 
 	public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-		return i_asyncCallbackExecutor;
+		return asyncCallbackExecutor;
 	}
 }

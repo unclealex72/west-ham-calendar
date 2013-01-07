@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 
 /**
- * A user is someone who can log into i_application.
+ * A user is someone who can log into application.
  * @author aj016368
  *
  */
@@ -34,17 +34,17 @@ public class User implements Serializable {
 	/**
 	 * The user's username.
 	 */
-  private String i_username;
+  private String username;
   
   /**
    * True if the user is logged in, false otherwise.
    */
-  private boolean i_loggedIn;
+  private boolean loggedIn;
   
   /**
    * The user's most senior role.
    */
-  private Role i_role;
+  private Role role;
   
   /**
 	 * Instantiates a new user.
@@ -65,9 +65,9 @@ public class User implements Serializable {
 	 */
   public User(String username, boolean loggedIn, Role role) {
     super();
-    i_username = username;
-    i_loggedIn = loggedIn;
-    i_role = role;
+    this.username = username;
+    this.loggedIn = loggedIn;
+    this.role = role;
   }
 
   /**
@@ -76,7 +76,7 @@ public class User implements Serializable {
 	 * @return the user's username
 	 */
   public String getUsername() {
-    return i_username;
+    return username;
   }
 
   /**
@@ -85,7 +85,7 @@ public class User implements Serializable {
 	 * @return the user's most senior role
 	 */
   public Role getRole() {
-    return i_role;
+    return role;
   }
 
   /**
@@ -94,7 +94,7 @@ public class User implements Serializable {
 	 * @return the true if the user is logged in, false otherwise
 	 */
   public boolean isLoggedIn() {
-    return i_loggedIn;
+    return loggedIn;
   }
   
   

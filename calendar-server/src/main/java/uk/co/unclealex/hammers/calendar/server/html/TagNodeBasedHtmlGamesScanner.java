@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -48,12 +48,12 @@ public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 	/**
 	 * The {@link HtmlPageLoader} used to load web pages.
 	 */
-	private HtmlPageLoader i_htmlPageLoader;
+	private HtmlPageLoader htmlPageLoader;
 	
 	/**
 	 * The {@link DateService} to use for date and time manipulation.
 	 */
-	private DateService i_dateService;
+	private DateService dateService;
 
 	/**
 	 * {@inheritDoc}
@@ -83,7 +83,7 @@ public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 	 * @return the {@link HtmlPageLoader} used to load web pages
 	 */
 	public HtmlPageLoader getHtmlPageLoader() {
-		return i_htmlPageLoader;
+		return htmlPageLoader;
 	}
 
 	/**
@@ -93,7 +93,7 @@ public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 	 *          the new {@link HtmlPageLoader} used to load web pages
 	 */
 	public void setHtmlPageLoader(HtmlPageLoader htmlPageLoader) {
-		i_htmlPageLoader = htmlPageLoader;
+		this.htmlPageLoader = htmlPageLoader;
 	}
 
 	/**
@@ -102,7 +102,7 @@ public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 	 * @return the {@link DateService} to use for date and time manipulation
 	 */
 	public DateService getDateService() {
-		return i_dateService;
+		return dateService;
 	}
 
 	/**
@@ -112,7 +112,7 @@ public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 	 *          the new {@link DateService} to use for date and time manipulation
 	 */
 	public void setDateService(DateService dateService) {
-		i_dateService = dateService;
+		this.dateService = dateService;
 	}
 
 }

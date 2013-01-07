@@ -40,11 +40,11 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
  */
 public abstract class RequiresPrerequisiteRemoteActionPresenter extends AbstractActivity {
 
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
+	private final AsyncCallbackExecutor asyncCallbackExecutor;
 	
 	public RequiresPrerequisiteRemoteActionPresenter(AsyncCallbackExecutor asyncCallbackExecutor) {
 		super();
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
+		this.asyncCallbackExecutor = asyncCallbackExecutor;
 	}
 
 
@@ -73,7 +73,7 @@ public abstract class RequiresPrerequisiteRemoteActionPresenter extends Abstract
 			AsyncCallback<Void> callback);
 
 	public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-		return i_asyncCallbackExecutor;
+		return asyncCallbackExecutor;
 	}
 
 }

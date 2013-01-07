@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -65,59 +65,59 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * The {@link GameService} used to create sets of {@link GameView} instances
 	 * to be viewed by the GUI.
 	 */
-	private GameService i_gameService;
+	private GameService gameService;
 
 	/**
 	 * The {@link SecurityInvalidator} for logging out.
 	 */
-	private SecurityInvalidator i_securityInvalidator;
+	private SecurityInvalidator securityInvalidator;
 
 	/**
 	 * The {@link LeagueService} for creating leagues.
 	 */
-	private LeagueService i_leagueService;
+	private LeagueService leagueService;
 
 	/**
 	 * The {@link AuthenticationService} for user authentication.
 	 */
-	private AuthenticationService i_authenticationService;
+	private AuthenticationService authenticationService;
 
 	/**
 	 * The {@link TicketingCalendarService} to get and set which calendar is to be
 	 * shown for ticketing information.
 	 */
-	private TicketingCalendarService i_ticketingCalendarService;
+	private TicketingCalendarService ticketingCalendarService;
 
 	/**
 	 * The {@link MainUpdateService} used for updating Google calendars.
 	 */
-	private MainUpdateService i_mainUpdateService;
+	private MainUpdateService mainUpdateService;
 
 	/**
 	 * The {@link UserService} used for updating users.
 	 */
-	private UserService i_userService;
+	private UserService userService;
 
 	/**
 	 * The {@link UserService} used for getting user information.
 	 */
-	private UserDao i_userDao;
+	private UserDao userDao;
 
 	/**
 	 * The {@link DefaultsService} used to make sure the minimal defaults exist.
 	 */
-	private DefaultsService i_defaultsService;
+	private DefaultsService defaultsService;
 
 	/**
 	 * The {@link CalendarFactory} used to install Google Calendar authorisation.
 	 */
-	private CalendarFactory i_calendarFactory;
+	private CalendarFactory calendarFactory;
 
 	/**
 	 * The {@link UpdateCalendarJob} used to trigger a full manual calendar
 	 * update.
 	 */
-	private UpdateCalendarJob i_updateCalendarJob;
+	private UpdateCalendarJob updateCalendarJob;
 
 	/**
 	 * {@inheritDoc}
@@ -365,7 +365,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *         instances to be viewed by the GUI
 	 */
 	public GameService getGameService() {
-		return i_gameService;
+		return gameService;
 	}
 
 	/**
@@ -377,7 +377,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          {@link GameView} instances to be viewed by the GUI
 	 */
 	public void setGameService(GameService gameService) {
-		i_gameService = gameService;
+		this.gameService = gameService;
 	}
 
 	/**
@@ -386,14 +386,14 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the {@link SecurityInvalidator} for logging out
 	 */
 	public SecurityInvalidator getSecurityInvalidator() {
-		return i_securityInvalidator;
+		return securityInvalidator;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void setSecurityInvalidator(SecurityInvalidator securityInvalidator) {
-		i_securityInvalidator = securityInvalidator;
+		this.securityInvalidator = securityInvalidator;
 	}
 
 	/**
@@ -402,7 +402,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the {@link LeagueService} for creating leagues
 	 */
 	public LeagueService getLeagueService() {
-		return i_leagueService;
+		return leagueService;
 	}
 
 	/**
@@ -412,7 +412,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          the new {@link LeagueService} for creating leagues
 	 */
 	public void setLeagueService(LeagueService leagueService) {
-		i_leagueService = leagueService;
+		this.leagueService = leagueService;
 	}
 
 	/**
@@ -421,7 +421,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the {@link AuthenticationService} for user authentication
 	 */
 	public AuthenticationService getAuthenticationService() {
-		return i_authenticationService;
+		return authenticationService;
 	}
 
 	/**
@@ -431,7 +431,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          the new {@link AuthenticationService} for user authentication
 	 */
 	public void setAuthenticationService(AuthenticationService authenticationService) {
-		i_authenticationService = authenticationService;
+		this.authenticationService = authenticationService;
 	}
 
 	/**
@@ -442,7 +442,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *         is to be shown for ticketing information
 	 */
 	public TicketingCalendarService getTicketingCalendarService() {
-		return i_ticketingCalendarService;
+		return ticketingCalendarService;
 	}
 
 	/**
@@ -454,7 +454,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          calendar is to be shown for ticketing information
 	 */
 	public void setTicketingCalendarService(TicketingCalendarService ticketingCalendarService) {
-		i_ticketingCalendarService = ticketingCalendarService;
+		this.ticketingCalendarService = ticketingCalendarService;
 	}
 
 	/**
@@ -463,7 +463,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the {@link MainUpdateService} used for updating Google calendars
 	 */
 	public MainUpdateService getMainUpdateService() {
-		return i_mainUpdateService;
+		return mainUpdateService;
 	}
 
 	/**
@@ -474,7 +474,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          calendars
 	 */
 	public void setMainUpdateService(MainUpdateService mainUpdateService) {
-		i_mainUpdateService = mainUpdateService;
+		this.mainUpdateService = mainUpdateService;
 	}
 
 	/**
@@ -483,7 +483,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the {@link UserService} used for updating users
 	 */
 	public UserService getUserService() {
-		return i_userService;
+		return userService;
 	}
 
 	/**
@@ -493,7 +493,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          the new {@link UserService} used for updating users
 	 */
 	public void setUserService(UserService userService) {
-		i_userService = userService;
+		this.userService = userService;
 	}
 
 	/**
@@ -502,7 +502,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 * @return the {@link UserService} used for getting user information
 	 */
 	public UserDao getUserDao() {
-		return i_userDao;
+		return userDao;
 	}
 
 	/**
@@ -512,7 +512,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          the new {@link UserService} used for getting user information
 	 */
 	public void setUserDao(UserDao userDao) {
-		i_userDao = userDao;
+		this.userDao = userDao;
 	}
 
 	/**
@@ -523,7 +523,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *         exist
 	 */
 	public DefaultsService getDefaultsService() {
-		return i_defaultsService;
+		return defaultsService;
 	}
 
 	/**
@@ -535,7 +535,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          defaults exist
 	 */
 	public void setDefaultsService(DefaultsService defaultsService) {
-		i_defaultsService = defaultsService;
+		this.defaultsService = defaultsService;
 	}
 
 	/**
@@ -546,7 +546,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *         authorisation
 	 */
 	public CalendarFactory getCalendarFactory() {
-		return i_calendarFactory;
+		return calendarFactory;
 	}
 
 	/**
@@ -558,7 +558,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          authorisation
 	 */
 	public void setCalendarFactory(CalendarFactory calendarFactory) {
-		i_calendarFactory = calendarFactory;
+		this.calendarFactory = calendarFactory;
 	}
 
 	/**
@@ -569,7 +569,7 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *         calendar update
 	 */
 	public UpdateCalendarJob getUpdateCalendarJob() {
-		return i_updateCalendarJob;
+		return updateCalendarJob;
 	}
 
 	/**
@@ -581,6 +581,6 @@ public class AttendanceServiceImpl implements AttendanceService {
 	 *          calendar update
 	 */
 	public void setUpdateCalendarJob(UpdateCalendarJob updateCalendarJob) {
-		i_updateCalendarJob = updateCalendarJob;
+		this.updateCalendarJob = updateCalendarJob;
 	}
 }

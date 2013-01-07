@@ -52,7 +52,7 @@ public class GoogleAuthentication extends SimplePanel implements Display {
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
-	private final CanWaitSupport i_canWaitSupport;
+	private final CanWaitSupport canWaitSupport;
 	
 	@UiField PopupPanel popupPanel;
 	@UiField Anchor authenticationAnchor;
@@ -61,7 +61,7 @@ public class GoogleAuthentication extends SimplePanel implements Display {
 	
 	@Inject
 	public GoogleAuthentication(CanWaitSupport canWaitSupport) {
-	  i_canWaitSupport = canWaitSupport;
+	  this.canWaitSupport = canWaitSupport;
 		add(binder.createAndBindUi(this));
 		canWaitSupport.wrap(successCode, submitButton);
 	}
@@ -89,7 +89,7 @@ public class GoogleAuthentication extends SimplePanel implements Display {
 	}
 
   public CanWaitSupport getCanWaitSupport() {
-    return i_canWaitSupport;
+    return canWaitSupport;
   }
 
   @Override

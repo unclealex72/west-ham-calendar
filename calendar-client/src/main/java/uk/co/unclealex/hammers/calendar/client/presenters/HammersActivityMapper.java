@@ -45,12 +45,12 @@ import com.google.inject.Provider;
  */
 public class HammersActivityMapper implements ActivityMapper {
 
-	private final Provider<GamesPresenter> i_gamesPresenterProvider;
-	private final Provider<TeamsPresenter> i_teamsPresenterProvider;
-	private final Provider<LeaguePresenter> i_leaguePresenterProvider;
-	private final Provider<AdminPresenter> i_adminPresenterProvider;
-	private final Provider<NoGamesPresenter> i_noGamesPresenterProvider;
-	private final SeasonsPresenter i_seasonsPresenter;
+	private final Provider<GamesPresenter> gamesPresenterProvider;
+	private final Provider<TeamsPresenter> teamsPresenterProvider;
+	private final Provider<LeaguePresenter> leaguePresenterProvider;
+	private final Provider<AdminPresenter> adminPresenterProvider;
+	private final Provider<NoGamesPresenter> noGamesPresenterProvider;
+	private final SeasonsPresenter seasonsPresenter;
 
 	@Inject
 	public HammersActivityMapper(Provider<GamesPresenter> gamesPresenterProvider,
@@ -58,12 +58,12 @@ public class HammersActivityMapper implements ActivityMapper {
 			Provider<AdminPresenter> adminPresenterProvider,
 			Provider<NoGamesPresenter> noGamesPresenterProvider,
 			SeasonsPresenter seasonsPresenter) {
-		i_gamesPresenterProvider = gamesPresenterProvider;
-		i_teamsPresenterProvider = teamsPresenterProvider;
-		i_leaguePresenterProvider = leaguePresenterProvider;
-		i_adminPresenterProvider = adminPresenterProvider;
-		i_noGamesPresenterProvider = noGamesPresenterProvider;
-		i_seasonsPresenter = seasonsPresenter;
+		this.gamesPresenterProvider = gamesPresenterProvider;
+		this.teamsPresenterProvider = teamsPresenterProvider;
+		this.leaguePresenterProvider = leaguePresenterProvider;
+		this.adminPresenterProvider = adminPresenterProvider;
+		this.noGamesPresenterProvider = noGamesPresenterProvider;
+		this.seasonsPresenter = seasonsPresenter;
 	}
 
 	@Override
@@ -74,12 +74,12 @@ public class HammersActivityMapper implements ActivityMapper {
 	
 	protected class ActivityProvider implements HammersPlaceVisitor, Activity {
 
-		private final Place i_place;
-		private Activity i_activity;
+		private final Place place;
+		private Activity activity;
 		
 		public ActivityProvider(Place place) {
 			super();
-			i_place = place;
+			this.place = place;
 		}
 
 		public Activity asActivity() {
@@ -136,11 +136,11 @@ public class HammersActivityMapper implements ActivityMapper {
 		}
 		
 		public Activity getActivity() {
-			return i_activity;
+			return activity;
 		}
 
 		public void setActivity(Activity activity) {
-			i_activity = activity;
+			this.activity = activity;
 		}
 
 		@Override
@@ -164,32 +164,32 @@ public class HammersActivityMapper implements ActivityMapper {
 		}
 
 		public Place getPlace() {
-			return i_place;
+			return place;
 		}
 		
 	}
 
 	public Provider<GamesPresenter> getGamesPresenterProvider() {
-		return i_gamesPresenterProvider;
+		return gamesPresenterProvider;
 	}
 
 	public Provider<TeamsPresenter> getTeamsPresenterProvider() {
-		return i_teamsPresenterProvider;
+		return teamsPresenterProvider;
 	}
 
 	public Provider<LeaguePresenter> getLeaguePresenterProvider() {
-		return i_leaguePresenterProvider;
+		return leaguePresenterProvider;
 	}
 
 	public Provider<AdminPresenter> getAdminPresenterProvider() {
-		return i_adminPresenterProvider;
+		return adminPresenterProvider;
 	}
 
 	public SeasonsPresenter getSeasonsPresenter() {
-		return i_seasonsPresenter;
+		return seasonsPresenter;
 	}
 
 	public Provider<NoGamesPresenter> getNoGamesPresenterProvider() {
-		return i_noGamesPresenterProvider;
+		return noGamesPresenterProvider;
 	}
 }

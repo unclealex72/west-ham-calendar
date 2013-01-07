@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -39,7 +39,7 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 	/**
 	 * The {@link GoogleCalendar} that was changed.
 	 */
-	private final GoogleCalendar i_googleCalendar;
+	private final GoogleCalendar googleCalendar;
 
 	/**
 	 * Instantiates a new abstract update change log.
@@ -49,7 +49,7 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 	 */
 	public AbstractUpdateChangeLog(GoogleCalendar googleCalendar) {
 		super();
-		i_googleCalendar = googleCalendar;
+		this.googleCalendar = googleCalendar;
 	}
 
 	/**
@@ -105,16 +105,16 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 	protected abstract String gameToString();
 
 	/**
-	 * Produce a string that describes what action was taken in i_update.
+	 * Produce a string that describes what action was taken in update.
 	 * 
 	 * @return The action as a string.
 	 */
 	protected abstract String action();
 
 	/**
-	 * Create a comparator that can be used to compare i_instance to another.
+	 * Create a comparator that can be used to compare instance to another.
 	 * 
-	 * @return A comparator that can be used to compare i_instance to another
+	 * @return A comparator that can be used to compare instance to another
 	 *         {@link UpdateChangeLog}. {@link UpdateChangeLog}.
 	 */
 	protected abstract UpdateChangeLogComparator createCompareVisitor();
@@ -184,7 +184,7 @@ public abstract class AbstractUpdateChangeLog implements UpdateChangeLog {
 	 * {@inheritDoc}
 	 */
 	public final GoogleCalendar getGoogleCalendar() {
-		return i_googleCalendar;
+		return googleCalendar;
 	}
 
 }

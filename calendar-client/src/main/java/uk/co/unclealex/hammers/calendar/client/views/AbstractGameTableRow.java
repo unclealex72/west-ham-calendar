@@ -51,10 +51,10 @@ public abstract class AbstractGameTableRow extends TableRow implements HasValue<
 	@UiField Label ticketsAvailable;
 	@UiField CheckBox attended;
 
-	private final HammersMessages i_hammersMessages;
+	private final HammersMessages hammersMessages;
 	
 	public AbstractGameTableRow(GameView gameView, HammersMessages hammersMessages) {
-		i_hammersMessages = hammersMessages;
+		this.hammersMessages = hammersMessages;
 		bind();
 		boolean visible = false;
 		boolean enabled = false;
@@ -123,7 +123,7 @@ public abstract class AbstractGameTableRow extends TableRow implements HasValue<
 	protected abstract String formatDatePlayed(Date datePlayed);
 
 	public HammersMessages getHammersMessages() {
-		return i_hammersMessages;
+		return hammersMessages;
 	}
 
 }

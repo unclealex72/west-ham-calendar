@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -33,7 +33,7 @@ public class PossiblyYearlessDateFormatBean extends AbstractPossiblyYearlessDate
 	/**
 	 * The yearless date format to use.
 	 */
-	private final String i_dateFormatWithoutYear;
+	private final String dateFormatWithoutYear;
 
 	/**
 	 * Instantiates a new possibly yearless date format bean.
@@ -45,14 +45,14 @@ public class PossiblyYearlessDateFormatBean extends AbstractPossiblyYearlessDate
 	 */
 	public PossiblyYearlessDateFormatBean(String dateFormatWithYear, String dateFormatWithoutYear) {
 		super(dateFormatWithYear);
-		i_dateFormatWithoutYear = dateFormatWithoutYear;
+		this.dateFormatWithoutYear = dateFormatWithoutYear;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getDateFormatWithoutYear() {
-		return i_dateFormatWithoutYear;
+		return dateFormatWithoutYear;
 	}
 	
 	

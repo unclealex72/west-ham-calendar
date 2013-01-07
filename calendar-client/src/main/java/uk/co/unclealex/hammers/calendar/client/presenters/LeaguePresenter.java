@@ -48,14 +48,14 @@ public class LeaguePresenter extends AbstractTablePresenter<LeagueRow, LeagueTab
     // No extra method
   }
 	
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
+	private final AsyncCallbackExecutor asyncCallbackExecutor;
 	
 	@Inject
 	public LeaguePresenter(
 			PlaceController placeController,
 			Display display, HammersMessages hammersMessages, AsyncCallbackExecutor asyncCallbackExecutor) {
 		super(placeController, display, hammersMessages);
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
+		this.asyncCallbackExecutor = asyncCallbackExecutor;
 	}
 
 	@Override
@@ -78,6 +78,6 @@ public class LeaguePresenter extends AbstractTablePresenter<LeagueRow, LeagueTab
 	}
 	
 	public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-		return i_asyncCallbackExecutor;
+		return asyncCallbackExecutor;
 	}
 }

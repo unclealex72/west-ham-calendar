@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -45,19 +45,19 @@ import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<CalendarType, CalendarConfiguration> {
 
 	/**
-	 * The primary key of i_calendar configuration.
+	 * The primary key of calendar configuration.
 	 */
-	private Integer i_id;
+	private Integer id;
 	
 	/**
 	 * The {@link CalendarType} that is to be bound to a Google calendar.
 	 */
-	private CalendarType i_calendarType;
+	private CalendarType calendarType;
 	
 	/**
 	 * The id of the calendar in the Google Calendar API.
 	 */
-	private String i_googleCalendarId;
+	private String googleCalendarId;
 
 	/**
 	 * Instantiates a new calendar configuration.
@@ -78,9 +78,9 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 	 */
 	public CalendarConfiguration(Integer id, CalendarType calendarType, String googleCalendarId) {
 		super();
-		i_id = id;
-		i_calendarType = calendarType;
-		i_googleCalendarId = googleCalendarId;
+		this.id = id;
+		this.calendarType = calendarType;
+		this.googleCalendarId = googleCalendarId;
 	}
 
 	/**
@@ -116,7 +116,7 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 	@Enumerated(EnumType.STRING)
 	@Column(unique = true, nullable = false)
 	public CalendarType getCalendarType() {
-		return i_calendarType;
+		return calendarType;
 	}
 
 	/**
@@ -127,7 +127,7 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 	 *          calendar
 	 */
 	public void setCalendarType(CalendarType calendarType) {
-		i_calendarType = calendarType;
+		this.calendarType = calendarType;
 	}
 
 	/**
@@ -136,17 +136,17 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 	@Id
 	@GeneratedValue
 	public Integer getId() {
-		return i_id;
+		return id;
 	}
 
 	/**
-	 * Sets the primary key of i_calendar configuration.
+	 * Sets the primary key of calendar configuration.
 	 * 
 	 * @param id
-	 *          the new primary key of i_calendar configuration
+	 *          the new primary key of calendar configuration
 	 */
 	public void setId(Integer id) {
-		i_id = id;
+		this.id = id;
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 	 */
 	@Column(nullable = false, unique = true)
 	public String getGoogleCalendarId() {
-		return i_googleCalendarId;
+		return googleCalendarId;
 	}
 
 	/**
@@ -166,6 +166,6 @@ public class CalendarConfiguration extends AbstractBusinessKeyBasedModel<Calenda
 	 *          the new id of the calendar in the Google Calendar API
 	 */
 	public void setGoogleCalendarId(String googleCalendarId) {
-		i_googleCalendarId = googleCalendarId;
+		this.googleCalendarId = googleCalendarId;
 	}
 }

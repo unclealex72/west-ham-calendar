@@ -50,8 +50,8 @@ public abstract class AbstractGamesPresenter<D extends Display<V>, V extends Abs
 	  // No extra methods
 	}
 	
-	private final AsyncCallbackExecutor i_asyncCallbackExecutor;
-	private final Provider<CanWaitSupport> i_canWaitSupportProvider;
+	private final AsyncCallbackExecutor asyncCallbackExecutor;
+	private final Provider<CanWaitSupport> canWaitSupportProvider;
 	
 	public AbstractGamesPresenter(
 			PlaceController placeController,
@@ -59,8 +59,8 @@ public abstract class AbstractGamesPresenter<D extends Display<V>, V extends Abs
 			AsyncCallbackExecutor asyncCallbackExecutor,
 			Provider<CanWaitSupport> canWaitSupportProvider) {
 		super(placeController, display, hammersMessages);
-		i_asyncCallbackExecutor = asyncCallbackExecutor;
-		i_canWaitSupportProvider = canWaitSupportProvider;
+		this.asyncCallbackExecutor = asyncCallbackExecutor;
+		this.canWaitSupportProvider = canWaitSupportProvider;
 	}
 
 	@Override
@@ -125,10 +125,10 @@ public abstract class AbstractGamesPresenter<D extends Display<V>, V extends Abs
 	protected abstract boolean showMonthBreaks();
 	
 	public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-		return i_asyncCallbackExecutor;
+		return asyncCallbackExecutor;
 	}
 
 	public Provider<CanWaitSupport> getCanWaitSupportProvider() {
-		return i_canWaitSupportProvider;
+		return canWaitSupportProvider;
 	}
 }

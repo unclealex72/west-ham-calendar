@@ -31,11 +31,11 @@ import com.google.gwt.user.client.ui.ListBox;
  */
 public abstract class EnumListBoxAdaptor<E extends Enum<E>> extends ValueListBoxAdaptor<E> {
 
-  private final Class<E> i_enumClass;
+  private final Class<E> enumClass;
 
   public EnumListBoxAdaptor(Class<E> enumClass, ListBox listBox, String nullText) {
     super(listBox, nullText);
-    i_enumClass = enumClass;
+    this.enumClass = enumClass;
   }
 
   @Override
@@ -49,7 +49,7 @@ public abstract class EnumListBoxAdaptor<E extends Enum<E>> extends ValueListBox
   }
 
   public Class<E> getEnumClass() {
-    return i_enumClass;
+    return enumClass;
   }
 
 }

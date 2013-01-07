@@ -61,18 +61,18 @@ public class UpdateUsersPresenter implements RefreshablePresenter, CloseHandler<
     HasClickHandlers getAddNewUserButton();
   }
   
-  private final Display i_display;
-  private final AsyncCallbackExecutor i_asyncCallbackExecutor;
-  private final UserPresenterFactory i_updatePresenterFactory;
-  private HandlerRegistration i_newUserHandlerRegistration;
+  private final Display display;
+  private final AsyncCallbackExecutor asyncCallbackExecutor;
+  private final UserPresenterFactory updatePresenterFactory;
+  private HandlerRegistration newUserHandlerRegistration;
   
   @Inject
   public UpdateUsersPresenter(Display display, AsyncCallbackExecutor asyncCallbackExecutor,
       UserPresenterFactory updatePresenterFactory) {
     super();
-    i_display = display;
-    i_asyncCallbackExecutor = asyncCallbackExecutor;
-    i_updatePresenterFactory = updatePresenterFactory;
+    this.display = display;
+    this.asyncCallbackExecutor = asyncCallbackExecutor;
+    this.updatePresenterFactory = updatePresenterFactory;
   }
   
   public void show(HasWidgets container) {
@@ -139,22 +139,22 @@ public class UpdateUsersPresenter implements RefreshablePresenter, CloseHandler<
   }
 
   public UserPresenterFactory getUpdatePresenterFactory() {
-    return i_updatePresenterFactory;
+    return updatePresenterFactory;
   }
 
   public Display getDisplay() {
-    return i_display;
+    return display;
   }
 
   public AsyncCallbackExecutor getAsyncCallbackExecutor() {
-    return i_asyncCallbackExecutor;
+    return asyncCallbackExecutor;
   }
 
   public HandlerRegistration getNewUserHandlerRegistration() {
-    return i_newUserHandlerRegistration;
+    return newUserHandlerRegistration;
   }
 
   public void setNewUserHandlerRegistration(HandlerRegistration newUserHandlerRegistration) {
-    i_newUserHandlerRegistration = newUserHandlerRegistration;
+    this.newUserHandlerRegistration = newUserHandlerRegistration;
   }
 }

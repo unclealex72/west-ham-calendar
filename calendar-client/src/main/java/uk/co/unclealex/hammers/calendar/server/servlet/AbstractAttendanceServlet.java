@@ -49,7 +49,7 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
  */
 public class AbstractAttendanceServlet extends RemoteServiceServlet {
 
-	private BeanFactory i_beanFactory;
+	private BeanFactory beanFactory;
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -95,11 +95,11 @@ public class AbstractAttendanceServlet extends RemoteServiceServlet {
 	}
 	
 	public BeanFactory getBeanFactory() {
-		return i_beanFactory;
+		return beanFactory;
 	}
 
 	public void setBeanFactory(BeanFactory beanFactory) {
-		i_beanFactory = beanFactory;
+		this.beanFactory = beanFactory;
 	}
 
 }

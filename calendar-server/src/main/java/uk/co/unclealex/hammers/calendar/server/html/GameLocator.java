@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -100,7 +100,7 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 		/**
 		 * The object used to locate a game.
 		 */
-		private final E i_locator;
+		private final E locator;
 
 		/**
 		 * Instantiates a new internal game locator.
@@ -109,7 +109,7 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 		 *          the locator
 		 */
 		protected InternalGameLocator(E locator) {
-			i_locator = locator;
+			this.locator = locator;
 		}
 
 		/**
@@ -142,7 +142,7 @@ public abstract class GameLocator implements Comparable<GameLocator> {
 		 * @return the locator
 		 */
 		public E getLocator() {
-			return i_locator;
+			return locator;
 		}
 	}
 

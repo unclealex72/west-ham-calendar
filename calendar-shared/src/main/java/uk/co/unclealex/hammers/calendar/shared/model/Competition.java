@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -95,19 +95,19 @@ public enum Competition {
 	}
 
 	/**
-	 * An array of tokens that can identify i_competition on the West Ham website.
+	 * An array of tokens that can identify competition on the West Ham website.
 	 */
-	private String[] i_tokens;
+	private String[] tokens;
 	
 	/**
-	 * True if i_competition is a league competition, false otherwise.
+	 * True if competition is a league competition, false otherwise.
 	 */
-	private boolean i_league;
+	private boolean league;
 	
 	/**
 	 * The name of the competition.
 	 */
-	private String i_name;
+	private String name;
 
 	/**
 	 * Instantiates a new competition.
@@ -120,9 +120,9 @@ public enum Competition {
 	 *          the tokens
 	 */
 	private Competition(String name, boolean league, String... tokens) {
-		i_name = name;
-		i_league = league;
-		i_tokens = tokens;
+		this.name = name;
+		this.league = league;
+		this.tokens = tokens;
 	}
 
 	/**
@@ -131,28 +131,28 @@ public enum Competition {
 	 * @return the name of the competition
 	 */
 	public String getName() {
-		return i_name;
+		return name;
 	}
 
 	/**
-	 * Gets the an array of tokens that can identify i_competition on the West
+	 * Gets the an array of tokens that can identify competition on the West
 	 * Ham website.
 	 * 
-	 * @return the an array of tokens that can identify i_competition on the
+	 * @return the an array of tokens that can identify competition on the
 	 *         West Ham website
 	 */
 	public String[] getTokens() {
-		return i_tokens;
+		return tokens;
 	}
 
 	/**
-	 * Checks if is true if i_competition is a league competition, false
+	 * Checks if is true if competition is a league competition, false
 	 * otherwise.
 	 * 
-	 * @return the true if i_competition is a league competition, false
+	 * @return the true if competition is a league competition, false
 	 *         otherwise
 	 */
 	public boolean isLeague() {
-		return i_league;
+		return league;
 	}
 }

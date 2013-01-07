@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -366,12 +366,12 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	/**
 	 * The {@link GameLocator} to use for finding which game i_{@link GameUpdateCommand} will update.
 	 */
-	private final GameLocator i_gameLocator;
+	private final GameLocator gameLocator;
 	
 	/**
 	 * The {@link Type} of i_{@link GameUpdateCommand}.
 	 */
-	private final Type i_type;
+	private final Type type;
 
 	/**
 	 * Instantiates a new game update command.
@@ -383,8 +383,8 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	 */
 	protected GameUpdateCommand(Type type, GameLocator gameLocator) {
 		super();
-		i_gameLocator = gameLocator;
-		i_type = type;
+		this.gameLocator = gameLocator;
+		this.type = type;
 	}
 
 	/**
@@ -438,7 +438,7 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		/**
 		 * The new value to that will be used to update the game.
 		 */
-		private final V i_newValue;
+		private final V newValue;
 
 		/**
 		 * Instantiates a new internal game update command.
@@ -452,7 +452,7 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		 */
 		protected InternalGameUpdateCommand(Type type, GameLocator gameLocator, V newValue) {
 			super(type, gameLocator);
-			i_newValue = newValue;
+			this.newValue = newValue;
 		}
 
 		/**
@@ -500,7 +500,7 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 		 * @return the newValue
 		 */
 		public V getNewValue() {
-			return i_newValue;
+			return newValue;
 		}
 	}
 
@@ -511,7 +511,7 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	 * @return The required {@link GameLocator} of any game to change.
 	 */
 	public GameLocator getGameLocator() {
-		return i_gameLocator;
+		return gameLocator;
 	}
 
 	/**
@@ -520,6 +520,6 @@ public abstract class GameUpdateCommand implements Comparable<GameUpdateCommand>
 	 * @return The ordering of i_{@link GameUpdateCommand}.
 	 */
 	protected Type getType() {
-		return i_type;
+		return type;
 	}
 }

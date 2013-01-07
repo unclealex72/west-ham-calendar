@@ -51,7 +51,7 @@ public class User extends SimplePanel implements Display {
 	
 	private static final Binder binder = GWT.create(Binder.class);
 
-	private final CanWaitSupport i_canWaitSupport;
+	private final CanWaitSupport canWaitSupport;
 	
 	@UiField DialogBox popupPanel;
 	@UiField TextBox username;
@@ -64,7 +64,7 @@ public class User extends SimplePanel implements Display {
 	@Inject
 	public User(CanWaitSupport canWaitSupport) {
 		add(binder.createAndBindUi(this));
-		i_canWaitSupport = canWaitSupport;
+		this.canWaitSupport = canWaitSupport;
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class User extends SimplePanel implements Display {
   }
 
   public CanWaitSupport getCanWaitSupport() {
-    return i_canWaitSupport;
+    return canWaitSupport;
   }
 
   public Button getRemove() {

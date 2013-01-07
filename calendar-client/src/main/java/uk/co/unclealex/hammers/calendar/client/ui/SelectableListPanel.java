@@ -31,8 +31,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class SelectableListPanel extends UnorderedListPanel {
 
-	private String i_selectedStyleName = "selected";
-	private Widget i_selectedWidget;
+	private String selectedStyleName = "selected";
+	private Widget selectedWidget;
 
 	public void select(Widget widget) {
 		Widget selectedWidget = getSelectedWidget();
@@ -47,18 +47,18 @@ public class SelectableListPanel extends UnorderedListPanel {
 	}
 
 	public Widget getSelectedWidget() {
-		return i_selectedWidget;
+		return selectedWidget;
 	}
 
 	protected void setSelectedWidget(Widget selectedWidget) {
-		i_selectedWidget = selectedWidget;
+		this.selectedWidget = selectedWidget;
 	}
 
 	public String getSelectedStyleName() {
-		return i_selectedStyleName;
+		return selectedStyleName;
 	}
 
 	public void setSelectedStyleName(String selectedStyleName) {
-		i_selectedStyleName = selectedStyleName;
+		this.selectedStyleName = selectedStyleName;
 	}
 }

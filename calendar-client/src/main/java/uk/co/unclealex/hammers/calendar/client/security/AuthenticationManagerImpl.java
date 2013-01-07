@@ -44,7 +44,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
  */
 public class AuthenticationManagerImpl implements AuthenticationManager {
 
-	private final Set<AuthenticationEventListener> i_authenticationEventListeners = new HashSet<AuthenticationEventListener>();
+	private final Set<AuthenticationEventListener> authenticationEventListeners = new HashSet<AuthenticationEventListener>();
 	
 	@Inject
 	public AuthenticationManagerImpl(
@@ -111,6 +111,6 @@ public class AuthenticationManagerImpl implements AuthenticationManager {
 	}
 	
 	public Set<AuthenticationEventListener> getAuthenticationEventListeners() {
-		return i_authenticationEventListeners;
+		return authenticationEventListeners;
 	}
 }

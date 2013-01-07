@@ -37,11 +37,11 @@ import com.google.gwt.user.client.ui.Label;
  */
 public abstract class Table<M, V extends TableRow, F extends TableRowFactory<M, V>> extends Composite implements AbstractTablePresenter.Display<M, V> {
 
-	private boolean i_nextRowOdd = true;
-	private final F i_tableRowFactory;
+	private boolean nextRowOdd = true;
+	private final F tableRowFactory;
 	
 	public Table(F tableRowFactory) {
-		i_tableRowFactory = tableRowFactory;
+		this.tableRowFactory = tableRowFactory;
 		bind();
 		table.setStylePrimaryName(getTableStyleName());
 	}
@@ -87,15 +87,15 @@ public abstract class Table<M, V extends TableRow, F extends TableRowFactory<M, 
 	protected abstract String getTableStyleName();
 	
 	public boolean isNextRowOdd() {
-		return i_nextRowOdd;
+		return nextRowOdd;
 	}
 
 	public void setNextRowOdd(boolean nextRowIsOdd) {
-		i_nextRowOdd = nextRowIsOdd;
+		nextRowOdd = nextRowIsOdd;
 	}
 
 	public F getTableRowFactory() {
-		return i_tableRowFactory;
+		return tableRowFactory;
 	}
 	
 }

@@ -62,21 +62,21 @@ public class UserPresenter extends AbstractCallbackPopupPresenter<DialogBox, Dis
     Button getCancel();
   }
   
-  private final Display i_display;
-  private final User i_user;
-  private final Collection<String> i_existingUsernames;
-  private final RoleListBoxAdaptor i_roleListBoxAdaptor;
-  private final HammersMessages i_messages;
+  private final Display display;
+  private final User user;
+  private final Collection<String> existingUsernames;
+  private final RoleListBoxAdaptor roleListBoxAdaptor;
+  private final HammersMessages messages;
   
   @Inject
   public UserPresenter(Display display, AsyncCallbackExecutor asyncCallbackExecutor, HammersMessages messages,
       @Assisted User user, @Assisted Collection<String> existingUsernames) {
     super(asyncCallbackExecutor);
-    i_display = display;
-    i_user = user;
-    i_existingUsernames = existingUsernames;
-    i_roleListBoxAdaptor = new RoleListBoxAdaptor(display.getRoles());
-    i_messages = messages;
+    this.display = display;
+    this.user = user;
+    this.existingUsernames = existingUsernames;
+    roleListBoxAdaptor = new RoleListBoxAdaptor(display.getRoles());
+    this.messages = messages;
   }
 
   @Override
@@ -169,22 +169,22 @@ public class UserPresenter extends AbstractCallbackPopupPresenter<DialogBox, Dis
   }
 
   public Display getDisplay() {
-    return i_display;
+    return display;
   }
 
   public User getUser() {
-    return i_user;
+    return user;
   }
 
   public Collection<String> getExistingUsernames() {
-    return i_existingUsernames;
+    return existingUsernames;
   }
 
   public RoleListBoxAdaptor getRoleListBoxAdaptor() {
-    return i_roleListBoxAdaptor;
+    return roleListBoxAdaptor;
   }
 
   public HammersMessages getMessages() {
-    return i_messages;
+    return messages;
   }
 }

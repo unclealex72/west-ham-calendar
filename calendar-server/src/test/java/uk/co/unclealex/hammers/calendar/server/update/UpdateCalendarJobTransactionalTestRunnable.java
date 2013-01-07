@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -35,7 +35,7 @@ import uk.co.unclealex.hammers.calendar.server.model.OauthTokenType;
 public class UpdateCalendarJobTransactionalTestRunnable implements Runnable {
 
 	/** The oauth token dao. */
-	private OauthTokenDao i_oauthTokenDao;
+	private OauthTokenDao oauthTokenDao;
 	
 	/**
 	 * {@inheritDoc}
@@ -64,7 +64,7 @@ public class UpdateCalendarJobTransactionalTestRunnable implements Runnable {
 	 * @return the oauth token dao
 	 */
 	public OauthTokenDao getOauthTokenDao() {
-		return i_oauthTokenDao;
+		return oauthTokenDao;
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class UpdateCalendarJobTransactionalTestRunnable implements Runnable {
 	 *          the new oauth token dao
 	 */
 	public void setOauthTokenDao(OauthTokenDao oauthTokenDao) {
-		i_oauthTokenDao = oauthTokenDao;
+		this.oauthTokenDao = oauthTokenDao;
 	}
 
 }

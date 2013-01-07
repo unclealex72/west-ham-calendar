@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -43,14 +43,14 @@ import uk.co.unclealex.hammers.calendar.shared.model.Role;
 public class Authority implements HasIdentity {
 
 	/**
-	 * The primary key of i_authority.
+	 * The primary key of authority.
 	 */
-	private Integer i_id;
+	private Integer id;
 	
 	/**
 	 * The {@link Role} granted to the user.
 	 */
-	private Role i_role;
+	private Role role;
 
 	/**
 	 * {@inheritDoc}
@@ -58,17 +58,17 @@ public class Authority implements HasIdentity {
 	@Id
 	@GeneratedValue
 	public Integer getId() {
-		return i_id;
+		return id;
 	}
 
 	/**
-	 * Sets the primary key of i_authority.
+	 * Sets the primary key of authority.
 	 * 
 	 * @param id
-	 *          the new primary key of i_authority
+	 *          the new primary key of authority
 	 */
 	public void setId(Integer id) {
-		i_id = id;
+		this.id = id;
 	}
 
 	/**
@@ -79,7 +79,7 @@ public class Authority implements HasIdentity {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "authority", nullable = false)
 	public Role getRole() {
-		return i_role;
+		return role;
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class Authority implements HasIdentity {
 	 *          the new {@link Role} granted to the user
 	 */
 	public void setRole(Role role) {
-		i_role = role;
+		this.role = role;
 	}
 
 }

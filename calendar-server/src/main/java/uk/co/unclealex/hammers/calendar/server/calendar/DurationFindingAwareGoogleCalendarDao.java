@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -90,12 +90,12 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 		/**
 		 * The game id.
 		 */
-		private final String i_gameId;
+		private final String gameId;
 		
 		/**
 		 * The {@link DurationFieldType} that found the game.
 		 */
-		private final DurationFieldType i_durationFieldType;
+		private final DurationFieldType durationFieldType;
 
 		/**
 		 * Instantiates a new game id and duration field type.
@@ -107,8 +107,8 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 		 */
 		public GameIdAndDurationFieldType(String gameId, DurationFieldType durationFieldType) {
 			super();
-			i_gameId = gameId;
-			i_durationFieldType = durationFieldType;
+			this.gameId = gameId;
+			this.durationFieldType = durationFieldType;
 		}
 
 		/**
@@ -117,7 +117,7 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 		 * @return the game id
 		 */
 		public String getGameId() {
-			return i_gameId;
+			return gameId;
 		}
 
 		/**
@@ -126,7 +126,7 @@ public abstract class DurationFindingAwareGoogleCalendarDao implements GoogleCal
 		 * @return the {@link DurationFieldType} that found the game
 		 */
 		public DurationFieldType getDurationFieldType() {
-			return i_durationFieldType;
+			return durationFieldType;
 		}
 
 	}

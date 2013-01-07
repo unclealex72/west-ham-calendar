@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -54,34 +54,34 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 * The {@link CalendarConfigurationDao} used for finding and creaing calendar
 	 * configurations.
 	 */
-	private CalendarConfigurationDao i_calendarConfigurationDao;
+	private CalendarConfigurationDao calendarConfigurationDao;
 
 	/**
 	 * The {@link GoogleCalendarDaoFactory} used for creating.
 	 * {@link GoogleCalendarDao}s.
 	 */
-	private GoogleCalendarDaoFactory i_googleCalendarDaoFactory;
+	private GoogleCalendarDaoFactory googleCalendarDaoFactory;
 
 	/**
 	 * The {@link GoogleCalendarFactory} used for creating {@link GoogleCalendar}
 	 * s.
 	 */
-	private GoogleCalendarFactory i_googleCalendarFactory;
+	private GoogleCalendarFactory googleCalendarFactory;
 
 	/**
 	 * The {@link UserService} used to look for and create users.
 	 */
-	private UserService i_userService;
+	private UserService userService;
 
 	/**
 	 * The username for the default user.
 	 */
-	private String i_defaultUsername;
+	private String defaultUsername;
 
 	/**
 	 * The password for the default user.
 	 */
-	private String i_defaultPassword;
+	private String defaultPassword;
 
 	/**
 	 * {@inheritDoc}
@@ -127,7 +127,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 *         calendar configurations
 	 */
 	public CalendarConfigurationDao getCalendarConfigurationDao() {
-		return i_calendarConfigurationDao;
+		return calendarConfigurationDao;
 	}
 
 	/**
@@ -139,7 +139,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 *          creaing calendar configurations
 	 */
 	public void setCalendarConfigurationDao(CalendarConfigurationDao calendarConfigurationDao) {
-		i_calendarConfigurationDao = calendarConfigurationDao;
+		this.calendarConfigurationDao = calendarConfigurationDao;
 	}
 
 	/**
@@ -148,7 +148,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 * @return the {@link GoogleCalendarDaoFactory} used for creating
 	 */
 	public GoogleCalendarDaoFactory getGoogleCalendarDaoFactory() {
-		return i_googleCalendarDaoFactory;
+		return googleCalendarDaoFactory;
 	}
 
 	/**
@@ -158,7 +158,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 *          the new {@link GoogleCalendarDaoFactory} used for creating
 	 */
 	public void setGoogleCalendarDaoFactory(GoogleCalendarDaoFactory googleCalendarDaoFactory) {
-		i_googleCalendarDaoFactory = googleCalendarDaoFactory;
+		this.googleCalendarDaoFactory = googleCalendarDaoFactory;
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 * @return the username for the default user
 	 */
 	public String getDefaultUsername() {
-		return i_defaultUsername;
+		return defaultUsername;
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 *          the new username for the default user
 	 */
 	public void setDefaultUsername(String defaultUsername) {
-		i_defaultUsername = defaultUsername;
+		this.defaultUsername = defaultUsername;
 	}
 
 	/**
@@ -186,7 +186,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 * @return the password for the default user
 	 */
 	public String getDefaultPassword() {
-		return i_defaultPassword;
+		return defaultPassword;
 	}
 
 	/**
@@ -196,7 +196,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 *          the new password for the default user
 	 */
 	public void setDefaultPassword(String defaultPassword) {
-		i_defaultPassword = defaultPassword;
+		this.defaultPassword = defaultPassword;
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 * @return the {@link UserService} used to look for and create users
 	 */
 	public UserService getUserService() {
-		return i_userService;
+		return userService;
 	}
 
 	/**
@@ -215,7 +215,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 *          the new {@link UserService} used to look for and create users
 	 */
 	public void setUserService(UserService userService) {
-		i_userService = userService;
+		this.userService = userService;
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 *         {@link GoogleCalendar} s
 	 */
 	public GoogleCalendarFactory getGoogleCalendarFactory() {
-		return i_googleCalendarFactory;
+		return googleCalendarFactory;
 	}
 
 	/**
@@ -238,7 +238,7 @@ public class DefaultsServiceImpl implements DefaultsService {
 	 *          {@link GoogleCalendar} s
 	 */
 	public void setGoogleCalendarFactory(GoogleCalendarFactory googleCalendarFactory) {
-		i_googleCalendarFactory = googleCalendarFactory;
+		this.googleCalendarFactory = googleCalendarFactory;
 	}
 
 }

@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -56,24 +56,24 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 * The {@link CalendarConfigurationDao} to use for persting and retrieving
 	 * Google Calendars.
 	 */
-	private CalendarConfigurationDao i_calendarConfigurationDao;
+	private CalendarConfigurationDao calendarConfigurationDao;
 
 	/**
 	 * The {@link GoogleCalendarUpdatingService} to use for updating calendars.
 	 */
-	private GoogleCalendarUpdatingService i_googleCalendarUpdatingService;
+	private GoogleCalendarUpdatingService googleCalendarUpdatingService;
 
 	/**
 	 * The {@link GoogleCalendarDaoFactory} used for creating.
 	 * {@link GoogleCalendarDao}s.
 	 */
-	private GoogleCalendarDaoFactory i_googleCalendarDaoFactory;
+	private GoogleCalendarDaoFactory googleCalendarDaoFactory;
 
 	/**
 	 * The {@link GoogleCalendarFactory} used for getting instances of.
 	 * {@link GoogleCalendar}s.
 	 */
-	private GoogleCalendarFactory i_googleCalendarFactory;
+	private GoogleCalendarFactory googleCalendarFactory;
 
 	/**
 	 * {@inheritDoc}
@@ -158,7 +158,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 *         retrieving Google Calendars
 	 */
 	public CalendarConfigurationDao getCalendarConfigurationDao() {
-		return i_calendarConfigurationDao;
+		return calendarConfigurationDao;
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 *          retrieving Google Calendars
 	 */
 	public void setCalendarConfigurationDao(CalendarConfigurationDao calendarConfigurationDao) {
-		i_calendarConfigurationDao = calendarConfigurationDao;
+		this.calendarConfigurationDao = calendarConfigurationDao;
 	}
 
 	/**
@@ -181,7 +181,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 *         calendars
 	 */
 	public GoogleCalendarUpdatingService getGoogleCalendarUpdatingService() {
-		return i_googleCalendarUpdatingService;
+		return googleCalendarUpdatingService;
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 *          calendars
 	 */
 	public void setGoogleCalendarUpdatingService(GoogleCalendarUpdatingService googleCalendarUpdatingService) {
-		i_googleCalendarUpdatingService = googleCalendarUpdatingService;
+		this.googleCalendarUpdatingService = googleCalendarUpdatingService;
 	}
 
 	/**
@@ -202,7 +202,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 * @return the {@link GoogleCalendarDaoFactory} used for creating
 	 */
 	public GoogleCalendarDaoFactory getGoogleCalendarDaoFactory() {
-		return i_googleCalendarDaoFactory;
+		return googleCalendarDaoFactory;
 	}
 
 	/**
@@ -212,7 +212,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 *          the new {@link GoogleCalendarDaoFactory} used for creating
 	 */
 	public void setGoogleCalendarDaoFactory(GoogleCalendarDaoFactory googleCalendarDaoFactory) {
-		i_googleCalendarDaoFactory = googleCalendarDaoFactory;
+		this.googleCalendarDaoFactory = googleCalendarDaoFactory;
 	}
 
 	/**
@@ -221,7 +221,7 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 * @return the {@link GoogleCalendarFactory} used for getting instances of
 	 */
 	public GoogleCalendarFactory getGoogleCalendarFactory() {
-		return i_googleCalendarFactory;
+		return googleCalendarFactory;
 	}
 
 	/**
@@ -232,6 +232,6 @@ public class GoogleCalendarServiceImpl implements GoogleCalendarService {
 	 *          of
 	 */
 	public void setGoogleCalendarFactory(GoogleCalendarFactory googleCalendarFactory) {
-		i_googleCalendarFactory = googleCalendarFactory;
+		this.googleCalendarFactory = googleCalendarFactory;
 	}
 }

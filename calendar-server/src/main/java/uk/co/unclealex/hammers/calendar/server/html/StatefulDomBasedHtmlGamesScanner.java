@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -32,7 +32,7 @@ import com.google.common.collect.Sets;
 
 
 /**
- * A base class for {@link HtmlGamesScanner}s that require state. Really, i_is to avoid writing Spring factories. 
+ * A base class for {@link HtmlGamesScanner}s that require state. Really, is to avoid writing Spring factories. 
  * @author alex
  *
  */
@@ -66,17 +66,17 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 		/**
 		 * The set of {@link GameUpdateCommand}s to update.
 		 */
-		private final SortedSet<GameUpdateCommand> i_gameUpdateCommands = Sets.newTreeSet();
+		private final SortedSet<GameUpdateCommand> gameUpdateCommands = Sets.newTreeSet();
 		
 		/**
 		 * The URI of the page being scanned.
 		 */
-		private final URI i_uri;
+		private final URI uri;
 		
 		/**
 		 * The top-level {@link TagNode} of the page being scanned.
 		 */
-		private final TagNode i_tagNode;
+		private final TagNode tagNode;
 		
 		/**
 		 * Instantiates a new scanner.
@@ -88,8 +88,8 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 		 */
 		public Scanner(URI uri, TagNode tagNode) {
 			super();
-			i_uri = uri;
-			i_tagNode = tagNode;
+			this.uri = uri;
+			this.tagNode = tagNode;
 		}
 
 		/**
@@ -106,7 +106,7 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 		 * @return the set of {@link GameUpdateCommand}s to update
 		 */
 		public final SortedSet<GameUpdateCommand> getGameUpdateCommands() {
-			return i_gameUpdateCommands;
+			return gameUpdateCommands;
 		}
 
 		/**
@@ -115,7 +115,7 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 		 * @return the URI of the page being scanned
 		 */
 		public final URI getUri() {
-			return i_uri;
+			return uri;
 		}
 
 		/**
@@ -124,7 +124,7 @@ public abstract class StatefulDomBasedHtmlGamesScanner extends TagNodeBasedHtmlG
 		 * @return the top-level {@link TagNode} of the page being scanned
 		 */
 		public final TagNode getTagNode() {
-			return i_tagNode;
+			return tagNode;
 		};
 	}	
 }

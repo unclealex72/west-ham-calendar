@@ -3,10 +3,10 @@
  *
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
- * distributed with i_work for additional information
- * regarding copyright ownership.  The ASF licenses i_file
+ * distributed with work for additional information
+ * regarding copyright ownership.  The ASF licenses file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use i_file except in compliance
+ * "License"); you may not use file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -32,7 +32,7 @@ import javax.persistence.Transient;
 
 
 /**
- * An oauth token is used by Google to authenticate i_application.
+ * An oauth token is used by Google to authenticate application.
  * @author alex
  *
  */
@@ -41,19 +41,19 @@ import javax.persistence.Transient;
 public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, OauthToken> {
 
 	/**
-	 * The primary key of i_token.
+	 * The primary key of token.
 	 */
-	private Integer i_id;
+	private Integer id;
 	
 	/**
-	 * The type of i_token.
+	 * The type of token.
 	 */
-	private OauthTokenType i_tokenType;
+	private OauthTokenType tokenType;
 	
 	/**
 	 * The token string to be passed to and from Google.
 	 */
-	private String i_token;
+	private String token;
 
 	/**
 	 * Instantiates a new oauth token.
@@ -72,8 +72,8 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 	 */
 	public OauthToken(OauthTokenType tokenType, String token) {
 		super();
-		i_tokenType = tokenType;
-		i_token = token;
+		this.tokenType = tokenType;
+		this.token = token;
 	}
 
 	/**
@@ -94,24 +94,24 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 	}
 
 	/**
-	 * Gets the type of i_token.
+	 * Gets the type of token.
 	 * 
-	 * @return the type of i_token
+	 * @return the type of token
 	 */
 	@Enumerated(EnumType.STRING)
 	@Column(unique = true, nullable = false)
 	public OauthTokenType getTokenType() {
-		return i_tokenType;
+		return tokenType;
 	}
 
 	/**
-	 * Sets the type of i_token.
+	 * Sets the type of token.
 	 * 
 	 * @param tokenType
-	 *          the new type of i_token
+	 *          the new type of token
 	 */
 	public void setTokenType(OauthTokenType tokenType) {
-		i_tokenType = tokenType;
+		this.tokenType = tokenType;
 	}
 
 	/**
@@ -121,7 +121,7 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 	 */
 	@Column(nullable = false)
 	public String getToken() {
-		return i_token;
+		return token;
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 	 *          the new token string to be passed to and from Google
 	 */
 	public void setToken(String token) {
-		i_token = token;
+		this.token = token;
 	}
 
 	/**
@@ -140,17 +140,17 @@ public class OauthToken extends AbstractBusinessKeyBasedModel<OauthTokenType, Oa
 	@Id
 	@GeneratedValue
 	public Integer getId() {
-		return i_id;
+		return id;
 	}
 
 	/**
-	 * Sets the primary key of i_token.
+	 * Sets the primary key of token.
 	 * 
 	 * @param id
-	 *          the new primary key of i_token
+	 *          the new primary key of token
 	 */
 	public void setId(Integer id) {
-		i_id = id;
+		this.id = id;
 	}
 
 }
