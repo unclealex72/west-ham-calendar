@@ -23,10 +23,6 @@
 package uk.co.unclealex.hammers.calendar.server.update;
 
 import java.io.IOException;
-import java.util.SortedSet;
-
-import uk.co.unclealex.hammers.calendar.server.calendar.UpdateChangeLog;
-import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 
 /**
  * The service used to combine reading game information from the web and
@@ -47,7 +43,7 @@ public interface MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  void attendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
+  void attendGame(int gameId) throws IOException;
 
   /**
    * Move a game to the unattendend calendar.
@@ -59,30 +55,7 @@ public interface MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  void unattendGame(int gameId) throws GoogleAuthenticationFailedException, IOException;
-
-  /**
-   * Update all calendars.
-   * 
-   * @return The set of changes required.
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws GoogleAuthenticationFailedException
-   *           Thrown if authentication with the Google servers fails.
-   */
-  SortedSet<UpdateChangeLog> updateAllCalendars() throws IOException, GoogleAuthenticationFailedException;
-
-  /**
-   * Update all calendars, taking only games from the latest season into
-   * consideration.
-   * 
-   * @return The set of changes required.
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
-   * @throws GoogleAuthenticationFailedException
-   *           Thrown if authentication with the Google servers fails.
-   */
-  SortedSet<UpdateChangeLog> updateAllCalendarsThisSeason() throws IOException, GoogleAuthenticationFailedException;
+  void unattendGame(int gameId) throws IOException;
 
   /**
    * Attend all home games in a season.
@@ -94,5 +67,5 @@ public interface MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  void attendAllHomeGamesForSeason(int season) throws GoogleAuthenticationFailedException, IOException;
+  void attendAllHomeGamesForSeason(int season) throws IOException;
 }

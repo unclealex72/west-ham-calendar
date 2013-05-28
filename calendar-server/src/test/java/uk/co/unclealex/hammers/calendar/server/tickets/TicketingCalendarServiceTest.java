@@ -38,78 +38,88 @@ import org.springframework.test.jdbc.SimpleJdbcTestUtils;
 import uk.co.unclealex.hammers.calendar.server.model.TicketingCalendar;
 import uk.co.unclealex.hammers.calendar.shared.model.CalendarType;
 
-
 /**
  * The Class TicketingCalendarServiceTest.
  * 
  * @author alex
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration({ "/application-contexts/dao/context.xml", "/application-contexts/dao/test-db.xml",
-		"/application-contexts/tickets/context.xml", "/application-contexts/calendar/context.xml" })
+@ContextConfiguration({
+    "/application-contexts/dao/context.xml",
+    "/application-contexts/dao/test-db.xml",
+    "/application-contexts/tickets/context.xml" })
 @SuppressWarnings("deprecation")
 public class TicketingCalendarServiceTest extends AbstractTransactionalJUnit4SpringContextTests {
 
-	/** The Constant TABLE_NAME. */
-	private static final String TABLE_NAME = TicketingCalendar.class.getAnnotation(Table.class).name();
+  /** The Constant TABLE_NAME. */
+  private static final String TABLE_NAME = TicketingCalendar.class.getAnnotation(Table.class).name();
 
-	/** The simple jdbc template. */
-	@Autowired
-	private SimpleJdbcTemplate simpleJdbcTemplate;
-	
-	/** The ticketing calendar service. */
-	@Autowired
-	private TicketingCalendarService ticketingCalendarService;
+  /** The simple jdbc template. */
+  @Autowired
+  private SimpleJdbcTemplate simpleJdbcTemplate;
 
-	/**
-	 * Setup.
-	 */
-	@Before
-	public void setup() {
-		SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, TABLE_NAME);
-	}
+  /** The ticketing calendar service. */
+  @Autowired
+  private TicketingCalendarService ticketingCalendarService;
 
-	/**
-	 * Test default is null.
-	 */
-	@Test
-	public void testDefaultIsNull() {
-		Assert.assertNull("By default, the selected ticketing calendar was not null.",
-				ticketingCalendarService.getSelectedTicketingCalendar());
-	}
+  /**
+   * Setup.
+   */
+  @Before
+  public void setup() {
+    SimpleJdbcTestUtils.deleteFromTables(simpleJdbcTemplate, TABLE_NAME);
+  }
 
-	/**
-	 * Test all calendar types.
-	 */
-	@Test
-	public void testAllCalendarTypes() {
-		for (CalendarType calendarType : CalendarType.values()) {
-			try {
-				ticketingCalendarService.setSelectedTicketingCalendar(calendarType);
-				Assert.assertTrue("Setting the selected calendar should have failed for calendar type " + calendarType,
-						calendarType.isTicketCalendar());
-				Assert.assertEquals("There were the wrong amount of ticketing calendars.", 1,
-						SimpleJdbcTestUtils.countRowsInTable(simpleJdbcTemplate, TABLE_NAME));
-				CalendarType actualCalendarType = ticketingCalendarService.getSelectedTicketingCalendar();
-				Assert.assertEquals("The wrong calendar was returned for calendar type " + calendarType,
-						calendarType, actualCalendarType);
-			}
-			catch (IllegalArgumentException e) {
-				Assert.assertFalse("Setting the selected calendar failed for calendar type " + calendarType,
-						calendarType.isTicketCalendar());
-			}
-		}
-	}
+  /**
+   * Test default is null.
+   */
+  @Test
+  public void testDefaultIsNull() {
+    Assert.assertNull(
+        "By default, the selected ticketing calendar was not null.",
+        ticketingCalendarService.getSelectedTicketingCalendar());
+  }
 
-	/**
-	 * Test clear.
-	 */
-	@Test
-	public void testClear() {
-		ticketingCalendarService.setSelectedTicketingCalendar(CalendarType.TICKETS_ACADEMY);
-		ticketingCalendarService.setSelectedTicketingCalendar(null);
-		Assert.assertNull("The selected calendar should be null.", ticketingCalendarService.getSelectedTicketingCalendar());
-		Assert.assertEquals("The wrong number of ticketing calendars were found.", 0,
-				SimpleJdbcTestUtils.countRowsInTable(simpleJdbcTemplate, TABLE_NAME));
-	}
+  /**
+   * Test all calendar types.
+   */
+  @Test
+  public void testAllCalendarTypes() {
+    for (final CalendarType calendarType : CalendarType.values()) {
+      try {
+        ticketingCalendarService.setSelectedTicketingCalendar(calendarType);
+        Assert.assertTrue(
+            "Setting the selected calendar should have failed for calendar type " + calendarType,
+            calendarType.isTicketCalendar());
+        Assert.assertEquals(
+            "There were the wrong amount of ticketing calendars.",
+            1,
+            SimpleJdbcTestUtils.countRowsInTable(simpleJdbcTemplate, TABLE_NAME));
+        final CalendarType actualCalendarType = ticketingCalendarService.getSelectedTicketingCalendar();
+        Assert.assertEquals(
+            "The wrong calendar was returned for calendar type " + calendarType,
+            calendarType,
+            actualCalendarType);
+      }
+      catch (final IllegalArgumentException e) {
+        Assert.assertFalse(
+            "Setting the selected calendar failed for calendar type " + calendarType,
+            calendarType.isTicketCalendar());
+      }
+    }
+  }
+
+  /**
+   * Test clear.
+   */
+  @Test
+  public void testClear() {
+    ticketingCalendarService.setSelectedTicketingCalendar(CalendarType.TICKETS_ACADEMY);
+    ticketingCalendarService.setSelectedTicketingCalendar(null);
+    Assert.assertNull("The selected calendar should be null.", ticketingCalendarService.getSelectedTicketingCalendar());
+    Assert.assertEquals(
+        "The wrong number of ticketing calendars were found.",
+        0,
+        SimpleJdbcTestUtils.countRowsInTable(simpleJdbcTemplate, TABLE_NAME));
+  }
 }

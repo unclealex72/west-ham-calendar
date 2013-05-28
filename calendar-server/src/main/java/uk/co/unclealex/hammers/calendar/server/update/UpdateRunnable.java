@@ -25,56 +25,56 @@ package uk.co.unclealex.hammers.calendar.server.update;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * A class containing the code to make sure that all Google calendars are synchronised with the database.
+ * A class containing the code to make sure that all Google calendars are
+ * synchronised with the database.
+ * 
  * @author alex
- *
+ * 
  */
 public class UpdateRunnable implements Runnable {
 
-	/** The logger for this class. */
-	private static final Logger log = LoggerFactory.getLogger(UpdateRunnable.class);
-	
-	/**
-	 * The {@link MainUpdateService} used to update the Google calendars.
-	 */
-	private MainUpdateService mainUpdateService;
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void run() {
-		try {
-			log.info("Updating started.");
-			getMainUpdateService().updateAllCalendars();
-			log.info("Updating completed.");
-			System.gc();
-		}
-		catch (Throwable e) {
-			log.error("Could not update calendars.", e);
-		}
-	}
+  /** The logger for this class. */
+  private static final Logger log = LoggerFactory.getLogger(UpdateRunnable.class);
 
-	/**
-	 * Gets the {@link MainUpdateService} used to update the Google calendars.
-	 * 
-	 * @return the {@link MainUpdateService} used to update the Google calendars
-	 */
-	public MainUpdateService getMainUpdateService() {
-		return mainUpdateService;
-	}
+  /**
+   * The {@link MainUpdateService} used to update the Google calendars.
+   */
+  private MainUpdateService mainUpdateService;
 
-	/**
-	 * Sets the {@link MainUpdateService} used to update the Google calendars.
-	 * 
-	 * @param mainUpdateService
-	 *          the new {@link MainUpdateService} used to update the Google
-	 *          calendars
-	 */
-	public void setMainUpdateService(MainUpdateService mainUpdateService) {
-		this.mainUpdateService = mainUpdateService;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void run() {
+    try {
+      log.info("Updating started.");
+      log.info("Updating completed.");
+      System.gc();
+    }
+    catch (final Throwable e) {
+      log.error("Could not update calendars.", e);
+    }
+  }
+
+  /**
+   * Gets the {@link MainUpdateService} used to update the Google calendars.
+   * 
+   * @return the {@link MainUpdateService} used to update the Google calendars
+   */
+  public MainUpdateService getMainUpdateService() {
+    return mainUpdateService;
+  }
+
+  /**
+   * Sets the {@link MainUpdateService} used to update the Google calendars.
+   * 
+   * @param mainUpdateService
+   *          the new {@link MainUpdateService} used to update the Google
+   *          calendars
+   */
+  public void setMainUpdateService(final MainUpdateService mainUpdateService) {
+    this.mainUpdateService = mainUpdateService;
+  }
 
 }

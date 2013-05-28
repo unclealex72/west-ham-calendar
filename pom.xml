@@ -28,7 +28,6 @@
   </properties>
   <modules>
     <module>calendar-server</module>
-    <module>calendar-shared</module>
   </modules>
   <reporting>
     <plugins>

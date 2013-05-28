@@ -35,8 +35,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarService;
-import uk.co.unclealex.hammers.calendar.server.calendar.UpdateChangeLog;
 import uk.co.unclealex.hammers.calendar.server.dao.GameDao;
 import uk.co.unclealex.hammers.calendar.server.html.GameLocator;
 import uk.co.unclealex.hammers.calendar.server.html.GameLocator.DatePlayedLocator;
@@ -47,7 +45,6 @@ import uk.co.unclealex.hammers.calendar.server.html.HtmlGamesScanner;
 import uk.co.unclealex.hammers.calendar.server.html.MainPageService;
 import uk.co.unclealex.hammers.calendar.server.model.Game;
 import uk.co.unclealex.hammers.calendar.server.model.GameKey;
-import uk.co.unclealex.hammers.calendar.shared.exceptions.GoogleAuthenticationFailedException;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 import com.google.common.base.Function;
@@ -90,32 +87,6 @@ public class MainUpdateServiceImpl implements MainUpdateService {
    * The {@link HtmlGamesScanner} for getting fixture information.
    */
   private HtmlGamesScanner fixturesHtmlGamesScanner;
-
-  /**
-   * The {@link GoogleCalendarService} used for updating the Google calendars.
-   */
-  private GoogleCalendarService googleCalendarService;
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public SortedSet<UpdateChangeLog> updateAllCalendars() throws IOException, GoogleAuthenticationFailedException {
-    processDatabaseUpdates();
-    return getGoogleCalendarService().updateCalendars(getGameDao().getAll());
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public SortedSet<UpdateChangeLog> updateAllCalendarsThisSeason()
-      throws IOException,
-      GoogleAuthenticationFailedException {
-    processDatabaseUpdates();
-    final GameDao gameDao = getGameDao();
-    return getGoogleCalendarService().updateCalendars(gameDao.getAllForSeason(gameDao.getLatestSeason()));
-  }
 
   /**
    * Process all updates required in the database.
@@ -185,7 +156,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
    * {@inheritDoc}
    */
   @Override
-  public void attendGame(final int gameId) throws GoogleAuthenticationFailedException, IOException {
+  public void attendGame(final int gameId) throws IOException {
     final Game game = getGameDao().findById(gameId);
     attendGame(game);
   }
@@ -200,8 +171,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  protected void attendGame(final Game game) throws GoogleAuthenticationFailedException, IOException {
-    getGoogleCalendarService().attendGame(game);
+  protected void attendGame(final Game game) throws IOException {
     game.setAttended(true);
     getGameDao().saveOrUpdate(game);
   }
@@ -210,9 +180,8 @@ public class MainUpdateServiceImpl implements MainUpdateService {
    * {@inheritDoc}
    */
   @Override
-  public void unattendGame(final int gameId) throws GoogleAuthenticationFailedException, IOException {
+  public void unattendGame(final int gameId) throws IOException {
     final Game game = getGameDao().findById(gameId);
-    getGoogleCalendarService().unattendGame(game);
     game.setAttended(false);
     getGameDao().saveOrUpdate(game);
   }
@@ -352,7 +321,7 @@ public class MainUpdateServiceImpl implements MainUpdateService {
    * {@inheritDoc}
    */
   @Override
-  public void attendAllHomeGamesForSeason(final int season) throws GoogleAuthenticationFailedException, IOException {
+  public void attendAllHomeGamesForSeason(final int season) throws IOException {
     for (final Game game : getGameDao().getAllForSeasonAndLocation(season, Location.HOME)) {
       attendGame(game);
     }
@@ -435,28 +404,4 @@ public class MainUpdateServiceImpl implements MainUpdateService {
   public void setFixturesHtmlGamesScanner(final HtmlGamesScanner fixturesHtmlGameScanner) {
     fixturesHtmlGamesScanner = fixturesHtmlGameScanner;
   }
-
-  /**
-   * Gets the {@link GoogleCalendarService} used for updating the Google
-   * calendars.
-   * 
-   * @return the {@link GoogleCalendarService} used for updating the Google
-   *         calendars
-   */
-  public GoogleCalendarService getGoogleCalendarService() {
-    return googleCalendarService;
-  }
-
-  /**
-   * Sets the {@link GoogleCalendarService} used for updating the Google
-   * calendars.
-   * 
-   * @param googleCalendarService
-   *          the new {@link GoogleCalendarService} used for updating the Google
-   *          calendars
-   */
-  public void setGoogleCalendarService(final GoogleCalendarService googleCalendarService) {
-    this.googleCalendarService = googleCalendarService;
-  }
-
 }
