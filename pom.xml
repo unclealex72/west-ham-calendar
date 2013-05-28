@@ -28,9 +28,7 @@
   </properties>
   <modules>
     <module>calendar-server</module>
-    <module>calendar-client</module>
     <module>calendar-shared</module>
-    <module>calendar-jndi</module>
   </modules>
   <reporting>
     <plugins>
