@@ -38,8 +38,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.unclealex.hammers.calendar.server.dates.AutomaticPossiblyYearlessDateFormat;
-import uk.co.unclealex.hammers.calendar.server.dates.PossiblyYearlessDateFormat;
 import uk.co.unclealex.hammers.calendar.server.dates.UnparseableDateException;
 import uk.co.unclealex.hammers.calendar.server.model.GameKey;
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
@@ -50,7 +48,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterators;
 
-
 /**
  * An {@link HtmlGamesScanner} that scans the season's fixtures page for game
  * information.
@@ -60,270 +57,281 @@ import com.google.common.collect.Iterators;
  */
 public class SeasonHtmlGamesScanner extends StatefulDomBasedHtmlGamesScanner {
 
-	/** The logger for this class. */
-	private static final Logger log = LoggerFactory.getLogger(SeasonHtmlGamesScanner.class);
+  /** The logger for this class. */
+  private static final Logger log = LoggerFactory.getLogger(SeasonHtmlGamesScanner.class);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Scanner createScanner(URI uri, TagNode tagNode) {
-		return new SeasonScanner(uri, tagNode);
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  protected Scanner createScanner(final URI uri, final TagNode tagNode) {
+    return new SeasonScanner(uri, tagNode);
+  }
 
-	/**
-	 * The {@link Scanner} that scans the season's fixtures page for game
-	 * information.
-	 * 
-	 * @author alex
-	 * 
-	 */
-	class SeasonScanner extends Scanner {
+  /**
+   * The {@link Scanner} that scans the season's fixtures page for game
+   * information.
+   * 
+   * @author alex
+   * 
+   */
+  class SeasonScanner extends Scanner {
 
-		/**
-		 * The current season.
-		 */
-		private int season;
+    /**
+     * The current season.
+     */
+    private int season;
 
-		/**
-		 * The current month.
-		 */
-		private String month;
+    /**
+     * The current month.
+     */
+    private String month;
 
-		/**
-		 * The {@link DateTime} the season started.
-		 */
-		private DateTime startOfSeason;
+    /**
+     * The {@link DateTime} the season started.
+     */
+    private DateTime startOfSeason;
 
-		/**
-		 * Instantiates a new season scanner.
-		 * 
-		 * @param uri
-		 *          the uri
-		 * @param tagNode
-		 *          the tag node
-		 */
-		public SeasonScanner(URI uri, TagNode tagNode) {
-			super(uri, tagNode);
-		}
+    /**
+     * Instantiates a new season scanner.
+     * 
+     * @param uri
+     *          the uri
+     * @param tagNode
+     *          the tag node
+     */
+    public SeasonScanner(final URI uri, final TagNode tagNode) {
+      super(uri, tagNode);
+    }
 
-		/**
-		 * {@inheritDoc}
-		 */
-		@Override
-		public void scan() throws IOException {
-			updateSeason();
-			TagNode tableTagNode;
-			try {
-				tableTagNode = (TagNode) getTagNode().evaluateXPath("//table[@class='fixtureList']")[0];
-			}
-			catch (XPatherException e) {
-				throw new IOException(e);
-			}
-			TagNodeFilter tableRowFilter = new TagNodeFilter() {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void scan() throws IOException {
+      updateSeason();
+      TagNode tableTagNode;
+      try {
+        tableTagNode = (TagNode) getTagNode().evaluateXPath("//table[@class='fixtureList']")[0];
+      }
+      catch (final XPatherException e) {
+        throw new IOException(e);
+      }
+      final TagNodeFilter tableRowFilter = new TagNodeFilter() {
 
-				@Override
-				public boolean apply(TagNode tagNode) {
-					return "tr".equals(tagNode.getName());
-				}
-			};
-			class ClassContainsPredicate implements Predicate<TagNode> {
-				String target;
+        @Override
+        public boolean apply(final TagNode tagNode) {
+          return "tr".equals(tagNode.getName());
+        }
+      };
+      class ClassContainsPredicate implements Predicate<TagNode> {
+        String target;
 
-				public ClassContainsPredicate(String target) {
-					super();
-					this.target = target;
-				}
+        public ClassContainsPredicate(final String target) {
+          super();
+          this.target = target;
+        }
 
-				@Override
-				public boolean apply(TagNode tagNode) {
-					String classes = tagNode.getAttributeByName("class");
-					return classes != null && classes.contains(target);
-				}
-			}
-			Predicate<TagNode> isMonthRowPredicate = new ClassContainsPredicate("rowHeader");
-			Predicate<TagNode> isGameRow = new ClassContainsPredicate("fixture");
-			for (TagNode row : tableRowFilter.list(tableTagNode)) {
-				if (isMonthRowPredicate.apply(row)) {
-					updateMonth(row);
-				}
-				else if (isGameRow.apply(row)) {
-					updateGame(row);
-				}
-			}
-		}
+        @Override
+        public boolean apply(final TagNode tagNode) {
+          final String classes = tagNode.getAttributeByName("class");
+          return classes != null && classes.contains(target);
+        }
+      }
+      final Predicate<TagNode> isMonthRowPredicate = new ClassContainsPredicate("rowHeader");
+      final Predicate<TagNode> isGameRow = new ClassContainsPredicate("fixture");
+      for (final TagNode row : tableRowFilter.list(tableTagNode)) {
+        if (isMonthRowPredicate.apply(row)) {
+          updateMonth(row);
+        }
+        else if (isGameRow.apply(row)) {
+          updateGame(row);
+        }
+      }
+    }
 
-		/**
-		 * Find which season page represents.
-		 */
-		protected void updateSeason() {
-			final Pattern seasonPattern = Pattern.compile("s\\.prop3=\"([0-9]+)\"");
-			new TagNodeWalker(getTagNode()) {
+    /**
+     * Find which season page represents.
+     */
+    protected void updateSeason() {
+      final Pattern seasonPattern = Pattern.compile("s\\.prop3=\"([0-9]+)\"");
+      new TagNodeWalker(getTagNode()) {
 
-				@Override
-				public void execute(TagNode tagNode) {
-					if (getSeason() == 0 && "script".equals(tagNode.getName())) {
-						String text = TagNodeUtils.normaliseText(tagNode);
-						Matcher matcher = seasonPattern.matcher(text);
-						if (matcher.find()) {
-							int season = Integer.valueOf(matcher.group(1));
-							log.info("Found season " + season);
-							setSeason(season);
-							setStartOfSeason(getDateService().parseDate("01/07/" + season, "dd/MM/yyyy"));
-						}
-					}
-				}
-			};
-		}
+        @Override
+        public void execute(final TagNode tagNode) {
+          if (getSeason() == 0 && "script".equals(tagNode.getName())) {
+            final String text = TagNodeUtils.normaliseText(tagNode);
+            final Matcher matcher = seasonPattern.matcher(text);
+            if (matcher.find()) {
+              final int season = Integer.valueOf(matcher.group(1));
+              log.info("Found season " + season);
+              setSeason(season);
+              setStartOfSeason(getDateService().parseDate("01/07/" + season, "dd/MM/yyyy"));
+            }
+          }
+        }
+      };
+    }
 
-		/**
-		 * Update the month.
-		 * 
-		 * @param row
-		 *          The table row containing the month.
-		 */
-		protected void updateMonth(TagNode row) {
-			TagNode child = row.findElementByName("td", false);
-			String month = TagNodeUtils.normaliseText(child);
-			log.info("Found " + month + " " + getSeason());
-			setMonth(month);
-		}
+    /**
+     * Update the month.
+     * 
+     * @param row
+     *          The table row containing the month.
+     */
+    protected void updateMonth(final TagNode row) {
+      final TagNode child = row.findElementByName("td", false);
+      final String month = TagNodeUtils.normaliseText(child);
+      log.info("Found " + month + " " + getSeason());
+      setMonth(month);
+    }
 
-		/**
-		 * Update a game.
-		 * 
-		 * @param row
-		 *          The current row in the fixtures table.
-		 */
-		protected void updateGame(TagNode row) {
-			Iterator<TagNode> tds = Iterators.forArray(row.getElementsByName("td", false));
-			String date = TagNodeUtils.normaliseTextToNull(tds.next());
-			date = date.replaceAll("[^0-9]", "");
-			date = Strings.padStart(date, 2, '0');
-			String time = TagNodeUtils.normaliseTextToNull(tds.next());
+    /**
+     * Update a game.
+     * 
+     * @param row
+     *          The current row in the fixtures table.
+     */
+    protected void updateGame(final TagNode row) {
+      final Iterator<TagNode> tds = Iterators.forArray(row.getElementsByName("td", false));
+      String date = TagNodeUtils.normaliseTextToNull(tds.next());
+      date = date.replaceAll("[^0-9]", "");
+      date = Strings.padStart(date, 2, '0');
+      final String time = TagNodeUtils.normaliseTextToNull(tds.next());
 
-			Location location = "H".equals(TagNodeUtils.normaliseTextToNull(tds.next())) ? Location.HOME : Location.AWAY;
-			TagNode opponentsEl = tds.next();
-			// Could be in a link
-			TagNode opponentsLink = opponentsEl.findElementByName("a", false);
-			if (opponentsLink != null) {
-				opponentsEl = opponentsLink;
-			}
-			String opponents = TagNodeUtils.normaliseTextToNull(opponentsEl);
-			Competition competition = Competition.findByToken(TagNodeUtils.normaliseTextToNull(tds.next()));
-			GameKey gameKey = new GameKey(competition, location, opponents, getSeason());
-			log.info("Found game key " + gameKey);
-			String datePlayedString = Joiner.on(" ").join(date, time, getMonth());
-			PossiblyYearlessDateFormat pydf = new AutomaticPossiblyYearlessDateFormat("dd HH:mm MMMM[ yyyy]");
-			DateTime datePlayed;
-			try {
-				datePlayed = getDateService().parsePossiblyYearlessDate(datePlayedString, getStartOfSeason(), false, pydf);
-			}
-			catch (UnparseableDateException e) {
-				log.warn("Cannot parse date " + datePlayedString + " for game " + gameKey, e);
-				return;
-			}
-			GameLocator gameKeyLocator = GameLocator.gameKeyLocator(gameKey);
-			GameUpdateCommand datePlayedGameUpdateCommand = GameUpdateCommand.datePlayed(gameKeyLocator, datePlayed);
-			tds.next(); // Move past the W/L/D token.
-			GameUpdateCommand resultGameUpdateCommand = GameUpdateCommand.result(gameKeyLocator,
-					TagNodeUtils.normaliseTextToNull(tds.next()));
-			String attendenceText = TagNodeUtils.normaliseTextToNull(tds.next());
-			Integer attendence;
-			URI uri = getUri();
-			try {
-				attendence = (attendenceText == null || "00".equals(attendenceText)) ? null : NumberFormat
-						.getIntegerInstance(Locale.UK).parse(attendenceText).intValue();
-			}
-			catch (ParseException e) {
-				StringBuilder sb = new StringBuilder();
-				for (byte by : attendenceText.getBytes()) {
-					int i;
-					if (by < 0) {
-						i = 256 + by;
-					}
-					else {
-						i = by;
-					}
-					sb.append("0x").append(Integer.toHexString(i));
-				}
-				log.warn("Cannot parse attendance " + sb.toString() + " on page " + uri, e);
-				attendence = null;
-			}
-			GameUpdateCommand attendenceUpdateCommand = GameUpdateCommand.attendence(gameKeyLocator, attendence);
-			tds.next(); // Move past the league table token.
-			TagNode matchReportTd = tds.next();
-			TagNode matchReportLink = matchReportTd.findElementByName("a", false);
-			String matchReport;
-			if (matchReportLink != null) {
-				String matchReportPath = matchReportLink.getAttributeByName("href");
-				URI matchReportUri = uri.resolve(matchReportPath);
-				matchReport = matchReportUri.toString();
-			}
-			else {
-				matchReport = null;
-			}
-			GameUpdateCommand matchReportUpdateCommand = GameUpdateCommand.matchReport(gameKeyLocator, matchReport);
-			getGameUpdateCommands().addAll(
-					Arrays.asList(datePlayedGameUpdateCommand, resultGameUpdateCommand, attendenceUpdateCommand,
-							matchReportUpdateCommand));
-		}
+      final Location location =
+          "H".equals(TagNodeUtils.normaliseTextToNull(tds.next())) ? Location.HOME : Location.AWAY;
+      TagNode opponentsEl = tds.next();
+      // Could be in a link
+      final TagNode opponentsLink = opponentsEl.findElementByName("a", false);
+      if (opponentsLink != null) {
+        opponentsEl = opponentsLink;
+      }
+      final String opponents = TagNodeUtils.normaliseTextToNull(opponentsEl);
+      final Competition competition = Competition.findByToken(TagNodeUtils.normaliseTextToNull(tds.next()));
+      final GameKey gameKey = new GameKey(competition, location, opponents, getSeason());
+      log.info("Found game key " + gameKey);
+      final String datePlayedString = Joiner.on(" ").join(date, time, getMonth());
+      DateTime datePlayed;
+      try {
+        datePlayed =
+            getDateService().parsePossiblyYearlessDate(
+                datePlayedString,
+                getStartOfSeason(),
+                false,
+                new String[] { ("dd HH:mm MMMM[ yyyy]") });
+      }
+      catch (final UnparseableDateException e) {
+        log.warn("Cannot parse date " + datePlayedString + " for game " + gameKey, e);
+        return;
+      }
+      final GameLocator gameKeyLocator = GameLocator.gameKeyLocator(gameKey);
+      final GameUpdateCommand datePlayedGameUpdateCommand = GameUpdateCommand.datePlayed(gameKeyLocator, datePlayed);
+      tds.next(); // Move past the W/L/D token.
+      final GameUpdateCommand resultGameUpdateCommand =
+          GameUpdateCommand.result(gameKeyLocator, TagNodeUtils.normaliseTextToNull(tds.next()));
+      final String attendenceText = TagNodeUtils.normaliseTextToNull(tds.next());
+      Integer attendence;
+      final URI uri = getUri();
+      try {
+        attendence =
+            (attendenceText == null || "00".equals(attendenceText)) ? null : NumberFormat
+                .getIntegerInstance(Locale.UK)
+                .parse(attendenceText)
+                .intValue();
+      }
+      catch (final ParseException e) {
+        final StringBuilder sb = new StringBuilder();
+        for (final byte by : attendenceText.getBytes()) {
+          int i;
+          if (by < 0) {
+            i = 256 + by;
+          }
+          else {
+            i = by;
+          }
+          sb.append("0x").append(Integer.toHexString(i));
+        }
+        log.warn("Cannot parse attendance " + sb.toString() + " on page " + uri, e);
+        attendence = null;
+      }
+      final GameUpdateCommand attendenceUpdateCommand = GameUpdateCommand.attendence(gameKeyLocator, attendence);
+      tds.next(); // Move past the league table token.
+      final TagNode matchReportTd = tds.next();
+      final TagNode matchReportLink = matchReportTd.findElementByName("a", false);
+      String matchReport;
+      if (matchReportLink != null) {
+        final String matchReportPath = matchReportLink.getAttributeByName("href");
+        final URI matchReportUri = uri.resolve(matchReportPath);
+        matchReport = matchReportUri.toString();
+      }
+      else {
+        matchReport = null;
+      }
+      final GameUpdateCommand matchReportUpdateCommand = GameUpdateCommand.matchReport(gameKeyLocator, matchReport);
+      getGameUpdateCommands().addAll(
+          Arrays.asList(
+              datePlayedGameUpdateCommand,
+              resultGameUpdateCommand,
+              attendenceUpdateCommand,
+              matchReportUpdateCommand));
+    }
 
-		/**
-		 * Gets the current season.
-		 * 
-		 * @return the current season
-		 */
-		public int getSeason() {
-			return season;
-		}
+    /**
+     * Gets the current season.
+     * 
+     * @return the current season
+     */
+    public int getSeason() {
+      return season;
+    }
 
-		/**
-		 * Gets the current month.
-		 * 
-		 * @return the current month
-		 */
-		public String getMonth() {
-			return month;
-		}
+    /**
+     * Gets the current month.
+     * 
+     * @return the current month
+     */
+    public String getMonth() {
+      return month;
+    }
 
-		/**
-		 * Sets the current month.
-		 * 
-		 * @param month
-		 *          the new current month
-		 */
-		public void setMonth(String month) {
-			this.month = month;
-		}
+    /**
+     * Sets the current month.
+     * 
+     * @param month
+     *          the new current month
+     */
+    public void setMonth(final String month) {
+      this.month = month;
+    }
 
-		/**
-		 * Gets the {@link DateTime} the season started.
-		 * 
-		 * @return the {@link DateTime} the season started
-		 */
-		public DateTime getStartOfSeason() {
-			return startOfSeason;
-		}
+    /**
+     * Gets the {@link DateTime} the season started.
+     * 
+     * @return the {@link DateTime} the season started
+     */
+    public DateTime getStartOfSeason() {
+      return startOfSeason;
+    }
 
-		/**
-		 * Sets the {@link DateTime} the season started.
-		 * 
-		 * @param startOfSeason
-		 *          the new {@link DateTime} the season started
-		 */
-		public void setStartOfSeason(DateTime startOfSeason) {
-			this.startOfSeason = startOfSeason;
-		}
+    /**
+     * Sets the {@link DateTime} the season started.
+     * 
+     * @param startOfSeason
+     *          the new {@link DateTime} the season started
+     */
+    public void setStartOfSeason(final DateTime startOfSeason) {
+      this.startOfSeason = startOfSeason;
+    }
 
-		/**
-		 * Sets the current season.
-		 * 
-		 * @param season
-		 *          the new current season
-		 */
-		public void setSeason(int season) {
-			this.season = season;
-		}
-	}
+    /**
+     * Sets the current season.
+     * 
+     * @param season
+     *          the new current season
+     */
+    public void setSeason(final int season) {
+      this.season = season;
+    }
+  }
 }

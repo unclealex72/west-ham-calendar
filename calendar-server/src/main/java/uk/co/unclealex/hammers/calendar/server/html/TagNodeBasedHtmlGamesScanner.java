@@ -42,77 +42,77 @@ import uk.co.unclealex.hammers.calendar.server.dates.DateService;
  */
 public abstract class TagNodeBasedHtmlGamesScanner implements HtmlGamesScanner {
 
-	/** The logger for this class. */
-	private static final Logger log = LoggerFactory.getLogger(TagNodeBasedHtmlGamesScanner.class);
+  /** The logger for this class. */
+  private static final Logger log = LoggerFactory.getLogger(TagNodeBasedHtmlGamesScanner.class);
 
-	/**
-	 * The {@link HtmlPageLoader} used to load web pages.
-	 */
-	private HtmlPageLoader htmlPageLoader;
-	
-	/**
-	 * The {@link DateService} to use for date and time manipulation.
-	 */
-	private DateService dateService;
+  /**
+   * The {@link HtmlPageLoader} used to load web pages.
+   */
+  private HtmlPageLoader htmlPageLoader;
+  
+  /**
+   * The {@link DateService} to use for date and time manipulation.
+   */
+  private DateService dateService;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public SortedSet<GameUpdateCommand> scan(URI uri) throws IOException {
-		log.info("Scanning URI " + uri);
-		TagNode tagNode = getHtmlPageLoader().loadPage(uri.toURL());
-		return scan(uri, tagNode);
-	}
+  /**
+   * {@inheritDoc}
+   */
+  public SortedSet<GameUpdateCommand> scan(URI uri) throws IOException {
+    log.info("Scanning URI " + uri);
+    TagNode tagNode = getHtmlPageLoader().loadPage(uri.toURL());
+    return scan(uri, tagNode);
+  }
 
-	/**
-	 * Scan a document for game updates.
-	 * 
-	 * @param uri
-	 *          The URI of the page being scanned.
-	 * @param tagNode
-	 *          The document that is being scanned.
-	 * @return A set of {@link GameUpdateCommand}s that need to be made.
-	 * @throws IOException
-	 *           If there are any network problems.
-	 */
-	abstract SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException;
+  /**
+   * Scan a document for game updates.
+   * 
+   * @param uri
+   *          The URI of the page being scanned.
+   * @param tagNode
+   *          The document that is being scanned.
+   * @return A set of {@link GameUpdateCommand}s that need to be made.
+   * @throws IOException
+   *           If there are any network problems.
+   */
+  abstract SortedSet<GameUpdateCommand> scan(URI uri, TagNode tagNode) throws IOException;
 
-	/**
-	 * Gets the {@link HtmlPageLoader} used to load web pages.
-	 * 
-	 * @return the {@link HtmlPageLoader} used to load web pages
-	 */
-	public HtmlPageLoader getHtmlPageLoader() {
-		return htmlPageLoader;
-	}
+  /**
+   * Gets the {@link HtmlPageLoader} used to load web pages.
+   * 
+   * @return the {@link HtmlPageLoader} used to load web pages
+   */
+  public HtmlPageLoader getHtmlPageLoader() {
+    return htmlPageLoader;
+  }
 
-	/**
-	 * Sets the {@link HtmlPageLoader} used to load web pages.
-	 * 
-	 * @param htmlPageLoader
-	 *          the new {@link HtmlPageLoader} used to load web pages
-	 */
-	public void setHtmlPageLoader(HtmlPageLoader htmlPageLoader) {
-		this.htmlPageLoader = htmlPageLoader;
-	}
+  /**
+   * Sets the {@link HtmlPageLoader} used to load web pages.
+   * 
+   * @param htmlPageLoader
+   *          the new {@link HtmlPageLoader} used to load web pages
+   */
+  public void setHtmlPageLoader(HtmlPageLoader htmlPageLoader) {
+    this.htmlPageLoader = htmlPageLoader;
+  }
 
-	/**
-	 * Gets the {@link DateService} to use for date and time manipulation.
-	 * 
-	 * @return the {@link DateService} to use for date and time manipulation
-	 */
-	public DateService getDateService() {
-		return dateService;
-	}
+  /**
+   * Gets the {@link DateService} to use for date and time manipulation.
+   * 
+   * @return the {@link DateService} to use for date and time manipulation
+   */
+  public DateService getDateService() {
+    return dateService;
+  }
 
-	/**
-	 * Sets the {@link DateService} to use for date and time manipulation.
-	 * 
-	 * @param dateService
-	 *          the new {@link DateService} to use for date and time manipulation
-	 */
-	public void setDateService(DateService dateService) {
-		this.dateService = dateService;
-	}
+  /**
+   * Sets the {@link DateService} to use for date and time manipulation.
+   * 
+   * @param dateService
+   *          the new {@link DateService} to use for date and time manipulation
+   */
+  public void setDateService(DateService dateService) {
+    this.dateService = dateService;
+  }
 
 }

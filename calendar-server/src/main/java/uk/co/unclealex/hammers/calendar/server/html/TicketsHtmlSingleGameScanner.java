@@ -31,8 +31,6 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.co.unclealex.hammers.calendar.server.dates.AutomaticPossiblyYearlessDateFormat;
-import uk.co.unclealex.hammers.calendar.server.dates.PossiblyYearlessDateFormat;
 import uk.co.unclealex.hammers.calendar.server.dates.UnparseableDateException;
 
 import com.google.common.base.Predicate;
@@ -133,7 +131,7 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
       /**
        * An array of date formats to look for a date to associate with action.
        */
-      private final PossiblyYearlessDateFormat[] possiblyYearlessDateFormats;
+      private final String[] possiblyYearlessDateFormats;
 
       /**
        * Instantiates a new parsing action.
@@ -146,11 +144,7 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
       public ParsingAction(final String containedString, final String... possiblyYearlessDateFormats) {
         super();
         containedText = containedString;
-        final PossiblyYearlessDateFormat[] pydfs = new PossiblyYearlessDateFormat[possiblyYearlessDateFormats.length];
-        for (int idx = 0; idx < possiblyYearlessDateFormats.length; idx++) {
-          pydfs[idx] = new AutomaticPossiblyYearlessDateFormat(possiblyYearlessDateFormats[idx]);
-        }
-        this.possiblyYearlessDateFormats = pydfs;
+        this.possiblyYearlessDateFormats = possiblyYearlessDateFormats;
       }
 
       /**
@@ -164,14 +158,14 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
         try {
           final DateTime dateTime = parseDateTime(dateText);
           if (dateTime == null) {
-            log.debug("Could not find a date in for URL " + getUri() + " in text " + dateText);
+            log.debug("Could not find a date for URL " + getUri() + " in text " + dateText);
           }
           else {
             execute(dateTime);
           }
         }
         catch (final UnparseableDateException e) {
-          log.debug("Could not find a date in for URL " + getUri() + " in text " + dateText, e);
+          log.debug("Could not find a date for URL " + getUri() + " in text " + dateText, e);
         }
       }
 
@@ -182,7 +176,6 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
        *          The text to search for or parse.
        * @return The found {@link DateTime} or nul if none could be found.
        * @throws UnparseableDateException
-       *           the unparseable date exception
        */
       abstract DateTime parseDateTime(String dateText) throws UnparseableDateException;
 
@@ -211,7 +204,7 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
        * @return the an array of date formats to look for a date to associate
        *         with action
        */
-      public PossiblyYearlessDateFormat[] getPossiblyYearlessDateFormats() {
+      public String[] getPossiblyYearlessDateFormats() {
         return possiblyYearlessDateFormats;
       }
     }
@@ -240,6 +233,8 @@ public class TicketsHtmlSingleGameScanner extends StatefulDomBasedHtmlGamesScann
 
       /**
        * {@inheritDoc}
+       * 
+       * @throws UnparseableDateException
        */
       @Override
       DateTime parseDateTime(final String dateText) throws UnparseableDateException {

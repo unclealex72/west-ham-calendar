@@ -41,16 +41,16 @@ import com.google.common.base.Joiner;
 
 /**
  * @author alex
- *
+ * 
  */
 public abstract class AbstractTicketsHtmlGamesScannerTest {
 
   private final int year;
-  
+
   /**
    * 
    */
-  public AbstractTicketsHtmlGamesScannerTest(int year) {
+  public AbstractTicketsHtmlGamesScannerTest(final int year) {
     this.year = year;
   }
 
@@ -68,14 +68,21 @@ public abstract class AbstractTicketsHtmlGamesScannerTest {
    * @throws URISyntaxException
    *           the uRI syntax exception
    */
-  protected void test(String resourceName, DateTime dateTime, Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction) throws IOException, URISyntaxException {
-  	TicketsHtmlSingleGameScanner ticketsHtmlSingleGameScanner = new TicketsHtmlSingleGameScanner();
-  	ticketsHtmlSingleGameScanner.setDateService(new DateServiceImpl());
-  	ticketsHtmlSingleGameScanner.setHtmlPageLoader(new HtmlPageLoaderImpl());
-  	URL url = getClass().getClassLoader().getResource(Joiner.on('/').join("html", "tickets", year, resourceName));
-  	SortedSet<GameUpdateCommand> actualGameUpdateCommands = ticketsHtmlSingleGameScanner.scan(url.toURI());
-  	Assert.assertThat("The wrong updates were returned for " + resourceName, actualGameUpdateCommands, Matchers.containsInAnyOrder(expectedGameUpdateCommandsFunction
-        .apply(GameLocator.datePlayedLocator(dateTime))));
+  protected void test(
+      final String resourceName,
+      final DateTime dateTime,
+      final Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction)
+      throws IOException,
+      URISyntaxException {
+    final TicketsHtmlSingleGameScanner ticketsHtmlSingleGameScanner = new TicketsHtmlSingleGameScanner();
+    ticketsHtmlSingleGameScanner.setDateService(new DateServiceImpl());
+    ticketsHtmlSingleGameScanner.setHtmlPageLoader(new HtmlPageLoaderImpl());
+    final URL url = getClass().getClassLoader().getResource(Joiner.on('/').join("html", "tickets", year, resourceName));
+    final SortedSet<GameUpdateCommand> actualGameUpdateCommands = ticketsHtmlSingleGameScanner.scan(url.toURI());
+    Assert.assertThat(
+        "The wrong updates were returned for " + resourceName,
+        actualGameUpdateCommands,
+        Matchers.containsInAnyOrder(expectedGameUpdateCommandsFunction.apply(GameLocator.datePlayedLocator(dateTime))));
   }
 
   /**
@@ -93,8 +100,8 @@ public abstract class AbstractTicketsHtmlGamesScannerTest {
    *          the minute
    * @return the date time
    */
-  protected DateTime dateOf(int day, int month, int year, int hour, int minute) {
-  	return new DateTime(year, month, day, hour, minute).withZone(DateTimeZone.forID("Europe/London"));
+  protected DateTime dateOf(final int day, final int month, final int year, final int hour, final int minute) {
+    return new DateTime(year, month, day, hour, minute).withZone(DateTimeZone.forID("Europe/London"));
   }
 
 }

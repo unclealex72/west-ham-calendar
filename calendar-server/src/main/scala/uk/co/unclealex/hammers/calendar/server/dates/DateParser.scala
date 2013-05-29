@@ -10,48 +10,36 @@
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
  * KIND, either express or implied.  See the License for the
  * specific language governing permissions and limitations
- * under the License.    
+ * under the License.
  *
  */
 
 package uk.co.unclealex.hammers.calendar.server.dates;
 
+import org.joda.time.DateTime
 
 /**
- * A {@link PossiblyYearlessDateFormat} that can be supplied with a year aware date format.
+ * An interface for objects that parse dates from strings or find dates embedded within strings.
  * @author alex
  *
  */
-public abstract class AbstractPossiblyYearlessDateFormat implements PossiblyYearlessDateFormat {
+trait DateParser {
 
-	/**
-	 * The year aware date format to use.
-	 */
-	private final String dateFormatWithYear;
+  /**
+   * Parse a date from a string.
+   * @return The parsed {@link DateTime} or None if the date could not be parsed.
+   */
+  def parse(str: String): Option[DateTime]
 
-	/**
-	 * Instantiates a new abstract possibly yearless date format.
-	 * 
-	 * @param dateFormatWithYear
-	 *          The year aware date format to use.
-	 */
-	public AbstractPossiblyYearlessDateFormat(String dateFormatWithYear) {
-		super();
-		this.dateFormatWithYear = dateFormatWithYear;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getDateFormatWithYear() {
-		return dateFormatWithYear;
-	}
-	
-	
+  /**
+   * Find a date within a string.
+   * @return The found {@link DateTime} or None if the date could not be parsed.
+   */
+  def find(str: String): Option[DateTime]
 }
