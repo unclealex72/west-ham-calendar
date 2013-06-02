@@ -5,6 +5,6 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd"
 	default-autowire="byName">
 
-	<bean id="dateService" class="uk.co.unclealex.hammers.calendar.server.dates.DateServiceImpl"/>
+	<bean id="dateService" class="uk.co.unclealex.hammers.calendar.dates.DateServiceImpl"/>
 	
 </beans>

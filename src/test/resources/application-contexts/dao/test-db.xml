@@ -18,7 +18,7 @@
 	</bean>
 
 	<bean id="dataSource"
-		class="uk.co.unclealex.hammers.calendar.server.testing.CountingDataSource">
+		class="uk.co.unclealex.hammers.calendar.testing.CountingDataSource">
 		<property name="targetDataSource">
 			<bean class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 				<property name="driverClassName" value="org.hsqldb.jdbcDriver" />

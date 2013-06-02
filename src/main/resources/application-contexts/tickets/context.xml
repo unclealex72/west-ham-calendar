@@ -5,5 +5,5 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
 	default-autowire="byName">
 
-	<bean id="ticketingCalendarService" class="uk.co.unclealex.hammers.calendar.server.tickets.TicketingCalendarServiceImpl"/>
+	<bean id="ticketingCalendarService" class="uk.co.unclealex.hammers.calendar.tickets.TicketingCalendarServiceImpl"/>
 </beans>

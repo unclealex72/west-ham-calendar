@@ -6,14 +6,14 @@
 	default-autowire="byName">
 
 	<bean id="mainUpdateService"
-		class="uk.co.unclealex.hammers.calendar.server.update.MainUpdateServiceImpl" />
+		class="uk.co.unclealex.hammers.calendar.update.MainUpdateServiceImpl" />
 
-	<bean id="updateRunnable" class="uk.co.unclealex.hammers.calendar.server.update.UpdateRunnable"/>
+	<bean id="updateRunnable" class="uk.co.unclealex.hammers.calendar.update.UpdateRunnable"/>
 
-	<bean id="abstractUpdateCalendarJob" class="uk.co.unclealex.hammers.calendar.server.update.UpdateCalendarJob"
+	<bean id="abstractUpdateCalendarJob" class="uk.co.unclealex.hammers.calendar.update.UpdateCalendarJob"
 		init-method="initialise" destroy-method="destroy" abstract="true">
 		<property name="runnable">
-			<bean class="uk.co.unclealex.hammers.calendar.server.update.TransactionalRunnableDelegate">
+			<bean class="uk.co.unclealex.hammers.calendar.update.TransactionalRunnableDelegate">
 				<property name="runnable" ref="updateRunnable"/>	
 			</bean>
 		</property>

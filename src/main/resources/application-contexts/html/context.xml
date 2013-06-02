@@ -5,27 +5,27 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd"
 	default-autowire="byName">
 
-	<bean id="mainPageService" class="uk.co.unclealex.hammers.calendar.server.html.MainPageServiceImpl">
+	<bean id="mainPageService" class="uk.co.unclealex.hammers.calendar.html.MainPageServiceImpl">
 		<constructor-arg ref="mainPage"/>
 	</bean>
 	
-	<bean id="htmlPageLoader" class="uk.co.unclealex.hammers.calendar.server.html.HtmlPageLoaderImpl"/>
+	<bean id="htmlPageLoader" class="uk.co.unclealex.hammers.calendar.html.HtmlPageLoaderImpl"/>
 
-	<bean id="ticketsHtmlGamesScanner" class="uk.co.unclealex.hammers.calendar.server.html.DelegatingHtmlGamesScanner">
+	<bean id="ticketsHtmlGamesScanner" class="uk.co.unclealex.hammers.calendar.html.DelegatingHtmlGamesScanner">
 		<property name="linkHarvester">
-			<bean class="uk.co.unclealex.hammers.calendar.server.html.TicketsLinkHarvester"/>
+			<bean class="uk.co.unclealex.hammers.calendar.html.TicketsLinkHarvester"/>
 		</property>
 		<property name="htmlGamesScanner">
-			<bean class="uk.co.unclealex.hammers.calendar.server.html.TicketsHtmlSingleGameScanner"/>
+			<bean class="uk.co.unclealex.hammers.calendar.html.TicketsHtmlSingleGameScanner"/>
 		</property>
 	</bean>
 
-	<bean id="fixturesHtmlGamesScanner" class="uk.co.unclealex.hammers.calendar.server.html.DelegatingHtmlGamesScanner">
+	<bean id="fixturesHtmlGamesScanner" class="uk.co.unclealex.hammers.calendar.html.DelegatingHtmlGamesScanner">
 		<property name="linkHarvester">
-			<bean class="uk.co.unclealex.hammers.calendar.server.html.SeasonsLinkHarvester"/>
+			<bean class="uk.co.unclealex.hammers.calendar.html.SeasonsLinkHarvester"/>
 		</property>
 		<property name="htmlGamesScanner">
-			<bean class="uk.co.unclealex.hammers.calendar.server.html.SeasonHtmlGamesScanner"/>
+			<bean class="uk.co.unclealex.hammers.calendar.html.SeasonHtmlGamesScanner"/>
 		</property>
 	</bean>	
 

@@ -34,11 +34,11 @@
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="annotatedClasses">
 			<list>
-				<value>uk.co.unclealex.hammers.calendar.server.dao.ModelBean</value>
+				<value>uk.co.unclealex.hammers.calendar.dao.ModelBean</value>
 			</list>
 		</property>
 	</bean>
 
 	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"/>
-	<bean id="modelDao" class="uk.co.unclealex.hammers.calendar.server.dao.HibernateModelDao"/>
+	<bean id="modelDao" class="uk.co.unclealex.hammers.calendar.dao.HibernateModelDao"/>
 </beans>

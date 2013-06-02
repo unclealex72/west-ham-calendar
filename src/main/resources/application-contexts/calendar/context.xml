@@ -7,16 +7,16 @@
 
 
 	<bean id="googleCalendarService"
-		class="uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarServiceImpl"/>
+		class="uk.co.unclealex.hammers.calendar.calendar.GoogleCalendarServiceImpl"/>
 
 	<bean id="googleCalendarUpdatingService"
-		class="uk.co.unclealex.hammers.calendar.server.calendar.GoogleCalendarUpdatingServiceImpl" />
+		class="uk.co.unclealex.hammers.calendar.calendar.GoogleCalendarUpdatingServiceImpl" />
 	
-	<bean id="googleCalendarFactory" class="uk.co.unclealex.hammers.calendar.server.calendar.google.GoogleCalendarFactoryImpl"/>
+	<bean id="googleCalendarFactory" class="uk.co.unclealex.hammers.calendar.calendar.google.GoogleCalendarFactoryImpl"/>
 	
 	<util:map id="googleCalendarsByCalendarType">
 		<entry key="ATTENDED">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.AttendedGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.AttendedGoogleCalendar">
 				<property name="calendarTitle" value="West Ham (Attended)"/>
 				<property name="description" value="West Ham games I attended."/>
 				<property name="durationInHours" value="2"/>
@@ -24,7 +24,7 @@
 			</bean>
 		</entry>
 		<entry key="UNATTENDED">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.UnattendedGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.UnattendedGoogleCalendar">
 				<property name="calendarTitle" value="West Ham (Unattended)"/>
 				<property name="description" value="West Ham games I did not attend."/>
 				<property name="durationInHours" value="2"/>
@@ -32,7 +32,7 @@
 			</bean>
 		</entry>
 		<entry key="HOME">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.HomeGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.HomeGoogleCalendar">
 				<property name="calendarTitle" value="West Ham (Home)"/>
 				<property name="description" value="Home West Ham games."/>
 				<property name="durationInHours" value="2"/>
@@ -40,7 +40,7 @@
 			</bean>
 		</entry>
 		<entry key="AWAY">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.AwayGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.AwayGoogleCalendar">
 				<property name="calendarTitle" value="West Ham (Away)"/>
 				<property name="description" value="Away West Ham games."/>
 				<property name="durationInHours" value="2"/>
@@ -48,7 +48,7 @@
 			</bean>
 		</entry>
 		<entry key="ALL">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.HomeAndAwayGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.HomeAndAwayGoogleCalendar">
 				<property name="calendarTitle" value="West Ham (Home and Away)"/>
 				<property name="description" value="All West Ham games."/>
 				<property name="durationInHours" value="2"/>
@@ -56,7 +56,7 @@
 			</bean>
 		</entry>
 		<entry key="TELEVISED">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.TelevisedGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.TelevisedGoogleCalendar">
 				<property name="calendarTitle" value="West Ham (Televised)"/>
 				<property name="description" value="Televised West Ham games."/>
 				<property name="durationInHours" value="2"/>
@@ -64,7 +64,7 @@
 			</bean>
 		</entry>
 		<entry key="TICKETS_GENERAL_SALE">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.GeneralSaleGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.GeneralSaleGoogleCalendar">
 				<property name="calendarTitle" value="West Ham Tickets (General Sale)"/>
 				<property name="description" value="West Ham ticket general sale dates."/>
 				<property name="durationInHours" value="1"/>
@@ -72,7 +72,7 @@
 			</bean>
 		</entry>
 		<entry key="TICKETS_ACADEMY">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.AcademyGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.AcademyGoogleCalendar">
 				<property name="calendarTitle" value="West Ham Tickets (Academy Members)"/>
 				<property name="description" value="West Ham ticket selling dates for academy members."/>
 				<property name="durationInHours" value="1"/>
@@ -80,7 +80,7 @@
 			</bean>
 		</entry>
 		<entry key="TICKETS_SEASON">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.SeasonTicketGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.SeasonTicketGoogleCalendar">
 				<property name="calendarTitle" value="West Ham Tickets (Season Ticket Holders)"/>
 				<property name="description" value="West Ham ticket selling dates for season ticket holders."/>
 				<property name="durationInHours" value="1"/>
@@ -88,7 +88,7 @@
 			</bean>
 		</entry>
 		<entry key="TICKETS_PRIORITY">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.PriorityPointGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.PriorityPointGoogleCalendar">
 				<property name="calendarTitle" value="West Ham Tickets (Priority Point Holders)"/>
 				<property name="description" value="West Ham ticket selling dates for priority point holders."/>
 				<property name="durationInHours" value="1"/>
@@ -96,7 +96,7 @@
 			</bean>
 		</entry>
 		<entry key="TICKETS_BONDHOLDERS">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.google.BondHolderGoogleCalendar">
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.google.BondHolderGoogleCalendar">
 				<property name="calendarTitle" value="West Ham Tickets (Bondholders)"/>
 				<property name="description" value="West Ham ticket selling dates for bondholders."/>
 				<property name="durationInHours" value="1"/>

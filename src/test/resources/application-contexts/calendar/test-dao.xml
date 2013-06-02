@@ -7,6 +7,6 @@
 
 
 	<bean id="googleCalendarDaoFactory"
-		class="uk.co.unclealex.hammers.calendar.server.calendar.MockGoogleCalendarDao"/>
+		class="uk.co.unclealex.hammers.calendar.calendar.MockGoogleCalendarDao"/>
 
 </beans>

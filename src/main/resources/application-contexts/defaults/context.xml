@@ -5,7 +5,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd"
 	default-autowire="byName">
 
-	<bean id="defaultsService" class="uk.co.unclealex.hammers.calendar.server.defaults.DefaultsServiceImpl">
+	<bean id="defaultsService" class="uk.co.unclealex.hammers.calendar.defaults.DefaultsServiceImpl">
 		<property name="defaultUsername" value="admin"/>
 		<property name="defaultPassword" value="admin"/>
 	</bean>

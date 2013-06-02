@@ -14,9 +14,9 @@
 		<property name="userPropertyToUse" value="username"/>
 	</bean>
 
-	<bean id="userService" class="uk.co.unclealex.hammers.calendar.server.auth.UserServiceImpl"/>
-	<bean id="tokenService" class="uk.co.unclealex.hammers.calendar.server.auth.TokenServiceImpl"/>
-	<bean id="authenticationService" class="uk.co.unclealex.hammers.calendar.server.auth.AuthenticationServiceImpl"/>
+	<bean id="userService" class="uk.co.unclealex.hammers.calendar.auth.UserServiceImpl"/>
+	<bean id="tokenService" class="uk.co.unclealex.hammers.calendar.auth.TokenServiceImpl"/>
+	<bean id="authenticationService" class="uk.co.unclealex.hammers.calendar.auth.AuthenticationServiceImpl"/>
 
   <sec:authentication-manager alias="authenticationManager">
     <sec:authentication-provider>

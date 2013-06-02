@@ -25,21 +25,21 @@
 
 	<bean id="sessionFactory"
 		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
-		<property name="packagesToScan" value="uk.co.unclealex.hammers.calendar.server.model" />
-		<property name="annotatedPackages" value="uk.co.unclealex.hammers.calendar.server.model"/>
+		<property name="packagesToScan" value="uk.co.unclealex.hammers.calendar.model" />
+		<property name="annotatedPackages" value="uk.co.unclealex.hammers.calendar.model"/>
 	</bean>
 
 	<bean id="transactionManager"
 		class="org.springframework.orm.hibernate4.HibernateTransactionManager" />
 
 	<bean id="userDao"
-		class="uk.co.unclealex.hammers.calendar.server.dao.HibernateUserDao" />
+		class="uk.co.unclealex.hammers.calendar.dao.HibernateUserDao" />
 	<bean id="calendarConfigurationDao"
-		class="uk.co.unclealex.hammers.calendar.server.dao.HibernateCalendarConfigurationDao" />
+		class="uk.co.unclealex.hammers.calendar.dao.HibernateCalendarConfigurationDao" />
 	<bean id="oauthTokenDao"
-		class="uk.co.unclealex.hammers.calendar.server.dao.HibernateOauthTokenDao" />
+		class="uk.co.unclealex.hammers.calendar.dao.HibernateOauthTokenDao" />
 	<bean id="ticketingCalendarDao"
-		class="uk.co.unclealex.hammers.calendar.server.dao.HibernateTicketingCalendarDao" />
+		class="uk.co.unclealex.hammers.calendar.dao.HibernateTicketingCalendarDao" />
 	<bean id="gameDao"
-		class="uk.co.unclealex.hammers.calendar.server.dao.HibernateGameDao" />
+		class="uk.co.unclealex.hammers.calendar.dao.HibernateGameDao" />
 </beans>

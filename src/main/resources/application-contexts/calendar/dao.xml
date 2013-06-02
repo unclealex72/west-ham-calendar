@@ -7,16 +7,16 @@
 
 
 	<bean id="googleCalendarDaoFactory"
-		class="uk.co.unclealex.hammers.calendar.server.calendar.SpringGoogleCalendarDaoFactory">
+		class="uk.co.unclealex.hammers.calendar.calendar.SpringGoogleCalendarDaoFactory">
 		<property name="gameFormatter">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.formatter.GameFormatter"/>	
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.formatter.GameFormatter"/>	
 		</property>
 		<property name="calendarFormatter">
-			<bean class="uk.co.unclealex.hammers.calendar.server.calendar.formatter.CalendarFormatter"/>
+			<bean class="uk.co.unclealex.hammers.calendar.calendar.formatter.CalendarFormatter"/>
 		</property>
 	</bean>
 
-	<bean id="calendarFactory" class="uk.co.unclealex.hammers.calendar.server.calendar.TokenServiceOauthCalendarFactory">
+	<bean id="calendarFactory" class="uk.co.unclealex.hammers.calendar.calendar.TokenServiceOauthCalendarFactory">
 		<property name="httpTransport">
 			<bean class="com.google.api.client.http.javanet.NetHttpTransport"/>
 		</property>
