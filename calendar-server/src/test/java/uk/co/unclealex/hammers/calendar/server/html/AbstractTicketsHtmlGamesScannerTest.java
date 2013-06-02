@@ -27,7 +27,6 @@ package uk.co.unclealex.hammers.calendar.server.html;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.SortedSet;
 
 import org.hamcrest.Matchers;
 import org.joda.time.DateTime;
@@ -74,15 +73,14 @@ public abstract class AbstractTicketsHtmlGamesScannerTest {
       final Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction)
       throws IOException,
       URISyntaxException {
-    final TicketsHtmlSingleGameScanner ticketsHtmlSingleGameScanner = new TicketsHtmlSingleGameScanner();
-    ticketsHtmlSingleGameScanner.setDateService(new DateServiceImpl());
-    ticketsHtmlSingleGameScanner.setHtmlPageLoader(new HtmlPageLoaderImpl());
+    final TicketsHtmlSingleGameScanner ticketsHtmlSingleGameScanner =
+        new TicketsHtmlSingleGameScanner(new HtmlPageLoaderImpl(), new DateServiceImpl(), new Integer(year));
     final URL url = getClass().getClassLoader().getResource(Joiner.on('/').join("html", "tickets", year, resourceName));
-    final SortedSet<GameUpdateCommand> actualGameUpdateCommands = ticketsHtmlSingleGameScanner.scan(url.toURI());
+    final Iterable<GameUpdateCommand> actualGameUpdateCommands = ticketsHtmlSingleGameScanner.scan(url.toURI());
     Assert.assertThat(
         "The wrong updates were returned for " + resourceName,
         actualGameUpdateCommands,
-        Matchers.containsInAnyOrder(expectedGameUpdateCommandsFunction.apply(GameLocator.datePlayedLocator(dateTime))));
+        Matchers.containsInAnyOrder(expectedGameUpdateCommandsFunction.apply(new DatePlayedLocator(dateTime))));
   }
 
   /**

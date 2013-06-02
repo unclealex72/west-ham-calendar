@@ -31,69 +31,81 @@ import uk.co.unclealex.hammers.calendar.server.model.GameKey;
 import uk.co.unclealex.hammers.calendar.shared.model.Competition;
 import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
-
 /**
  * Test that game locator comparators are well behaved.
+ * 
  * @author alex
  * 
  */
 public class GameLocatorTest {
 
-	/**
-	 * Test game key is lower.
-	 */
-	@Test
-	public void testGameKeyIsLower() {
-		GameLocator gameKeyLocator = GameLocator.gameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents",
-				2012));
-		GameLocator datePlayedLocator = GameLocator.datePlayedLocator(new DateTime());
-		int cmp = gameKeyLocator.compareTo(datePlayedLocator);
-		Assert.assertTrue("The game key comparator was not found to be smaller.", cmp < 0);
-	}
+  /**
+   * Test game key is lower.
+   */
+  @Test
+  public void testGameKeyIsLower() {
+    final GameLocator gameKeyLocator =
+        new GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012));
+    final GameLocator datePlayedLocator = new DatePlayedLocator(new DateTime());
+    final int cmp = gameKeyLocator.compareTo(datePlayedLocator);
+    Assert.assertTrue("The game key comparator was not found to be smaller.", cmp < 0);
+  }
 
-	/**
-	 * Test date played is higher.
-	 */
-	@Test
-	public void testDatePlayedIsHigher() {
-		GameLocator gameKeyLocator = GameLocator.gameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents",
-				2012));
-		GameLocator datePlayedLocator = GameLocator.datePlayedLocator(new DateTime());
-		int cmp = datePlayedLocator.compareTo(gameKeyLocator);
-		Assert.assertTrue("The date played comparator was not found to be larget.", cmp > 0);
-	}
+  /**
+   * Test date played is higher.
+   */
+  @Test
+  public void testDatePlayedIsHigher() {
+    final GameLocator gameKeyLocator =
+        new GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012));
+    final GameLocator datePlayedLocator = new DatePlayedLocator(new DateTime());
+    final int cmp = datePlayedLocator.compareTo(gameKeyLocator);
+    Assert.assertTrue("The date played comparator was not found to be larget.", cmp > 0);
+  }
 
-	/**
-	 * Test date played respects date time comparison.
-	 */
-	@Test
-	public void testDatePlayedRespectsDateTimeComparison() {
-		DateTime lowerDateTime = new DateTime(2000, 5, 1, 0, 0, 0, 0);
-		DateTime higherDateTime = new DateTime(2001, 5, 1, 0, 0, 0, 0);
-		GameLocator lowerDatePlayedLocator = GameLocator.datePlayedLocator(lowerDateTime);
-		GameLocator higherDatePlayedLocator = GameLocator.datePlayedLocator(higherDateTime);
-		Assert.assertEquals("Comparing lower to higher failed.", lowerDateTime.compareTo(higherDateTime),
-				lowerDatePlayedLocator.compareTo(higherDatePlayedLocator));
-		Assert.assertEquals("Comparing higher to lower failed.", higherDateTime.compareTo(lowerDateTime),
-				higherDatePlayedLocator.compareTo(lowerDatePlayedLocator));
-		Assert.assertEquals("Comparing higher to higher failed.", higherDateTime.compareTo(higherDateTime),
-				higherDatePlayedLocator.compareTo(higherDatePlayedLocator));
-	}
+  /**
+   * Test date played respects date time comparison.
+   */
+  @Test
+  public void testDatePlayedRespectsDateTimeComparison() {
+    final DateTime lowerDateTime = new DateTime(2000, 5, 1, 0, 0, 0, 0);
+    final DateTime higherDateTime = new DateTime(2001, 5, 1, 0, 0, 0, 0);
+    final GameLocator lowerDatePlayedLocator = new DatePlayedLocator(lowerDateTime);
+    final GameLocator higherDatePlayedLocator = new DatePlayedLocator(higherDateTime);
+    Assert.assertEquals(
+        "Comparing lower to higher failed.",
+        lowerDateTime.compareTo(higherDateTime),
+        lowerDatePlayedLocator.compareTo(higherDatePlayedLocator));
+    Assert.assertEquals(
+        "Comparing higher to lower failed.",
+        higherDateTime.compareTo(lowerDateTime),
+        higherDatePlayedLocator.compareTo(lowerDatePlayedLocator));
+    Assert.assertEquals(
+        "Comparing higher to higher failed.",
+        higherDateTime.compareTo(higherDateTime),
+        higherDatePlayedLocator.compareTo(higherDatePlayedLocator));
+  }
 
-	/**
-	 * Test game key respects game key comparison.
-	 */
-	@Test
-	public void testGameKeyRespectsGameKeyComparison() {
-		GameKey lowerGameKey = new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2011);
-		GameKey higherGameKey = new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012);
-		GameLocator lowerGameKeyLocator = GameLocator.gameKeyLocator(lowerGameKey);
-		GameLocator higherGameKeyLocator = GameLocator.gameKeyLocator(higherGameKey);
-		Assert.assertEquals("Comparing lower to higher failed.", lowerGameKey.compareTo(higherGameKey),
-				lowerGameKeyLocator.compareTo(higherGameKeyLocator));
-		Assert.assertEquals("Comparing higher to lower failed.", higherGameKey.compareTo(lowerGameKey),
-				higherGameKeyLocator.compareTo(lowerGameKeyLocator));
-		Assert.assertEquals("Comparing higher to higher failed.", higherGameKey.compareTo(higherGameKey),
-				higherGameKeyLocator.compareTo(higherGameKeyLocator));
-	}
+  /**
+   * Test game key respects game key comparison.
+   */
+  @Test
+  public void testGameKeyRespectsGameKeyComparison() {
+    final GameKey lowerGameKey = new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2011);
+    final GameKey higherGameKey = new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012);
+    final GameLocator lowerGameKeyLocator = new GameKeyLocator(lowerGameKey);
+    final GameLocator higherGameKeyLocator = new GameKeyLocator(higherGameKey);
+    Assert.assertEquals(
+        "Comparing lower to higher failed.",
+        lowerGameKey.compareTo(higherGameKey),
+        lowerGameKeyLocator.compareTo(higherGameKeyLocator));
+    Assert.assertEquals(
+        "Comparing higher to lower failed.",
+        higherGameKey.compareTo(lowerGameKey),
+        higherGameKeyLocator.compareTo(lowerGameKeyLocator));
+    Assert.assertEquals(
+        "Comparing higher to higher failed.",
+        higherGameKey.compareTo(higherGameKey),
+        higherGameKeyLocator.compareTo(higherGameKeyLocator));
+  }
 }

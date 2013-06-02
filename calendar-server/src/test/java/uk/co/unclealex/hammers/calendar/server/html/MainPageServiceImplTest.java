@@ -27,10 +27,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import javax.inject.Provider;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
-
 
 /**
  * The Class MainPageServiceImplTest.
@@ -39,24 +40,27 @@ import org.junit.Test;
  */
 public class MainPageServiceImplTest {
 
-	/**
-	 * Test.
-	 * 
-	 * @throws IOException
-	 *           Signals that an I/O exception has occurred.
-	 * @throws URISyntaxException
-	 *           the uRI syntax exception
-	 */
-	@Test
-	public void test() throws IOException, URISyntaxException {
-		URL url = getClass().getClassLoader().getResource("html/home.html");
-		MainPageServiceImpl mainPageServiceImpl = new MainPageServiceImpl("http://www.whufc.com/page/Home/");
-		mainPageServiceImpl.setHtmlPageLoader(new HtmlPageLoaderImpl());
-		mainPageServiceImpl.initialise(url);
-		Assert.assertEquals("The wrong tickets uri was found.", new URI("http://www.whufc.com/page/TicketNews/0,,12562,00.html"),
-				mainPageServiceImpl.getTicketsUri());
-		Assert.assertEquals("The wrong fixtures uri was found.",
-				new URI("http://www.whufc.com/page/FixturesResults/0,,12562,00.html"), mainPageServiceImpl.getFixturesUri());
-	}
+  /**
+   * Test.
+   * 
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws URISyntaxException
+   *           the uRI syntax exception
+   */
+  @Test
+  public void test() throws IOException, URISyntaxException {
+    final URL url = getClass().getClassLoader().getResource("html/home.html");
+    final Provider<MainPageService> provider = new MainPageServiceProvider(url.toURI(), new HtmlPageLoaderImpl());
+    final MainPageService mainPageService = provider.get();
+    Assert.assertEquals(
+        "The wrong tickets uri was found.",
+        new URI("file:/page/TicketNews/0,,12562,00.html"),
+        mainPageService.ticketsUri());
+    Assert.assertEquals(
+        "The wrong fixtures uri was found.",
+        new URI("file:/page/FixturesResults/0,,12562,00.html"),
+        mainPageService.fixturesUri());
+  }
 
 }

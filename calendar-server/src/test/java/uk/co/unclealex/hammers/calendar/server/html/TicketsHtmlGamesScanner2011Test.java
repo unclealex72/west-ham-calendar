@@ -29,7 +29,6 @@ import org.junit.Test;
 
 import com.google.common.base.Function;
 
-
 /**
  * The Class TicketsHtmlGamesScanner2011Test.
  * 
@@ -40,87 +39,92 @@ public class TicketsHtmlGamesScanner2011Test extends AbstractTicketsHtmlGamesSca
   public TicketsHtmlGamesScanner2011Test() {
     super(2011);
   }
-  
-	/**
-	 * Test blackpool away.
-	 * 
-	 * @throws IOException
-	 *           Signals that an I/O exception has occurred.
-	 * @throws URISyntaxException
-	 *           the uRI syntax exception
-	 */
-	@Test
-	public void testBlackpoolAway() throws IOException, URISyntaxException {
-		Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction = new Function<GameLocator, GameUpdateCommand[]>() {
-			@Override
-			public GameUpdateCommand[] apply(GameLocator gameLocator) {
-				return new GameUpdateCommand[] { GameUpdateCommand.priorityPointTickets(gameLocator, dateOf(25, 1, 2012, 10, 0)),
-						GameUpdateCommand.bondHolderTickets(gameLocator, dateOf(26, 1, 2012, 9, 0)),
-						GameUpdateCommand.seasonTickets(gameLocator, dateOf(28, 1, 2012, 9, 0)),
-						GameUpdateCommand.academyTickets(gameLocator, dateOf(30, 1, 2012, 9, 0)),
-						GameUpdateCommand.generalSaleTickets(gameLocator, dateOf(1, 2, 2012, 9, 0)) };
-			}
-		};
-		test("tickets-blackpool-away.html", dateOf(18, 2, 2012, 15, 0), expectedGameUpdateCommandsFunction);
-	}
 
-	/**
-	 * Test southampton home.
-	 * 
-	 * @throws IOException
-	 *           Signals that an I/O exception has occurred.
-	 * @throws URISyntaxException
-	 *           the uRI syntax exception
-	 */
-	@Test
-	public void testSouthamptonHome() throws IOException, URISyntaxException {
-		Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction = new Function<GameLocator, GameUpdateCommand[]>() {
-			@Override
-			public GameUpdateCommand[] apply(GameLocator gameLocator) {
-				return new GameUpdateCommand[] {
-						GameUpdateCommand.seasonTickets(gameLocator, dateOf(16, 1, 2012, 9, 0)),
-						GameUpdateCommand.academyTickets(gameLocator, dateOf(10, 1, 2012, 9, 0)),
-						GameUpdateCommand.generalSaleTickets(gameLocator, dateOf(17, 1, 2012, 9, 0))};
-			}
-		};
-		test("tickets-southampton-home.html", dateOf(14, 2, 2012, 19, 45), expectedGameUpdateCommandsFunction);
-	}
+  /**
+   * Test blackpool away.
+   * 
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws URISyntaxException
+   *           the uRI syntax exception
+   */
+  @Test
+  public void testBlackpoolAway() throws IOException, URISyntaxException {
+    final Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction =
+        new Function<GameLocator, GameUpdateCommand[]>() {
+          @Override
+          public GameUpdateCommand[] apply(final GameLocator gameLocator) {
+            return new GameUpdateCommand[] {
+                new PriorityPointTicketsUpdateCommand(gameLocator, dateOf(25, 1, 2012, 10, 0)),
+                new BondHolderTicketsUpdateCommand(gameLocator, dateOf(26, 1, 2012, 9, 0)),
+                new SeasonTicketsUpdateCommand(gameLocator, dateOf(28, 1, 2012, 9, 0)),
+                new AcademyTicketsUpdateCommand(gameLocator, dateOf(30, 1, 2012, 9, 0)),
+                new GeneralSaleTicketsUpdateCommand(gameLocator, dateOf(1, 2, 2012, 9, 0)) };
+          }
+        };
+    test("tickets-blackpool-away.html", dateOf(18, 2, 2012, 15, 0), expectedGameUpdateCommandsFunction);
+  }
 
-	/**
-	 * Test palace home.
-	 * 
-	 * @throws IOException
-	 *           Signals that an I/O exception has occurred.
-	 * @throws URISyntaxException
-	 *           the uRI syntax exception
-	 */
-	@Test
-	public void testPalaceHome() throws IOException, URISyntaxException {
-		Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction = new Function<GameLocator, GameUpdateCommand[]>() {
-			@Override
-			public GameUpdateCommand[] apply(GameLocator gameLocator) {
-        return new GameUpdateCommand[0];
-			}
-		};
-		test("tickets-palace-home.html", dateOf(25, 2, 2012, 12, 45), expectedGameUpdateCommandsFunction);
-	}
+  /**
+   * Test southampton home.
+   * 
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws URISyntaxException
+   *           the uRI syntax exception
+   */
+  @Test
+  public void testSouthamptonHome() throws IOException, URISyntaxException {
+    final Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction =
+        new Function<GameLocator, GameUpdateCommand[]>() {
+          @Override
+          public GameUpdateCommand[] apply(final GameLocator gameLocator) {
+            return new GameUpdateCommand[] {
+                new SeasonTicketsUpdateCommand(gameLocator, dateOf(16, 1, 2012, 9, 0)),
+                new AcademyTicketsUpdateCommand(gameLocator, dateOf(10, 1, 2012, 9, 0)),
+                new GeneralSaleTicketsUpdateCommand(gameLocator, dateOf(17, 1, 2012, 9, 0)) };
+          }
+        };
+    test("tickets-southampton-home.html", dateOf(14, 2, 2012, 19, 45), expectedGameUpdateCommandsFunction);
+  }
 
-	/**
-	 * Test peterborough away.
-	 * 
-	 * @throws IOException
-	 *           Signals that an I/O exception has occurred.
-	 * @throws URISyntaxException
-	 *           the uRI syntax exception
-	 */
-	@Test
-	public void testPeterboroughAway() throws IOException, URISyntaxException {
-		Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction = new Function<GameLocator, GameUpdateCommand[]>() {
-			@Override
-			public GameUpdateCommand[] apply(GameLocator gameLocator) {
-				return new GameUpdateCommand[0];
-			}
-		};
-		test("tickets-peterborough-away.html", dateOf(25, 2, 2012, 12, 45), expectedGameUpdateCommandsFunction);
-	}
+  /**
+   * Test palace home.
+   * 
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws URISyntaxException
+   *           the uRI syntax exception
+   */
+  @Test
+  public void testPalaceHome() throws IOException, URISyntaxException {
+    final Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction =
+        new Function<GameLocator, GameUpdateCommand[]>() {
+          @Override
+          public GameUpdateCommand[] apply(final GameLocator gameLocator) {
+            return new GameUpdateCommand[0];
+          }
+        };
+    test("tickets-palace-home.html", dateOf(25, 2, 2012, 12, 45), expectedGameUpdateCommandsFunction);
+  }
+
+  /**
+   * Test peterborough away.
+   * 
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   * @throws URISyntaxException
+   *           the uRI syntax exception
+   */
+  @Test
+  public void testPeterboroughAway() throws IOException, URISyntaxException {
+    final Function<GameLocator, GameUpdateCommand[]> expectedGameUpdateCommandsFunction =
+        new Function<GameLocator, GameUpdateCommand[]>() {
+          @Override
+          public GameUpdateCommand[] apply(final GameLocator gameLocator) {
+            return new GameUpdateCommand[0];
+          }
+        };
+    test("tickets-peterborough-away.html", dateOf(25, 2, 2012, 12, 45), expectedGameUpdateCommandsFunction);
+  }
 }

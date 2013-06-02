@@ -47,18 +47,16 @@ import scala.collection.JavaConversions._
  */
 class DateServiceImpl extends DateService {
 
-  @throws(classOf[UnparseableDateException])
   override def parsePossiblyYearlessDate(date: String, yearDeterminingDate: DateTime,
-    yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: Array[String]): DateTime = {
+    yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: String*): Option[DateTime] = {
     val parser = makeParser(yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate, possiblyYearlessDateFormats)
-    THROWS(parser.parse(date))
+    parser.parse(date)
   }
 
-  @throws(classOf[UnparseableDateException])
   override def findPossiblyYearlessDate(date: String, yearDeterminingDate: DateTime,
-    yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: Array[String]): DateTime = {
+    yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: String*): Option[DateTime] = {
     val parser = makeParser(yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate, possiblyYearlessDateFormats)
-    THROWS(parser.find(date))
+    parser.find(date)
   }
 
   def makeParser(yearDeterminingDate: DateTime,
@@ -66,10 +64,12 @@ class DateServiceImpl extends DateService {
     new ChainingDateParser(possiblyYearlessDateFormats map (
       new PossiblyYearlessDateParser(yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate, _)))
 
-  def THROWS(dt: Option[DateTime]) = dt getOrElse { throw new UnparseableDateException }
+  override def parseDate(date: String, dateFormats: String*): Option[DateTime] =
+    parseOrFindDate(dateFormats, dateParser => dateParser.parse(date))
 
-  override def parseDate(date: String, dateFormat: String): DateTime = new JodaDateParser(dateFormat).parse(date) orNull
+  override def findDate(date: String, dateFormats: String*): Option[DateTime] =
+    parseOrFindDate(dateFormats, dateParser => dateParser.find(date))
 
-  override def findDate(date: String, dateFormat: String): DateTime = new JodaDateParser(dateFormat).find(date) orNull
-
+  def parseOrFindDate(dateFormats: Seq[String], parseOrFind: DateParser => Option[DateTime]): Option[DateTime] =
+    dateFormats.toStream.flatMap(df => parseOrFind(new JodaDateParser(df))).headOption
 }

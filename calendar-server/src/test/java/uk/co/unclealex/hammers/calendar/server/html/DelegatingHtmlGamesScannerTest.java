@@ -44,7 +44,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
-
 /**
  * The Class DelegatingHtmlGamesScannerTest.
  * 
@@ -52,60 +51,68 @@ import com.google.common.collect.Sets;
  */
 public class DelegatingHtmlGamesScannerTest {
 
-	/**
-	 * Test.
-	 * 
-	 * @throws URISyntaxException
-	 *           the uRI syntax exception
-	 * @throws IOException
-	 *           Signals that an I/O exception has occurred.
-	 */
-	@Test
-	public void test() throws URISyntaxException, IOException {
-		DelegatingHtmlGamesScanner delegatingHtmlGamesScanner = new DelegatingHtmlGamesScanner();
-		delegatingHtmlGamesScanner.setHtmlPageLoader(new HtmlPageLoaderImpl());
-		delegatingHtmlGamesScanner.setDateService(new DateServiceImpl());
-		HtmlGamesScanner htmlGamesScanner = new HtmlGamesScanner() {
-			int season = 2012;
-			@Override
-			public SortedSet<GameUpdateCommand> scan(URI uri) throws IOException {
-				GameUpdateCommand gameUpdateCommand = GameUpdateCommand.matchReport(
-						GameLocator.gameKeyLocator(new GameKey(Competition.FACP, Location.HOME, "Them", season++)), uri.toString());
-				return Sets.newTreeSet(Collections.singleton(gameUpdateCommand));
-			}
-		};
-		delegatingHtmlGamesScanner.setHtmlGamesScanner(htmlGamesScanner);
-		LinkHarvester linkHarvester = new LinkHarvester() {
+  /**
+   * Test.
+   * 
+   * @throws URISyntaxException
+   *           the uRI syntax exception
+   * @throws IOException
+   *           Signals that an I/O exception has occurred.
+   */
+  @Test
+  public void test() throws URISyntaxException, IOException {
+    final HtmlGamesScanner htmlGamesScanner = new HtmlGamesScanner() {
+      int season = 2012;
 
-			@Override
-			public List<URI> harvestLinks(URI pageUri, TagNode tagNode) throws IOException {
-				final List<URI> links = Lists.newArrayList();
-				new TagNodeWalker(tagNode) {
-					@Override
-					public void execute(TagNode tagNode) {
-						String href = tagNode.getAttributeByName("href");
-						if (href != null) {
-							links.add(URI.create(href));
-						}
-					}
-				};
-				return links;
-			}
-		};
-		delegatingHtmlGamesScanner.setLinkHarvester(linkHarvester);
-		URI uri = getClass().getClassLoader().getResource("delegate.xml").toURI();
-		SortedSet<GameUpdateCommand> actualGameUpdateCommands = delegatingHtmlGamesScanner.scan(uri);
-		Function<String, GameUpdateCommand> expectedGameUpdateCommandFunction = new Function<String, GameUpdateCommand>() {
-			int season = 2012;
-			@Override
-			public GameUpdateCommand apply(String uri) {
-				return GameUpdateCommand.matchReport(
-						GameLocator.gameKeyLocator(new GameKey(Competition.FACP, Location.HOME, "Them", season++)), uri);
-			}
-		};
-		Iterable<GameUpdateCommand> expectedGameUpdateCommands = Iterables.transform(
-				Arrays.asList("1.html", "2.html", "3.html", "4.html"), expectedGameUpdateCommandFunction);
-		Assert.assertArrayEquals(Iterables.toArray(expectedGameUpdateCommands, GameUpdateCommand.class),
-				Iterables.toArray(actualGameUpdateCommands, GameUpdateCommand.class));
-	}
+      @Override
+      public SortedSet<GameUpdateCommand> scan(final URI uri) throws IOException {
+        final GameUpdateCommand gameUpdateCommand =
+            new MatchReportUpdateCommand(new GameKeyLocator(new GameKey(
+                Competition.FACP,
+                Location.HOME,
+                "Them",
+                season++)), uri.toString());
+        return Sets.newTreeSet(Collections.singleton(gameUpdateCommand));
+      }
+    };
+    final LinkHarvester linkHarvester = new LinkHarvester() {
+
+      @Override
+      public List<URI> harvestLinks(final URI pageUri, final TagNode tagNode) throws IOException {
+        final List<URI> links = Lists.newArrayList();
+        new TagNodeWalker(tagNode) {
+          @Override
+          public void execute(final TagNode tagNode) {
+            final String href = tagNode.getAttributeByName("href");
+            if (href != null) {
+              links.add(URI.create(href));
+            }
+          }
+        };
+        return links;
+      }
+    };
+    final DelegatingHtmlGamesScanner delegatingHtmlGamesScanner =
+        new DelegatingHtmlGamesScanner(new HtmlPageLoaderImpl(), new DateServiceImpl(), linkHarvester, htmlGamesScanner);
+    final URI uri = getClass().getClassLoader().getResource("delegate.xml").toURI();
+    final Iterable<GameUpdateCommand> actualGameUpdateCommands = delegatingHtmlGamesScanner.scan(uri);
+    final Function<String, GameUpdateCommand> expectedGameUpdateCommandFunction =
+        new Function<String, GameUpdateCommand>() {
+          int season = 2012;
+
+          @Override
+          public GameUpdateCommand apply(final String uri) {
+            return new MatchReportUpdateCommand(new GameKeyLocator(new GameKey(
+                Competition.FACP,
+                Location.HOME,
+                "Them",
+                season++)), uri);
+          }
+        };
+    final Iterable<GameUpdateCommand> expectedGameUpdateCommands =
+        Iterables.transform(Arrays.asList("1.html", "2.html", "3.html", "4.html"), expectedGameUpdateCommandFunction);
+    Assert.assertArrayEquals(
+        Iterables.toArray(expectedGameUpdateCommands, GameUpdateCommand.class),
+        Iterables.toArray(actualGameUpdateCommands, GameUpdateCommand.class));
+  }
 }

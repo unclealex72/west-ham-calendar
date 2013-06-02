@@ -45,13 +45,10 @@ trait DateService {
    *          otherwise.
    * @param possiblyYearlessDateFormats
    *          The expected formats to try, year aware first.
-   * @return The parsed date.
-   * @throws UnparseableDateException
-   *           Thrown if a date could not be found in any of the supplied formats.
+   * @return The parsed date or None if no date could be parsed.
    */
-  @throws(classOf[UnparseableDateException])
   def parsePossiblyYearlessDate(dateFormat: String, yearDeterminingDate: DateTime,
-    yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: Array[String]): DateTime
+    yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: String*): Option[DateTime]
 
   /**
    * Find a date that may or may not have a year, taking the year from another date if need be.
@@ -65,27 +62,24 @@ trait DateService {
    *          otherwise.
    * @param possiblyYearlessDateFormats
    *          The expected formats to try, year aware first.
-   * @return The parsed date.
-   * @throws UnparseableDateException
-   *           Thrown if the date was not in any of the supplied formats.
+   * @return The found date or None if no date could be found.
    */
-  @throws(classOf[UnparseableDateException])
   def findPossiblyYearlessDate(dateFormat: String, yearDeterminingDate: DateTime,
-    yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: Array[String]): DateTime
+    yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: String*): Option[DateTime]
 
   /**
    * Parse a date.
    * @param date The date to parse
-   * @param dateFormat The date format to use.
-   * @return The parsed date or null if no date could be parsed.
+   * @param dateFormat The date formats to use.
+   * @return The parsed date or None if no date could be parsed.
    */
-  def parseDate(date: String, dateFormat: String): DateTime
+  def parseDate(date: String, dateFormats: String*): Option[DateTime]
 
   /**
    * Find a date.
    * @param date The string that may contain the date inside it.
-   * @param dateFormat The date format to use.
-   * @return The found date or null if no date could be found.
+   * @param dateFormat The date formats to use.
+   * @return The found date or None if no date could be found.
    */
-  def findDate(date: String, dateFormat: String): DateTime
+  def findDate(date: String, dateFormats: String*): Option[DateTime]
 }

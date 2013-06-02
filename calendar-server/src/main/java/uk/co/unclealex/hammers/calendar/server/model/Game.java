@@ -39,7 +39,6 @@ import uk.co.unclealex.hammers.calendar.shared.model.Location;
 
 import com.google.common.base.Objects;
 
-
 /**
  * A game is the main model in application. It encapsulates all possible
  * information for a given game.
@@ -48,510 +47,540 @@ import com.google.common.base.Objects;
  * 
  */
 @Entity
-@Table(name = "game", uniqueConstraints = @UniqueConstraint(columnNames = { "competition", "location", "opponents",
-		"season" }))
+@Table(name = "game", uniqueConstraints = @UniqueConstraint(columnNames = {
+    "competition",
+    "location",
+    "opponents",
+    "season" }))
 @XmlRootElement
 public class Game implements HasIdentity, Comparable<Game> {
 
-	/**
-	 * The primary key of the game.
-	 */
-	private Integer id;
+  /**
+   * The primary key of the game.
+   */
+  private Integer id;
 
-	/**
-	 * The game's {@link Competition}.
-	 */
-	private Competition competition;
+  /**
+   * The game's {@link Competition}.
+   */
+  private Competition competition;
 
-	/**
-	 * The game's {@link Location}.
-	 */
-	private Location location;
+  /**
+   * The game's {@link Location}.
+   */
+  private Location location;
 
-	/**
-	 * The game's opponents.
-	 */
-	private String opponents;
+  /**
+   * The game's opponents.
+   */
+  private String opponents;
 
-	/**
-	 * The season the game was played in.
-	 */
-	private int season;
+  /**
+   * The season the game was played in.
+   */
+  private int season;
 
-	/**
-	 * The {@link DateTime} the game was played.
-	 */
-	private DateTime dateTimePlayed;
+  /**
+   * The {@link DateTime} the game was played.
+   */
+  private DateTime dateTimePlayed;
 
-	/**
-	 * The {@link DateTime} that Bondholder tickets went on sale.
-	 */
-	private DateTime dateTimeBondholdersAvailable;
+  /**
+   * The {@link DateTime} that Bondholder tickets went on sale.
+   */
+  private DateTime dateTimeBondholdersAvailable;
 
-	/**
-	 * The {@link DateTime} that priority point tickets went on sale.
-	 */
-	private DateTime dateTimePriorityPointPostAvailable;
+  /**
+   * The {@link DateTime} that priority point tickets went on sale.
+   */
+  private DateTime dateTimePriorityPointPostAvailable;
 
-	/**
-	 * The {@link DateTime} that season ticker holder tickets went on sale.
-	 */
-	private DateTime dateTimeSeasonTicketsAvailable;
+  /**
+   * The {@link DateTime} that season ticker holder tickets went on sale.
+   */
+  private DateTime dateTimeSeasonTicketsAvailable;
 
-	/**
-	 * The {@link DateTime} that Academy members' tickets went on sale.
-	 */
-	private DateTime dateTimeAcademyMembersAvailable;
+  /**
+   * The {@link DateTime} that Academy members' tickets went on sale.
+   */
+  private DateTime dateTimeAcademyMembersAvailable;
 
-	/**
-	 * The {@link DateTime} that tickets went on general sale.
-	 */
-	private DateTime dateTimeGeneralSaleAvailable;
+  /**
+   * The {@link DateTime} that tickets went on general sale.
+   */
+  private DateTime dateTimeGeneralSaleAvailable;
 
-	/**
-	 * The game's result.
-	 */
-	private String result;
-	
-	/**
-	 * The game's attendence.
-	 */
-	private Integer attendence;
-	
-	/**
-	 * The game's match report.
-	 */
-	private String matchReport;
-	
-	/**
-	 * The TV channel that showed the match.
-	 */
-	private String televisionChannel;
+  /**
+   * The game's result.
+   */
+  private String result;
 
-	/**
-	 * True if the game has been marked as attended, false otherwise.
-	 */
-	private boolean attended;
+  /**
+   * The game's attendence.
+   */
+  private Integer attendence;
 
-	/**
-	 * Default constructor.
-	 */
-	protected Game() {
-		super();
-	}
+  /**
+   * The game's match report.
+   */
+  private String matchReport;
 
-	/**
-	 * Instantiates a new game.
-	 * 
-	 * @param id
-	 *          the id
-	 * @param competition
-	 *          the competition
-	 * @param location
-	 *          the location
-	 * @param opponents
-	 *          the opponents
-	 * @param season
-	 *          the season
-	 * @param datePlayed
-	 *          the date played
-	 * @param bondholdersAvailable
-	 *          the bondholders available
-	 * @param priorityPointPostAvailable
-	 *          the priority point post available
-	 * @param seasonTicketsAvailable
-	 *          the season tickets available
-	 * @param academyMembersAvailable
-	 *          the academy members available
-	 * @param generalSaleAvailable
-	 *          the general sale available
-	 * @param result
-	 *          the result
-	 * @param attendence
-	 *          the attendence
-	 * @param matchReport
-	 *          the match report
-	 * @param televisionChannel
-	 *          the television channel
-	 * @param attended
-	 *          the attended
-	 */
-	public Game(Integer id, Competition competition, Location location, String opponents, int season,
-			DateTime datePlayed, DateTime bondholdersAvailable, DateTime priorityPointPostAvailable,
-			DateTime seasonTicketsAvailable, DateTime academyMembersAvailable, DateTime generalSaleAvailable, String result,
-			Integer attendence, String matchReport, String televisionChannel, boolean attended) {
-		super();
-		this.id = id;
-		this.competition = competition;
-		this.location = location;
-		this.opponents = opponents;
-		this.season = season;
-		dateTimePlayed = datePlayed;
-		dateTimeBondholdersAvailable = bondholdersAvailable;
-		dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
-		dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
-		dateTimeAcademyMembersAvailable = academyMembersAvailable;
-		dateTimeGeneralSaleAvailable = generalSaleAvailable;
-		this.result = result;
-		this.attendence = attendence;
-		this.matchReport = matchReport;
-		this.televisionChannel = televisionChannel;
-		this.attended = attended;
-	}
+  /**
+   * The TV channel that showed the match.
+   */
+  private String televisionChannel;
 
-	/**
-	 * Get the {@link GameKey} that uniquely identifies game.
-	 * @return The {@link GameKey} that uniquely identifies game
-	 */
-	@Transient
-	public GameKey getGameKey() {
-		return new GameKey(getCompetition(), getLocation(), getOpponents(), getSeason());
-	}
+  /**
+   * True if the game has been marked as attended, false otherwise.
+   */
+  private boolean attended;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		return obj instanceof Game && compareTo((Game) obj) == 0;
-	}
+  /**
+   * Default constructor.
+   */
+  protected Game() {
+    super();
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int compareTo(Game o) {
-		return getGameKey().compareTo(o.getGameKey());
-	}
+  /**
+   * Instantiates a new game.
+   * 
+   * @param id
+   *          the id
+   * @param competition
+   *          the competition
+   * @param location
+   *          the location
+   * @param opponents
+   *          the opponents
+   * @param season
+   *          the season
+   * @param datePlayed
+   *          the date played
+   * @param bondholdersAvailable
+   *          the bondholders available
+   * @param priorityPointPostAvailable
+   *          the priority point post available
+   * @param seasonTicketsAvailable
+   *          the season tickets available
+   * @param academyMembersAvailable
+   *          the academy members available
+   * @param generalSaleAvailable
+   *          the general sale available
+   * @param result
+   *          the result
+   * @param attendence
+   *          the attendence
+   * @param matchReport
+   *          the match report
+   * @param televisionChannel
+   *          the television channel
+   * @param attended
+   *          the attended
+   */
+  public Game(
+      final Integer id,
+      final Competition competition,
+      final Location location,
+      final String opponents,
+      final int season,
+      final DateTime datePlayed,
+      final DateTime bondholdersAvailable,
+      final DateTime priorityPointPostAvailable,
+      final DateTime seasonTicketsAvailable,
+      final DateTime academyMembersAvailable,
+      final DateTime generalSaleAvailable,
+      final String result,
+      final Integer attendence,
+      final String matchReport,
+      final String televisionChannel,
+      final boolean attended) {
+    super();
+    this.id = id;
+    this.competition = competition;
+    this.location = location;
+    this.opponents = opponents;
+    this.season = season;
+    dateTimePlayed = datePlayed;
+    dateTimeBondholdersAvailable = bondholdersAvailable;
+    dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
+    dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
+    dateTimeAcademyMembersAvailable = academyMembersAvailable;
+    dateTimeGeneralSaleAvailable = generalSaleAvailable;
+    this.result = result;
+    this.attendence = attendence;
+    this.matchReport = matchReport;
+    this.televisionChannel = televisionChannel;
+    this.attended = attended;
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public int hashCode() {
-		return Objects.hashCode(getCompetition(), getLocation(), getOpponents(), getSeason());
-	}
+  public Game(final Competition competition, final Location location, final String opponents, final int season) {
+    super();
+    this.competition = competition;
+    this.location = location;
+    this.opponents = opponents;
+    this.season = season;
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return String.format("[Opponents: %s, Location: %s, Competition: %s, Season %d]", getOpponents(), getLocation(),
-				getCompetition(), getSeason());
-	}
+  /**
+   * Get the {@link GameKey} that uniquely identifies game.
+   * 
+   * @return The {@link GameKey} that uniquely identifies game
+   */
+  @Transient
+  public GameKey getGameKey() {
+    return new GameKey(getCompetition(), getLocation(), getOpponents(), getSeason());
+  }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Id
-	@GeneratedValue
-	public Integer getId() {
-		return id;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public boolean equals(final Object obj) {
+    return obj instanceof Game && compareTo((Game) obj) == 0;
+  }
 
-	/**
-	 * Sets the primary key of the game.
-	 * 
-	 * @param id
-	 *          the new primary key of the game
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int compareTo(final Game o) {
+    return getGameKey().compareTo(o.getGameKey());
+  }
 
-	/**
-	 * Gets the game's {@link Competition}.
-	 * 
-	 * @return the game's {@link Competition}
-	 */
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	public Competition getCompetition() {
-		return competition;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public int hashCode() {
+    return Objects.hashCode(getCompetition(), getLocation(), getOpponents(), getSeason());
+  }
 
-	/**
-	 * Sets the game's {@link Competition}.
-	 * 
-	 * @param competition
-	 *          the new game's {@link Competition}
-	 */
-	public void setCompetition(Competition competition) {
-		this.competition = competition;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public String toString() {
+    return String.format(
+        "[Opponents: %s, Location: %s, Competition: %s, Season %d]",
+        getOpponents(),
+        getLocation(),
+        getCompetition(),
+        getSeason());
+  }
 
-	/**
-	 * Gets the game's {@link Location}.
-	 * 
-	 * @return the game's {@link Location}
-	 */
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	public Location getLocation() {
-		return location;
-	}
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  @Id
+  @GeneratedValue
+  public Integer getId() {
+    return id;
+  }
 
-	/**
-	 * Sets the game's {@link Location}.
-	 * 
-	 * @param location
-	 *          the new game's {@link Location}
-	 */
-	public void setLocation(Location location) {
-		this.location = location;
-	}
+  /**
+   * Sets the primary key of the game.
+   * 
+   * @param id
+   *          the new primary key of the game
+   */
+  public void setId(final Integer id) {
+    this.id = id;
+  }
 
-	/**
-	 * Gets the game's opponents.
-	 * 
-	 * @return the game's opponents
-	 */
-	@Column(nullable = false)
-	public String getOpponents() {
-		return opponents;
-	}
+  /**
+   * Gets the game's {@link Competition}.
+   * 
+   * @return the game's {@link Competition}
+   */
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  public Competition getCompetition() {
+    return competition;
+  }
 
-	/**
-	 * Sets the game's opponents.
-	 * 
-	 * @param opponents
-	 *          the new game's opponents
-	 */
-	public void setOpponents(String opponents) {
-		this.opponents = opponents;
-	}
+  /**
+   * Sets the game's {@link Competition}.
+   * 
+   * @param competition
+   *          the new game's {@link Competition}
+   */
+  public void setCompetition(final Competition competition) {
+    this.competition = competition;
+  }
 
-	/**
-	 * Gets the season the game was played in.
-	 * 
-	 * @return the season the game was played in
-	 */
-	@Column(nullable = false)
-	public int getSeason() {
-		return season;
-	}
+  /**
+   * Gets the game's {@link Location}.
+   * 
+   * @return the game's {@link Location}
+   */
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  public Location getLocation() {
+    return location;
+  }
 
-	/**
-	 * Sets the season the game was played in.
-	 * 
-	 * @param season
-	 *          the new season the game was played in
-	 */
-	public void setSeason(int season) {
-		this.season = season;
-	}
+  /**
+   * Sets the game's {@link Location}.
+   * 
+   * @param location
+   *          the new game's {@link Location}
+   */
+  public void setLocation(final Location location) {
+    this.location = location;
+  }
 
-	/**
-	 * Gets the {@link DateTime} the game was played.
-	 * 
-	 * @return the {@link DateTime} the game was played
-	 */
-	public DateTime getDateTimePlayed() {
-		return dateTimePlayed;
-	}
+  /**
+   * Gets the game's opponents.
+   * 
+   * @return the game's opponents
+   */
+  @Column(nullable = false)
+  public String getOpponents() {
+    return opponents;
+  }
 
-	/**
-	 * Sets the {@link DateTime} the game was played.
-	 * 
-	 * @param datePlayed
-	 *          the new {@link DateTime} the game was played
-	 */
-	@Column(nullable = false)
-	public void setDateTimePlayed(DateTime datePlayed) {
-		dateTimePlayed = datePlayed;
-	}
+  /**
+   * Sets the game's opponents.
+   * 
+   * @param opponents
+   *          the new game's opponents
+   */
+  public void setOpponents(final String opponents) {
+    this.opponents = opponents;
+  }
 
-	/**
-	 * Gets the game's result.
-	 * 
-	 * @return the game's result
-	 */
-	public String getResult() {
-		return result;
-	}
+  /**
+   * Gets the season the game was played in.
+   * 
+   * @return the season the game was played in
+   */
+  @Column(nullable = false)
+  public int getSeason() {
+    return season;
+  }
 
-	/**
-	 * Sets the game's result.
-	 * 
-	 * @param result
-	 *          the new game's result
-	 */
-	public void setResult(String result) {
-		this.result = result;
-	}
+  /**
+   * Sets the season the game was played in.
+   * 
+   * @param season
+   *          the new season the game was played in
+   */
+  public void setSeason(final int season) {
+    this.season = season;
+  }
 
-	/**
-	 * Gets the game's attendence.
-	 * 
-	 * @return the game's attendence
-	 */
-	public Integer getAttendence() {
-		return attendence;
-	}
+  /**
+   * Gets the {@link DateTime} the game was played.
+   * 
+   * @return the {@link DateTime} the game was played
+   */
+  public DateTime getDateTimePlayed() {
+    return dateTimePlayed;
+  }
 
-	/**
-	 * Sets the game's attendence.
-	 * 
-	 * @param attendence
-	 *          the new game's attendence
-	 */
-	public void setAttendence(Integer attendence) {
-		this.attendence = attendence;
-	}
+  /**
+   * Sets the {@link DateTime} the game was played.
+   * 
+   * @param datePlayed
+   *          the new {@link DateTime} the game was played
+   */
+  @Column(nullable = false)
+  public void setDateTimePlayed(final DateTime datePlayed) {
+    dateTimePlayed = datePlayed;
+  }
 
-	/**
-	 * Gets the game's match report.
-	 * 
-	 * @return the game's match report
-	 */
-	public String getMatchReport() {
-		return matchReport;
-	}
+  /**
+   * Gets the game's result.
+   * 
+   * @return the game's result
+   */
+  public String getResult() {
+    return result;
+  }
 
-	/**
-	 * Sets the game's match report.
-	 * 
-	 * @param matchReport
-	 *          the new game's match report
-	 */
-	public void setMatchReport(String matchReport) {
-		this.matchReport = matchReport;
-	}
+  /**
+   * Sets the game's result.
+   * 
+   * @param result
+   *          the new game's result
+   */
+  public void setResult(final String result) {
+    this.result = result;
+  }
 
-	/**
-	 * Checks if is true if the game has been marked as attended, false otherwise.
-	 * 
-	 * @return the true if the game has been marked as attended, false otherwise
-	 */
-	public boolean isAttended() {
-		return attended;
-	}
+  /**
+   * Gets the game's attendence.
+   * 
+   * @return the game's attendence
+   */
+  public Integer getAttendence() {
+    return attendence;
+  }
 
-	/**
-	 * Sets the true if the game has been marked as attended, false otherwise.
-	 * 
-	 * @param attended
-	 *          the new true if the game has been marked as attended, false
-	 *          otherwise
-	 */
-	public void setAttended(boolean attended) {
-		this.attended = attended;
-	}
+  /**
+   * Sets the game's attendence.
+   * 
+   * @param attendence
+   *          the new game's attendence
+   */
+  public void setAttendence(final Integer attendence) {
+    this.attendence = attendence;
+  }
 
-	/**
-	 * Gets the {@link DateTime} that season ticker holder tickets went on sale.
-	 * 
-	 * @return the {@link DateTime} that season ticker holder tickets went on sale
-	 */
-	public DateTime getDateTimeSeasonTicketsAvailable() {
-		return dateTimeSeasonTicketsAvailable;
-	}
+  /**
+   * Gets the game's match report.
+   * 
+   * @return the game's match report
+   */
+  public String getMatchReport() {
+    return matchReport;
+  }
 
-	/**
-	 * Sets the {@link DateTime} that season ticker holder tickets went on sale.
-	 * 
-	 * @param seasonTicketsAvailable
-	 *          the new {@link DateTime} that season ticker holder tickets went on
-	 *          sale
-	 */
-	public void setDateTimeSeasonTicketsAvailable(DateTime seasonTicketsAvailable) {
-		dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
-	}
+  /**
+   * Sets the game's match report.
+   * 
+   * @param matchReport
+   *          the new game's match report
+   */
+  public void setMatchReport(final String matchReport) {
+    this.matchReport = matchReport;
+  }
 
-	/**
-	 * Gets the {@link DateTime} that Bondholder tickets went on sale.
-	 * 
-	 * @return the {@link DateTime} that Bondholder tickets went on sale
-	 */
-	public DateTime getDateTimeBondholdersAvailable() {
-		return dateTimeBondholdersAvailable;
-	}
+  /**
+   * Checks if is true if the game has been marked as attended, false otherwise.
+   * 
+   * @return the true if the game has been marked as attended, false otherwise
+   */
+  public boolean isAttended() {
+    return attended;
+  }
 
-	/**
-	 * Sets the {@link DateTime} that Bondholder tickets went on sale.
-	 * 
-	 * @param bondholdersAvailable
-	 *          the new {@link DateTime} that Bondholder tickets went on sale
-	 */
-	public void setDateTimeBondholdersAvailable(DateTime bondholdersAvailable) {
-		dateTimeBondholdersAvailable = bondholdersAvailable;
-	}
+  /**
+   * Sets the true if the game has been marked as attended, false otherwise.
+   * 
+   * @param attended
+   *          the new true if the game has been marked as attended, false
+   *          otherwise
+   */
+  public void setAttended(final boolean attended) {
+    this.attended = attended;
+  }
 
-	/**
-	 * Gets the {@link DateTime} that priority point tickets went on sale.
-	 * 
-	 * @return the {@link DateTime} that priority point tickets went on sale
-	 */
-	public DateTime getDateTimePriorityPointPostAvailable() {
-		return dateTimePriorityPointPostAvailable;
-	}
+  /**
+   * Gets the {@link DateTime} that season ticker holder tickets went on sale.
+   * 
+   * @return the {@link DateTime} that season ticker holder tickets went on sale
+   */
+  public DateTime getDateTimeSeasonTicketsAvailable() {
+    return dateTimeSeasonTicketsAvailable;
+  }
 
-	/**
-	 * Sets the {@link DateTime} that priority point tickets went on sale.
-	 * 
-	 * @param priorityPointPostAvailable
-	 *          the new {@link DateTime} that priority point tickets went on sale
-	 */
-	public void setDateTimePriorityPointPostAvailable(DateTime priorityPointPostAvailable) {
-		dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
-	}
+  /**
+   * Sets the {@link DateTime} that season ticker holder tickets went on sale.
+   * 
+   * @param seasonTicketsAvailable
+   *          the new {@link DateTime} that season ticker holder tickets went on
+   *          sale
+   */
+  public void setDateTimeSeasonTicketsAvailable(final DateTime seasonTicketsAvailable) {
+    dateTimeSeasonTicketsAvailable = seasonTicketsAvailable;
+  }
 
-	/**
-	 * Gets the {@link DateTime} that Academy members' tickets went on sale.
-	 * 
-	 * @return the {@link DateTime} that Academy members' tickets went on sale
-	 */
-	public DateTime getDateTimeAcademyMembersAvailable() {
-		return dateTimeAcademyMembersAvailable;
-	}
+  /**
+   * Gets the {@link DateTime} that Bondholder tickets went on sale.
+   * 
+   * @return the {@link DateTime} that Bondholder tickets went on sale
+   */
+  public DateTime getDateTimeBondholdersAvailable() {
+    return dateTimeBondholdersAvailable;
+  }
 
-	/**
-	 * Sets the {@link DateTime} that Academy members' tickets went on sale.
-	 * 
-	 * @param academyMembersAvailable
-	 *          the new {@link DateTime} that Academy members' tickets went on
-	 *          sale
-	 */
-	public void setDateTimeAcademyMembersAvailable(DateTime academyMembersAvailable) {
-		dateTimeAcademyMembersAvailable = academyMembersAvailable;
-	}
+  /**
+   * Sets the {@link DateTime} that Bondholder tickets went on sale.
+   * 
+   * @param bondholdersAvailable
+   *          the new {@link DateTime} that Bondholder tickets went on sale
+   */
+  public void setDateTimeBondholdersAvailable(final DateTime bondholdersAvailable) {
+    dateTimeBondholdersAvailable = bondholdersAvailable;
+  }
 
-	/**
-	 * Gets the {@link DateTime} that tickets went on general sale.
-	 * 
-	 * @return the {@link DateTime} that tickets went on general sale
-	 */
-	public DateTime getDateTimeGeneralSaleAvailable() {
-		return dateTimeGeneralSaleAvailable;
-	}
+  /**
+   * Gets the {@link DateTime} that priority point tickets went on sale.
+   * 
+   * @return the {@link DateTime} that priority point tickets went on sale
+   */
+  public DateTime getDateTimePriorityPointPostAvailable() {
+    return dateTimePriorityPointPostAvailable;
+  }
 
-	/**
-	 * Sets the {@link DateTime} that tickets went on general sale.
-	 * 
-	 * @param generalSaleAvailable
-	 *          the new {@link DateTime} that tickets went on general sale
-	 */
-	public void setDateTimeGeneralSaleAvailable(DateTime generalSaleAvailable) {
-		dateTimeGeneralSaleAvailable = generalSaleAvailable;
-	}
+  /**
+   * Sets the {@link DateTime} that priority point tickets went on sale.
+   * 
+   * @param priorityPointPostAvailable
+   *          the new {@link DateTime} that priority point tickets went on sale
+   */
+  public void setDateTimePriorityPointPostAvailable(final DateTime priorityPointPostAvailable) {
+    dateTimePriorityPointPostAvailable = priorityPointPostAvailable;
+  }
 
-	/**
-	 * Gets the TV channel that showed the match.
-	 * 
-	 * @return the TV channel that showed the match
-	 */
-	public String getTelevisionChannel() {
-		return televisionChannel;
-	}
+  /**
+   * Gets the {@link DateTime} that Academy members' tickets went on sale.
+   * 
+   * @return the {@link DateTime} that Academy members' tickets went on sale
+   */
+  public DateTime getDateTimeAcademyMembersAvailable() {
+    return dateTimeAcademyMembersAvailable;
+  }
 
-	/**
-	 * Sets the TV channel that showed the match.
-	 * 
-	 * @param televisionChannel
-	 *          the new TV channel that showed the match
-	 */
-	public void setTelevisionChannel(String televisionChannel) {
-		this.televisionChannel = televisionChannel;
-	}
+  /**
+   * Sets the {@link DateTime} that Academy members' tickets went on sale.
+   * 
+   * @param academyMembersAvailable
+   *          the new {@link DateTime} that Academy members' tickets went on
+   *          sale
+   */
+  public void setDateTimeAcademyMembersAvailable(final DateTime academyMembersAvailable) {
+    dateTimeAcademyMembersAvailable = academyMembersAvailable;
+  }
+
+  /**
+   * Gets the {@link DateTime} that tickets went on general sale.
+   * 
+   * @return the {@link DateTime} that tickets went on general sale
+   */
+  public DateTime getDateTimeGeneralSaleAvailable() {
+    return dateTimeGeneralSaleAvailable;
+  }
+
+  /**
+   * Sets the {@link DateTime} that tickets went on general sale.
+   * 
+   * @param generalSaleAvailable
+   *          the new {@link DateTime} that tickets went on general sale
+   */
+  public void setDateTimeGeneralSaleAvailable(final DateTime generalSaleAvailable) {
+    dateTimeGeneralSaleAvailable = generalSaleAvailable;
+  }
+
+  /**
+   * Gets the TV channel that showed the match.
+   * 
+   * @return the TV channel that showed the match
+   */
+  public String getTelevisionChannel() {
+    return televisionChannel;
+  }
+
+  /**
+   * Sets the TV channel that showed the match.
+   * 
+   * @param televisionChannel
+   *          the new TV channel that showed the match
+   */
+  public void setTelevisionChannel(final String televisionChannel) {
+    this.televisionChannel = televisionChannel;
+  }
 }

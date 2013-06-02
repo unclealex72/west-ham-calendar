@@ -71,6 +71,9 @@ class PossiblyYearlessDateParser(
   }
 }
 
+/**
+ * Classes used in case matches to decide whether a date format requires a year setting or not.
+ */
 sealed abstract class NeedsYear(dateFormat: String)
 
 case class DoesNeedYear(dateFormat: String) extends NeedsYear(dateFormat)

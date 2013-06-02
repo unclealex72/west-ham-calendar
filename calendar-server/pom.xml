@@ -21,6 +21,12 @@
             <version>2.10.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.typesafe</groupId>
+            <artifactId>scalalogging-slf4j_2.10</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+
 		<dependency>
 			<groupId>org.mozilla</groupId>
 			<artifactId>rhino</artifactId>
@@ -178,6 +184,13 @@
 			<artifactId>javax.inject</artifactId>
 			<version>1</version>
 		</dependency>
+    
+     <dependency>
+   <groupId>org.specs2</groupId> 
+   <artifactId>specs2_2.10</artifactId> 
+   <version>1.14</version>
+   <scope>test</scope> 
+ </dependency>
 	</dependencies>
 
 	<repositories>
