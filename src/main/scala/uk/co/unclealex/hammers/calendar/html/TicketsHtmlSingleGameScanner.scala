@@ -46,10 +46,6 @@ class TicketsHtmlSingleGameScanner(
   dateService: DateService,
   season: Int) extends StatefulDomBasedHtmlGamesScanner(htmlPageLoader, dateService) with Logging {
 
-  //TODO: Remove me
-  def this(htmlPageLoader: HtmlPageLoader, dateService: DateService, season: java.lang.Integer) =
-    this(htmlPageLoader, dateService, Int.unbox(season))
-
   /**
    * The text that indicates the ticket selling date is for Bondholders.
    */
