@@ -22,9 +22,10 @@
 
 package uk.co.unclealex.hammers.calendar.html;
 
-import org.htmlcleaner.HtmlNode;
-import org.htmlcleaner.TagNode;
+import org.htmlcleaner.HtmlNode
+import org.htmlcleaner.TagNode
 import org.htmlcleaner.TagNodeVisitor;
+import scala.collection.mutable.Buffer
 
 /**
  * A class to walk {@link TagNode}s. Basically, class wraps a {@link TagNodeVisitor} but only visits
@@ -32,25 +33,24 @@ import org.htmlcleaner.TagNodeVisitor;
  * @author alex
  *
  */
-abstract class TagNodeWalker(
-  /**
-   * The tag node to walk.
-   */
-  tagNode: TagNode) {
+object TagNodeWalker {
 
-  val visitor = new TagNodeVisitor() {
-    def visit(parentNode: TagNode, htmlNode: HtmlNode) = {
-      if (htmlNode.isInstanceOf[TagNode]) {
-        execute(htmlNode.asInstanceOf[TagNode])
+  /**
+   * Walk a tag node.
+   * @param f A function that transforms a tag node into a list of results.
+   * @param tagNode the node to walk.
+   */
+  def walk[E](f: TagNode => Traversable[E])(tagNode: TagNode): List[E] = {
+    val buffer = Buffer.empty[E]
+    val visitor = new TagNodeVisitor() {
+      def visit(parentNode: TagNode, htmlNode: HtmlNode) = {
+        if (htmlNode.isInstanceOf[TagNode]) {
+          buffer ++= f(htmlNode.asInstanceOf[TagNode])
+        }
+        true
       }
-      true
     }
+    tagNode.traverse(visitor)
+    buffer.toList
   }
-  tagNode.traverse(visitor)
-
-  /**
-   * Do something in response to finding a {@link TagNode}.
-   * @param tagNode The current {@link TagNode}.
-   */
-  def execute(tagNode: TagNode)
 }

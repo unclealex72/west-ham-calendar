@@ -24,10 +24,8 @@
 
 package uk.co.unclealex.hammers.calendar
 
-import uk.co.unclealex.hammers.calendar.dates.YearSettingDateParserFactory
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import com.google.common.base.Strings
 
 /**
  * Helper classes used to make dates and times more readable in tests.
@@ -61,7 +59,7 @@ object Date {
 
 case class Instant(val date: Date, val hours: Int, val minutes: Int) {
   override def toString = {
-    def pad(i: Int) = Strings.padStart(Integer.toString(i), 2, '0')
+    def pad(i: Int) = (if (i < 10) "0" else "") + i
     s"$date ${pad(hours)}:${pad(minutes)}"
   }
 

@@ -22,19 +22,9 @@
 
 package uk.co.unclealex.hammers.calendar.html;
 
-import java.lang.{Iterable => JIterable}
 import java.net.URI
-import java.util.Collections
-import java.util.{List => JList}
-import java.util.{SortedSet => JSortedSet}
-
-import scala.collection.JavaConverters.iterableAsScalaIterableConverter
-
 import org.htmlcleaner.TagNode
 import org.specs2.mutable.Specification
-
-import com.google.common.collect.Lists
-import com.google.common.collect.Sets
 
 import uk.co.unclealex.hammers.calendar.dates.DateServiceImpl
 import uk.co.unclealex.hammers.calendar.model.Competition
@@ -52,7 +42,7 @@ class DelegatingHtmlGamesScannerTest extends Specification {
       val htmlGamesScanner = new HtmlGamesScanner() {
         var season = 2012
 
-        override def scan(uri: URI): JSortedSet[GameUpdateCommand] = {
+        override def scan(uri: URI): List[GameUpdateCommand] = {
           val gameUpdateCommand =
             MatchReportUpdateCommand(new GameKeyLocator(new GameKey(
               Competition.FACP,
@@ -60,37 +50,29 @@ class DelegatingHtmlGamesScannerTest extends Specification {
               "Them",
               season)), Some(uri.toString))
           season = season + 1
-          Sets.newTreeSet(Collections.singleton(gameUpdateCommand))
+          List(gameUpdateCommand)
         }
       }
 
       val linkHarvester = new LinkHarvester() {
-
-        override def harvestLinks(pageUri: URI, tagNode: TagNode): JIterable[URI] = {
-          val links: JList[URI] = Lists.newArrayList()
-          new TagNodeWalker(tagNode) {
-            override def execute(tagNode: TagNode) {
-              val href = tagNode.getAttributeByName("href")
-              if (href != null) {
-                links.add(URI.create(href))
-              }
-            }
-          }
-          links
+        override def harvestLinks(pageUri: URI, tagNode: TagNode): List[URI] = {
+          TagNodeWalker.walk { tagNode =>
+            Option(tagNode.getAttributeByName("href")) map (href => URI.create(href))
+          }(tagNode)
         }
       }
       val delegatingHtmlGamesScanner = new DelegatingHtmlGamesScanner(
         new HtmlPageLoaderImpl, new DateServiceImpl, linkHarvester, htmlGamesScanner)
       val uri = getClass().getClassLoader().getResource("delegate.xml").toURI
-      val actualGameUpdateCommands = delegatingHtmlGamesScanner.scan(uri).asScala.toList
-      val expectedGameUpdateCommands = (1 to 4).toList map { (index: Int) =>
+      val actualGameUpdateCommands = delegatingHtmlGamesScanner.scan(uri)
+      val expectedGameUpdateCommands: List[GameUpdateCommand] = (1 to 4).toList map { (index: Int) =>
         MatchReportUpdateCommand(new GameKeyLocator(new GameKey(
           Competition.FACP,
           Location.HOME,
           "Them",
           index + 2011)), Some(s"${index}.html"))
       }
-      actualGameUpdateCommands must be equalTo (expectedGameUpdateCommands)
+      actualGameUpdateCommands.sorted must be equalTo (expectedGameUpdateCommands.sorted)
     }
   }
 }

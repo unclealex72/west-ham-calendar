@@ -72,7 +72,7 @@ class TicketsLinkHarvesterTest extends Specification {
       val url = getClass.getClassLoader.getResource(s"html/tickets/$season/tickets.html")
       val tagNode = new HtmlPageLoaderImpl().loadPage(url);
       val actualLinks =
-        harvester.harvestLinks(new URI("http://www.whufc.com/page/TicketNews/0,,12562,00.html"), tagNode).asScala.toList
+        harvester.harvestLinks(new URI("http://www.whufc.com/page/TicketNews/0,,12562,00.html"), tagNode)
       s"contain the correct links" in {
         actualLinks must be equalTo (List(expectedLinks: _*) map ((uri: String) => new URI(uri)))
       }

@@ -28,7 +28,7 @@ import org.joda.time.DateTime
 import com.typesafe.scalalogging.slf4j.Logging
 import TagNodeImplicits.Implicits
 import uk.co.unclealex.hammers.calendar.dates.DateService
-import scala.collection.mutable.SortedSet
+import scala.collection.SortedSet
 /**
  * A {@link HtmlGamesScanner} that scans a page for ticket sales.
  *
@@ -77,8 +77,8 @@ class TicketsHtmlSingleGameScanner(
    * {@inheritDoc}
    */
   @Override
-  protected override def createScanner(uri: URI, tagNode: TagNode, gameUpdateCommands: SortedSet[GameUpdateCommand]): Scanner =
-    new TicketsScanner(uri, tagNode, gameUpdateCommands)
+  protected override def createScanner(uri: URI, tagNode: TagNode): Scanner =
+    new TicketsScanner(uri, tagNode)
 
   /**
    * A {@link Scanner} that scans a page for ticket sale dates.
@@ -86,7 +86,7 @@ class TicketsHtmlSingleGameScanner(
    * @author alex
    *
    */
-  class TicketsScanner(uri: URI, tagNode: TagNode, gameUpdateCommands: SortedSet[GameUpdateCommand]) extends Scanner(uri, tagNode, gameUpdateCommands) {
+  class TicketsScanner(uri: URI, tagNode: TagNode) extends Scanner(uri, tagNode) {
 
     /**
      * The currently found {@link GameLocator}.
@@ -124,10 +124,13 @@ class TicketsHtmlSingleGameScanner(
        * @param dateText
        *          The dateText to search for or parse a date time.
        */
-      def execute(dateText: String): Unit = {
+      def execute(dateText: String): Option[GameUpdateCommand] = {
         parseDateTime(dateText) match {
           case Some(dateTime) => execute(dateTime)
-          case None => logger debug s"Could not find a date for URL $uri in text $dateText"
+          case None => {
+            logger debug s"Could not find a date for URL $uri in text $dateText"
+            None
+          }
         }
       }
 
@@ -148,7 +151,7 @@ class TicketsHtmlSingleGameScanner(
        * @param dateTime
        *          The {@link DateTime} that has been found.
        */
-      def execute(dateTime: DateTime): Unit
+      def execute(dateTime: DateTime): Option[GameUpdateCommand]
 
     }
 
@@ -181,10 +184,11 @@ class TicketsHtmlSingleGameScanner(
        *          The found {@link DateTime}.
        *
        */
-      def execute(dateTime: DateTime) {
+      def execute(dateTime: DateTime): Option[GameUpdateCommand] = {
         logger info s"The game with tickets at URL $uri is being played at $dateTime"
         dateTimePlayed = Some(dateTime)
         gameLocator = Some(DatePlayedLocator(dateTime))
+        None
       }
     }
 
@@ -222,10 +226,9 @@ class TicketsHtmlSingleGameScanner(
           }
       }
 
-      override def execute(dateTime: DateTime): Unit = {
+      override def execute(dateTime: DateTime): Option[GameUpdateCommand] = {
         logger info s"Found ticket type ${containedText.trim()} for game at ${dateTimePlayed.get} being sold at $dateTime"
-        val gameUpdateCommand = createGameUpdateCommand(gameLocator.get, Some(dateTime))
-        gameUpdateCommands += gameUpdateCommand
+        Some(createGameUpdateCommand(gameLocator.get, Some(dateTime)))
       }
 
       /**
@@ -306,7 +309,7 @@ class TicketsHtmlSingleGameScanner(
      * @throws IOException
      *           Signals that an I/O exception has occurred.
      */
-    override def scan: Unit = {
+    override def scan: List[GameUpdateCommand] = {
       val parsingActions = List(
         GameDatePlayedParsingAction,
         BondHoldersTicketParsingAction,
@@ -315,13 +318,17 @@ class TicketsHtmlSingleGameScanner(
         AcademyMemberTicketParsingAction,
         GeneralSaleTicketParsingAction)
       val filter = new TagNodeFilter(_ => true)
-      filter.list(tagNode).foreach { tagNode =>
+      filter.list(tagNode) flatMap { tagNode =>
         val text = tagNode.normalisedText
-        if (!text.isEmpty()) {
-          val parsingAction = parsingActions.find(pa => text.contains(pa.containedText))
-          parsingAction.foreach { parsingAction =>
-            val textForDate = text.replace(parsingAction.containedText, "")
-            parsingAction.execute(textForDate)
+        text match {
+          case "" => List.empty
+          case _ => {
+            val parsingAction = parsingActions.find(pa => text.contains(pa.containedText))
+            val newGameUpdateCommands = parsingAction.flatMap { parsingAction =>
+              val textForDate = text.replace(parsingAction.containedText, "")
+              parsingAction.execute(textForDate)
+            }
+            newGameUpdateCommands
           }
         }
       }

@@ -22,9 +22,7 @@
 
 package uk.co.unclealex.hammers.calendar.html;
 
-import java.io.IOException
 import java.net.URI
-import java.lang.{ Iterable => JIterable }
 
 /**
  * The common interface for services that scan web pages for details on West Ham games. Such details can either
@@ -42,6 +40,5 @@ trait HtmlGamesScanner {
    * @return A set of changes found.
    * @throws IOException Thrown if there are any network problems.
    */
-  @throws(classOf[IOException])
-  def scan(uri: URI): JIterable[GameUpdateCommand]
+  def scan(uri: URI): List[GameUpdateCommand]
 }

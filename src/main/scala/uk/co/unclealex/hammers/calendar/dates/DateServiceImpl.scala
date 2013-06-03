@@ -21,24 +21,10 @@
  */
 package uk.co.unclealex.hammers.calendar.dates;
 
-import java.util.List;
-
-import org.joda.time.Chronology;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeConstants;
-import org.joda.time.DateTimeZone;
-import org.joda.time.DayOfWeekIgnoringChronology;
-import org.joda.time.chrono.ISOChronology;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeParser;
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import scala.collection.JavaConversions._
+
+import org.joda.time.DateTime
+import org.joda.time.DayOfWeekIgnoringChronology
 /**
  * The default implementation of {@link DateService}.
  *

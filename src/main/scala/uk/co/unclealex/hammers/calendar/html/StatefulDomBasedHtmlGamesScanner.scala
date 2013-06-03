@@ -22,11 +22,10 @@
 
 package uk.co.unclealex.hammers.calendar.html;
 
-import java.io.IOException
 import java.net.URI
+
 import org.htmlcleaner.TagNode
-import com.google.common.collect.Sets
-import scala.collection.mutable.SortedSet
+
 import uk.co.unclealex.hammers.calendar.dates.DateService
 
 /**
@@ -47,8 +46,8 @@ abstract class StatefulDomBasedHtmlGamesScanner(
   /**
    * {@inheritDoc}
    */
-  override def scan(uri: URI, tagNode: TagNode, gameUpdateCommands: SortedSet[GameUpdateCommand]): Unit = {
-    val scanner = createScanner(uri, tagNode, gameUpdateCommands)
+  override def scan(uri: URI, tagNode: TagNode): List[GameUpdateCommand] = {
+    val scanner = createScanner(uri, tagNode)
     scanner.scan()
   }
 
@@ -58,7 +57,7 @@ abstract class StatefulDomBasedHtmlGamesScanner(
    * @param tagNode The XML tagNode to scan.
    * @return A scanner as described above.
    */
-  protected def createScanner(uri: URI, tagNode: TagNode, gameUpdateCommands: SortedSet[GameUpdateCommand]): Scanner
+  protected def createScanner(uri: URI, tagNode: TagNode): Scanner
 
   /**
    * An abstract class to allow for scanning state to be stored, mainly so that there is
@@ -74,11 +73,7 @@ abstract class StatefulDomBasedHtmlGamesScanner(
     /**
      * The top-level {@link TagNode} of the page being scanned.
      */
-    tagNode: TagNode,
-    /**
-     * The set of {@link GameUpdateCommand}s to update.
-     */
-    gameUpdateCommands: SortedSet[GameUpdateCommand]) {
+    tagNode: TagNode) {
 
     /**
      * Scan the page for any information.
@@ -86,6 +81,6 @@ abstract class StatefulDomBasedHtmlGamesScanner(
      * @throws IOException
      *           Signals that an I/O exception has occurred.
      */
-    def scan(): Unit
+    def scan(): List[GameUpdateCommand]
   }
 }

@@ -24,12 +24,7 @@ package uk.co.unclealex.hammers.calendar.html;
 import java.io.IOException
 import java.net.URI
 import org.htmlcleaner.TagNode
-import com.google.common.collect.Lists
-import com.google.common.collect.Sets
-import scala.collection.mutable.LinkedHashSet
-import scala.collection.mutable.Set
-import scala.collection.JavaConverters._
-import java.lang.{ Iterable => JIterable }
+
 /**
  * An {@link ElementLinkHarvester} is a {@link LinkHarvester} that searches a page for HTML elements with
  * a given name and then processes it's inner text.
@@ -42,18 +37,10 @@ abstract class ElementLinkHarvester(
    */
   elementName: String) extends LinkHarvester {
 
-  @Override
-  override def harvestLinks(pageUri: URI, tagNode: TagNode): JIterable[URI] = {
-    val links: Set[URI] = LinkedHashSet()
-    new TagNodeWalker(tagNode) {
-      def execute(tagNode: TagNode) = {
-        if (elementName.equals(tagNode.getName())) {
-          val linkUri = checkForLink(pageUri, tagNode)
-          links ++= linkUri
-        }
-      }
-    }
-    links.asJava
+  override def harvestLinks(pageUri: URI, tagNode: TagNode): List[URI] = {
+    TagNodeWalker.walk { tagNode =>
+      if (elementName.equals(tagNode.getName())) checkForLink(pageUri, tagNode) else None
+    }(tagNode) distinct
   }
 
   /**

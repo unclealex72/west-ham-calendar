@@ -23,8 +23,8 @@
 package uk.co.unclealex.hammers.calendar.html;
 
 import org.joda.time.DateTime
-import com.google.common.base.Objects
-import uk.co.unclealex.hammers.calendar.model.GameKey;
+
+import uk.co.unclealex.hammers.calendar.model.GameKey
 
 /**
  * The base class for both types of game locator.

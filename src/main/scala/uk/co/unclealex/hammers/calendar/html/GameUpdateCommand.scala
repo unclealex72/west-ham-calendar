@@ -91,9 +91,9 @@ sealed abstract class BaseGameUpdateCommand[V](
   override def update(game: Game): Boolean = {
     newValue match {
       case Some(newValue) => {
-        if (newValue != currentValue(game)) {
-          logger info s"Updating the ${updateType.description} to $newValue for game ${game.getGameKey}"
-          setNewValue(game, newValue)
+        if (Some(newValue) != currentValue(game)) {
+          logger info s"Updating the ${updateType.description} to $newValue for game ${game.gameKey}"
+          setNewValue(game, Some(newValue))
           true
         } else {
           false
@@ -119,7 +119,7 @@ sealed abstract class BaseGameUpdateCommand[V](
    *          The game to check.
    * @return The current value of the current game.
    */
-  protected def currentValue(game: Game): V
+  protected def currentValue(game: Game): Option[V]
 
   /**
    * Alter a game.
@@ -127,7 +127,7 @@ sealed abstract class BaseGameUpdateCommand[V](
    * @param game
    *          The game to alter.
    */
-  protected def setNewValue(game: Game, newValue: V)
+  protected def setNewValue(game: Game, newValue: Option[V])
 }
 /**
  * A {@link GameUpdateCommand} that updates a game's date played value.
@@ -142,12 +142,9 @@ sealed abstract class BaseGameUpdateCommand[V](
 case class DatePlayedUpdateCommand(
   override val gameLocator: GameLocator, newDatePlayed: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](DATE_PLAYED, gameLocator, newDatePlayed) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: DateTime) = this(gameLocator, Some(value))
+  override def currentValue(game: Game) = game.dateTimePlayed
 
-  override def currentValue(game: Game) = game.getDateTimePlayed
-
-  override def setNewValue(game: Game, newDatePlayed: DateTime) = game.setDateTimePlayed(newDatePlayed)
+  override def setNewValue(game: Game, newDatePlayed: Option[DateTime]) = game.dateTimePlayed = newDatePlayed
 }
 
 /**
@@ -162,12 +159,9 @@ case class DatePlayedUpdateCommand(
 case class ResultUpdateCommand(
   override val gameLocator: GameLocator, newResult: Option[String]) extends BaseGameUpdateCommand[String](RESULT, gameLocator, newResult) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: String) = this(gameLocator, Some(value))
+  override def currentValue(game: Game) = game.result
 
-  override def currentValue(game: Game) = game.getResult
-
-  override def setNewValue(game: Game, newResult: String) = game.setResult(newResult)
+  override def setNewValue(game: Game, newResult: Option[String]) = game.result = newResult
 }
 
 /**
@@ -182,12 +176,9 @@ case class ResultUpdateCommand(
 case class AttendenceUpdateCommand(
   override val gameLocator: GameLocator, newAttendence: Option[Int]) extends BaseGameUpdateCommand[Int](ATTENDENCE, gameLocator, newAttendence) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: Int) = this(gameLocator, Some(value))
+  override def currentValue(game: Game) = game.attendence
 
-  override def currentValue(game: Game) = game.getAttendence
-
-  override def setNewValue(game: Game, newAttendence: Int) = game.setAttendence(newAttendence)
+  override def setNewValue(game: Game, newAttendence: Option[Int]) = game.attendence = newAttendence
 
 }
 
@@ -205,12 +196,9 @@ case class AttendenceUpdateCommand(
 case class MatchReportUpdateCommand(
   override val gameLocator: GameLocator, newMatchReport: Option[String]) extends BaseGameUpdateCommand[String](MATCH_REPORT, gameLocator, newMatchReport) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: String) = this(gameLocator, Some(value))
+  override def currentValue(game: Game) = game.matchReport
 
-  override def currentValue(game: Game) = game.getMatchReport
-
-  override def setNewValue(game: Game, newMatchReport: String) = game.setMatchReport(newMatchReport)
+  override def setNewValue(game: Game, newMatchReport: Option[String]) = game.matchReport = newMatchReport
 }
 
 /**
@@ -227,12 +215,9 @@ case class MatchReportUpdateCommand(
 case class TelevisionChannelUpdateCommand(
   override val gameLocator: GameLocator, newTelevisionChannel: Option[String]) extends BaseGameUpdateCommand[String](TELEVISION_CHANNEL, gameLocator, newTelevisionChannel) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: String) = this(gameLocator, Some(value))
+  override def currentValue(game: Game) = game.televisionChannel
 
-  override def currentValue(game: Game) = game.getTelevisionChannel
-
-  override def setNewValue(game: Game, newTelevisionChannel: String) = game.setTelevisionChannel(newTelevisionChannel)
+  override def setNewValue(game: Game, newTelevisionChannel: Option[String]) = game.televisionChannel = newTelevisionChannel
 }
 
 /**
@@ -247,12 +232,9 @@ case class TelevisionChannelUpdateCommand(
 case class AttendedUpdateCommand(
   override val gameLocator: GameLocator, newAttended: Option[Boolean]) extends BaseGameUpdateCommand[Boolean](ATTENDED, gameLocator, newAttended) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: Boolean) = this(gameLocator, Some(value))
+  override def currentValue(game: Game) = game.attended
 
-  override def currentValue(game: Game) = game.isAttended
-
-  override def setNewValue(game: Game, newAttended: Boolean) = game.setAttended(newAttended)
+  override def setNewValue(game: Game, newAttended: Option[Boolean]) = game.attended = newAttended
 }
 
 /**
@@ -269,12 +251,9 @@ case class AttendedUpdateCommand(
 case class BondHolderTicketsUpdateCommand(
   override val gameLocator: GameLocator, newBondHolderTicketsAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](BONDHOLDER_TICKETS, gameLocator, newBondHolderTicketsAvailable) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: DateTime) = this(gameLocator, Some(value))
-
-  override def currentValue(game: Game) = game.getDateTimeBondholdersAvailable
-  override def setNewValue(game: Game, newBondHolderTicketsAvailable: DateTime) =
-    game.setDateTimeBondholdersAvailable(newBondHolderTicketsAvailable)
+  override def currentValue(game: Game) = game.dateTimeBondholdersAvailable
+  override def setNewValue(game: Game, newBondHolderTicketsAvailable: Option[DateTime]) =
+    game.dateTimeBondholdersAvailable = newBondHolderTicketsAvailable
 }
 
 /**
@@ -291,12 +270,9 @@ case class BondHolderTicketsUpdateCommand(
 case class PriorityPointTicketsUpdateCommand(
   override val gameLocator: GameLocator, newPriorityPointPostAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](PRIORITY_POINT_POST_TICKETS, gameLocator, newPriorityPointPostAvailable) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: DateTime) = this(gameLocator, Some(value))
-
-  override def currentValue(game: Game) = game.getDateTimePriorityPointPostAvailable
-  override def setNewValue(game: Game, newPriorityPointPostAvailable: DateTime) =
-    game.setDateTimePriorityPointPostAvailable(newPriorityPointPostAvailable)
+  override def currentValue(game: Game) = game.dateTimePriorityPointPostAvailable
+  override def setNewValue(game: Game, newPriorityPointPostAvailable: Option[DateTime]) =
+    game.dateTimePriorityPointPostAvailable = newPriorityPointPostAvailable
 }
 
 /**
@@ -313,12 +289,9 @@ case class PriorityPointTicketsUpdateCommand(
 case class SeasonTicketsUpdateCommand(
   override val gameLocator: GameLocator, newSeasonTicketsAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](SEASON_TICKETS, gameLocator, newSeasonTicketsAvailable) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: DateTime) = this(gameLocator, Some(value))
-
-  override def currentValue(game: Game) = game.getDateTimeSeasonTicketsAvailable
-  override def setNewValue(game: Game, newSeasonTicketsAvailable: DateTime) =
-    game.setDateTimeSeasonTicketsAvailable(newSeasonTicketsAvailable)
+  override def currentValue(game: Game) = game.dateTimeSeasonTicketsAvailable
+  override def setNewValue(game: Game, newSeasonTicketsAvailable: Option[DateTime]) =
+    game.dateTimeSeasonTicketsAvailable = newSeasonTicketsAvailable
 }
 
 /**
@@ -335,12 +308,9 @@ case class SeasonTicketsUpdateCommand(
 case class AcademyTicketsUpdateCommand(
   override val gameLocator: GameLocator, newAcademyTicketsAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](ACADEMY_TICKETS, gameLocator, newAcademyTicketsAvailable) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: DateTime) = this(gameLocator, Some(value))
-
-  override def currentValue(game: Game) = game.getDateTimeAcademyMembersAvailable
-  override def setNewValue(game: Game, newAcademyTicketsAvailable: DateTime) =
-    game.setDateTimeAcademyMembersAvailable(newAcademyTicketsAvailable)
+  override def currentValue(game: Game) = game.dateTimeAcademyMembersAvailable
+  override def setNewValue(game: Game, newAcademyTicketsAvailable: Option[DateTime]) =
+    game.dateTimeAcademyMembersAvailable = newAcademyTicketsAvailable
 }
 
 /**
@@ -357,10 +327,7 @@ case class AcademyTicketsUpdateCommand(
 case class GeneralSaleTicketsUpdateCommand(
   override val gameLocator: GameLocator, newGeneralSaleTicketsAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](GENERAL_SALE_TICKETS, gameLocator, newGeneralSaleTicketsAvailable) {
 
-  //TODO Remove
-  def this(gameLocator: GameLocator, value: DateTime) = this(gameLocator, Some(value))
-
-  override def currentValue(game: Game) = game.getDateTimeGeneralSaleAvailable
-  override def setNewValue(game: Game, newGeneralSaleTicketsAvailable: DateTime) =
-    game.setDateTimeGeneralSaleAvailable(newGeneralSaleTicketsAvailable)
+  override def currentValue(game: Game) = game.dateTimeGeneralSaleAvailable
+  override def setNewValue(game: Game, newGeneralSaleTicketsAvailable: Option[DateTime]) =
+    game.dateTimeGeneralSaleAvailable = newGeneralSaleTicketsAvailable
 }

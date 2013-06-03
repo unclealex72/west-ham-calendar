@@ -26,15 +26,12 @@ import java.lang.annotation.ElementType
 import java.lang.annotation.Retention
 import java.lang.annotation.RetentionPolicy
 import java.lang.annotation.Target
-import junit.framework.Assert
 import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
-import org.junit.Test
 import uk.co.unclealex.hammers.calendar.model.Game
 import uk.co.unclealex.hammers.calendar.model.GameKey
 import uk.co.unclealex.hammers.calendar.model.Competition
 import uk.co.unclealex.hammers.calendar.model.Location
-import com.google.common.base.Function
 import org.specs2.mutable.Specification
 import uk.co.unclealex.hammers.calendar.Date._
 import uk.co.unclealex.hammers.calendar.September
@@ -69,7 +66,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the date played" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (datePlayed: Option[DateTime]) => DatePlayedUpdateCommand(gameLocator, datePlayed),
-      game => game.getDateTimePlayed,
+      game => game.dateTimePlayed,
       DEFAULT_DATE_PLAYED,
       DEFAULT_DATE_PLAYED plusHours 1)
   }
@@ -77,7 +74,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the result" should {
     testGameUpdateCommand(
       gameLocator => (result: Option[String]) => ResultUpdateCommand(gameLocator, result),
-      game => game.getResult,
+      game => game.result,
       DEFAULT_RESULT,
       "1" + DEFAULT_RESULT)
   }
@@ -85,7 +82,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the attendence" should {
     testGameUpdateCommand(
       gameLocator => (attendence: Option[Int]) => AttendenceUpdateCommand(gameLocator, attendence),
-      game => game.getAttendence.intValue,
+      game => game.attendence,
       DEFAULT_ATTENDENCE,
       DEFAULT_ATTENDENCE * 2)
   }
@@ -93,7 +90,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the match report" should {
     testGameUpdateCommand(
       gameLocator => (matchReport: Option[String]) => MatchReportUpdateCommand(gameLocator, matchReport),
-      game => game.getMatchReport,
+      game => game.matchReport,
       DEFAULT_MATCH_REPORT,
       DEFAULT_MATCH_REPORT + "!")
   }
@@ -101,7 +98,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the television channel" should {
     testGameUpdateCommand(
       gameLocator => (televisionChannel: Option[String]) => TelevisionChannelUpdateCommand(gameLocator, televisionChannel),
-      game => game.getTelevisionChannel,
+      game => game.televisionChannel,
       DEFAULT_TELEVISION_CHANNEL,
       DEFAULT_TELEVISION_CHANNEL + "!")
   }
@@ -109,7 +106,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the attended flag" should {
     testGameUpdateCommand(
       gameLocator => (attended: Option[Boolean]) => AttendedUpdateCommand(gameLocator, attended),
-      game => game.isAttended,
+      game => game.attended,
       DEFAULT_ATTENDED,
       !DEFAULT_ATTENDED)
   }
@@ -117,7 +114,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the bond holder ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: Option[DateTime]) => BondHolderTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.getDateTimeBondholdersAvailable,
+      game => game.dateTimeBondholdersAvailable,
       DEFAULT_BONDHOLDERS_AVAILABLE,
       DEFAULT_BONDHOLDERS_AVAILABLE plusDays 1)
   }
@@ -125,7 +122,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the priority point ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: Option[DateTime]) => PriorityPointTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.getDateTimePriorityPointPostAvailable,
+      game => game.dateTimePriorityPointPostAvailable,
       DEFAULT_PRIORITY_POINT_POST_AVAILABLE,
       DEFAULT_PRIORITY_POINT_POST_AVAILABLE plusDays 1)
   }
@@ -133,7 +130,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the season ticket holders' ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: Option[DateTime]) => SeasonTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.getDateTimeSeasonTicketsAvailable,
+      game => game.dateTimeSeasonTicketsAvailable,
       DEFAULT_SEASON_TICKETS_AVAILABLE,
       DEFAULT_SEASON_TICKETS_AVAILABLE plusDays 1)
   }
@@ -141,7 +138,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the academy members' ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: Option[DateTime]) => AcademyTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.getDateTimeAcademyMembersAvailable,
+      game => game.dateTimeAcademyMembersAvailable,
       DEFAULT_ACADEMY_TICKETS_AVAILABLE,
       DEFAULT_ACADEMY_TICKETS_AVAILABLE plusDays 1)
   }
@@ -149,7 +146,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the general ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: Option[DateTime]) => GeneralSaleTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.getDateTimeGeneralSaleAvailable,
+      game => game.dateTimeGeneralSaleAvailable,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE plusDays 1)
   }
@@ -168,10 +165,10 @@ class GameUpdateCommandTest extends Specification {
    */
   def testGameUpdateCommand[E](
     gameUpdateCommandFactory: GameLocator => Option[E] => GameUpdateCommand,
-    valueFactory: Game => E,
+    valueFactory: Game => Option[E],
     currentValue: E,
     newValue: E)(implicit ct: ClassTag[E]) {
-    val updateCommandFactory = (game: Game) => gameUpdateCommandFactory(GameKeyLocator(game.getGameKey))
+    val updateCommandFactory = (game: Game) => gameUpdateCommandFactory(GameKeyLocator(game.gameKey))
     "not change for None values" in {
       testNoChangeForNone(updateCommandFactory, valueFactory)
     }
@@ -195,7 +192,7 @@ class GameUpdateCommandTest extends Specification {
    */
   def testNoChangeForNone[E](
     gameUpdateCommandFactory: Game => Option[E] => GameUpdateCommand,
-    valueFactory: Game => E) {
+    valueFactory: Game => Option[E]) {
     val game = createFullyPopulatedGame
     val gameUpdateCommand = gameUpdateCommandFactory(game)(None: Option[E])
     gameUpdateCommand update game must be equalTo (false)
@@ -216,12 +213,12 @@ class GameUpdateCommandTest extends Specification {
    */
   def testNoChangeForEqualValue[E](
     gameUpdateCommandFactory: Game => Option[E] => GameUpdateCommand,
-    valueFactory: Game => E,
+    valueFactory: Game => Option[E],
     currentValue: E) {
     val game = createFullyPopulatedGame
     val gameUpdateCommand = gameUpdateCommandFactory(game)(Some(currentValue))
     gameUpdateCommand update game should be equalTo (false)
-    valueFactory(game) should be equalTo (currentValue)
+    valueFactory(game) should be equalTo (Some(currentValue))
   }
 
   /**
@@ -238,13 +235,13 @@ class GameUpdateCommandTest extends Specification {
    */
   def testChangeForDifferentValues[E](
     gameUpdateCommandFactory: Game => Option[E] => GameUpdateCommand,
-    valueFactory: Game => E,
+    valueFactory: Game => Option[E],
     newValue: E) {
     val game = createFullyPopulatedGame
     val gameUpdateCommand =
       gameUpdateCommandFactory(game)(Some(newValue))
     gameUpdateCommand update game should be equalTo (true)
-    valueFactory.apply(game) should be equalTo (newValue)
+    valueFactory.apply(game) should be equalTo (Some(newValue))
   }
 
   /**
@@ -259,17 +256,17 @@ class GameUpdateCommandTest extends Specification {
       DEFAULT_LOCATION,
       DEFAULT_OPPONENTS,
       DEFAULT_SEASON,
-      DEFAULT_DATE_PLAYED,
-      DEFAULT_BONDHOLDERS_AVAILABLE,
-      DEFAULT_PRIORITY_POINT_POST_AVAILABLE,
-      DEFAULT_SEASON_TICKETS_AVAILABLE,
-      DEFAULT_ACADEMY_TICKETS_AVAILABLE,
-      DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE,
-      DEFAULT_RESULT,
-      DEFAULT_ATTENDENCE,
-      DEFAULT_MATCH_REPORT,
-      DEFAULT_TELEVISION_CHANNEL,
-      DEFAULT_ATTENDED)
+      Some(DEFAULT_DATE_PLAYED),
+      Some(DEFAULT_BONDHOLDERS_AVAILABLE),
+      Some(DEFAULT_PRIORITY_POINT_POST_AVAILABLE),
+      Some(DEFAULT_SEASON_TICKETS_AVAILABLE),
+      Some(DEFAULT_ACADEMY_TICKETS_AVAILABLE),
+      Some(DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE),
+      Some(DEFAULT_RESULT),
+      Some(DEFAULT_ATTENDENCE),
+      Some(DEFAULT_MATCH_REPORT),
+      Some(DEFAULT_TELEVISION_CHANNEL),
+      Some(DEFAULT_ATTENDED))
   }
 
 }

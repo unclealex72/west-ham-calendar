@@ -22,11 +22,9 @@
 
 package uk.co.unclealex.hammers.calendar.html
 
-import java.io.IOException
 import java.net.URI
 
 import org.htmlcleaner.TagNode
-import java.lang.{ Iterable => JIterable }
 /**
  * The interface for classes that collect the links for the {@link DelegatingHtmlGamesScanner}.
  * @author alex
@@ -41,6 +39,5 @@ trait LinkHarvester {
    * @return A list of links to further scan for games.
    * @throws IOException Thrown if there are any issues reading the document.
    */
-  @throws(classOf[IOException])
-  def harvestLinks(pageUri: URI, tagNode: TagNode): JIterable[URI]
+  def harvestLinks(pageUri: URI, tagNode: TagNode): List[URI]
 }

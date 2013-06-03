@@ -26,7 +26,6 @@ import java.net.URI
 import org.htmlcleaner.TagNode
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import com.google.common.base.Strings;
 import com.typesafe.scalalogging.slf4j.Logging
 
 /**
@@ -41,11 +40,11 @@ class TicketsLinkHarvester extends ElementLinkHarvester("a") with Logging {
    * {@inheritDoc}
    */
   override protected def checkForLink(uri: URI, tagNode: TagNode): Option[URI] = {
-    val href = Strings.nullToEmpty(tagNode.getAttributeByName("href"))
+    val href = Option(tagNode.getAttributeByName("href")).getOrElse("")
     href match {
       case ticketsLinkRegex() => {
         val linkUri = uri.resolve(href);
-        logger.info("Found tickets link " + linkUri);
+        logger info s"Found tickets link $linkUri"
         Some(linkUri)
       }
       case _ => None

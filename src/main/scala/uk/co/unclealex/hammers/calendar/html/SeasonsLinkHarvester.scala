@@ -25,7 +25,6 @@ package uk.co.unclealex.hammers.calendar.html
 import java.net.URI
 import org.htmlcleaner.TagNode
 import TagNodeImplicits._
-import com.google.common.base.Strings
 import com.typesafe.scalalogging.slf4j.Logging
 
 /**
@@ -38,7 +37,7 @@ class SeasonsLinkHarvester extends ElementLinkHarvester("option") with Logging {
   val seasonRegex = ".*[0-9]+/[0-9]+.*".r
 
   protected def checkForLink(uri: URI, tagNode: TagNode): Option[URI] = {
-    val value = Strings.nullToEmpty(tagNode.getAttributeByName("value"))
+    val value = Option(tagNode.getAttributeByName("value")).getOrElse("")
     val optionText = tagNode.normalisedText
     optionText match {
       case seasonRegex() => {

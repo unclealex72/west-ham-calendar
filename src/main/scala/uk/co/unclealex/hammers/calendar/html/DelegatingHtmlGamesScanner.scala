@@ -24,7 +24,7 @@ package uk.co.unclealex.hammers.calendar.html;
 import java.net.URI
 import org.htmlcleaner.TagNode
 import uk.co.unclealex.hammers.calendar.dates.DateService
-import scala.collection.mutable.SortedSet
+import scala.collection.SortedSet
 import scala.collection.JavaConversions._
 
 /**
@@ -55,7 +55,7 @@ class DelegatingHtmlGamesScanner(
   /**
    * {@inheritDoc}
    */
-  def scan(uri: URI, tagNode: TagNode, gameUpdateCommands: SortedSet[GameUpdateCommand]) = {
-    linkHarvester.harvestLinks(uri, tagNode).flatMap(htmlGamesScanner.scan _).foldLeft(gameUpdateCommands)(_ += _)
+  def scan(uri: URI, tagNode: TagNode): List[GameUpdateCommand] = {
+    linkHarvester.harvestLinks(uri, tagNode).flatMap(htmlGamesScanner.scan _)
   }
 }

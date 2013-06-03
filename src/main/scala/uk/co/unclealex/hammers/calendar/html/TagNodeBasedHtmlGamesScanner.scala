@@ -29,14 +29,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import uk.co.unclealex.hammers.calendar.dates.DateService
 import com.typesafe.scalalogging.slf4j.Logging
-import scala.collection.mutable.{ SortedSet => MutableSortedSet }
-import scala.collection.immutable.SortedSet
-import scala.collection.mutable.{ TreeSet => MutableTreeSet }
-import scala.collection.immutable.TreeSet
-import java.util.{ SortedSet => JSortedSet }
-import scala.collection.JavaConversions._
-import scala.collection.JavaConverters._
-import java.lang.{ Iterable => JIterable }
+
 /**
  * A base class for {@link HtmlGamesScanner}s that first parse a URL into an XML
  * document.
@@ -54,12 +47,10 @@ abstract class TagNodeBasedHtmlGamesScanner(
    */
   dateService: DateService) extends HtmlGamesScanner with Logging {
 
-  override def scan(uri: URI): JIterable[GameUpdateCommand] = {
+  override def scan(uri: URI): List[GameUpdateCommand] = {
     logger info s"Scanning URI $uri"
     val tagNode = htmlPageLoader.loadPage(uri.toURL())
-    val gameUpdateCommands: MutableSortedSet[GameUpdateCommand] = MutableTreeSet()
-    scan(uri, tagNode, gameUpdateCommands)
-    gameUpdateCommands.foldLeft(TreeSet(): SortedSet[GameUpdateCommand])(_ + _)
+    scan(uri, tagNode) distinct
   }
 
   /**
@@ -73,5 +64,5 @@ abstract class TagNodeBasedHtmlGamesScanner(
    * @throws IOException
    *           If there are any network problems.
    */
-  def scan(uri: URI, tagNode: TagNode, gameUpdateCommands: MutableSortedSet[GameUpdateCommand]): Unit
+  def scan(uri: URI, tagNode: TagNode): List[GameUpdateCommand]
 }

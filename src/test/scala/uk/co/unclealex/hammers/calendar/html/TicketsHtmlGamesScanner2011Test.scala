@@ -22,12 +22,8 @@
 
 package uk.co.unclealex.hammers.calendar.html;
 
-import java.io.IOException
-import java.net.URISyntaxException
-import org.junit.Test
-import uk.co.unclealex.hammers.calendar.Instant
-import com.google.common.base.Function
 import uk.co.unclealex.hammers.calendar.February
+import uk.co.unclealex.hammers.calendar.Instant
 import uk.co.unclealex.hammers.calendar.January
 
 /**

@@ -22,17 +22,11 @@
 
 package uk.co.unclealex.hammers.calendar.html
 
+import scala.collection.JavaConversions._
+
 import org.htmlcleaner.CommentNode
 import org.htmlcleaner.ContentNode
 import org.htmlcleaner.TagNode
-import scala.collection.JavaConversions._
-
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 
 /**
  * Implicit methods for getting text from {@link TagNode}s.
@@ -69,9 +63,9 @@ object TagNodeImplicits {
      *          The node whose text should be normalised.
      * @return The normalised text of the element.
      */
-    def normalisedText: String =
-      Strings.nullToEmpty(text).replace("\\s+", " ").trim()
-
+    def normalisedText: String = if (text == null) "" else {
+      text.replace("\\s+", " ").trim
+    }
     /**
      * Normalise all whitespace (including non-breaking) and trim.
      *
@@ -79,7 +73,10 @@ object TagNodeImplicits {
      *          The node whose text should be normalised.
      * @return The normalised text of the element or None if the text was empty.
      */
-    def optionalNormalisedText: Option[String] = Option(Strings.emptyToNull(normalisedText))
+    def optionalNormalisedText: Option[String] = normalisedText match {
+      case "" => None
+      case str: String => Some(str)
+    }
   }
 
 }

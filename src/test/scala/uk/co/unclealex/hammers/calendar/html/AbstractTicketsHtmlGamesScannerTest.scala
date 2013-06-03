@@ -45,7 +45,7 @@ abstract class AbstractTicketsHtmlGamesScannerTest(val year: Int) extends Specif
       val ticketsHtmlSingleGameScanner =
         new TicketsHtmlSingleGameScanner(new HtmlPageLoaderImpl, new DateServiceImpl, year)
       val url = getClass().getClassLoader().getResource(s"html/tickets/${year}/${gameResource}")
-      val actualGameUpdateCommands = ticketsHtmlSingleGameScanner.scan(url.toURI).asScala.toList
+      val actualGameUpdateCommands = ticketsHtmlSingleGameScanner.scan(url.toURI)
       "have the correct ticket information" in {
         actualGameUpdateCommands.sorted must be equalTo (expectations(DatePlayedLocator(instant)).sorted)
       }

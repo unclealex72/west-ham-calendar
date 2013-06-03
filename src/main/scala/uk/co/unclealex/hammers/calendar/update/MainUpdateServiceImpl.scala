@@ -22,37 +22,28 @@
 
 package uk.co.unclealex.hammers.calendar.update;
 
-import java.io.IOException
 import java.net.URI
+
+import scala.collection.JavaConversions._
+
 import org.joda.time.DateTime
 import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+
+import com.typesafe.scalalogging.slf4j.Logging
+
+import javax.inject.Named
 import uk.co.unclealex.hammers.calendar.dao.GameDao
-import uk.co.unclealex.hammers.calendar.html.GameLocator
+import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
+import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
 import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
 import uk.co.unclealex.hammers.calendar.html.GameKeyLocator
+import uk.co.unclealex.hammers.calendar.html.GameKeyLocator
+import uk.co.unclealex.hammers.calendar.html.GameLocator
 import uk.co.unclealex.hammers.calendar.html.GameUpdateCommand
 import uk.co.unclealex.hammers.calendar.html.HtmlGamesScanner
 import uk.co.unclealex.hammers.calendar.html.MainPageService
 import uk.co.unclealex.hammers.calendar.model.Game
 import uk.co.unclealex.hammers.calendar.model.GameKey
-import uk.co.unclealex.hammers.calendar.model.Location
-import com.google.common.base.Function
-import com.google.common.base.Predicate
-import com.google.common.base.Predicates
-import com.google.common.base.Supplier
-import com.google.common.collect.Iterables
-import com.google.common.collect.Lists
-import com.google.common.collect.Maps
-import com.google.common.collect.Multimaps
-import com.google.common.collect.Sets
-import com.google.common.collect.SortedSetMultimap
-import com.typesafe.scalalogging.slf4j.Logging
-import javax.inject.Named
-import scala.collection.JavaConversions._
-import uk.co.unclealex.hammers.calendar.html.GameKeyLocator
-import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
-import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
 
 /**
  * The Class MainUpdateServiceImpl.
@@ -83,7 +74,7 @@ class MainUpdateServiceImpl(
    * @throws IOException
    */
   override def processDatabaseUpdates: Unit = {
-    val allGames = gameDao.getAll().toList
+    val allGames = gameDao.getAll
     val newGames = processUpdates(
       "fixture", mainPageService.fixturesUri, fixturesHtmlGamesScanner, true, allGames)
     processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, false, allGames ++ newGames)
@@ -130,12 +121,8 @@ class MainUpdateServiceImpl(
   def findGame(allGames: List[Game], gameLocator: GameLocator): Option[Game] = {
     def gameFinder: Game => Boolean = { (game: Game) =>
       gameLocator match {
-        case GameKeyLocator(gameKey) =>
-          gameKey.getCompetition() == game.getCompetition() &&
-            gameKey.getLocation() == game.getLocation() &&
-            gameKey.getOpponents() == game.getOpponents() &&
-            gameKey.getSeason() == game.getSeason()
-        case DatePlayedLocator(datePlayed) => datePlayed == game.getDateTimePlayed()
+        case GameKeyLocator(gameKey) => game.gameKey == gameKey
+        case DatePlayedLocator(datePlayed) => datePlayed == game.dateTimePlayed
       }
     }
     allGames find gameFinder
@@ -148,7 +135,7 @@ class MainUpdateServiceImpl(
     gameLocator match {
       case GameKeyLocator(gameKey) => {
         logger info s"Creating new game $gameKey"
-        Some(new Game(gameKey.getCompetition(), gameKey.getLocation(), gameKey.getOpponents(), gameKey.getSeason()))
+        Some(Game(gameKey))
       }
       case DatePlayedLocator(datePlayed) => {
         logger info s"Tickets were found for a non-existent game played at $datePlayed. Ignoring."
@@ -165,9 +152,9 @@ class MainUpdateServiceImpl(
       updateCount + (if (gameUpdateCommand update game) 1 else 0)
     }
     if (updateCount == 0) {
-      logger info s"Ignoring game ${game.getGameKey}"
+      logger info s"Ignoring game ${game.gameKey}"
     } else {
-      gameDao saveOrUpdate game
+      gameDao store game
     }
   }
 
@@ -175,12 +162,13 @@ class MainUpdateServiceImpl(
 
   def unattendGame(gameId: Int): Unit = attendOrUnattendGame(gameId, false)
 
-  def attendOrUnattendGame(gameId: Int, attend: Boolean) = attendOrUnattendGames(Seq(gameDao.findById(gameId)), attend)
+  def attendOrUnattendGame(gameId: Int, attend: Boolean) =
+    attendOrUnattendGames(gameDao.findById(gameId), attend)
 
   def attendAllHomeGamesForSeason(season: Int) = attendOrUnattendGames(gameDao.getAllForSeason(season).toSeq, true)
 
-  def attendOrUnattendGames(games: Seq[Game], attend: Boolean): Unit = {
-    games foreach (game => game.setAttended(attend))
-    gameDao.saveOrUpdate(games)
+  def attendOrUnattendGames(games: Traversable[Game], attend: Boolean): Unit = {
+    games foreach (game => game.attended = Some(attend))
+    gameDao storeAll games
   }
 }

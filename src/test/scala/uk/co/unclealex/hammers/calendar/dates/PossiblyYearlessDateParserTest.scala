@@ -23,8 +23,6 @@
 package uk.co.unclealex.hammers.calendar.dates
 
 import org.joda.time.DateTime
-import org.junit.Assert
-import org.junit.Test;
 import org.specs2.mutable.Specification
 
 /**

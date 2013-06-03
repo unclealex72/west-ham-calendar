@@ -23,20 +23,18 @@
 package uk.co.unclealex.hammers.calendar.dates
 
 import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
 import org.specs2.mutable.Specification
 
-import uk.co.unclealex.hammers.calendar.January
-import uk.co.unclealex.hammers.calendar.MonthAndDay
-import uk.co.unclealex.hammers.calendar.June
-import uk.co.unclealex.hammers.calendar.March
-import uk.co.unclealex.hammers.calendar.December
 import uk.co.unclealex.hammers.calendar.Date
-import uk.co.unclealex.hammers.calendar.September
+import uk.co.unclealex.hammers.calendar.December
 import uk.co.unclealex.hammers.calendar.February
 import uk.co.unclealex.hammers.calendar.Instant
+import uk.co.unclealex.hammers.calendar.January
+import uk.co.unclealex.hammers.calendar.June
+import uk.co.unclealex.hammers.calendar.March
+import uk.co.unclealex.hammers.calendar.MonthAndDay
 import uk.co.unclealex.hammers.calendar.October
-import com.google.common.base.Strings
+import uk.co.unclealex.hammers.calendar.September
 import uk.co.unclealex.hammers.calendar.dates.DateTimeImplicits._
 
 /**
@@ -163,7 +161,7 @@ class DateServiceImplTest extends Specification {
       actualDateTime must be equalTo (expectedDateTime)
     }
     1 to 3 flatMap { paddingSize =>
-      val padding = Strings.repeat("x", paddingSize)
+      val padding = (1 to paddingSize).map(_ => "x").mkString
       List(date, padding + date, date + padding, padding + date + padding)
     } foreach { date =>
       s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedInstant" in {

@@ -40,7 +40,7 @@ class SeasonsLinkHarvesterTest extends Specification {
     "Return a link for each season" in {
       val tagNode = new HtmlPageLoaderImpl().loadPage(getClass.getClassLoader.getResource("html/fixtures.html"))
       val actualLinks = new SeasonsLinkHarvester().harvestLinks(
-        new URI("http://www.whufc.com/page/FixturesResults/0,,12562,00.html"), tagNode).asScala.toList
+        new URI("http://www.whufc.com/page/FixturesResults/0,,12562,00.html"), tagNode)
       actualLinks must be equalTo (
         List(
           new URI("http://www.whufc.com/page/FixturesResults/0,,12562~2001,00.html"),

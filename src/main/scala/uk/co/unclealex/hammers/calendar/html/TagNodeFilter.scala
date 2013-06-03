@@ -21,12 +21,11 @@
  */
 package uk.co.unclealex.hammers.calendar.html;
 
+import scala.collection.mutable.Buffer
+
 import org.htmlcleaner.HtmlNode
 import org.htmlcleaner.TagNode
 import org.htmlcleaner.TagNodeVisitor
-import com.google.common.base.Predicate
-import com.google.common.collect.Lists;
-import scala.collection.mutable.Buffer
 
 /**
  * A class to walk and filter {@link TagNode}s. Basically, class wraps a {@link TagNodeVisitor} but only visits

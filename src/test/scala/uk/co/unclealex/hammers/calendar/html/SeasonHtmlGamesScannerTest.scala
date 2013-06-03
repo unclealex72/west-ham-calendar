@@ -46,7 +46,7 @@ class SeasonHtmlGamesScannerTest extends Specification with SeasonHtmlGamesScann
   def scan(season: Int, expectedGameUpdateCommands: List[GameUpdateCommand]) {
     val seasonHtmlGamesScanner = new SeasonHtmlGamesScanner(new HtmlPageLoaderImpl, new DateServiceImpl)
     val actualGameUpdateCommands = seasonHtmlGamesScanner.scan(
-      getClass.getClassLoader.getResource(s"html/fixtures-${season}.html").toURI()).asScala.toList
+      getClass.getClassLoader.getResource(s"html/fixtures-${season}.html").toURI())
     "encompass all the games" in {
       actualGameUpdateCommands diff expectedGameUpdateCommands must be equalTo (List())
     }
@@ -59,8 +59,8 @@ class SeasonHtmlGamesScannerTest extends Specification with SeasonHtmlGamesScann
     val groupedActualGameUpdateCommands = actualGameUpdateCommands groupBy grouper
     expectedGameUpdateCommands groupBy grouper foreach {
       case (gameKey, expectedGameUpdateCommands) =>
-        s"find ${gameKey.getOpponents} at ${gameKey.getLocation} in ${gameKey.getCompetition}" in {
-          groupedActualGameUpdateCommands get gameKey must be equalTo (Some(expectedGameUpdateCommands))
+        s"find ${gameKey.opponents} at ${gameKey.location} in ${gameKey.competition}" in {
+          (groupedActualGameUpdateCommands get gameKey) map (_.sorted) must be equalTo (Some(expectedGameUpdateCommands.sorted))
         }
     }
   }
