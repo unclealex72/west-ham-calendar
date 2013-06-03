@@ -177,10 +177,11 @@ class SeasonHtmlGamesScanner(
           }
           case Some(datePlayed) => {
             val gameKeyLocator = GameKeyLocator(gameKey)
-            val datePlayedGameUpdateCommand = DatePlayedUpdateCommand(gameKeyLocator, Some(datePlayed))
+            val datePlayedGameUpdateCommand: Option[GameUpdateCommand] =
+              Some(DatePlayedUpdateCommand(gameKeyLocator, datePlayed))
             tds.next(); // Move past the W/L/D token.
             val resultGameUpdateCommand =
-              ResultUpdateCommand(gameKeyLocator, tds.next.optionalNormalisedText)
+              tds.next.optionalNormalisedText map (text => ResultUpdateCommand(gameKeyLocator, text))
             val attendenceText = tds.next().normalisedText
             val attendence: Option[Int] = {
               try {
@@ -199,7 +200,8 @@ class SeasonHtmlGamesScanner(
                 }
               }
             }
-            val attendenceUpdateCommand = AttendenceUpdateCommand(gameKeyLocator, attendence);
+            val attendenceUpdateCommand =
+              attendence map (attendence => AttendenceUpdateCommand(gameKeyLocator, attendence))
             tds.next(); // Move past the league table token.
             val matchReportTd = tds.next();
             val matchReportLink = Option(matchReportTd.findElementByName("a", false))
@@ -208,12 +210,11 @@ class SeasonHtmlGamesScanner(
               val matchReportUri = uri.resolve(matchReportPath)
               matchReportUri.toString
             }
-            val matchReportUpdateCommand = MatchReportUpdateCommand(gameKeyLocator, matchReport)
-            val newUpdateCommands = List(
-              datePlayedGameUpdateCommand,
-              resultGameUpdateCommand,
-              attendenceUpdateCommand,
-              matchReportUpdateCommand)
+            val matchReportUpdateCommand =
+              matchReport map (matchReport => MatchReportUpdateCommand(gameKeyLocator, matchReport))
+            val newUpdateCommands =
+              List.empty ++ datePlayedGameUpdateCommand ++ resultGameUpdateCommand ++ attendenceUpdateCommand ++
+                matchReportUpdateCommand
             logger debug s"Adding game update commands $newUpdateCommands"
             newUpdateCommands
           }

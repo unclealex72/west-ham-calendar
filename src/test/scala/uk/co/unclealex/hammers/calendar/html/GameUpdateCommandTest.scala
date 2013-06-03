@@ -65,7 +65,7 @@ class GameUpdateCommandTest extends Specification {
    */
   "Updating the date played" should {
     testGameUpdateCommand[DateTime](
-      gameLocator => (datePlayed: Option[DateTime]) => DatePlayedUpdateCommand(gameLocator, datePlayed),
+      gameLocator => (datePlayed: DateTime) => DatePlayedUpdateCommand(gameLocator, datePlayed),
       game => game.dateTimePlayed,
       DEFAULT_DATE_PLAYED,
       DEFAULT_DATE_PLAYED plusHours 1)
@@ -73,7 +73,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the result" should {
     testGameUpdateCommand(
-      gameLocator => (result: Option[String]) => ResultUpdateCommand(gameLocator, result),
+      gameLocator => (result: String) => ResultUpdateCommand(gameLocator, result),
       game => game.result,
       DEFAULT_RESULT,
       "1" + DEFAULT_RESULT)
@@ -81,7 +81,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the attendence" should {
     testGameUpdateCommand(
-      gameLocator => (attendence: Option[Int]) => AttendenceUpdateCommand(gameLocator, attendence),
+      gameLocator => (attendence: Int) => AttendenceUpdateCommand(gameLocator, attendence),
       game => game.attendence,
       DEFAULT_ATTENDENCE,
       DEFAULT_ATTENDENCE * 2)
@@ -89,7 +89,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the match report" should {
     testGameUpdateCommand(
-      gameLocator => (matchReport: Option[String]) => MatchReportUpdateCommand(gameLocator, matchReport),
+      gameLocator => (matchReport: String) => MatchReportUpdateCommand(gameLocator, matchReport),
       game => game.matchReport,
       DEFAULT_MATCH_REPORT,
       DEFAULT_MATCH_REPORT + "!")
@@ -97,7 +97,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the television channel" should {
     testGameUpdateCommand(
-      gameLocator => (televisionChannel: Option[String]) => TelevisionChannelUpdateCommand(gameLocator, televisionChannel),
+      gameLocator => (televisionChannel: String) => TelevisionChannelUpdateCommand(gameLocator, televisionChannel),
       game => game.televisionChannel,
       DEFAULT_TELEVISION_CHANNEL,
       DEFAULT_TELEVISION_CHANNEL + "!")
@@ -105,7 +105,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the attended flag" should {
     testGameUpdateCommand(
-      gameLocator => (attended: Option[Boolean]) => AttendedUpdateCommand(gameLocator, attended),
+      gameLocator => (attended: Boolean) => AttendedUpdateCommand(gameLocator, attended),
       game => game.attended,
       DEFAULT_ATTENDED,
       !DEFAULT_ATTENDED)
@@ -113,7 +113,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the bond holder ticket sale date" should {
     testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: Option[DateTime]) => BondHolderTicketsUpdateCommand(gameLocator, saleDate),
+      gameLocator => (saleDate: DateTime) => BondHolderTicketsUpdateCommand(gameLocator, saleDate),
       game => game.dateTimeBondholdersAvailable,
       DEFAULT_BONDHOLDERS_AVAILABLE,
       DEFAULT_BONDHOLDERS_AVAILABLE plusDays 1)
@@ -121,7 +121,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the priority point ticket sale date" should {
     testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: Option[DateTime]) => PriorityPointTicketsUpdateCommand(gameLocator, saleDate),
+      gameLocator => (saleDate: DateTime) => PriorityPointTicketsUpdateCommand(gameLocator, saleDate),
       game => game.dateTimePriorityPointPostAvailable,
       DEFAULT_PRIORITY_POINT_POST_AVAILABLE,
       DEFAULT_PRIORITY_POINT_POST_AVAILABLE plusDays 1)
@@ -129,7 +129,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the season ticket holders' ticket sale date" should {
     testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: Option[DateTime]) => SeasonTicketsUpdateCommand(gameLocator, saleDate),
+      gameLocator => (saleDate: DateTime) => SeasonTicketsUpdateCommand(gameLocator, saleDate),
       game => game.dateTimeSeasonTicketsAvailable,
       DEFAULT_SEASON_TICKETS_AVAILABLE,
       DEFAULT_SEASON_TICKETS_AVAILABLE plusDays 1)
@@ -137,7 +137,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the academy members' ticket sale date" should {
     testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: Option[DateTime]) => AcademyTicketsUpdateCommand(gameLocator, saleDate),
+      gameLocator => (saleDate: DateTime) => AcademyTicketsUpdateCommand(gameLocator, saleDate),
       game => game.dateTimeAcademyMembersAvailable,
       DEFAULT_ACADEMY_TICKETS_AVAILABLE,
       DEFAULT_ACADEMY_TICKETS_AVAILABLE plusDays 1)
@@ -145,7 +145,7 @@ class GameUpdateCommandTest extends Specification {
 
   "Updating the general ticket sale date" should {
     testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: Option[DateTime]) => GeneralSaleTicketsUpdateCommand(gameLocator, saleDate),
+      gameLocator => (saleDate: DateTime) => GeneralSaleTicketsUpdateCommand(gameLocator, saleDate),
       game => game.dateTimeGeneralSaleAvailable,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE plusDays 1)
@@ -164,84 +164,24 @@ class GameUpdateCommandTest extends Specification {
    *          the new value
    */
   def testGameUpdateCommand[E](
-    gameUpdateCommandFactory: GameLocator => Option[E] => GameUpdateCommand,
+    gameUpdateCommandFactory: GameLocator => E => GameUpdateCommand,
     valueFactory: Game => Option[E],
     currentValue: E,
     newValue: E)(implicit ct: ClassTag[E]) {
     val updateCommandFactory = (game: Game) => gameUpdateCommandFactory(GameKeyLocator(game.gameKey))
-    "not change for None values" in {
-      testNoChangeForNone(updateCommandFactory, valueFactory)
-    }
     "not change for equal values" in {
-      testNoChangeForEqualValue(updateCommandFactory, valueFactory, currentValue)
+      val game = createFullyPopulatedGame
+      val gameUpdateCommand = updateCommandFactory(game)(currentValue)
+      gameUpdateCommand update game should be equalTo (false)
+      valueFactory(game) should be equalTo (Some(currentValue))
     }
     "change for different values" in {
-      testChangeForDifferentValues(updateCommandFactory, valueFactory, newValue)
+      val game = createFullyPopulatedGame
+      val gameUpdateCommand =
+        updateCommandFactory(game)(newValue)
+      gameUpdateCommand update game should be equalTo (true)
+      valueFactory.apply(game) should be equalTo (Some(newValue))
     }
-  }
-
-  /**
-   * Test no change for null.
-   *
-   * @param <E>
-   *          the element type
-   * @param gameUpdateCommandFactory
-   *          the game update command factory
-   * @param valueFunction
-   *          the value function
-   */
-  def testNoChangeForNone[E](
-    gameUpdateCommandFactory: Game => Option[E] => GameUpdateCommand,
-    valueFactory: Game => Option[E]) {
-    val game = createFullyPopulatedGame
-    val gameUpdateCommand = gameUpdateCommandFactory(game)(None: Option[E])
-    gameUpdateCommand update game must be equalTo (false)
-    valueFactory(game) must not be equalTo(None)
-  }
-
-  /**
-   * Test no change for equal value.
-   *
-   * @param <E>
-   *          the element type
-   * @param gameUpdateCommandFactory
-   *          the game update command factory
-   * @param valueFunction
-   *          the value function
-   * @param currentValue
-   *          the current value
-   */
-  def testNoChangeForEqualValue[E](
-    gameUpdateCommandFactory: Game => Option[E] => GameUpdateCommand,
-    valueFactory: Game => Option[E],
-    currentValue: E) {
-    val game = createFullyPopulatedGame
-    val gameUpdateCommand = gameUpdateCommandFactory(game)(Some(currentValue))
-    gameUpdateCommand update game should be equalTo (false)
-    valueFactory(game) should be equalTo (Some(currentValue))
-  }
-
-  /**
-   * Test change for different values.
-   *
-   * @param <E>
-   *          the element type
-   * @param gameUpdateCommandFactory
-   *          the game update command factory
-   * @param valueFunction
-   *          the value function
-   * @param newValue
-   *          the new value
-   */
-  def testChangeForDifferentValues[E](
-    gameUpdateCommandFactory: Game => Option[E] => GameUpdateCommand,
-    valueFactory: Game => Option[E],
-    newValue: E) {
-    val game = createFullyPopulatedGame
-    val gameUpdateCommand =
-      gameUpdateCommandFactory(game)(Some(newValue))
-    gameUpdateCommand update game should be equalTo (true)
-    valueFactory.apply(game) should be equalTo (Some(newValue))
   }
 
   /**

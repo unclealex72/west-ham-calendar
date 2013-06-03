@@ -20,7 +20,7 @@
  *
  */
 
-package uk.co.unclealex.hammers.calendar.html;
+package uk.co.unclealex.hammers.calendar.html
 
 import java.net.URI
 import org.htmlcleaner.TagNode
@@ -28,7 +28,9 @@ import org.joda.time.DateTime
 import com.typesafe.scalalogging.slf4j.Logging
 import TagNodeImplicits.Implicits
 import uk.co.unclealex.hammers.calendar.dates.DateService
-import scala.collection.SortedSet
+import uk.co.unclealex.hammers.calendar.dates.DateTimeImplicits._
+import uk.co.unclealex.hammers.calendar.html.TagNodeImplicits.Implicits
+
 /**
  * A {@link HtmlGamesScanner} that scans a page for ticket sales.
  *
@@ -124,7 +126,7 @@ class TicketsHtmlSingleGameScanner(
        * @param dateText
        *          The dateText to search for or parse a date time.
        */
-      def execute(dateText: String): Option[GameUpdateCommand] = {
+      def execute(dateText: String): Option[TicketsUpdateCommand] = {
         parseDateTime(dateText) match {
           case Some(dateTime) => execute(dateTime)
           case None => {
@@ -151,7 +153,7 @@ class TicketsHtmlSingleGameScanner(
        * @param dateTime
        *          The {@link DateTime} that has been found.
        */
-      def execute(dateTime: DateTime): Option[GameUpdateCommand]
+      def execute(dateTime: DateTime): Option[TicketsUpdateCommand]
 
     }
 
@@ -178,13 +180,13 @@ class TicketsHtmlSingleGameScanner(
        * Make sure that {@link DateTime} the game was played and the
        * corresponding {@link GameLocator} are populated so that any
        * {@link TicketParsingAction}s know which game to use to create a
-       * {@link GameUpdateCommand}.
+       * {@link TicketsUpdateCommand}.
        *
        * @param dateTime
        *          The found {@link DateTime}.
        *
        */
-      def execute(dateTime: DateTime): Option[GameUpdateCommand] = {
+      def execute(dateTime: DateTime): Option[TicketsUpdateCommand] = {
         logger info s"The game with tickets at URL $uri is being played at $dateTime"
         dateTimePlayed = Some(dateTime)
         gameLocator = Some(DatePlayedLocator(dateTime))
@@ -194,7 +196,7 @@ class TicketsHtmlSingleGameScanner(
 
     /**
      * A {@link ParsingAction} that looks for a ticket selling date (as
-     * identified by a string) and then creates a {@link GameUpdateCommand} to
+     * identified by a string) and then creates a {@link TicketsUpdateCommand} to
      * be stored.
      *
      * @author alex
@@ -226,13 +228,13 @@ class TicketsHtmlSingleGameScanner(
           }
       }
 
-      override def execute(dateTime: DateTime): Option[GameUpdateCommand] = {
+      override def execute(dateTime: DateTime): Option[TicketsUpdateCommand] = {
         logger info s"Found ticket type ${containedText.trim()} for game at ${dateTimePlayed.get} being sold at $dateTime"
-        Some(createGameUpdateCommand(gameLocator.get, Some(dateTime)))
+        Some(createTicketsUpdateCommand(gameLocator.get, dateTime))
       }
 
       /**
-       * Create the {@link GameUpdateCommand} that associates a game with a
+       * Create the {@link TicketsUpdateCommand} that associates a game with a
        * ticket sale date.
        *
        * @param gameLocator
@@ -240,9 +242,9 @@ class TicketsHtmlSingleGameScanner(
        *          {@link GameDatePlayedParsingAction}.
        * @param dateTime
        *          The {@link DateTime} parsed in text.
-       * @return A {@link GameUpdateCommand} that describes the update required.
+       * @return A {@link TicketsUpdateCommand} that describes the update required.
        */
-      protected def createGameUpdateCommand(gameLocator: GameLocator, dateTime: Option[DateTime]): GameUpdateCommand
+      protected def createTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime): TicketsUpdateCommand
     }
 
     /**
@@ -252,7 +254,7 @@ class TicketsHtmlSingleGameScanner(
      *
      */
     case object BondHoldersTicketParsingAction extends TicketParsingAction(BOND_HOLDER_PATTERN) {
-      protected def createGameUpdateCommand(gameLocator: GameLocator, dateTime: Option[DateTime]) =
+      protected def createTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime) =
         BondHolderTicketsUpdateCommand(gameLocator, dateTime)
     }
 
@@ -264,7 +266,7 @@ class TicketsHtmlSingleGameScanner(
      *
      */
     case object PriorityPointTicketParsingAction extends TicketParsingAction(PRIORITY_POINT_PATTERN) {
-      protected def createGameUpdateCommand(gameLocator: GameLocator, dateTime: Option[DateTime]) =
+      protected def createTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime) =
         PriorityPointTicketsUpdateCommand(gameLocator, dateTime)
     }
 
@@ -276,7 +278,7 @@ class TicketsHtmlSingleGameScanner(
      *
      */
     case object SeasonTicketParsingAction extends TicketParsingAction(SEASON_TICKET_PATTERN) {
-      protected def createGameUpdateCommand(gameLocator: GameLocator, dateTime: Option[DateTime]) =
+      protected def createTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime) =
         SeasonTicketsUpdateCommand(gameLocator, dateTime)
     }
 
@@ -287,7 +289,7 @@ class TicketsHtmlSingleGameScanner(
      *
      */
     case object AcademyMemberTicketParsingAction extends TicketParsingAction(ACADEMY_MEMBER_PATTERN) {
-      protected def createGameUpdateCommand(gameLocator: GameLocator, dateTime: Option[DateTime]) =
+      protected def createTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime) =
         AcademyTicketsUpdateCommand(gameLocator, dateTime)
     }
 
@@ -298,7 +300,7 @@ class TicketsHtmlSingleGameScanner(
      *
      */
     case object GeneralSaleTicketParsingAction extends TicketParsingAction(GENERAL_SALE_PATTERN) {
-      protected def createGameUpdateCommand(gameLocator: GameLocator, dateTime: Option[DateTime]) =
+      protected def createTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime) =
         GeneralSaleTicketsUpdateCommand(gameLocator, dateTime)
     }
 
@@ -309,7 +311,7 @@ class TicketsHtmlSingleGameScanner(
      * @throws IOException
      *           Signals that an I/O exception has occurred.
      */
-    override def scan: List[GameUpdateCommand] = {
+    override def scan: List[TicketsUpdateCommand] = {
       val parsingActions = List(
         GameDatePlayedParsingAction,
         BondHoldersTicketParsingAction,
@@ -318,20 +320,32 @@ class TicketsHtmlSingleGameScanner(
         AcademyMemberTicketParsingAction,
         GeneralSaleTicketParsingAction)
       val filter = new TagNodeFilter(_ => true)
-      filter.list(tagNode) flatMap { tagNode =>
+      val allTicketsUpdateCommands = filter.list(tagNode) flatMap { tagNode =>
         val text = tagNode.normalisedText
         text match {
           case "" => List.empty
           case _ => {
             val parsingAction = parsingActions.find(pa => text.contains(pa.containedText))
-            val newGameUpdateCommands = parsingAction.flatMap { parsingAction =>
+            val newTicketsUpdateCommands = parsingAction.flatMap { parsingAction =>
               val textForDate = text.replace(parsingAction.containedText, "")
               parsingAction.execute(textForDate)
             }
-            newGameUpdateCommands
+            newTicketsUpdateCommands
           }
         }
       }
+      takeEarliestOnly(allTicketsUpdateCommands)
+    }
+
+    /**
+     * If a ticket type is found twice, take only the earliest selling date.
+     * This happens with Academy members home games.
+     */
+    def takeEarliestOnly(allTicketsUpdateCommands: List[TicketsUpdateCommand]): List[TicketsUpdateCommand] = {
+      val dateOrdering = Ordering.by((t: TicketsUpdateCommand) => t.newValue)
+      val groupedCommands =
+        allTicketsUpdateCommands groupBy (t => (t.gameLocator, t.updateType)) mapValues (_.sorted(dateOrdering))
+      groupedCommands.values.flatMap(_.headOption).toList
     }
   }
 }

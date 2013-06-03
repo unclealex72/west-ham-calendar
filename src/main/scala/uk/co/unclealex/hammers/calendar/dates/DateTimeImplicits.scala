@@ -34,8 +34,10 @@ import org.joda.time.DateTimeConstants
  */
 object DateTimeImplicits {
 
-  def isWeekday(dateTime: DateTime) = dateTime isWeekday
-  def isThreeOClockOnASaturday(dateTime: DateTime) = dateTime isThreeOClockOnASaturday
+  /**
+   * Order by the number of milliseconds since the epoch.
+   */
+  implicit val ord = Ordering.by((dt: DateTime) => dt.getMillis)
 
   implicit class Implicits(dateTime: DateTime) {
 

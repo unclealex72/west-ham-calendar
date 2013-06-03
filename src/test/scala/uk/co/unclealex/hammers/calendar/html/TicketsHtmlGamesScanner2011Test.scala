@@ -37,11 +37,11 @@ class TicketsHtmlGamesScanner2011Test extends AbstractTicketsHtmlGamesScannerTes
     "tickets-blackpool-away.html" on (February(18, 2012) at (15, 0)) expects {
       gameLocator =>
         List(
-          PriorityPointTicketsUpdateCommand(gameLocator, Some(January(25, 2012) at (10, 0))),
-          BondHolderTicketsUpdateCommand(gameLocator, Some(January(26, 2012) at (9, 0))),
-          SeasonTicketsUpdateCommand(gameLocator, Some(January(28, 2012) at (9, 0))),
-          AcademyTicketsUpdateCommand(gameLocator, Some(January(30, 2012) at (9, 0))),
-          GeneralSaleTicketsUpdateCommand(gameLocator, Some(February(1, 2012) at (9, 0))))
+          PriorityPointTicketsUpdateCommand(gameLocator, January(25, 2012) at (10, 0)),
+          BondHolderTicketsUpdateCommand(gameLocator, January(26, 2012) at (9, 0)),
+          SeasonTicketsUpdateCommand(gameLocator, January(28, 2012) at (9, 0)),
+          AcademyTicketsUpdateCommand(gameLocator, January(30, 2012) at (9, 0)),
+          GeneralSaleTicketsUpdateCommand(gameLocator, February(1, 2012) at (9, 0)))
     }
   }
 
@@ -49,9 +49,9 @@ class TicketsHtmlGamesScanner2011Test extends AbstractTicketsHtmlGamesScannerTes
     "tickets-southampton-home.html" on (February(14, 2012) at (19, 45)) expects {
       gameLocator =>
         List(
-          SeasonTicketsUpdateCommand(gameLocator, Some(January(16, 2012) at (9, 0))),
-          AcademyTicketsUpdateCommand(gameLocator, Some(January(10, 2012) at (9, 0))),
-          GeneralSaleTicketsUpdateCommand(gameLocator, Some(January(17, 2012) at (9, 0))))
+          SeasonTicketsUpdateCommand(gameLocator, January(16, 2012) at (9, 0)),
+          AcademyTicketsUpdateCommand(gameLocator, January(10, 2012) at (9, 0)),
+          GeneralSaleTicketsUpdateCommand(gameLocator, January(17, 2012) at (9, 0)))
     }
   }
 

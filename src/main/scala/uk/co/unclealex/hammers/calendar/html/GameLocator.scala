@@ -25,6 +25,7 @@ package uk.co.unclealex.hammers.calendar.html;
 import org.joda.time.DateTime
 
 import uk.co.unclealex.hammers.calendar.model.GameKey
+import uk.co.unclealex.hammers.calendar.dates.DateTimeImplicits._
 
 /**
  * The base class for both types of game locator.
@@ -94,4 +95,4 @@ case class GameKeyLocator(val gameKey: GameKey) extends InternalGameLocator[Game
  *
  */
 case class DatePlayedLocator(val datePlayed: DateTime) extends InternalGameLocator[DateTime](
-  LocatorType.DATETIME_PLAYED, datePlayed)(Ordering.by((dt: DateTime) => dt.getMillis))
+  LocatorType.DATETIME_PLAYED, datePlayed)

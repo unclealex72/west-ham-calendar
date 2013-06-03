@@ -86,20 +86,15 @@ sealed abstract class BaseGameUpdateCommand[V](
   /**
    * The new date played value.
    */
-  val newValue: Option[V]) extends GameUpdateCommand(gameLocator) with Logging {
+  val newValue: V) extends GameUpdateCommand(gameLocator) with Logging {
 
   override def update(game: Game): Boolean = {
-    newValue match {
-      case Some(newValue) => {
-        if (Some(newValue) != currentValue(game)) {
-          logger info s"Updating the ${updateType.description} to $newValue for game ${game.gameKey}"
-          setNewValue(game, Some(newValue))
-          true
-        } else {
-          false
-        }
-      }
-      case None => false
+    if (Some(newValue) != currentValue(game)) {
+      logger info s"Updating the ${updateType.description} to $newValue for game ${game.gameKey}"
+      setNewValue(game)
+      true
+    } else {
+      false
     }
   }
 
@@ -127,24 +122,24 @@ sealed abstract class BaseGameUpdateCommand[V](
    * @param game
    *          The game to alter.
    */
-  protected def setNewValue(game: Game, newValue: Option[V])
+  protected def setNewValue(game: Game)
 }
 /**
  * A {@link GameUpdateCommand} that updates a game's date played value.
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newDatePlayed
+ * @param newValue
  *          The new date played value.
  * @return A {@link GameUpdateCommand} that updates a game's date played
  *         value.
  */
 case class DatePlayedUpdateCommand(
-  override val gameLocator: GameLocator, newDatePlayed: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](DATE_PLAYED, gameLocator, newDatePlayed) {
+  override val gameLocator: GameLocator, override val newValue: DateTime) extends BaseGameUpdateCommand[DateTime](DATE_PLAYED, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.dateTimePlayed
 
-  override def setNewValue(game: Game, newDatePlayed: Option[DateTime]) = game.dateTimePlayed = newDatePlayed
+  override def setNewValue(game: Game) = game.dateTimePlayed = Some(newValue)
 }
 
 /**
@@ -152,16 +147,16 @@ case class DatePlayedUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newResult
+ * @param newValue
  *          The new result.
  * @return A {@link GameUpdateCommand} that updates a game's result value.
  */
 case class ResultUpdateCommand(
-  override val gameLocator: GameLocator, newResult: Option[String]) extends BaseGameUpdateCommand[String](RESULT, gameLocator, newResult) {
+  override val gameLocator: GameLocator, override val newValue: String) extends BaseGameUpdateCommand[String](RESULT, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.result
 
-  override def setNewValue(game: Game, newResult: Option[String]) = game.result = newResult
+  override def setNewValue(game: Game) = game.result = Some(newValue)
 }
 
 /**
@@ -169,16 +164,16 @@ case class ResultUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newAttendence
+ * @param newValue
  *          The new attendence.
  * @return A {@link GameUpdateCommand} that updates a game's attendence value.
  */
 case class AttendenceUpdateCommand(
-  override val gameLocator: GameLocator, newAttendence: Option[Int]) extends BaseGameUpdateCommand[Int](ATTENDENCE, gameLocator, newAttendence) {
+  override val gameLocator: GameLocator, override val newValue: Int) extends BaseGameUpdateCommand[Int](ATTENDENCE, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.attendence
 
-  override def setNewValue(game: Game, newAttendence: Option[Int]) = game.attendence = newAttendence
+  override def setNewValue(game: Game) = game.attendence = Some(newValue)
 
 }
 
@@ -188,17 +183,17 @@ case class AttendenceUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newMatchReport
+ * @param newValue
  *          The new match report.
  * @return A {@link GameUpdateCommand} that updates a game's match report
  *         value.
  */
 case class MatchReportUpdateCommand(
-  override val gameLocator: GameLocator, newMatchReport: Option[String]) extends BaseGameUpdateCommand[String](MATCH_REPORT, gameLocator, newMatchReport) {
+  override val gameLocator: GameLocator, override val newValue: String) extends BaseGameUpdateCommand[String](MATCH_REPORT, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.matchReport
 
-  override def setNewValue(game: Game, newMatchReport: Option[String]) = game.matchReport = newMatchReport
+  override def setNewValue(game: Game) = game.matchReport = Some(newValue)
 }
 
 /**
@@ -207,17 +202,17 @@ case class MatchReportUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newTelevisionChannel
+ * @param newValue
  *          The new television channel.
  * @return A {@link GameUpdateCommand} that updates a game's television
  *         channel value.
  */
 case class TelevisionChannelUpdateCommand(
-  override val gameLocator: GameLocator, newTelevisionChannel: Option[String]) extends BaseGameUpdateCommand[String](TELEVISION_CHANNEL, gameLocator, newTelevisionChannel) {
+  override val gameLocator: GameLocator, override val newValue: String) extends BaseGameUpdateCommand[String](TELEVISION_CHANNEL, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.televisionChannel
 
-  override def setNewValue(game: Game, newTelevisionChannel: Option[String]) = game.televisionChannel = newTelevisionChannel
+  override def setNewValue(game: Game) = game.televisionChannel = Some(newValue)
 }
 
 /**
@@ -225,17 +220,24 @@ case class TelevisionChannelUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newAttended
+ * @param newValue
  *          The new attended value.
  * @return A {@link GameUpdateCommand} that updates a game's attended value.
  */
 case class AttendedUpdateCommand(
-  override val gameLocator: GameLocator, newAttended: Option[Boolean]) extends BaseGameUpdateCommand[Boolean](ATTENDED, gameLocator, newAttended) {
+  override val gameLocator: GameLocator, override val newValue: Boolean) extends BaseGameUpdateCommand[Boolean](ATTENDED, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.attended
 
-  override def setNewValue(game: Game, newAttended: Option[Boolean]) = game.attended = newAttended
+  override def setNewValue(game: Game) = game.attended = Some(newValue)
 }
+
+/**
+ * The parent class of all ticketing update commands. This basically restricts the value type to be updated to DateTime.
+ */
+sealed abstract class TicketsUpdateCommand(
+  override val updateType: UpdateType, override val gameLocator: GameLocator, override val newValue: DateTime)
+  extends BaseGameUpdateCommand[DateTime](updateType, gameLocator, newValue)
 
 /**
  * Create a {@link GameUpdateCommand} that updates a game's bondholder tickets
@@ -243,17 +245,16 @@ case class AttendedUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newBondHolderTicketsAvailable
+ * @param newValue
  *          The new date for bond holder ticket availabilty.
  * @return A {@link GameUpdateCommand} that updates a game's bondholder
  *         availability tickets date.
  */
 case class BondHolderTicketsUpdateCommand(
-  override val gameLocator: GameLocator, newBondHolderTicketsAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](BONDHOLDER_TICKETS, gameLocator, newBondHolderTicketsAvailable) {
+  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(BONDHOLDER_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.dateTimeBondholdersAvailable
-  override def setNewValue(game: Game, newBondHolderTicketsAvailable: Option[DateTime]) =
-    game.dateTimeBondholdersAvailable = newBondHolderTicketsAvailable
+  override def setNewValue(game: Game) = game.dateTimeBondholdersAvailable = Some(newValue)
 }
 
 /**
@@ -262,17 +263,16 @@ case class BondHolderTicketsUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newPriorityPointTicketsAvailable
+ * @param newValue
  *          The new date for priority point ticket availabilty.
  * @return A {@link GameUpdateCommand} that updates a game's priority points
  *         tickets availability date.
  */
 case class PriorityPointTicketsUpdateCommand(
-  override val gameLocator: GameLocator, newPriorityPointPostAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](PRIORITY_POINT_POST_TICKETS, gameLocator, newPriorityPointPostAvailable) {
+  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(PRIORITY_POINT_POST_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.dateTimePriorityPointPostAvailable
-  override def setNewValue(game: Game, newPriorityPointPostAvailable: Option[DateTime]) =
-    game.dateTimePriorityPointPostAvailable = newPriorityPointPostAvailable
+  override def setNewValue(game: Game) = game.dateTimePriorityPointPostAvailable = Some(newValue)
 }
 
 /**
@@ -281,17 +281,16 @@ case class PriorityPointTicketsUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newSeasonTicketsAvailable
+ * @param newValue
  *          The new date for season ticket availabilty.
  * @return A {@link GameUpdateCommand} that updates a game's season ticket
  *         availability date.
  */
 case class SeasonTicketsUpdateCommand(
-  override val gameLocator: GameLocator, newSeasonTicketsAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](SEASON_TICKETS, gameLocator, newSeasonTicketsAvailable) {
+  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(SEASON_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.dateTimeSeasonTicketsAvailable
-  override def setNewValue(game: Game, newSeasonTicketsAvailable: Option[DateTime]) =
-    game.dateTimeSeasonTicketsAvailable = newSeasonTicketsAvailable
+  override def setNewValue(game: Game) = game.dateTimeSeasonTicketsAvailable = Some(newValue)
 }
 
 /**
@@ -300,17 +299,17 @@ case class SeasonTicketsUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newAcademyTicketsAvailable
+ * @param newValue
  *          The new date for academy ticket availabilty.
  * @return A {@link GameUpdateCommand} that updates a game's academy ticket
  *         availability date.
  */
 case class AcademyTicketsUpdateCommand(
-  override val gameLocator: GameLocator, newAcademyTicketsAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](ACADEMY_TICKETS, gameLocator, newAcademyTicketsAvailable) {
+  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(ACADEMY_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.dateTimeAcademyMembersAvailable
-  override def setNewValue(game: Game, newAcademyTicketsAvailable: Option[DateTime]) =
-    game.dateTimeAcademyMembersAvailable = newAcademyTicketsAvailable
+  override def setNewValue(game: Game) = game.dateTimeAcademyMembersAvailable = Some(newValue)
+
 }
 
 /**
@@ -319,15 +318,14 @@ case class AcademyTicketsUpdateCommand(
  *
  * @param gameLocator
  *          The locator to use to locate the game.
- * @param newGeneralSaleTicketsAvailable
+ * @param newValue
  *          The new date for general sale ticket availabilty.
  * @return A {@link GameUpdateCommand} that updates a game's general sale
  *         ticket availability date.
  */
 case class GeneralSaleTicketsUpdateCommand(
-  override val gameLocator: GameLocator, newGeneralSaleTicketsAvailable: Option[DateTime]) extends BaseGameUpdateCommand[DateTime](GENERAL_SALE_TICKETS, gameLocator, newGeneralSaleTicketsAvailable) {
+  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(GENERAL_SALE_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.dateTimeGeneralSaleAvailable
-  override def setNewValue(game: Game, newGeneralSaleTicketsAvailable: Option[DateTime]) =
-    game.dateTimeGeneralSaleAvailable = newGeneralSaleTicketsAvailable
+  override def setNewValue(game: Game) = game.dateTimeGeneralSaleAvailable = Some(newValue)
 }

@@ -48,7 +48,7 @@ class DelegatingHtmlGamesScannerTest extends Specification {
               Competition.FACP,
               Location.HOME,
               "Them",
-              season)), Some(uri.toString))
+              season)), uri.toString)
           season = season + 1
           List(gameUpdateCommand)
         }
@@ -70,7 +70,7 @@ class DelegatingHtmlGamesScannerTest extends Specification {
           Competition.FACP,
           Location.HOME,
           "Them",
-          index + 2011)), Some(s"${index}.html"))
+          index + 2011)), s"${index}.html")
       }
       actualGameUpdateCommands.sorted must be equalTo (expectedGameUpdateCommands.sorted)
     }
