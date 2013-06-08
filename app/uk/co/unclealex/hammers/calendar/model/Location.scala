@@ -45,4 +45,8 @@ object Location extends PersistableEnumeration[Location] {
     val persistableToken = "AWAY"
   }
   AWAY
+  
+  implicit def serialiseLocation(location: Location): String = location.persistableToken
+  implicit def deserialiseLocation(s: String): Location = Location.values.find(_.persistableToken == s).get
+
 }

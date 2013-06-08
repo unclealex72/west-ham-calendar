@@ -20,10 +20,9 @@
  *
  */
 
-package uk.co.unclealex.hammers.calendar.update;
+package uk.co.unclealex.hammers.calendar.update
 
-import java.io.IOException;
-import uk.co.unclealex.hammers.calendar.html.GameUpdateCommand
+import java.io.IOException
 
 /**
  * The service used to combine reading game information from the web and
@@ -35,7 +34,7 @@ import uk.co.unclealex.hammers.calendar.html.GameUpdateCommand
 trait MainUpdateService {
 
   /**
-   * Move a game to the attendend calendar.
+   * Move a game to the attended calendar.
    *
    * @param gameId
    *          The the id of the game to move.

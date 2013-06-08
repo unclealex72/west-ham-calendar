@@ -50,7 +50,7 @@ case class GameKey(
   def compare(other: GameKey) = {
     val orderings: Seq[GameKey => GameKey => Int] =
       Seq(
-        gk1 => gk2 => gk1.season - gk2.season,
+        gk1 => gk2 => gk1.season compare gk2.season,
         gk1 => gk2 => gk1.competition.index compare gk2.competition.index,
         gk1 => gk2 => gk1.opponents compare gk2.opponents,
         gk1 => gk2 => gk1.location.index compare gk2.location.index)

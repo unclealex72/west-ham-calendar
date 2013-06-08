@@ -6,7 +6,7 @@
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License") you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -30,23 +30,13 @@ import org.joda.time.format.DateTimeFormat
 import org.joda.time.DayOfWeekIgnoringChronology
 import org.joda.time.DateTimeZone
 import org.joda.time.chrono.ISOChronology
-
+import JodaDateTime._
 /**
  * A date parser that uses Joda Time to parse dates.
  * @author alex
  *
  */
 class JodaDateParser(dateFormat: String) extends DateParser {
-
-  /**
-   * The default (and only) time zone.
-   */
-  val EUROPE_LONDON = DateTimeZone.forID("Europe/London");
-
-  /**
-   * The default (and only) chronology with the default time zone.
-   */
-  val DEFAULT_CHRONOLOGY = ISOChronology.getInstance(EUROPE_LONDON);
 
   val dateTimeFormatter =
     DateTimeFormat.forPattern(dateFormat).withZone(EUROPE_LONDON).withChronology(

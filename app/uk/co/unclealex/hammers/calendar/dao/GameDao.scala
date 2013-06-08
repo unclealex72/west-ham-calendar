@@ -35,19 +35,20 @@ import uk.co.unclealex.hammers.calendar.model.Location
 trait GameDao {
 
   /**
-   * Persist a game to the database.
+   * Run code within a transaction.
+   * @param block The code to run.
    */
-  def store(game: Game): Game
+  def transaction[T](block: => T): T
 
   /**
-   * Persist games to the database.
+   * Persist a game
    */
-  def storeAll(games: Traversable[Game]): Traversable[Game]
-
+  def store(game: Game): Game
+  
   /**
    * Find a game by its ID.
    */
-  def findById(id: Int): Option[Game]
+  def findById(id: Long): Option[Game]
 
   /**
    * Find a game by the {@link DateTime} it was played.
@@ -84,7 +85,7 @@ trait GameDao {
    * Get the latest known season.
    * @return The latest known season.
    */
-  def getLatestSeason: Int
+  def getLatestSeason: Option[Int]
 
   /**
    * Get all {@link Game}s for a given season and {@link Location}.

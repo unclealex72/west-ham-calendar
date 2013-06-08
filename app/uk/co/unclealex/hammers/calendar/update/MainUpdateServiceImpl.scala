@@ -169,6 +169,5 @@ class MainUpdateServiceImpl(
 
   def attendOrUnattendGames(games: Traversable[Game], attend: Boolean): Unit = {
     games foreach (game => game.attended = Some(attend))
-    gameDao storeAll games
   }
 }

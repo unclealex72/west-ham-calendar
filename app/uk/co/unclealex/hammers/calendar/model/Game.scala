@@ -22,6 +22,11 @@
 package uk.co.unclealex.hammers.calendar.model
 
 import org.joda.time.DateTime
+import org.squeryl.KeyedEntity
+import org.squeryl.dsl.CompositeKey4
+import Competition._
+import Location._
+import org.squeryl.annotations.ColumnBase
 
 /**
  * A persistable unit that represents an advertised West Ham game.
@@ -30,23 +35,25 @@ case class Game(
   /**
    * The primary key of the game.
    */
-  val id: Int,
+  val id: Long,
   /**
    * The game's {@link Competition}.
    */
-  var competition: Competition,
+  @ColumnBase("competition")
+  val _competition: String,
   /**
    * The game's {@link Location}.
    */
-  var location: Location,
+  @ColumnBase("location")
+  val _location: String,
   /**
    * The game's opponents.
    */
-  var opponents: String,
+  val opponents: String,
   /**
    * The season the game was played in.
    */
-  var season: Int,
+  val season: Int,
   /**
    * The {@link DateTime} the game was played.
    */
@@ -91,7 +98,7 @@ case class Game(
   /**
    * True if the game has been marked as attended, false otherwise.
    */
-  var attended: Option[Boolean]) {
+  var attended: Option[Boolean]) extends KeyedEntity[Long] {
 
   /**
    * Squeryl constructor
@@ -111,10 +118,16 @@ case class Game(
       0, gameKey.competition, gameKey.location, gameKey.opponents, gameKey.season,
       None, None, None, None, None, None, None, None, None, None, Some(false))
 
+  def competition: Competition = _competition
+  
+  def location: Location = _location
+  
   /**
    * Get the unique business key for this game.
    */
   def gameKey: GameKey = GameKey(competition, location, opponents, season)
+  
+  def gameKeyComposite = CompositeKey4(_competition, _location, opponents, season)
 }
 
 object Game {
