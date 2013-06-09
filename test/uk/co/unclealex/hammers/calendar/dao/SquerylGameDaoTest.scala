@@ -51,7 +51,7 @@ import scala.math.Ordering
  */
 class SquerylGameDaoTest extends Specification {
 
-  "A minimally stored game" should tx {
+  "A minimally stored game" should txn {
     val game = Game(GameKey(Competition.FACP, Location.HOME, "Opponents", 2013))
     store(game)
     val persistedGame = findByBusinessKey(Competition.FACP, Location.HOME, "Opponents", 2013)
@@ -68,7 +68,7 @@ class SquerylGameDaoTest extends Specification {
     }
   }
 
-  "Game keys" should tx {
+  "Game keys" should txn {
     val game = Game(GameKey(Competition.FACP, Location.HOME, "Opponents", 2013))
     store(game)
     val unique = {
@@ -85,7 +85,7 @@ class SquerylGameDaoTest extends Specification {
     }
   }
 
-  "Games with dates" should tx {
+  "Games with dates" should txn {
     val game = Game(GameKey(Competition.FACP, Location.HOME, "Opponents", 2013))
     game.dateTimePlayed = Some(September(5, 2013) at (15, 0))
     store(game)
@@ -98,7 +98,7 @@ class SquerylGameDaoTest extends Specification {
     }
   }
   
-  "Looking for all games in a season" should tx {
+  "Looking for all games in a season" should txn {
     val chelsea = "Chelsea" home May(5, 2013)
     val spurs = "Spurs" away January(9, 2013)
     val arsenal = "Arsenal" home February(12, 2013)
@@ -109,7 +109,7 @@ class SquerylGameDaoTest extends Specification {
     }
   }
   
-  "Retrieving all known seasons" should tx {
+  "Retrieving all known seasons" should txn {
     val chelsea = "Chelsea" home May(5, 2013)
     val reading = "Reading" away September(7, 2011)
     val everton = "Everton" home March(15, 2011)
@@ -119,7 +119,7 @@ class SquerylGameDaoTest extends Specification {
     }
   }
   
-  "Getting the latest season" should tx {
+  "Getting the latest season" should txn {
     val emptyLastSeason = getLatestSeason
     "be None for when there are no games at all" in {
       emptyLastSeason must be equalTo(None)
@@ -133,7 +133,7 @@ class SquerylGameDaoTest extends Specification {
     }
   }
   
-  "Getting all games for a given season and location" should tx {
+  "Getting all games for a given season and location" should txn {
     val chelsea = "Chelsea" home May(5, 2013)
     val spurs = "Spurs" away January(9, 2013)
     val arsenal = "Arsenal" home February(12, 2013)
@@ -144,7 +144,7 @@ class SquerylGameDaoTest extends Specification {
     }
   }
 
-  "Getting all games" should tx {
+  "Getting all games" should txn {
     val chelsea = "Chelsea" home May(5, 2013)
     val spurs = "Spurs" away January(9, 2013)
     val arsenal = "Arsenal" home February(12, 2013)
@@ -158,13 +158,13 @@ class SquerylGameDaoTest extends Specification {
   /**
    * Wrap tests with database creation and transactions
    */
-  def tx[B](block: => B) = {
+  def txn[B](block: => B) = {
     Class forName "org.h2.Driver"
     SessionFactory.concreteFactory = Some(() =>
       Session.create(
         java.sql.DriverManager.getConnection("jdbc:h2:mem:", "", ""),
         new H2Adapter))
-    transaction {
+    tx { gd =>
       create
       block
     }

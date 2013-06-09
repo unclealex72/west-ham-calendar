@@ -23,14 +23,10 @@
 package uk.co.unclealex.hammers.calendar.update;
 
 import java.net.URI
-
 import scala.collection.JavaConversions._
-
 import org.joda.time.DateTime
 import org.slf4j.Logger
-
 import com.typesafe.scalalogging.slf4j.Logging
-
 import javax.inject.Named
 import uk.co.unclealex.hammers.calendar.dao.GameDao
 import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
@@ -44,6 +40,8 @@ import uk.co.unclealex.hammers.calendar.html.HtmlGamesScanner
 import uk.co.unclealex.hammers.calendar.html.MainPageService
 import uk.co.unclealex.hammers.calendar.model.Game
 import uk.co.unclealex.hammers.calendar.model.GameKey
+import uk.co.unclealex.hammers.calendar.model.Location.HOME
+import uk.co.unclealex.hammers.calendar.dao.Transactional
 
 /**
  * The Class MainUpdateServiceImpl.
@@ -54,7 +52,7 @@ class MainUpdateServiceImpl(
   /**
    * The {@link GameDao} for getting persisted {@link Game} information.
    */
-  gameDao: GameDao,
+  tx: Transactional,
   /**
    * The {@link MainPageService} for finding the links off the main page.
    */
@@ -74,10 +72,10 @@ class MainUpdateServiceImpl(
    * @throws IOException
    */
   override def processDatabaseUpdates: Unit = {
-    val allGames = gameDao.getAll
+    val allGames = tx { _ getAll }
     val newGames = processUpdates(
-      "fixture", mainPageService.fixturesUri, fixturesHtmlGamesScanner, true, allGames)
-    processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, false, allGames ++ newGames)
+      "fixture", mainPageService.fixturesUri, fixturesHtmlGamesScanner, allGames)
+    processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, allGames ++ newGames)
   }
 
   /**
@@ -89,12 +87,10 @@ class MainUpdateServiceImpl(
    *          the uri
    * @param scanner
    *          the scanner
-   * @param addUnknownGames true if unknown games should be added, false otherwise (for the case where tickets are
-   * advertised for games that are not listed).
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def processUpdates(updatesType: String, uri: URI, scanner: HtmlGamesScanner, addUnknownGames: Boolean, allGames: List[Game]): List[Game] = {
+  def processUpdates(updatesType: String, uri: URI, scanner: HtmlGamesScanner, allGames: List[Game]): List[Game] = {
     logger info s"Scanning for $updatesType changes."
     val allGameUpdateCommands = scanner.scan(uri)
     val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
@@ -122,7 +118,7 @@ class MainUpdateServiceImpl(
     def gameFinder: Game => Boolean = { (game: Game) =>
       gameLocator match {
         case GameKeyLocator(gameKey) => game.gameKey == gameKey
-        case DatePlayedLocator(datePlayed) => datePlayed == game.dateTimePlayed
+        case DatePlayedLocator(datePlayed) => Some(datePlayed) == game.dateTimePlayed
       }
     }
     allGames find gameFinder
@@ -154,20 +150,25 @@ class MainUpdateServiceImpl(
     if (updateCount == 0) {
       logger info s"Ignoring game ${game.gameKey}"
     } else {
-      gameDao store game
+      tx { _ store game }
     }
   }
 
-  def attendGame(gameId: Int): Unit = attendOrUnattendGame(gameId, true)
+  def attendGame(gameId: Long): Unit = attendOrUnattendGame(gameId, true)
 
-  def unattendGame(gameId: Int): Unit = attendOrUnattendGame(gameId, false)
+  def unattendGame(gameId: Long): Unit = attendOrUnattendGame(gameId, false)
 
-  def attendOrUnattendGame(gameId: Int, attend: Boolean) =
-    attendOrUnattendGames(gameDao.findById(gameId), attend)
+  def attendOrUnattendGame(gameId: Long, attend: Boolean) =
+    attendOrUnattendGames(_ findById gameId, attend)
 
-  def attendAllHomeGamesForSeason(season: Int) = attendOrUnattendGames(gameDao.getAllForSeason(season).toSeq, true)
+  def attendAllHomeGamesForSeason(season: Int) = attendOrUnattendGames(_ getAllForSeasonAndLocation(season, HOME), true)
 
-  def attendOrUnattendGames(games: Traversable[Game], attend: Boolean): Unit = {
-    games foreach (game => game.attended = Some(attend))
+  def attendOrUnattendGames(gamesFactory: GameDao => Traversable[Game], attend: Boolean): Unit = {
+    tx { gameDao =>
+      gamesFactory(gameDao) foreach { game => 
+        game.attended = Some(attend)
+        gameDao store game
+      }
+    }
   }
 }

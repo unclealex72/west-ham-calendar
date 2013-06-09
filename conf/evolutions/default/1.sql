@@ -1,4 +1,4 @@
-# CallerID schema
+# Calendar schema
 
 # --- !Ups
 

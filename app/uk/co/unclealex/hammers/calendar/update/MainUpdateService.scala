@@ -43,8 +43,7 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  @throws(classOf[IOException])
-  def attendGame(gameId: Int): Unit
+  def attendGame(gameId: Long): Unit
 
   /**
    * Move a game to the unattendend calendar.
@@ -56,8 +55,7 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  @throws(classOf[IOException])
-  def unattendGame(gameId: Int): Unit
+  def unattendGame(gameId: Long): Unit
 
   /**
    * Attend all home games in a season.
@@ -69,7 +67,6 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  @throws(classOf[IOException])
   def attendAllHomeGamesForSeason(season: Int): Unit
 
   /**

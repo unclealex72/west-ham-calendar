@@ -33,7 +33,7 @@ import uk.co.unclealex.hammers.calendar.model.Competition
  * @author alex
  *
  */
-object SquerylGameDao extends Schema with GameDao {
+object SquerylGameDao extends Schema with GameDao with Transactional {
 
   val games = table[Game]
   
@@ -48,7 +48,7 @@ object SquerylGameDao extends Schema with GameDao {
    * Run code within a transaction.
    * @param block The code to run.
    */
-  def transaction[T](block: => T): T = inTransaction { block }
+  def tx[T](block: GameDao => T): T = inTransaction { block(this) }
 
   def store(game: Game): Game = {
     games.insertOrUpdate(game)

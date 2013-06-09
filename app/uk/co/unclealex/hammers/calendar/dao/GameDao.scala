@@ -35,12 +35,6 @@ import uk.co.unclealex.hammers.calendar.model.Location
 trait GameDao {
 
   /**
-   * Run code within a transaction.
-   * @param block The code to run.
-   */
-  def transaction[T](block: => T): T
-
-  /**
    * Persist a game
    */
   def store(game: Game): Game

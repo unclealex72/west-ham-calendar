@@ -19,14 +19,14 @@ object ApplicationBuild extends Build {
     "javax.inject"  % "javax.inject"  % "1",
     "com.google.inject" % "guice" % "3.0",
     "com.tzavellas" % "sse-guice" % "0.7.1",
+    jdbc,
+    "org.mnode.ical4j" % "ical4j" % "1.0.4",
     "org.squeryl" %% "squeryl" % "0.9.6-RC1",
     "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
     "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
     "com.h2database" % "h2" % "1.3.171" % "test",
     "org.specs2"  %% "specs2"  % "1.14"  % "test",
-    jdbc,
-    "org.mnode.ical4j" % "ical4j" % "1.0.4"
-  )
+    "org.scalamock" %% "scalamock-specs2-support" % "3.0.1" % "test")
 
 
   val main = play.Project(appName, appVersion, appDependencies).settings(
