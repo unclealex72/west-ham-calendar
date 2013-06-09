@@ -20,6 +20,7 @@ object ApplicationBuild extends Build {
     "com.google.inject" % "guice" % "3.0",
     "com.tzavellas" % "sse-guice" % "0.7.1",
     "org.squeryl" %% "squeryl" % "0.9.6-RC1",
+    "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
     "com.h2database" % "h2" % "1.3.171" % "test",
     "org.specs2"  %% "specs2"  % "1.14"  % "test",
     jdbc,
