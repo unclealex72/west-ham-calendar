@@ -19,3 +19,6 @@ dist
 .target
 bin
 .scalastyle
+
+# Secure files that should not be uploaded to github
+conf/secure
