@@ -34,10 +34,12 @@ import org.mozilla.javascript.NativeArray
 import org.mozilla.javascript.Scriptable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import javax.inject.Provider
 import com.typesafe.scalalogging.slf4j.Logging
 import scala.collection.JavaConversions._
 import uk.co.unclealex.hammers.calendar.html.TagNodeImplicits._
+import com.google.inject.Provider
+import javax.inject.Inject
+import javax.inject.Named
 
 /**
  * The default implementation of {@link MainPageService}.
@@ -45,11 +47,11 @@ import uk.co.unclealex.hammers.calendar.html.TagNodeImplicits._
  * @author alex
  *
  */
-class MainPageServiceProvider(
+class MainPageServiceProvider @Inject() (
   /**
    * The URI for the main web page.
    */
-  mainPageUri: URI,
+  @Named("mainPage") mainPageUri: URI,
   /**
    * The {@link HtmlPageLoader} used to load the main page.
    */

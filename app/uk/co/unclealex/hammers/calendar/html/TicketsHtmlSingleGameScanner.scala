@@ -30,6 +30,7 @@ import TagNodeImplicits.Implicits
 import uk.co.unclealex.hammers.calendar.dates.DateService
 import uk.co.unclealex.hammers.calendar.dates.DateTimeImplicits._
 import uk.co.unclealex.hammers.calendar.html.TagNodeImplicits.Implicits
+import javax.inject.Inject
 
 /**
  * A {@link HtmlGamesScanner} that scans a page for ticket sales.
@@ -37,7 +38,7 @@ import uk.co.unclealex.hammers.calendar.html.TagNodeImplicits.Implicits
  * @author alex
  *
  */
-class TicketsHtmlSingleGameScanner(
+class TicketsHtmlSingleGameScanner @Inject() (
   /**
    * The {@link HtmlPageLoader} used to load web pages.
    */

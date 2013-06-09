@@ -26,17 +26,16 @@ import java.net.URI
 import java.text.NumberFormat
 import java.text.ParseException
 import java.util.Locale
-
 import org.htmlcleaner.TagNode
 import org.joda.time.DateTime
 import org.slf4j.Logger
-
 import TagNodeImplicits._
 import uk.co.unclealex.hammers.calendar.dates.DateService
 import uk.co.unclealex.hammers.calendar.dates.UnparseableDateException
 import uk.co.unclealex.hammers.calendar.model.Competition
 import uk.co.unclealex.hammers.calendar.model.GameKey
 import uk.co.unclealex.hammers.calendar.model.Location
+import javax.inject.Inject
 
 /**
  * An {@link HtmlGamesScanner} that scans the season's fixtures page for game
@@ -45,7 +44,7 @@ import uk.co.unclealex.hammers.calendar.model.Location
  * @author alex
  *
  */
-class SeasonHtmlGamesScanner(
+class SeasonHtmlGamesScanner @Inject() (
   /**
    * The {@link HtmlPageLoader} used to load web pages.
    */

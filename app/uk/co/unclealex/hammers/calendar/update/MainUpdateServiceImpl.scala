@@ -42,13 +42,14 @@ import uk.co.unclealex.hammers.calendar.model.Game
 import uk.co.unclealex.hammers.calendar.model.GameKey
 import uk.co.unclealex.hammers.calendar.model.Location.HOME
 import uk.co.unclealex.hammers.calendar.dao.Transactional
+import javax.inject.Inject
 
 /**
  * The Class MainUpdateServiceImpl.
  *
  * @author alex
  */
-class MainUpdateServiceImpl(
+class MainUpdateServiceImpl @Inject() (
   /**
    * The {@link GameDao} for getting persisted {@link Game} information.
    */
@@ -60,11 +61,11 @@ class MainUpdateServiceImpl(
   /**
    * The {@link HtmlGamesScanner} for getting ticketing information.
    */
-  @Named("tickets") ticketsHtmlGamesScanner: HtmlGamesScanner,
+  ticketsHtmlGamesScannerFactory: TicketsHtmlGamesScannerFactory,
   /**
    * The {@link HtmlGamesScanner} for getting fixture information.
    */
-  @Named("fixtures") fixturesHtmlGamesScanner: HtmlGamesScanner) extends MainUpdateService with Logging {
+  fixturesHtmlGamesScanner: HtmlGamesScanner) extends MainUpdateService with Logging {
 
   /**
    * Process all updates required in the database.
@@ -75,7 +76,9 @@ class MainUpdateServiceImpl(
     val allGames = tx { _ getAll }
     val newGames = processUpdates(
       "fixture", mainPageService.fixturesUri, fixturesHtmlGamesScanner, allGames)
-    processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, allGames ++ newGames)
+    ticketsHtmlGamesScannerFactory.get map { ticketsHtmlGamesScanner =>
+      processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, allGames ++ newGames)
+    }
   }
 
   /**

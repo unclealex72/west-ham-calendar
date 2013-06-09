@@ -254,10 +254,13 @@ class MainUpdateServiceImplTest extends Specification with MockFactory {
     }
     val ticketsHtmlGamesScanner = mock[HtmlGamesScanner]
     val fixturesHtmlGamesScanner = mock[HtmlGamesScanner]
+    val ticketsHtmlGamesScannerFactory = new TicketsHtmlGamesScannerFactory() {
+      def get = Some(ticketsHtmlGamesScanner)
+    }
     val transactional = new Transactional {
       def tx[T](block: GameDao => T): T = block(gameDao)
     }
-    val mainUpdateService = new MainUpdateServiceImpl(transactional, mainPageService, ticketsHtmlGamesScanner, fixturesHtmlGamesScanner)
+    val mainUpdateService = new MainUpdateServiceImpl(transactional, mainPageService, ticketsHtmlGamesScannerFactory, fixturesHtmlGamesScanner)
   }  
 }
 
