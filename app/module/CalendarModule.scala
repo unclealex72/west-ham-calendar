@@ -40,6 +40,7 @@ import uk.co.unclealex.hammers.calendar.update.MainUpdateServiceImpl
 import java.net.URI
 import uk.co.unclealex.hammers.calendar.update.TicketsHtmlGamesScannerFactory
 import uk.co.unclealex.hammers.calendar.update.TicketsHtmlGamesScannerFactoryImpl
+
 /**
  * @author alex
  *
