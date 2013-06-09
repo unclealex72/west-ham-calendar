@@ -22,36 +22,28 @@
  *
  */
 
-package uk.co.unclealex.hammers.calendar.model
+package uk.co.unclealex.hammers.calendar.cal
+
+import uk.co.unclealex.hammers.calendar.model.Game
+import org.joda.time.DateTime
+import org.joda.time.Duration
 
 /**
- * A base class for enumeration type objects that can be persisted in a database
+ * An interface for creating a calendar from a list of games.
  * @author alex
  *
  */
-trait PersistableEnumeration[E] {
-
-  trait Value { self: E =>
-
-    /**
-     *  The index used for ordering.
-     */
-    val index = _values.length
-    /**
-     * The token that is persisted to the database.
-     */
-    val persistableToken: String
-
-    _values :+= this
-
-    implicit def ordering = Ordering.by((v: Value) => v.index)
-
-  }
+trait CalendarFactory {
 
   /**
-   * A list of all the registered instances of this type.
+   * Create a new calendar.
+   * @param title The name of the calendar.
+   * @param id The unique ID of the calendar.
+   * @param busy True if calendar items should be marked as busy, false otherwise.
+   * @param duration The length of events in the created calendar.
+   * @param dateFactory a function to extract a date from a game. Games that do not have a date will not
+   * be included in the generated calendar.
+   * @param games The games that will appear in the calendar.
    */
-  private var _values = List.empty[E]
-  def values: List[E] = _values
-
+  def create(title: String, id: String, busy: Boolean, duration: Duration, dateFactory: Game => Option[DateTime], games: Traversable[Game]): Calendar
 }

@@ -22,36 +22,25 @@
  *
  */
 
-package uk.co.unclealex.hammers.calendar.model
+package uk.co.unclealex.hammers.calendar.cal
+
+import scala.collection.SortedSet
 
 /**
- * A base class for enumeration type objects that can be persisted in a database
+ * A simple representation of a calendar that has a title, ID and a list of events.
  * @author alex
  *
  */
-trait PersistableEnumeration[E] {
-
-  trait Value { self: E =>
-
-    /**
-     *  The index used for ordering.
-     */
-    val index = _values.length
-    /**
-     * The token that is persisted to the database.
-     */
-    val persistableToken: String
-
-    _values :+= this
-
-    implicit def ordering = Ordering.by((v: Value) => v.index)
-
-  }
-
+case class Calendar(
   /**
-   * A list of all the registered instances of this type.
+   * The unique ID of this calendar.
    */
-  private var _values = List.empty[E]
-  def values: List[E] = _values
-
-}
+  val id: String,
+  /**
+   * The title of this calendar.
+   */
+  val title: String,
+  /**
+   * The list of events for this calendar.
+   */
+  val events: SortedSet[Event])

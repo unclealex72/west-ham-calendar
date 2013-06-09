@@ -22,36 +22,21 @@
  *
  */
 
-package uk.co.unclealex.hammers.calendar.model
+package uk.co.unclealex.hammers.calendar.cal
+
+import java.io.Writer
 
 /**
- * A base class for enumeration type objects that can be persisted in a database
+ * A trait for classes that can output a calendar to an external source.
  * @author alex
  *
  */
-trait PersistableEnumeration[E] {
-
-  trait Value { self: E =>
-
-    /**
-     *  The index used for ordering.
-     */
-    val index = _values.length
-    /**
-     * The token that is persisted to the database.
-     */
-    val persistableToken: String
-
-    _values :+= this
-
-    implicit def ordering = Ordering.by((v: Value) => v.index)
-
-  }
+trait CalendarWriter {
 
   /**
-   * A list of all the registered instances of this type.
+   * Write a calendar to an underlying writer.
+   * @param calendar The calendar to writer.
+   * @param writer The writer to write the calendar to.
    */
-  private var _values = List.empty[E]
-  def values: List[E] = _values
-
+  def write(calendar: Calendar, writer: Writer): Unit
 }

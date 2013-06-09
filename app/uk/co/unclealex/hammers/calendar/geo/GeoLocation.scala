@@ -26,6 +26,8 @@ import com.rockymadden.stringmetric.similarity.WeightedLevenshteinMetric
 import com.typesafe.scalalogging.slf4j.Logging
 import scala.collection.immutable.SortedMap
 import com.rockymadden.stringmetric.similarity.JaroWinklerMetric
+import uk.co.unclealex.hammers.calendar.model.Game
+import uk.co.unclealex.hammers.calendar.model.Location
 
 /**
  * Geographic locations of all UK football league stadia
@@ -68,7 +70,13 @@ sealed abstract class GeoLocation(
   /**
    * The longitude of the ground.
    */
-  val longitude: BigDecimal) extends GeoLocation.Value
+  val longitude: BigDecimal) extends GeoLocation.Value {
+  
+  /**
+   * The URL for Google maps.
+   */
+  val url = s"https://maps.google.com/maps?q=$latitude,+$longitude+(${name.replace(' ', '+')})&iwloc=A&hl=en"
+}
 object GeoLocation extends GeoLocationLike {
 
   case object WYCOMBE_WANDERERS extends GeoLocation("Wycombe Wanderers", "Adams Park", BigDecimal("51.6306"), BigDecimal("-0.800299")); WYCOMBE_WANDERERS
@@ -232,5 +240,16 @@ object GeoLocation extends GeoLocationLike {
     search map { case (geoLocation, difference) => geoLocation }
   }
   
+  /**
+   * Get a geographic location from a team.
+   */
   def apply(team: String): Option[GeoLocation] = { val lc = team.toLowerCase; values.get(lc) orElse lookFor(lc) }
+  
+  /**
+   * Get a geographic location for a game.
+   */
+  def apply(game: Game): Option[GeoLocation] = game.location match {
+    case Location.HOME => Some(WEST_HAM)
+    case Location.AWAY => apply(game.opponents)
+  }
 }
