@@ -26,6 +26,10 @@ import uk.co.unclealex.hammers.calendar.model.Game
 import scala.collection.SortedSet
 import uk.co.unclealex.hammers.calendar.model.Competition
 import uk.co.unclealex.hammers.calendar.model.Location
+import uk.co.unclealex.hammers.calendar.search.SearchOption
+import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
+import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
+import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
 
 /**
  * The data access object for {@link Game}s.
@@ -88,6 +92,14 @@ trait GameDao {
    * @return All {@link Game}s with the given season and {@link Location}.
    */
   def getAllForSeasonAndLocation(season: Int, location: Location): List[Game]
+
+  /**
+   * Search for games that match all the search options provided.
+   */
+  def search(
+    attendedSearchOption: AttendedSearchOption, 
+    locationSearchOption: LocationSearchOption, 
+    gameOrTicketSearchOption: GameOrTicketSearchOption): List[Game]
 
   /**
    * Get all known games.

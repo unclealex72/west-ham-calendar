@@ -44,6 +44,14 @@ import uk.co.unclealex.hammers.calendar.April
 import uk.co.unclealex.hammers.calendar.March
 import scala.collection.SortedSet
 import scala.math.Ordering
+import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
+import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
+import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
+import scala.collection.mutable.Buffer
+import uk.co.unclealex.hammers.calendar.August
+import org.joda.time.DateTime
+import scala.collection.mutable.Map
+import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 
 /**
  * @author alex
@@ -149,12 +157,82 @@ class SquerylGameDaoTest extends Specification {
     val spurs = "Spurs" away January(9, 2013)
     val arsenal = "Arsenal" home February(12, 2013)
     val fulham = "Fulham" away April(1, 2012)
-    val allGames = getAll.sortBy(_.id)
-    "return all games in no given order" in {
-      allGames must be equalTo(List(arsenal, chelsea, spurs, fulham).sortBy(_.id))
+    val allGames = getAll
+    "return all games in chronological order" in {
+      allGames must be equalTo(List(fulham, spurs, arsenal, chelsea))
     }
   }
 
+  "Searching for games" should txn {
+    val allGames = Buffer.empty[Game]
+    var day = 1
+    var index = 0
+    // Generate a game for each possible search option
+    for(location <- List(LocationSearchOption.HOME, LocationSearchOption.AWAY);
+        attended <- List(AttendedSearchOption.ATTENDED, AttendedSearchOption.UNATTENDED);
+        ticket <- GameOrTicketSearchOption.values) {
+      val opponents = String.format("Opponents %02d", new Integer(index))
+      val game = location match {
+        case LocationSearchOption.HOME => opponents home September(day, 2013)
+        case LocationSearchOption.AWAY => opponents away September(day, 2013)
+      }
+      game.attended = attended match {
+        case AttendedSearchOption.ATTENDED => Some(true)
+        case AttendedSearchOption.UNATTENDED => Some(false)
+      }
+      val tickets: Option[DateTime] = Some(August(day, 2013) at (9, 0))
+      ticket match {
+        case GameOrTicketSearchOption.BONDHOLDERS => game.dateTimeBondholdersAvailable = tickets
+        case GameOrTicketSearchOption.PRIORITY_POINT => game.dateTimePriorityPointPostAvailable = tickets
+        case GameOrTicketSearchOption.SEASON => game.dateTimeSeasonTicketsAvailable = tickets
+        case GameOrTicketSearchOption.ACADEMY => game.dateTimeAcademyMembersAvailable = tickets
+        case GameOrTicketSearchOption.GENERAL_SALE => game.dateTimeGeneralSaleAvailable = tickets
+        case GameOrTicketSearchOption.GAME => 
+      }
+      allGames += store(game)
+      day = day + 1
+      index = index + 1
+    }
+    // Create predicates for each possible search option
+    val locationPredicateFactory = (lso: LocationSearchOption) => (g: Game) => lso match {
+      case LocationSearchOption.HOME => g.location == Location.HOME
+      case LocationSearchOption.AWAY => g.location == Location.AWAY
+      case LocationSearchOption.ANY => true
+    }
+    
+    val attendedPredicateFactory = (aso: AttendedSearchOption) => (g: Game) => aso match {
+      case AttendedSearchOption.ATTENDED => g.attended == Some(true)
+      case AttendedSearchOption.UNATTENDED => g.attended == Some(false)
+      case AttendedSearchOption.ANY => true
+    }
+    val gameOrTicketPredicateFactory = (gtso: GameOrTicketSearchOption) => (g: Game) => gtso match {
+      case GameOrTicketSearchOption.BONDHOLDERS => g.dateTimeBondholdersAvailable.isDefined
+      case GameOrTicketSearchOption.PRIORITY_POINT => g.dateTimePriorityPointPostAvailable.isDefined
+      case GameOrTicketSearchOption.SEASON => g.dateTimeSeasonTicketsAvailable.isDefined
+      case GameOrTicketSearchOption.ACADEMY => g.dateTimeAcademyMembersAvailable.isDefined
+      case GameOrTicketSearchOption.GENERAL_SALE => g.dateTimeGeneralSaleAvailable.isDefined
+      case GameOrTicketSearchOption.GAME => true
+    }
+    // Search for each possible option
+    val expectedSearchesByPredicates = 
+      Map.empty[Tuple3[LocationSearchOption, AttendedSearchOption, GameOrTicketSearchOption], List[Game]]
+    val actualSearchesByPredicates = 
+      Map.empty[Tuple3[LocationSearchOption, AttendedSearchOption, GameOrTicketSearchOption], List[Game]]
+    for (lso <- LocationSearchOption.values; aso <- AttendedSearchOption.values; gtso <- GameOrTicketSearchOption.values) {
+      val key = (lso, aso, gtso)
+      actualSearchesByPredicates += key -> search(aso, lso, gtso)
+      val searchPredicate = (g: Game) => 
+        locationPredicateFactory(lso)(g) && attendedPredicateFactory(aso)(g) && gameOrTicketPredicateFactory(gtso)(g)
+      expectedSearchesByPredicates += key -> allGames.filter(searchPredicate).toList
+    }
+    expectedSearchesByPredicates.foreach { case(key, expectedSearchResults) =>
+      val size = expectedSearchResults.size
+      s"return ${size} result${if (size == 1) "" else "s"} for search key $key" in {
+        actualSearchesByPredicates.get(key) must be equalTo(Some(expectedSearchResults))
+      }
+    }
+  }
+  
   /**
    * Wrap tests with database creation and transactions
    */

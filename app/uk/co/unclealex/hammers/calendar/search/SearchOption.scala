@@ -35,17 +35,18 @@ trait SearchOptionLike[E <: SearchOption] {
     /**
      *  The index used for ordering.
      */
-    _values += (this.token.toLowerCase -> this)
+    _map += (this.token.toLowerCase -> this)
 
   }
 
   /**
    * A list of all the registered instances of this type.
    */
-  private var _values = SortedMap.empty[String, E]
-  def values: SortedMap[String, E] = _values
+  private var _map = SortedMap.empty[String, E]
+  def map: SortedMap[String, E] = _map
+  def values = _map.values.toSeq
 
-  def apply(token: String) = values.get(token.toLowerCase)
+  def apply(token: String) = map.get(token.toLowerCase)
 }
 
 sealed trait SearchOption {
@@ -58,7 +59,7 @@ sealed trait SearchOption {
 /**
  * Location search options
  */
-sealed class LocationSearchOption(val token: String) extends LocationSearchOption.Value with SearchOption
+sealed abstract class LocationSearchOption(val token: String) extends LocationSearchOption.Value with SearchOption
 object LocationSearchOption extends SearchOptionLike[LocationSearchOption]{
   case object HOME extends LocationSearchOption("home"); HOME
   case object AWAY extends LocationSearchOption("away"); AWAY
@@ -68,7 +69,7 @@ object LocationSearchOption extends SearchOptionLike[LocationSearchOption]{
 /**
  * Attended search options
  */
-sealed class AttendedSearchOption(val token: String) extends AttendedSearchOption.Value with SearchOption
+sealed abstract class AttendedSearchOption(val token: String) extends AttendedSearchOption.Value with SearchOption
 object AttendedSearchOption extends SearchOptionLike[AttendedSearchOption]{
   case object ATTENDED extends AttendedSearchOption("attended"); ATTENDED
   case object UNATTENDED extends AttendedSearchOption("unattended"); UNATTENDED
@@ -78,7 +79,7 @@ object AttendedSearchOption extends SearchOptionLike[AttendedSearchOption]{
 /**
  * Game or ticket search options
  */
-sealed class GameOrTicketSearchOption(val token: String) extends GameOrTicketSearchOption.Value with SearchOption
+sealed abstract class GameOrTicketSearchOption(val token: String) extends GameOrTicketSearchOption.Value with SearchOption
 object GameOrTicketSearchOption extends SearchOptionLike[GameOrTicketSearchOption]{
   case object GAME extends GameOrTicketSearchOption("games"); GAME
   case object BONDHOLDERS extends GameOrTicketSearchOption("bondholders"); BONDHOLDERS
