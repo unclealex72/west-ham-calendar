@@ -83,13 +83,12 @@ class SquerylGameDaoTest extends Specification {
       try {
         store(Game(GameKey(Competition.FACP, Location.HOME, "Opponents", 2013)))
         false
-      }
-      catch {
+      } catch {
         case _: SquerylSQLException => true
       }
     }
     "be unique" in {
-      unique must be equalTo(true)
+      unique must be equalTo (true)
     }
   }
 
@@ -100,12 +99,12 @@ class SquerylGameDaoTest extends Specification {
     val persistedGame = findByDatePlayed(September(5, 2013) at (15, 0))
     "should be searchable by date" in {
       persistedGame match {
-        case Some(persistedGame) => persistedGame.dateTimePlayed must be equalTo(Some(September(5, 2013) at (15, 0)))
+        case Some(persistedGame) => persistedGame.dateTimePlayed must be equalTo (Some(September(5, 2013) at (15, 0)))
         case None => persistedGame must not be equalTo(None)
       }
     }
   }
-  
+
   "Looking for all games in a season" should txn {
     val chelsea = "Chelsea" home May(5, 2013)
     val spurs = "Spurs" away January(9, 2013)
@@ -113,10 +112,10 @@ class SquerylGameDaoTest extends Specification {
     val fulham = "Fulham" away April(1, 2012)
     val gamesFor2013 = getAllForSeason(2013)
     "return only games for that season in date played order" in {
-      gamesFor2013 must be equalTo(List(spurs, arsenal, chelsea))
+      gamesFor2013 must be equalTo (List(spurs, arsenal, chelsea))
     }
   }
-  
+
   "Retrieving all known seasons" should txn {
     val chelsea = "Chelsea" home May(5, 2013)
     val reading = "Reading" away September(7, 2011)
@@ -126,21 +125,21 @@ class SquerylGameDaoTest extends Specification {
       seasons must be equalTo (SortedSet(2011, 2013))
     }
   }
-  
+
   "Getting the latest season" should txn {
     val emptyLastSeason = getLatestSeason
     "be None for when there are no games at all" in {
-      emptyLastSeason must be equalTo(None)
+      emptyLastSeason must be equalTo (None)
     }
     val chelsea = "Chelsea" home May(5, 2013)
     val reading = "Reading" away September(7, 2011)
     val everton = "Everton" home March(15, 2011)
     val lastSeason = getLatestSeason
     "be equal to the last season with a game" in {
-      lastSeason must be equalTo(Some(2013))
+      lastSeason must be equalTo (Some(2013))
     }
   }
-  
+
   "Getting all games for a given season and location" should txn {
     val chelsea = "Chelsea" home May(5, 2013)
     val spurs = "Spurs" away January(9, 2013)
@@ -148,7 +147,7 @@ class SquerylGameDaoTest extends Specification {
     val fulham = "Fulham" away April(1, 2012)
     val homeGamesFor2013 = getAllForSeasonAndLocation(2013, Location.HOME)
     "return only games for that season in date played order" in {
-      homeGamesFor2013 must be equalTo(List(arsenal, chelsea))
+      homeGamesFor2013 must be equalTo (List(arsenal, chelsea))
     }
   }
 
@@ -159,7 +158,7 @@ class SquerylGameDaoTest extends Specification {
     val fulham = "Fulham" away April(1, 2012)
     val allGames = getAll
     "return all games in chronological order" in {
-      allGames must be equalTo(List(fulham, spurs, arsenal, chelsea))
+      allGames must be equalTo (List(fulham, spurs, arsenal, chelsea))
     }
   }
 
@@ -168,9 +167,11 @@ class SquerylGameDaoTest extends Specification {
     var day = 1
     var index = 0
     // Generate a game for each possible search option
-    for(location <- List(LocationSearchOption.HOME, LocationSearchOption.AWAY);
-        attended <- List(AttendedSearchOption.ATTENDED, AttendedSearchOption.UNATTENDED);
-        ticket <- GameOrTicketSearchOption.values) {
+    for (
+      location <- List(LocationSearchOption.HOME, LocationSearchOption.AWAY);
+      attended <- List(AttendedSearchOption.ATTENDED, AttendedSearchOption.UNATTENDED);
+      ticket <- GameOrTicketSearchOption.values
+    ) {
       val opponents = String.format("Opponents %02d", new Integer(index))
       val game = location match {
         case LocationSearchOption.HOME => opponents home September(day, 2013)
@@ -187,7 +188,7 @@ class SquerylGameDaoTest extends Specification {
         case GameOrTicketSearchOption.SEASON => game.dateTimeSeasonTicketsAvailable = tickets
         case GameOrTicketSearchOption.ACADEMY => game.dateTimeAcademyMembersAvailable = tickets
         case GameOrTicketSearchOption.GENERAL_SALE => game.dateTimeGeneralSaleAvailable = tickets
-        case GameOrTicketSearchOption.GAME => 
+        case GameOrTicketSearchOption.GAME =>
       }
       allGames += store(game)
       day = day + 1
@@ -199,7 +200,7 @@ class SquerylGameDaoTest extends Specification {
       case LocationSearchOption.AWAY => g.location == Location.AWAY
       case LocationSearchOption.ANY => true
     }
-    
+
     val attendedPredicateFactory = (aso: AttendedSearchOption) => (g: Game) => aso match {
       case AttendedSearchOption.ATTENDED => g.attended == Some(true)
       case AttendedSearchOption.UNATTENDED => g.attended == Some(false)
@@ -214,25 +215,26 @@ class SquerylGameDaoTest extends Specification {
       case GameOrTicketSearchOption.GAME => true
     }
     // Search for each possible option
-    val expectedSearchesByPredicates = 
+    val expectedSearchesByPredicates =
       Map.empty[Tuple3[LocationSearchOption, AttendedSearchOption, GameOrTicketSearchOption], List[Game]]
-    val actualSearchesByPredicates = 
+    val actualSearchesByPredicates =
       Map.empty[Tuple3[LocationSearchOption, AttendedSearchOption, GameOrTicketSearchOption], List[Game]]
     for (lso <- LocationSearchOption.values; aso <- AttendedSearchOption.values; gtso <- GameOrTicketSearchOption.values) {
       val key = (lso, aso, gtso)
       actualSearchesByPredicates += key -> search(aso, lso, gtso)
-      val searchPredicate = (g: Game) => 
+      val searchPredicate = (g: Game) =>
         locationPredicateFactory(lso)(g) && attendedPredicateFactory(aso)(g) && gameOrTicketPredicateFactory(gtso)(g)
       expectedSearchesByPredicates += key -> allGames.filter(searchPredicate).toList
     }
-    expectedSearchesByPredicates.foreach { case(key, expectedSearchResults) =>
-      val size = expectedSearchResults.size
-      s"return ${size} result${if (size == 1) "" else "s"} for search key $key" in {
-        actualSearchesByPredicates.get(key) must be equalTo(Some(expectedSearchResults))
-      }
+    expectedSearchesByPredicates.foreach {
+      case (key, expectedSearchResults) =>
+        val size = expectedSearchResults.size
+        s"return ${size} result${if (size == 1) "" else "s"} for search key $key" in {
+          actualSearchesByPredicates.get(key) must be equalTo (Some(expectedSearchResults))
+        }
     }
   }
-  
+
   /**
    * Wrap tests with database creation and transactions
    */
@@ -247,16 +249,17 @@ class SquerylGameDaoTest extends Specification {
       block
     }
   }
-  
+
   /**
    * A simple implicit class that allows games to be created as "Opponents home date" or "Opponents away date"
    */
   implicit class StringImplicit(opponents: String) {
-    def home(implicit date:Date) = on(Location.HOME)
-    def away(implicit date:Date) = on(Location.AWAY)
+    def home(implicit date: Date) = on(Location.HOME)
+    def away(implicit date: Date) = on(Location.AWAY)
     def on(location: Location)(implicit date: Date): Game = {
-    val game = Game(GameKey(Competition.FACP, location, opponents, date.year))
-    game.dateTimePlayed = Some(date at (15, 0))
-    store(game)
-  }}
+      val game = Game(GameKey(Competition.FACP, location, opponents, date.year))
+      game.dateTimePlayed = Some(date at (15, 0))
+      store(game)
+    }
+  }
 }

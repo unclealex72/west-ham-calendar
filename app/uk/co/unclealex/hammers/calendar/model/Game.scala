@@ -26,7 +26,7 @@ import org.squeryl.KeyedEntity
 import org.squeryl.dsl.CompositeKey4
 import Competition._
 import Location._
-import org.squeryl.annotations.ColumnBase
+import org.squeryl.annotations.Column
 
 /**
  * A persistable unit that represents an advertised West Ham game.
@@ -39,13 +39,11 @@ case class Game(
   /**
    * The game's {@link Competition}.
    */
-  @ColumnBase("competition")
-  val _competition: String,
+  @Column("competition") val _competition: String,
   /**
    * The game's {@link Location}.
    */
-  @ColumnBase("location")
-  val _location: String,
+  @Column("location") val _location: String,
   /**
    * The game's opponents.
    */
@@ -119,14 +117,14 @@ case class Game(
       None, None, None, None, None, None, None, None, None, None, Some(false))
 
   def competition: Competition = _competition
-  
+
   def location: Location = _location
-  
+
   /**
    * Get the unique business key for this game.
    */
   def gameKey: GameKey = GameKey(competition, location, opponents, season)
-  
+
   def gameKeyComposite = CompositeKey4(_competition, _location, opponents, season)
 }
 

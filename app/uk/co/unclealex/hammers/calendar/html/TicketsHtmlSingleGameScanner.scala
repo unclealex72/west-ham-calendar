@@ -219,14 +219,18 @@ class TicketsHtmlSingleGameScanner @Inject() (
        */
       @Override
       override def parseDateTime(dateText: String): Option[DateTime] = {
-        dateService.findPossiblyYearlessDate(
-          dateText,
-          dateTimePlayed.get,
-          true,
-          possiblyYearlessDateFormats: _*) map { dateTime =>
-            // Account for noon being interpreted as midnight
-            if (dateTime.getHourOfDay == 0) dateTime withHourOfDay 12 else dateTime
-          }
+        dateTimePlayed match {
+          case Some(dateTimePlayed) =>
+            dateService.findPossiblyYearlessDate(
+              dateText,
+              dateTimePlayed,
+              true,
+              possiblyYearlessDateFormats: _*) map { dateTime =>
+                // Account for noon being interpreted as midnight
+                if (dateTime.getHourOfDay == 0) dateTime withHourOfDay 12 else dateTime
+              }
+          case None => None
+        }
       }
 
       override def execute(dateTime: DateTime): Option[TicketsUpdateCommand] = {
