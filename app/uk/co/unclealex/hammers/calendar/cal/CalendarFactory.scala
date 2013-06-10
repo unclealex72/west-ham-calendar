@@ -27,6 +27,9 @@ package uk.co.unclealex.hammers.calendar.cal
 import uk.co.unclealex.hammers.calendar.model.Game
 import org.joda.time.DateTime
 import org.joda.time.Duration
+import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
+import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
+import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 
 /**
  * An interface for creating a calendar from a list of games.
@@ -37,13 +40,12 @@ trait CalendarFactory {
 
   /**
    * Create a new calendar.
-   * @param title The name of the calendar.
-   * @param id The unique ID of the calendar.
-   * @param busy True if calendar items should be marked as busy, false otherwise.
-   * @param duration The length of events in the created calendar.
-   * @param dateFactory a function to extract a date from a game. Games that do not have a date will not
-   * be included in the generated calendar.
-   * @param games The games that will appear in the calendar.
+   * @param attendedSearchOption the search option to use for searching whether a game was attended or not.
+   * @param locationSearchOption the search option to use for searching whether a game was at home or not.
+   * @param gameOrTicketSearchOption the search option to use for defining whether to return game or ticket information.
    */
-  def create(title: String, id: String, busy: Boolean, duration: Duration, dateFactory: Game => Option[DateTime], games: Traversable[Game]): Calendar
+  def create(
+    attendedSearchOption: AttendedSearchOption, 
+    locationSearchOption: LocationSearchOption, 
+    gameOrTicketSearchOption: GameOrTicketSearchOption): Calendar
 }

@@ -31,32 +31,76 @@ import org.joda.time.DateTime
 import org.joda.time.Duration
 import scala.collection.SortedSet
 import uk.co.unclealex.hammers.calendar.geo.GeoLocation
+import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
+import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption._
+import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
+import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
+import javax.inject.Inject
+import uk.co.unclealex.hammers.calendar.dao.Transactional
 /**
  * @author alex
  *
  */
-class CalendarFactoryImpl extends CalendarFactory {
+class CalendarFactoryImpl @Inject() (
+  /**
+   * The transactional object to use for data access
+   */
+  tx: Transactional) extends CalendarFactory {
 
   def create(
-    title: String,
-    id: String,
-    busy: Boolean,
-    duration: Duration,
-    dateFactory: Game => Option[DateTime],
-    games: Traversable[Game]): Calendar = {
-    val events = games.foldLeft(SortedSet.empty[Event]){ (events, game) =>
-      convert(dateFactory, busy, duration, game) match {
-        case Some(event) => events + event
-        case None => events
-      }
+    attendedSearchOption: AttendedSearchOption,
+    locationSearchOption: LocationSearchOption,
+    gameOrTicketSearchOption: GameOrTicketSearchOption): Calendar = {
+    val games = tx(_ search (attendedSearchOption, locationSearchOption, gameOrTicketSearchOption))
+    val (dateFactory, duration) = gamePeriodFactory(gameOrTicketSearchOption)
+    val busy = attendedSearchOption match {
+      case AttendedSearchOption.ATTENDED => true
+      case _ => false
     }
-    Calendar(id, title, events)
+    val entries = games map convert(dateFactory, busy, Duration.standardHours(duration)) flatten
+    val title = createTitle(attendedSearchOption, locationSearchOption, gameOrTicketSearchOption)
+    Calendar("whufc" + title.replace(' ', '_'), title, SortedSet.empty[Event] ++ entries)
+  }
+
+  def gamePeriodFactory(gameOrTicketSearchOption: GameOrTicketSearchOption): Pair[Game => Option[DateTime], Int] = {
+    gameOrTicketSearchOption match {
+      case BONDHOLDERS => (g => g.dateTimeBondholdersAvailable, 1)
+      case PRIORITY_POINT => (g => g.dateTimePriorityPointPostAvailable, 1)
+      case SEASON => (g => g.dateTimeSeasonTicketsAvailable, 1)
+      case ACADEMY => (g => g.dateTimeAcademyMembersAvailable, 1)
+      case GENERAL_SALE => (g => g.dateTimeGeneralSaleAvailable, 1)
+      case GAME => (g => g.dateTimePlayed, 2)
+    }
+  }
+
+  def createTitle(attendedSearchOption: AttendedSearchOption,
+    locationSearchOption: LocationSearchOption,
+    gameOrTicketSearchOption: GameOrTicketSearchOption): String = {
+    val titleType = gameOrTicketSearchOption match {
+      case BONDHOLDERS => "Bondholder ticket selling"
+      case PRIORITY_POINT => "Priority point ticket selling"
+      case SEASON => "Season ticket selling"
+      case ACADEMY => "Academy member ticket selling"
+      case GENERAL_SALE => "General sale ticket selling"
+      case GAME => "Game"
+    }
+    val attendedType = attendedSearchOption match {
+      case AttendedSearchOption.ANY => "all"
+      case AttendedSearchOption.ATTENDED => "attended"
+      case AttendedSearchOption.UNATTENDED => "unattended"
+    }
+    val locationType = locationSearchOption match {
+      case LocationSearchOption.ANY => "all"
+      case LocationSearchOption.HOME => "home"
+      case LocationSearchOption.AWAY => "away"
+    }
+    s"$titleType times for ${List("all", attendedType, locationType).distinct.mkString(" ")} games"
   }
 
   /**
    * Convert a game to into an event if the date factory supplies a date.
    */
-  def convert(dateFactory: Game => Option[DateTime], busy: Boolean, duration: Duration, game: Game): Option[Event] = {
+  def convert(dateFactory: Game => Option[DateTime], busy: Boolean, duration: Duration): Game => Option[Event] = { game =>
     dateFactory(game) map { date =>
       new Event(
         id = game.id.toString,

@@ -40,6 +40,8 @@ import uk.co.unclealex.hammers.calendar.update.MainUpdateServiceImpl
 import java.net.URI
 import uk.co.unclealex.hammers.calendar.update.TicketsHtmlGamesScannerFactory
 import uk.co.unclealex.hammers.calendar.update.TicketsHtmlGamesScannerFactoryImpl
+import uk.co.unclealex.hammers.calendar.cal.CalendarFactory
+import uk.co.unclealex.hammers.calendar.cal.CalendarFactoryImpl
 
 /**
  * @author alex
@@ -55,10 +57,10 @@ class CalendarModule extends ScalaModule {
   override def configure {
     // Persistence
     bind[Transactional].toInstance(SquerylGameDao)
-    
+
     // Dates
     bind[DateService].to[DateServiceImpl]
-    
+
     // Game harvesting and update services
     bind[TicketsHtmlGamesScannerFactory].to[TicketsHtmlGamesScannerFactoryImpl]
     bind[HtmlGamesScanner].to[SeasonHtmlGamesScanner]
@@ -66,5 +68,8 @@ class CalendarModule extends ScalaModule {
     bind[HtmlPageLoader].to[HtmlPageLoaderImpl]
     bind[MainPageService].toProvider[MainPageServiceProvider]
     bind[MainUpdateService].to[MainUpdateServiceImpl]
+
+    // Calendars
+    bind[CalendarFactory].to[CalendarFactoryImpl]
   }
 }
