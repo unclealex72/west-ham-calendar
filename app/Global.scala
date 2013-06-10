@@ -38,6 +38,7 @@ import play.api.GlobalSettings
 import play.api.db.DB
 import uk.co.unclealex.hammers.calendar.schedule.UpdateJob
 import com.typesafe.scalalogging.slf4j.Logging
+import uk.co.unclealex.hammers.calendar.dao.SquerylGameDao
 
 /**
  * The Play Framework global entry point.

@@ -55,27 +55,27 @@ case class Game(
   /**
    * The {@link DateTime} the game was played.
    */
-  var dateTimePlayed: Option[DateTime],
+  var at: Option[DateTime],
   /**
    * The {@link DateTime} that Bondholder tickets went on sale.
    */
-  var dateTimeBondholdersAvailable: Option[DateTime],
+  @Column("bondholders") var bondholdersAvailable: Option[DateTime],
   /**
    * The {@link DateTime} that priority point tickets went on sale.
    */
-  var dateTimePriorityPointPostAvailable: Option[DateTime],
+  @Column("prioritypoint") var priorityPointAvailable: Option[DateTime],
   /**
    * The {@link DateTime} that season ticker holder tickets went on sale.
    */
-  var dateTimeSeasonTicketsAvailable: Option[DateTime],
+  @Column("seasontickets") var seasonTicketsAvailable: Option[DateTime],
   /**
    * The {@link DateTime} that Academy members' tickets went on sale.
    */
-  var dateTimeAcademyMembersAvailable: Option[DateTime],
+  @Column("academymembers") var academyMembersAvailable: Option[DateTime],
   /**
    * The {@link DateTime} that tickets went on general sale.
    */
-  var dateTimeGeneralSaleAvailable: Option[DateTime],
+  @Column("generalsale") var generalSaleAvailable: Option[DateTime],
   /**
    * The game's result.
    */
@@ -87,11 +87,11 @@ case class Game(
   /**
    * The game's match report.
    */
-  var matchReport: Option[String],
+  @Column("report") var matchReport: Option[String],
   /**
    * The TV channel that showed the match.
    */
-  var televisionChannel: Option[String],
+  @Column("tvchannel") var televisionChannel: Option[String],
 
   /**
    * True if the game has been marked as attended, false otherwise.

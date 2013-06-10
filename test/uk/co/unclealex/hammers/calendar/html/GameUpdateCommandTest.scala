@@ -50,7 +50,7 @@ class GameUpdateCommandTest extends Specification {
   val DEFAULT_SEASON = 2012
   val DEFAULT_DATE_PLAYED = September(5, 1972)
   val DEFAULT_BONDHOLDERS_AVAILABLE = September(5, 1973)
-  val DEFAULT_PRIORITY_POINT_POST_AVAILABLE = September(5, 1974)
+  val DEFAULT_PRIORITY_POINT_AVAILABLE = September(5, 1974)
   val DEFAULT_SEASON_TICKETS_AVAILABLE = September(5, 1975)
   val DEFAULT_ACADEMY_TICKETS_AVAILABLE = September(5, 1976)
   val DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE = September(5, 1977)
@@ -66,7 +66,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the date played" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (datePlayed: DateTime) => DatePlayedUpdateCommand(gameLocator, datePlayed),
-      game => game.dateTimePlayed,
+      game => game.at,
       DEFAULT_DATE_PLAYED,
       DEFAULT_DATE_PLAYED plusHours 1)
   }
@@ -114,7 +114,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the bond holder ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: DateTime) => BondHolderTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.dateTimeBondholdersAvailable,
+      game => game.bondholdersAvailable,
       DEFAULT_BONDHOLDERS_AVAILABLE,
       DEFAULT_BONDHOLDERS_AVAILABLE plusDays 1)
   }
@@ -122,15 +122,15 @@ class GameUpdateCommandTest extends Specification {
   "Updating the priority point ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: DateTime) => PriorityPointTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.dateTimePriorityPointPostAvailable,
-      DEFAULT_PRIORITY_POINT_POST_AVAILABLE,
-      DEFAULT_PRIORITY_POINT_POST_AVAILABLE plusDays 1)
+      game => game.priorityPointAvailable,
+      DEFAULT_PRIORITY_POINT_AVAILABLE,
+      DEFAULT_PRIORITY_POINT_AVAILABLE plusDays 1)
   }
 
   "Updating the season ticket holders' ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: DateTime) => SeasonTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.dateTimeSeasonTicketsAvailable,
+      game => game.seasonTicketsAvailable,
       DEFAULT_SEASON_TICKETS_AVAILABLE,
       DEFAULT_SEASON_TICKETS_AVAILABLE plusDays 1)
   }
@@ -138,7 +138,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the academy members' ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: DateTime) => AcademyTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.dateTimeAcademyMembersAvailable,
+      game => game.academyMembersAvailable,
       DEFAULT_ACADEMY_TICKETS_AVAILABLE,
       DEFAULT_ACADEMY_TICKETS_AVAILABLE plusDays 1)
   }
@@ -146,7 +146,7 @@ class GameUpdateCommandTest extends Specification {
   "Updating the general ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: DateTime) => GeneralSaleTicketsUpdateCommand(gameLocator, saleDate),
-      game => game.dateTimeGeneralSaleAvailable,
+      game => game.generalSaleAvailable,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE plusDays 1)
   }
@@ -198,7 +198,7 @@ class GameUpdateCommandTest extends Specification {
       DEFAULT_SEASON,
       Some(DEFAULT_DATE_PLAYED),
       Some(DEFAULT_BONDHOLDERS_AVAILABLE),
-      Some(DEFAULT_PRIORITY_POINT_POST_AVAILABLE),
+      Some(DEFAULT_PRIORITY_POINT_AVAILABLE),
       Some(DEFAULT_SEASON_TICKETS_AVAILABLE),
       Some(DEFAULT_ACADEMY_TICKETS_AVAILABLE),
       Some(DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE),

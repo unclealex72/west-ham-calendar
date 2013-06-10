@@ -62,9 +62,9 @@ object SquerylGameDao extends Schema with GameDao with Transactional {
 
   def findById(id: Long): Option[Game] = games.lookup(id)
 
-  def findByDatePlayed(datePlayed: DateTime): Option[Game] = games.where(g => g.dateTimePlayed === Some(datePlayed))
+  def findByDatePlayed(datePlayed: DateTime): Option[Game] = games.where(g => g.at === Some(datePlayed))
 
-  def getAllForSeason(season: Int): List[Game] = from(games)(g => where(g.season === season) select (g) orderBy (g.dateTimePlayed))
+  def getAllForSeason(season: Int): List[Game] = from(games)(g => where(g.season === season) select (g) orderBy (g.at))
 
   def getAllSeasons: SortedSet[Int] = from(games)(g => select(g.season)).distinct
 
@@ -74,9 +74,9 @@ object SquerylGameDao extends Schema with GameDao with Transactional {
   def getLatestSeason: Option[Int] = from(games)(g => compute(max(g.season)))
 
   def getAllForSeasonAndLocation(season: Int, location: Location): List[Game] =
-    from(games)(g => where(g.season === season and g._location === location.persistableToken) select (g) orderBy (g.dateTimePlayed))
+    from(games)(g => where(g.season === season and g._location === location.persistableToken) select (g) orderBy (g.at))
 
-  def getAll: List[Game] = from(games)(g => select(g) orderBy (g.dateTimePlayed))
+  def getAll: List[Game] = from(games)(g => select(g) orderBy (g.at))
 
   def searchPredicate(searchOption: SearchOption): Option[Game => LogicalBoolean] = {
     searchOption match {
@@ -87,11 +87,11 @@ object SquerylGameDao extends Schema with GameDao with Transactional {
       case LocationSearchOption.HOME => Some(g => g._location === Location.HOME.persistableToken)
       case LocationSearchOption.AWAY => Some(g => g._location === Location.AWAY.persistableToken)
       case GameOrTicketSearchOption.GAME => None
-      case GameOrTicketSearchOption.BONDHOLDERS => Some(g => g.dateTimeBondholdersAvailable isNotNull)
-      case GameOrTicketSearchOption.PRIORITY_POINT => Some(g => g.dateTimePriorityPointPostAvailable isNotNull)
-      case GameOrTicketSearchOption.SEASON => Some(g => g.dateTimeSeasonTicketsAvailable isNotNull)
-      case GameOrTicketSearchOption.ACADEMY => Some(g => g.dateTimeAcademyMembersAvailable isNotNull)
-      case GameOrTicketSearchOption.GENERAL_SALE => Some(g => g.dateTimeGeneralSaleAvailable isNotNull)
+      case GameOrTicketSearchOption.BONDHOLDERS => Some(g => g.bondholdersAvailable isNotNull)
+      case GameOrTicketSearchOption.PRIORITY_POINT => Some(g => g.priorityPointAvailable isNotNull)
+      case GameOrTicketSearchOption.SEASON => Some(g => g.seasonTicketsAvailable isNotNull)
+      case GameOrTicketSearchOption.ACADEMY => Some(g => g.academyMembersAvailable isNotNull)
+      case GameOrTicketSearchOption.GENERAL_SALE => Some(g => g.generalSaleAvailable isNotNull)
     }
   }
 
@@ -104,7 +104,7 @@ object SquerylGameDao extends Schema with GameDao with Transactional {
       getAll
     } else {
       val predicate = (g: Game) => predicates.map(p => p(g)).reduce((p1, p2) => p1 and p2)
-      from(games)(g => where(predicate(g)) select (g) orderBy (g.dateTimePlayed))
+      from(games)(g => where(predicate(g)) select (g) orderBy (g.at))
     }
   }
 }

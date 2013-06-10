@@ -47,12 +47,12 @@ class CalendarFactoryImplTest extends Specification with MockFactory {
 
   "Generating a calendar" should {
     val game = Game(GameKey(Competition.FACP, Location.HOME, "Them", 2013))
-    game.dateTimeBondholdersAvailable = Some(August(1, 2013) at (9, 0))
-    game.dateTimePriorityPointPostAvailable = Some(August(2, 2013) at (9, 0))
-    game.dateTimeSeasonTicketsAvailable = Some(August(3, 2013) at (9, 0))
-    game.dateTimeAcademyMembersAvailable = Some(August(4, 2013) at (9, 0))
-    game.dateTimeGeneralSaleAvailable = Some(August(5, 2013) at (9, 0))
-    game.dateTimePlayed = Some(September(5, 2013) at (15, 0))
+    game.bondholdersAvailable = Some(August(1, 2013) at (9, 0))
+    game.priorityPointAvailable = Some(August(2, 2013) at (9, 0))
+    game.seasonTicketsAvailable = Some(August(3, 2013) at (9, 0))
+    game.academyMembersAvailable = Some(August(4, 2013) at (9, 0))
+    game.generalSaleAvailable = Some(August(5, 2013) at (9, 0))
+    game.at = Some(September(5, 2013) at (15, 0))
     game.attendence = Some(100)
     game.matchReport = Some("report")
     game.result = Some("4-0")

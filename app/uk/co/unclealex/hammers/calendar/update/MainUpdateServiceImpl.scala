@@ -121,7 +121,7 @@ class MainUpdateServiceImpl @Inject() (
     def gameFinder: Game => Boolean = { (game: Game) =>
       gameLocator match {
         case GameKeyLocator(gameKey) => game.gameKey == gameKey
-        case DatePlayedLocator(datePlayed) => Some(datePlayed) == game.dateTimePlayed
+        case DatePlayedLocator(datePlayed) => Some(datePlayed) == game.at
       }
     }
     allGames find gameFinder
@@ -164,11 +164,11 @@ class MainUpdateServiceImpl @Inject() (
   def attendOrUnattendGame(gameId: Long, attend: Boolean) =
     attendOrUnattendGames(_ findById gameId, attend)
 
-  def attendAllHomeGamesForSeason(season: Int) = attendOrUnattendGames(_ getAllForSeasonAndLocation(season, HOME), true)
+  def attendAllHomeGamesForSeason(season: Int) = attendOrUnattendGames(_ getAllForSeasonAndLocation (season, HOME), true)
 
   def attendOrUnattendGames(gamesFactory: GameDao => Traversable[Game], attend: Boolean): Unit = {
     tx { gameDao =>
-      gamesFactory(gameDao) foreach { game => 
+      gamesFactory(gameDao) foreach { game =>
         game.attended = Some(attend)
         gameDao store game
       }

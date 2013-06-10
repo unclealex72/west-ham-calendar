@@ -64,12 +64,12 @@ class CalendarFactoryImpl @Inject() (
 
   def gamePeriodFactory(gameOrTicketSearchOption: GameOrTicketSearchOption): Pair[Game => Option[DateTime], Int] = {
     gameOrTicketSearchOption match {
-      case BONDHOLDERS => (g => g.dateTimeBondholdersAvailable, 1)
-      case PRIORITY_POINT => (g => g.dateTimePriorityPointPostAvailable, 1)
-      case SEASON => (g => g.dateTimeSeasonTicketsAvailable, 1)
-      case ACADEMY => (g => g.dateTimeAcademyMembersAvailable, 1)
-      case GENERAL_SALE => (g => g.dateTimeGeneralSaleAvailable, 1)
-      case GAME => (g => g.dateTimePlayed, 2)
+      case BONDHOLDERS => (g => g.bondholdersAvailable, 1)
+      case PRIORITY_POINT => (g => g.priorityPointAvailable, 1)
+      case SEASON => (g => g.seasonTicketsAvailable, 1)
+      case ACADEMY => (g => g.academyMembersAvailable, 1)
+      case GENERAL_SALE => (g => g.generalSaleAvailable, 1)
+      case GAME => (g => g.at, 2)
     }
   }
 

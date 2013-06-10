@@ -94,12 +94,12 @@ class SquerylGameDaoTest extends Specification {
 
   "Games with dates" should txn {
     val game = Game(GameKey(Competition.FACP, Location.HOME, "Opponents", 2013))
-    game.dateTimePlayed = Some(September(5, 2013) at (15, 0))
+    game.at = Some(September(5, 2013) at (15, 0))
     store(game)
     val persistedGame = findByDatePlayed(September(5, 2013) at (15, 0))
     "should be searchable by date" in {
       persistedGame match {
-        case Some(persistedGame) => persistedGame.dateTimePlayed must be equalTo (Some(September(5, 2013) at (15, 0)))
+        case Some(persistedGame) => persistedGame.at must be equalTo (Some(September(5, 2013) at (15, 0)))
         case None => persistedGame must not be equalTo(None)
       }
     }
@@ -183,11 +183,11 @@ class SquerylGameDaoTest extends Specification {
       }
       val tickets: Option[DateTime] = Some(August(day, 2013) at (9, 0))
       ticket match {
-        case GameOrTicketSearchOption.BONDHOLDERS => game.dateTimeBondholdersAvailable = tickets
-        case GameOrTicketSearchOption.PRIORITY_POINT => game.dateTimePriorityPointPostAvailable = tickets
-        case GameOrTicketSearchOption.SEASON => game.dateTimeSeasonTicketsAvailable = tickets
-        case GameOrTicketSearchOption.ACADEMY => game.dateTimeAcademyMembersAvailable = tickets
-        case GameOrTicketSearchOption.GENERAL_SALE => game.dateTimeGeneralSaleAvailable = tickets
+        case GameOrTicketSearchOption.BONDHOLDERS => game.bondholdersAvailable = tickets
+        case GameOrTicketSearchOption.PRIORITY_POINT => game.priorityPointAvailable = tickets
+        case GameOrTicketSearchOption.SEASON => game.seasonTicketsAvailable = tickets
+        case GameOrTicketSearchOption.ACADEMY => game.academyMembersAvailable = tickets
+        case GameOrTicketSearchOption.GENERAL_SALE => game.generalSaleAvailable = tickets
         case GameOrTicketSearchOption.GAME =>
       }
       allGames += store(game)
@@ -207,11 +207,11 @@ class SquerylGameDaoTest extends Specification {
       case AttendedSearchOption.ANY => true
     }
     val gameOrTicketPredicateFactory = (gtso: GameOrTicketSearchOption) => (g: Game) => gtso match {
-      case GameOrTicketSearchOption.BONDHOLDERS => g.dateTimeBondholdersAvailable.isDefined
-      case GameOrTicketSearchOption.PRIORITY_POINT => g.dateTimePriorityPointPostAvailable.isDefined
-      case GameOrTicketSearchOption.SEASON => g.dateTimeSeasonTicketsAvailable.isDefined
-      case GameOrTicketSearchOption.ACADEMY => g.dateTimeAcademyMembersAvailable.isDefined
-      case GameOrTicketSearchOption.GENERAL_SALE => g.dateTimeGeneralSaleAvailable.isDefined
+      case GameOrTicketSearchOption.BONDHOLDERS => g.bondholdersAvailable.isDefined
+      case GameOrTicketSearchOption.PRIORITY_POINT => g.priorityPointAvailable.isDefined
+      case GameOrTicketSearchOption.SEASON => g.seasonTicketsAvailable.isDefined
+      case GameOrTicketSearchOption.ACADEMY => g.academyMembersAvailable.isDefined
+      case GameOrTicketSearchOption.GENERAL_SALE => g.generalSaleAvailable.isDefined
       case GameOrTicketSearchOption.GAME => true
     }
     // Search for each possible option
@@ -258,7 +258,7 @@ class SquerylGameDaoTest extends Specification {
     def away(implicit date: Date) = on(Location.AWAY)
     def on(location: Location)(implicit date: Date): Game = {
       val game = Game(GameKey(Competition.FACP, location, opponents, date.year))
-      game.dateTimePlayed = Some(date at (15, 0))
+      game.at = Some(date at (15, 0))
       store(game)
     }
   }
