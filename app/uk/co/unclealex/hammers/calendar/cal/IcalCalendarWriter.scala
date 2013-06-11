@@ -25,7 +25,6 @@
 package uk.co.unclealex.hammers.calendar.cal
 
 import java.io.Writer
-
 import scala.math.BigDecimal._
 import org.joda.time.{ DateTime => JodaDateTime }
 import uk.co.unclealex.hammers.calendar.model.Location._
@@ -64,6 +63,7 @@ import net.fortuna.ical4j.model.property.Sequence
 import net.fortuna.ical4j.model.property.Status
 import net.fortuna.ical4j.model.property.Method
 import net.fortuna.ical4j.model.property.XProperty
+import net.fortuna.ical4j.model.PropertyList
 
 /*
  * A calendar writer that creates iCal calendars that are compatible with at least Google and Mozilla Thunderbird
@@ -103,7 +103,7 @@ class IcalCalendarWriter @Inject() (
   def toVEvent(event: Event): VEvent = {
     val properties: Seq[Event => Traversable[Property]] =
       Seq(DTSTART, DTEND, DTSTAMP, UID, CREATED, DESCRIPTION, LAST_MODIFIED, LOCATION, SEQUENCE, STATUS, SUMMARY, GEO, ATTACH, TRANSP)
-    fluent(new VEvent)(ve => properties.foreach(f => f(event).foreach(ve.getProperties.add)))
+    fluent(new VEvent(new PropertyList))(ve => properties.foreach(f => f(event).foreach(ve.getProperties.add)))
   }
 
   /**
@@ -119,7 +119,7 @@ class IcalCalendarWriter @Inject() (
   /**
    * Create a DTSAMP property
    */
-  def DTSTAMP: Event => Property = event => new DtStamp
+  def DTSTAMP: Event => Property = event => new DtStamp(nowService.now)
 
   /**
    * Create a UID property

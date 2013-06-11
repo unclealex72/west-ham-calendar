@@ -38,6 +38,7 @@ import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
 import javax.inject.Inject
 import uk.co.unclealex.hammers.calendar.dao.Transactional
 /**
+ * The default implementation of the Calendar factory.
  * @author alex
  *
  */
