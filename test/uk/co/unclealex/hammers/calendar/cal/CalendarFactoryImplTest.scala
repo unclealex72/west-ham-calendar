@@ -21,23 +21,25 @@
  */
 package uk.co.unclealex.hammers.calendar.cal
 
-import org.specs2.mutable.Specification
-import org.scalamock.specs2.MockFactory
-import uk.co.unclealex.hammers.calendar.search.{ GameOrTicketSearchOption => G }
-import uk.co.unclealex.hammers.calendar.search.{ AttendedSearchOption => A }
-import uk.co.unclealex.hammers.calendar.search.{ LocationSearchOption => L }
-import uk.co.unclealex.hammers.calendar.September
-import uk.co.unclealex.hammers.calendar.Instant
 import org.joda.time.DateTime
 import org.joda.time.Duration
-import uk.co.unclealex.hammers.calendar.model.Game
-import uk.co.unclealex.hammers.calendar.model.Competition
-import uk.co.unclealex.hammers.calendar.model.GameKey
-import uk.co.unclealex.hammers.calendar.model.Location
+import org.scalamock.specs2.MockFactory
+import org.specs2.mutable.Specification
+
 import uk.co.unclealex.hammers.calendar.August
-import uk.co.unclealex.hammers.calendar.geo.GeoLocation
+import uk.co.unclealex.hammers.calendar.Instant
+import uk.co.unclealex.hammers.calendar.July
+import uk.co.unclealex.hammers.calendar.September
 import uk.co.unclealex.hammers.calendar.dao.GameDao
 import uk.co.unclealex.hammers.calendar.dao.Transactional
+import uk.co.unclealex.hammers.calendar.geo.GeoLocation
+import uk.co.unclealex.hammers.calendar.model.Competition
+import uk.co.unclealex.hammers.calendar.model.Game
+import uk.co.unclealex.hammers.calendar.model.GameKey
+import uk.co.unclealex.hammers.calendar.model.Location
+import uk.co.unclealex.hammers.calendar.search.{ AttendedSearchOption => A }
+import uk.co.unclealex.hammers.calendar.search.{ GameOrTicketSearchOption => G }
+import uk.co.unclealex.hammers.calendar.search.{ LocationSearchOption => L }
 
 /**
  * @author alex
@@ -45,6 +47,26 @@ import uk.co.unclealex.hammers.calendar.dao.Transactional
  */
 class CalendarFactoryImplTest extends Specification with MockFactory {
 
+  "The busy mask" should {
+    val variations = List(
+      (None, A.ATTENDED, true),
+      (None, A.UNATTENDED, false),
+      (None, A.ANY, false),
+      (Some(true), A.ATTENDED, true),
+      (Some(true), A.UNATTENDED, true),
+      (Some(true), A.ANY, true),
+      (Some(false), A.ATTENDED, false),
+      (Some(false), A.UNATTENDED, false),
+      (Some(false), A.ANY, false))
+    variations foreach {
+      case (busyMask, attendedSearchOption, expectedResult) =>
+        s"make calendars with ${attendedSearchOption} ${if (expectedResult) "" else "not "}busy when set to ${busyMask}" in {
+          val calendarFactory = new CalendarFactoryImpl(mock[Transactional])
+          val actualResult = calendarFactory.busy(busyMask, attendedSearchOption)
+          actualResult must be equalTo (expectedResult)
+        }
+    }
+  }
   "Generating a calendar" should {
     val game = Game(GameKey(Competition.FACP, Location.HOME, "Them", 2013))
     game.bondholdersAvailable = Some(August(1, 2013) at (9, 0))
@@ -57,6 +79,8 @@ class CalendarFactoryImplTest extends Specification with MockFactory {
     game.matchReport = Some("report")
     game.result = Some("4-0")
     game.televisionChannel = Some("TV")
+    game.dateCreated = July(1, 2013) at (5, 0)
+    game.lastUpdated = July(7, 2013) at (9, 0)
     val expectations = for (a <- A.values; l <- L.values; g <- G.values) yield {
       val expectedGameTypeDescriptor = (a, l) match {
         case (A.ATTENDED, L.HOME) => "all attended home"
@@ -91,7 +115,9 @@ class CalendarFactoryImplTest extends Specification with MockFactory {
         attendence = Some(100),
         matchReport = Some("report"),
         televisionChannel = Some("TV"),
-        busy = busy)
+        busy = busy,
+        dateCreated = July(1, 2013) at (5, 0),
+        lastUpdated = July(7, 2013) at (9, 0))
       (a, l, g, expectedTitle, expectedEvent)
     }
     expectations foreach {
@@ -102,7 +128,7 @@ class CalendarFactoryImplTest extends Specification with MockFactory {
             def tx[E](block: GameDao => E) = block(gameDao)
           }
           (gameDao.search _) expects (a, l, g) returning (List(game))
-          val actualCalendar = new CalendarFactoryImpl(tx).create(a, l, g)
+          val actualCalendar = new CalendarFactoryImpl(tx).create(None, a, l, g)
           actualCalendar.title must be equalTo (expectedTitle)
           actualCalendar.events must have size (1)
           actualCalendar.events foreach (_ must be equalTo (expectedEvent))

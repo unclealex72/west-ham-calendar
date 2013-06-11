@@ -39,28 +39,32 @@ class Calendar @Inject() (calendarFactory: CalendarFactory, calendarWriter: Cale
 
   def searchSecure(attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     calendar(
+      None,
       AttendedSearchOption(attendedSearchOption),
       LocationSearchOption(locationSearchOption),
       GameOrTicketSearchOption(gameOrTicketSearchOption))
 
-  def search(locationSearchOption: String, gameOrTicketSearchOption: String) =
+  def search(mask: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     calendar(
+      Some("busy" == mask),
       Some(AttendedSearchOption.ANY),
       LocationSearchOption(locationSearchOption),
       GameOrTicketSearchOption(gameOrTicketSearchOption))
 
   def calendar(
+    busyMask: Option[Boolean],
     a: Option[AttendedSearchOption],
     l: Option[LocationSearchOption],
     g: Option[GameOrTicketSearchOption]) = Action {
-    if (a.isEmpty || l.isEmpty || g.isEmpty) {
-      NotFound
-    } else {
-      val calendar = calendarFactory.create(a.get, l.get, g.get)
-      val buffer = new StringWriter
-      calendarWriter.write(calendar, buffer)
-      val output = buffer.toString
-      Ok(output).as("text/calendar")
+    (a, l, g) match {
+      case (Some(a), Some(l), Some(g)) => {
+        val calendar = calendarFactory.create(busyMask, a, l, g)
+        val buffer = new StringWriter
+        calendarWriter.write(calendar, buffer)
+        val output = buffer.toString
+        Ok(output).as(calendarWriter.mimeType)
+      }
+      case _ => NotFound
     }
   }
 }

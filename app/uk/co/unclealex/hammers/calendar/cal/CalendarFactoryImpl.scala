@@ -48,18 +48,22 @@ class CalendarFactoryImpl @Inject() (
   tx: Transactional) extends CalendarFactory {
 
   def create(
+    busyMask: Option[Boolean],
     attendedSearchOption: AttendedSearchOption,
     locationSearchOption: LocationSearchOption,
     gameOrTicketSearchOption: GameOrTicketSearchOption): Calendar = {
     val games = tx(_ search (attendedSearchOption, locationSearchOption, gameOrTicketSearchOption))
     val (dateFactory, duration) = gamePeriodFactory(gameOrTicketSearchOption)
-    val busy = attendedSearchOption match {
-      case AttendedSearchOption.ATTENDED => true
-      case _ => false
-    }
-    val entries = games map convert(dateFactory, busy, Duration.standardHours(duration)) flatten
+    val entries = games map convert(dateFactory, busy(busyMask, attendedSearchOption), Duration.standardHours(duration)) flatten
     val title = createTitle(attendedSearchOption, locationSearchOption, gameOrTicketSearchOption)
     Calendar("whufc" + title.replace(' ', '_'), title, SortedSet.empty[Event] ++ entries)
+  }
+
+  /**
+   * Determine whether a calendar should be busy or not.
+   */
+  def busy(busyMask: Option[Boolean], attendedSearchOption: AttendedSearchOption): Boolean = {
+    busyMask getOrElse (attendedSearchOption == AttendedSearchOption.ATTENDED)
   }
 
   def gamePeriodFactory(gameOrTicketSearchOption: GameOrTicketSearchOption): Pair[Game => Option[DateTime], Int] = {
@@ -114,7 +118,9 @@ class CalendarFactoryImpl @Inject() (
         attendence = game.attendence,
         matchReport = game.matchReport,
         televisionChannel = game.televisionChannel,
-        busy = busy)
+        busy = busy,
+        dateCreated = game.dateCreated,
+        lastUpdated = game.lastUpdated)
     }
   }
 }

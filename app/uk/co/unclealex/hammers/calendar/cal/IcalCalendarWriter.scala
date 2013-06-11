@@ -25,6 +25,7 @@
 package uk.co.unclealex.hammers.calendar.cal
 
 import java.io.Writer
+
 import scala.math.BigDecimal._
 import org.joda.time.{ DateTime => JodaDateTime }
 import uk.co.unclealex.hammers.calendar.model.Location._
@@ -51,44 +52,129 @@ import net.fortuna.ical4j.model.property.Uid
 import net.fortuna.ical4j.model.property.Location
 import net.fortuna.ical4j.model.property.BusyType._
 import net.fortuna.ical4j.model.property.Transp._
+import net.fortuna.ical4j.model.property.Status._
 import net.fortuna.ical4j.model.property.Geo
 import net.fortuna.ical4j.model.property.Attach
-/**
+import net.fortuna.ical4j.model.property.DtStamp
+import javax.inject.Inject
+import uk.co.unclealex.hammers.calendar.dates.NowService
+import net.fortuna.ical4j.model.property.Created
+import net.fortuna.ical4j.model.property.LastModified
+import net.fortuna.ical4j.model.property.Sequence
+import net.fortuna.ical4j.model.property.Status
+import net.fortuna.ical4j.model.property.Method
+import net.fortuna.ical4j.model.property.XProperty
+
+/*
+ * A calendar writer that creates iCal calendars that are compatible with at least Google and Mozilla Thunderbird
  * @author alex
  *
  */
-class IcalCalendarWriter extends CalendarWriter {
+class IcalCalendarWriter @Inject() (
+  /**
+   * The service used to get the curent time for DTSTAMP properties.
+   */
+  nowService: NowService) extends CalendarWriter {
 
-  val outputter = new CalendarOutputter(true)
+  /**
+   * The calendar outputter that acutally outputs the calendar.
+   */
+  val outputter = new CalendarOutputter(false)
 
-  val timezone: TimeZone =
-    TimeZoneRegistryFactory.getInstance.createRegistry().getTimeZone("Europe/London")
+  def mimeType = "text/calendar"
 
   def write(calendar: Calendar, writer: Writer): Unit = {
     val ical = new ICalendar
     List(
       new ProdId("-//unclealex.co.uk//West Ham Calendar 6.0//EN"),
       Version.VERSION_2_0,
+      Method.PUBLISH,
+      new XProperty("X-WR-CALNAME", calendar.title),
+      new XProperty("X-WR-CALDESC", calendar.title),
+      new XProperty("X-WR-TIMEZONE", "Europe/London"),
       CalScale.GREGORIAN) foreach (ical.getProperties().add)
     calendar.events map (toVEvent) foreach (ical.getComponents().add)
     outputter output (ical, writer)
   }
 
+  /**
+   * Output a single event.
+   */
   def toVEvent(event: Event): VEvent = {
     val properties: Seq[Event => Traversable[Property]] =
-      Seq(asStart, asEnd, asSummary, /*asDescription, */ asTimezone, /*asLocation, asAttachments, asBusy,*/ asUid)
+      Seq(DTSTART, DTEND, DTSTAMP, UID, CREATED, DESCRIPTION, LAST_MODIFIED, LOCATION, SEQUENCE, STATUS, SUMMARY, GEO, ATTACH, TRANSP)
     fluent(new VEvent)(ve => properties.foreach(f => f(event).foreach(ve.getProperties.add)))
   }
 
-  def asStart: Event => Property = event => new DtStart(event.dateTime)
-  def asEnd: Event => Property = event => new DtEnd(event.dateTime.plus(event.duration))
-  def asUid: Event => Property = event => new Uid(event.id)
-  def asLocation: Event => Option[Property] = event => event.geoLocation map { gl => new Location(gl.name) }
-  def asGeoLocation: Event => Option[Property] = event => event.geoLocation map { gl => new Geo(gl.latitude, gl.longitude) }
-  def asBusy: Event => Property = event => if (event.busy) OPAQUE else TRANSPARENT
-  def asAttachments: Event => Seq[Property] =
-    event => Seq(event.geoLocation map (_.url), event.matchReport).flatten.map(url => new Attach(new URI(url)))
-  def asSummary: Event => Property = { event =>
+  /**
+   * Create a DTSTART property
+   */
+  def DTSTART: Event => Property = event => new DtStart(event.dateTime)
+
+  /**
+   * Create a DTEND property
+   */
+  def DTEND: Event => Property = event => new DtEnd(event.dateTime.plus(event.duration))
+
+  /**
+   * Create a DTSAMP property
+   */
+  def DTSTAMP: Event => Property = event => new DtStamp
+
+  /**
+   * Create a UID property
+   */
+  def UID: Event => Property = event => new Uid(s"${event.id}@calendar.unclealex.co.uk")
+
+  /**
+   * Create a CREATED property
+   */
+  def CREATED: Event => Property = event => new Created(event.dateCreated)
+
+  /**
+   * Create a DESCRIPTION property
+   */
+  def DESCRIPTION: Event => Option[Property] = { event =>
+    val descriptionLine: Pair[String, Option[Any]] => Option[String] = { parts =>
+      parts._2 map (value => s"${parts._1}: $value")
+    }
+    val descriptions = Seq(
+      "Result" -> event.result,
+      "Attendence" -> event.attendence,
+      "Match Report" -> event.matchReport) map descriptionLine
+    if (descriptions isEmpty) None else Some(new Description(descriptions.flatten mkString "\n"))
+  }
+
+  /**
+   * Create a LAST-MODIFIED property
+   */
+  def LAST_MODIFIED: Event => Property = event => new LastModified(event.lastUpdated)
+
+  /**
+   * Create a LOCATION property
+   */
+  def LOCATION: Event => Option[Property] = event =>
+    event.geoLocation map { gl => new Location(s"${gl.name} near ${gl.latitude}, ${gl.longitude}") }
+
+  /**
+   * Create a SEQUENCE property
+   */
+  def SEQUENCE: Event => Property = _ => new Sequence(0)
+
+  /**
+   * Create a STATUS property
+   */
+  def STATUS: Event => Property = _ => VEVENT_CONFIRMED
+
+  /**
+   * Create a TRANSP property
+   */
+  def TRANSP: Event => Property = event => if (event.busy) OPAQUE else TRANSPARENT
+
+  /**
+   * Create a SUMMARY property
+   */
+  def SUMMARY: Event => Property = { event =>
     val swapOnAway: Pair[String, String] => Pair[String, String] = { p =>
       event.location match {
         case HOME => p
@@ -99,32 +185,46 @@ class IcalCalendarWriter extends CalendarWriter {
     new Summary(s"${teams._1} vs ${teams._2} (${event.competition.name})")
   }
 
-  def asTimezone: Event => Property = _ => timezone.getTimeZoneId
-  def asDescription: Event => Option[Property] = { event =>
-    val descriptionLine: Pair[String, Option[Any]] => Option[String] = { parts =>
-      parts._2 map (value => s"${parts._1}: $value")
-    }
-    val descriptions = Seq(
-      "Result" -> event.result,
-      "Attendence" -> event.attendence,
-      "Match Report" -> event.matchReport,
-      "Location" -> event.geoLocation.map(gl => s"${gl.name}")) map descriptionLine
-    if (descriptions isEmpty) None else Some(new Description(descriptions.flatten mkString "\n"))
-  }
+  /**
+   * Create a GEO property
+   */
+  def GEO: Event => Option[Property] = event => event.geoLocation map { gl => new Geo(gl.latitude, gl.longitude) }
 
-  implicit def ical(dateTime: JodaDateTime): IDateTime = {
-    fluent(new IDateTime(dateTime.getMillis)) { dt =>
-      dt.setTimeZone(timezone)
-    }
-  }
+  /**
+   * Create an ATTACH property
+   */
+  def ATTACH: Event => Seq[Property] =
+    event => Seq(event.geoLocation map (_.url), event.matchReport).flatten.map(url => new Attach(new URI(url)))
 
-  implicit def timezone(timeZone: TimeZone): VTimeZone = timeZone.getVTimeZone
-  implicit def singleProperty: (Event => Property) => (Event => Traversable[Property]) = f => e => Some(f(e))
-  implicit def optionalProperty: (Event => Option[Property]) => (Event => Traversable[Property]) = f => e => f(e)
-  implicit def bigDecimal: BigDecimal => java.math.BigDecimal = bd => new java.math.BigDecimal(bd.toString)
-
+  /**
+   * A small utility that allows a mutable object to be created, mutated and then returned.
+   */
   def fluent[E](value: E)(block: E => Any): E = {
     block(value)
     value
   }
+
+  // Implicits
+
+  /**
+   * An implicit used to create a Ical DateTime from a Joda DateTime
+   */
+  implicit def ical(dateTime: JodaDateTime): IDateTime = {
+    fluent(new IDateTime(dateTime.getMillis)) { dt =>
+      dt.setUtc(true)
+    }
+  }
+
+  /**
+   * An implicit to convert Scala BigDecimals into Java BigDecimals
+   */
+  implicit def bigDecimal: BigDecimal => java.math.BigDecimal = bd => new java.math.BigDecimal(bd.toString)
+
+  /**
+   * Implicits to allow the property generating functions to either return an optional or single property instead
+   * of a sequence of properties.
+   */
+  implicit def singleProperty: (Event => Property) => (Event => Traversable[Property]) = f => e => Some(f(e))
+  implicit def optionalProperty: (Event => Option[Property]) => (Event => Traversable[Property]) = f => e => f(e)
+
 }

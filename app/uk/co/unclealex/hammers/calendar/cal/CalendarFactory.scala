@@ -40,12 +40,15 @@ trait CalendarFactory {
 
   /**
    * Create a new calendar.
+   * @param busyMask true if all entries in this calendar should be busy, false if they should not or none if
+   * the default for each event should be used.
    * @param attendedSearchOption the search option to use for searching whether a game was attended or not.
    * @param locationSearchOption the search option to use for searching whether a game was at home or not.
    * @param gameOrTicketSearchOption the search option to use for defining whether to return game or ticket information.
    */
   def create(
-    attendedSearchOption: AttendedSearchOption, 
-    locationSearchOption: LocationSearchOption, 
+    busyMask: Option[Boolean],
+    attendedSearchOption: AttendedSearchOption,
+    locationSearchOption: LocationSearchOption,
     gameOrTicketSearchOption: GameOrTicketSearchOption): Calendar
 }

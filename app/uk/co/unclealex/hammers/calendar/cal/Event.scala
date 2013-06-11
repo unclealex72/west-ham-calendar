@@ -82,8 +82,16 @@ case class Event(
   /**
    * True if this event should be marked as busy, false otherwise.
    */
-  val busy: Boolean) extends Ordered[Event] {
-  
+  val busy: Boolean,
+  /**
+   * The date this event was created.
+   */
+  val dateCreated: DateTime,
+  /**
+   * The date this event was last updated.
+   */
+  val lastUpdated: DateTime) extends Ordered[Event] {
+
   /**
    * Compare events chronologically
    */
