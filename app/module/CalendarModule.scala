@@ -42,6 +42,10 @@ import uk.co.unclealex.hammers.calendar.update.TicketsHtmlGamesScannerFactory
 import uk.co.unclealex.hammers.calendar.update.TicketsHtmlGamesScannerFactoryImpl
 import uk.co.unclealex.hammers.calendar.cal.CalendarFactory
 import uk.co.unclealex.hammers.calendar.cal.CalendarFactoryImpl
+import uk.co.unclealex.hammers.calendar.cal.CalendarWriter
+import uk.co.unclealex.hammers.calendar.cal.IcalCalendarWriter
+import uk.co.unclealex.hammers.calendar.dates.NowService
+import uk.co.unclealex.hammers.calendar.dates.SystemNowService
 
 /**
  * @author alex
@@ -56,7 +60,8 @@ class CalendarModule extends ScalaModule {
 
   override def configure {
     // Persistence
-    bind[Transactional].toInstance(SquerylGameDao)
+    bind[NowService].to[SystemNowService]
+    bind[Transactional].to[SquerylGameDao]
 
     // Dates
     bind[DateService].to[DateServiceImpl]
@@ -71,5 +76,6 @@ class CalendarModule extends ScalaModule {
 
     // Calendars
     bind[CalendarFactory].to[CalendarFactoryImpl]
+    bind[CalendarWriter].to[IcalCalendarWriter]
   }
 }

@@ -33,21 +33,20 @@ import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
 import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
 import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 import org.squeryl.dsl.ast.LogicalBoolean
+import CalendarSchema._
+import javax.inject.Inject
+import uk.co.unclealex.hammers.calendar.dates.NowService
 
 /**
+ * The Squeryl implementation of both GameDao and Transactional.
  * @author alex
  *
  */
-object SquerylGameDao extends Schema with GameDao with Transactional {
-
-  val games = table[Game]("game")
-
+class SquerylGameDao @Inject() (
   /**
-   * Column constraints
+   * The now service to get the current times for updates and creates.
    */
-  on(games)(g => declare(
-    g.id is (autoIncremented),
-    g.gameKeyComposite is (unique)))
+  nowService: NowService) extends GameDao with Transactional {
 
   /**
    * Run code within a transaction.
@@ -56,6 +55,11 @@ object SquerylGameDao extends Schema with GameDao with Transactional {
   def tx[T](block: GameDao => T): T = inTransaction { block(this) }
 
   def store(game: Game): Game = {
+    val now = nowService.now
+    if (game.dateCreated == null) {
+      game.dateCreated = now
+    }
+    game.lastUpdated = now
     games.insertOrUpdate(game)
     game
   }

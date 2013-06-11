@@ -69,6 +69,10 @@ object Global extends GlobalSettings with Logging {
     scheduleUpdates
   }
 
+  override def onStop(app: Application) {
+    UpdateJob.close
+  }
+
   def getSession(adapter: DatabaseAdapter, app: Application) = Session.create(DB.getConnection()(app), adapter)
 
 }

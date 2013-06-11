@@ -69,14 +69,14 @@ class IcalCalendarWriter extends CalendarWriter {
     List(
       new ProdId("-//unclealex.co.uk//West Ham Calendar 6.0//EN"),
       Version.VERSION_2_0,
-      CalScale.GREGORIAN) foreach(ical.getProperties().add)
-    calendar.events map(toVEvent) foreach(ical.getComponents().add)
-    outputter output(ical, writer)
+      CalScale.GREGORIAN) foreach (ical.getProperties().add)
+    calendar.events map (toVEvent) foreach (ical.getComponents().add)
+    outputter output (ical, writer)
   }
 
   def toVEvent(event: Event): VEvent = {
-    val properties: Seq[Event => Traversable[Property]] = 
-      Seq(asStart, asEnd, asSummary, asDescription, asTimezone, asLocation, asAttachments, asBusy, asUid)
+    val properties: Seq[Event => Traversable[Property]] =
+      Seq(asStart, asEnd, asSummary, /*asDescription, */ asTimezone, /*asLocation, asAttachments, asBusy,*/ asUid)
     fluent(new VEvent)(ve => properties.foreach(f => f(event).foreach(ve.getProperties.add)))
   }
 
@@ -86,8 +86,8 @@ class IcalCalendarWriter extends CalendarWriter {
   def asLocation: Event => Option[Property] = event => event.geoLocation map { gl => new Location(gl.name) }
   def asGeoLocation: Event => Option[Property] = event => event.geoLocation map { gl => new Geo(gl.latitude, gl.longitude) }
   def asBusy: Event => Property = event => if (event.busy) OPAQUE else TRANSPARENT
-  def asAttachments: Event => Seq[Property] = 
-    event => Seq(event.geoLocation map (_.url), event.matchReport).flatten.map (url => new Attach(new URI(url)))
+  def asAttachments: Event => Seq[Property] =
+    event => Seq(event.geoLocation map (_.url), event.matchReport).flatten.map(url => new Attach(new URI(url)))
   def asSummary: Event => Property = { event =>
     val swapOnAway: Pair[String, String] => Pair[String, String] = { p =>
       event.location match {
@@ -105,14 +105,12 @@ class IcalCalendarWriter extends CalendarWriter {
       parts._2 map (value => s"${parts._1}: $value")
     }
     val descriptions = Seq(
-      "Result" -> event.result, 
-      "Attendence" -> event.attendence, 
+      "Result" -> event.result,
+      "Attendence" -> event.attendence,
       "Match Report" -> event.matchReport,
-      "Location" -> event.geoLocation.map(gl => s"${gl.name}")
-      ) map descriptionLine
+      "Location" -> event.geoLocation.map(gl => s"${gl.name}")) map descriptionLine
     if (descriptions isEmpty) None else Some(new Description(descriptions.flatten mkString "\n"))
   }
-
 
   implicit def ical(dateTime: JodaDateTime): IDateTime = {
     fluent(new IDateTime(dateTime.getMillis)) { dt =>
@@ -124,7 +122,7 @@ class IcalCalendarWriter extends CalendarWriter {
   implicit def singleProperty: (Event => Property) => (Event => Traversable[Property]) = f => e => Some(f(e))
   implicit def optionalProperty: (Event => Option[Property]) => (Event => Traversable[Property]) = f => e => f(e)
   implicit def bigDecimal: BigDecimal => java.math.BigDecimal = bd => new java.math.BigDecimal(bd.toString)
-  
+
   def fluent[E](value: E)(block: E => Any): E = {
     block(value)
     value

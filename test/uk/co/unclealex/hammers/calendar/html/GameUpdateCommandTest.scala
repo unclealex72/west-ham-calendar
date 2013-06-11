@@ -54,6 +54,7 @@ class GameUpdateCommandTest extends Specification {
   val DEFAULT_SEASON_TICKETS_AVAILABLE = September(5, 1975)
   val DEFAULT_ACADEMY_TICKETS_AVAILABLE = September(5, 1976)
   val DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE = September(5, 1977)
+  val DEFAULT_UPDATE_DATE = September(5, 2013) at (9, 12)
   val DEFAULT_RESULT = "1-0"
   val DEFAULT_ATTENDENCE = 100000
   val DEFAULT_MATCH_REPORT = "Good"
@@ -206,7 +207,9 @@ class GameUpdateCommandTest extends Specification {
       Some(DEFAULT_ATTENDENCE),
       Some(DEFAULT_MATCH_REPORT),
       Some(DEFAULT_TELEVISION_CHANNEL),
-      Some(DEFAULT_ATTENDED))
+      Some(DEFAULT_ATTENDED),
+      DEFAULT_UPDATE_DATE,
+      DEFAULT_UPDATE_DATE)
   }
 
 }

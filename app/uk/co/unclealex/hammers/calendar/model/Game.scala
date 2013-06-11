@@ -96,7 +96,15 @@ case class Game(
   /**
    * True if the game has been marked as attended, false otherwise.
    */
-  var attended: Option[Boolean]) extends KeyedEntity[Long] {
+  var attended: Option[Boolean],
+  /**
+   * The date and time at which this game entry was originally created.
+   */
+  @Column("datecreated") var dateCreated: DateTime,
+  /**
+   * The date and time at which this game entry was last updated.
+   */
+  @Column("lastupdated") var lastUpdated: DateTime) extends KeyedEntity[Long] {
 
   /**
    * Squeryl constructor
@@ -107,14 +115,14 @@ case class Game(
       0, Competition.PREM, Location.HOME, "", 0,
       Some(new DateTime()), Some(new DateTime()), Some(new DateTime()),
       Some(new DateTime()), Some(new DateTime()), Some(new DateTime()),
-      Some("result"), Some(0), Some("matchReport"), Some("televionChannel"), Some(false))
+      Some("result"), Some(0), Some("matchReport"), Some("televionChannel"), Some(false), null, null)
   /**
    * Create a new game from a business key.
    */
   def this(gameKey: GameKey) =
     this(
       0, gameKey.competition, gameKey.location, gameKey.opponents, gameKey.season,
-      None, None, None, None, None, None, None, None, None, None, Some(false))
+      None, None, None, None, None, None, None, None, None, None, Some(false), null, null)
 
   def competition: Competition = _competition
 

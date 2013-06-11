@@ -59,13 +59,17 @@ class UpdateJob extends Job with Logging {
 
 object UpdateJob {
 
-  def schedule: Unit = {
-    val scheduler = StdSchedulerFactory.getDefaultScheduler
+  val scheduler = StdSchedulerFactory.getDefaultScheduler
 
+  def schedule: Unit = {
     val job = newJob(classOf[UpdateJob]) withIdentity ("job1", "group1") build ()
     val cronTrigger = newTrigger() withIdentity ("cron_trigger", "group1") withSchedule (cronSchedule("0 0 * * * ?")) build ()
     scheduler scheduleJob (job, cronTrigger)
     scheduler.start()
     scheduler triggerJob (job.getKey)
+  }
+
+  def close: Unit = {
+    scheduler.shutdown()
   }
 }
