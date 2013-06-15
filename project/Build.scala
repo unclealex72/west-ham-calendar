@@ -4,6 +4,7 @@ import sbt.Keys._
 import play.Project._
 import sbtrelease._
 import sbtrelease.ReleasePlugin._
+import sbtrelease.ReleasePlugin.ReleaseKeys._
 import ReleaseStateTransformations._
 
 object ApplicationBuild extends Build {
@@ -41,6 +42,18 @@ object ApplicationBuild extends Build {
   // Do not publish during part of the release process.
 
   val main = play.Project(appName, appVersion, appDependencies).settings(releaseSettings: _*).settings(
+    releaseProcess := Seq[ReleaseStep](
+	  checkSnapshotDependencies,
+	  inquireVersions,
+	  runTest,
+	  setReleaseVersion,
+	  commitReleaseVersion,
+	  tagRelease,
+	  publishArtifacts,
+	  setNextVersion,
+	  commitNextVersion,
+	  pushChanges
+	),
     scalaVersion := "2.10.1",
     organization := "uk.co.unclealex.calendar",
     resolvers ++= Seq(
