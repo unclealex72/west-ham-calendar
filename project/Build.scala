@@ -9,6 +9,11 @@ object ApplicationBuild extends Build {
   val appVersion      = "6.0.0-SNAPSHOT"
 
   val appDependencies = Seq(
+    //web dependencies
+    "org.webjars" % "angular-ui-bootstrap" % "0.3.0-1",
+    "org.webjars" % "bootstrap" % "2.3.2",
+    "org.webjars" % "jquery" % "1.9.1",
+    //backend libraries
     "com.typesafe"  %% "scalalogging-slf4j" % "1.0.1",
     "org.mozilla"  % "rhino"  % "1.7R3",
     "ch.qos.logback" % "logback-classic" % "1.0.7",
@@ -25,6 +30,7 @@ object ApplicationBuild extends Build {
     "org.squeryl" %% "squeryl" % "0.9.6-RC1",
     "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
     "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
+    // test
     "com.h2database" % "h2" % "1.3.171" % "test",
     "org.specs2"  %% "specs2"  % "1.14"  % "test",
     "org.scalamock" %% "scalamock-specs2-support" % "3.0.1" % "test")
