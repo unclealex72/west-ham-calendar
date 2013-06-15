@@ -49,7 +49,6 @@ object ApplicationBuild extends Build {
 	  setReleaseVersion,
 	  commitReleaseVersion,
 	  tagRelease,
-	  publishArtifacts,
 	  setNextVersion,
 	  commitNextVersion,
 	  pushChanges
