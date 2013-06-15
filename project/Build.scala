@@ -10,7 +10,6 @@ import ReleaseStateTransformations._
 object ApplicationBuild extends Build {
 
   val appName         = "west-ham-calendar"
-  val appVersion      = "6.0.0-SNAPSHOT"
 
   val appDependencies = Seq(
     //web dependencies
@@ -41,7 +40,7 @@ object ApplicationBuild extends Build {
 
   // Do not publish during part of the release process.
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(releaseSettings: _*).settings(
+  val main = play.Project(appName).settings(releaseSettings: _*).settings(
     releaseProcess := Seq[ReleaseStep](
 	  checkSnapshotDependencies,
 	  inquireVersions,
@@ -55,6 +54,8 @@ object ApplicationBuild extends Build {
 	),
     scalaVersion := "2.10.1",
     organization := "uk.co.unclealex.calendar",
+    version <<= version in ThisBuild,
+    libraryDependencies ++= appDependencies,
     resolvers ++= Seq(
       "scala-tools" at "https://oss.sonatype.org/content/groups/scala-tools/",
       "cloudbees-private-release-repository" at "https://repository-unclealex.forge.cloudbees.com/release",
