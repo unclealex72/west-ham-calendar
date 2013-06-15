@@ -2,6 +2,9 @@ import sbt._
 import Keys._
 import sbt.Keys._
 import play.Project._
+import sbtrelease._
+import sbtrelease.ReleasePlugin._
+import ReleaseStateTransformations._
 
 object ApplicationBuild extends Build {
 
@@ -35,14 +38,15 @@ object ApplicationBuild extends Build {
     "org.specs2"  %% "specs2"  % "1.14"  % "test",
     "org.scalamock" %% "scalamock-specs2-support" % "3.0.1" % "test")
 
+  // Do not publish during part of the release process.
 
-  val main = play.Project(appName, appVersion, appDependencies).settings(
+  val main = play.Project(appName, appVersion, appDependencies).settings(releaseSettings: _*).settings(
     scalaVersion := "2.10.1",
     organization := "uk.co.unclealex.calendar",
     resolvers ++= Seq(
       "scala-tools" at "https://oss.sonatype.org/content/groups/scala-tools/",
       "cloudbees-private-release-repository" at "https://repository-unclealex.forge.cloudbees.com/release",
-      "cloudbees-private-snapshot-repository" at "https://repository-unclealex.forge.cloudbees.com/snapshot")    
+      "cloudbees-private-snapshot-repository" at "https://repository-unclealex.forge.cloudbees.com/snapshot")
   )
 
 }
