@@ -21,17 +21,20 @@
  */
 package controllers
 
+import java.io.StringWriter
+
 import javax.inject.Inject
+import play.api.mvc.Action
+import play.api.mvc.Results.NotFound
+import play.api.mvc.Results.Ok
 import uk.co.unclealex.hammers.calendar.cal.CalendarFactory
 import uk.co.unclealex.hammers.calendar.cal.CalendarWriter
 import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
 import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
-import play.api.mvc.Action
-import play.api.mvc.Results._
-import java.io.StringWriter
 
 /**
+ * The controller that handles generating calendars.
  * @author alex
  *
  */

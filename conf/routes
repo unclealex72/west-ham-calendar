@@ -5,6 +5,10 @@
 # Home page
 GET     /                           controllers.Application.index
 
+# Updates
+
+GET     /update.html                @controllers.Update.update
+# Calendars
 GET     /calendars/:attended/:location/:type/aj.ics   @controllers.Calendar.searchSecure(attended, location, type)
 GET     /calendars/$mask<(free|busy)>/:location/:type/calendar.ics   @controllers.Calendar.search(mask, location, type)
 

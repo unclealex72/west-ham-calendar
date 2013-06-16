@@ -31,13 +31,14 @@ import org.squeryl.SessionFactory
 import org.squeryl.adapters.H2Adapter
 import org.squeryl.adapters.PostgreSqlAdapter
 import org.squeryl.internals.DatabaseAdapter
+
 import com.google.inject.Guice
+import com.typesafe.scalalogging.slf4j.Logging
+
 import module.CalendarModule
 import play.api.Application
 import play.api.GlobalSettings
 import play.api.db.DB
-import uk.co.unclealex.hammers.calendar.schedule.UpdateJob
-import com.typesafe.scalalogging.slf4j.Logging
 import uk.co.unclealex.hammers.calendar.dao.SquerylGameDao
 
 /**
@@ -53,9 +54,6 @@ object Global extends GlobalSettings with Logging {
     injector.getInstance(clazz)
   }
 
-  // Quartz
-  def scheduleUpdates: Unit = UpdateJob.schedule
-
   override def onStart(app: Application) {
     logger info "Setting up database access."
     // Set up Squeryl database access
@@ -66,11 +64,6 @@ object Global extends GlobalSettings with Logging {
     }
     // Schedule the update job
     logger info "Setting up calendar updates."
-    scheduleUpdates
-  }
-
-  override def onStop(app: Application) {
-    UpdateJob.close
   }
 
   def getSession(adapter: DatabaseAdapter, app: Application) = Session.create(DB.getConnection()(app), adapter)

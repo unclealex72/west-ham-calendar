@@ -19,12 +19,10 @@ object ApplicationBuild extends Build {
     //backend libraries
     "com.typesafe"  %% "scalalogging-slf4j" % "1.0.1",
     "org.mozilla"  % "rhino"  % "1.7R3",
-    "ch.qos.logback" % "logback-classic" % "1.0.7",
     "javax.transaction"  % "jta"  % "1.1",
     "joda-time"  % "joda-time"  % "2.2",
     "org.joda"  % "joda-convert"  % "1.3.1",
     "net.sourceforge.htmlcleaner"  % "htmlcleaner"  % "2.2",
-    "org.quartz-scheduler" % "quartz" % "2.1.7",
     "javax.inject"  % "javax.inject"  % "1",
     "com.google.inject" % "guice" % "3.0",
     "com.tzavellas" % "sse-guice" % "0.7.1",
