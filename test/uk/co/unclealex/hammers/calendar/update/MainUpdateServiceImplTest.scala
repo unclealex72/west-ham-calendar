@@ -63,7 +63,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory {
         g.at = Some(September(5, 2013) at (15, 0))
       }
       (s.gameDao.store _) expects (where(expectedStoredGame)) returning (expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates()
+      s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
 
@@ -82,7 +82,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory {
         g.attendence = Some(34966)
       }
       (s.gameDao.store _) expects (where(expectedStoredGame)) returning (expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates()
+      s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
 
@@ -101,7 +101,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory {
         g.at = Some(September(5, 2013) at (15, 0))
         g.attendence = Some(34966)
       }
-      s.mainUpdateService.processDatabaseUpdates()
+      s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
 
@@ -120,7 +120,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory {
         g.seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
       }
       (s.gameDao.store _) expects (where(expectedStoredGame)) returning (expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates()
+      s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
 
@@ -135,7 +135,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory {
       (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List.empty)
       (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List(
         SeasonTicketsUpdateCommand(September(5, 2013) at (15, 0), September(3, 2013) at (9, 0))))
-      s.mainUpdateService.processDatabaseUpdates()
+      s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
 
@@ -157,7 +157,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory {
       List(firstStoredGame, secondStoredGame) foreach { game =>
         (s.gameDao.store _) expects (where(game)) returning (game)
       }
-      s.mainUpdateService.processDatabaseUpdates()
+      s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
 
@@ -168,7 +168,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory {
       (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List.empty)
       (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List(
         SeasonTicketsUpdateCommand(September(5, 2013) at (15, 0), September(3, 2013) at (9, 0))))
-      s.mainUpdateService.processDatabaseUpdates()
+      s.mainUpdateService.processDatabaseUpdates() must be equalTo (0)
     }
   }
 
