@@ -71,6 +71,7 @@ trait MainUpdateService {
 
   /**
    * Update a list of game update commands from an HTML scan.
+   * @return The number of games processed.
    */
-  def processDatabaseUpdates(): Unit
+  def processDatabaseUpdates(): Int
 }

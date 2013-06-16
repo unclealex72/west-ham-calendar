@@ -41,8 +41,8 @@ class Update @Inject() (
 
   def update = Action {
     try {
-      mainUpdateService.processDatabaseUpdates
-      Ok("Updated")
+      val gameCount = mainUpdateService.processDatabaseUpdates
+      Ok(s"Updated: There are now ${gameCount} games in the database")
     } catch {
       case e: Exception => {
         val buffer = new StringWriter

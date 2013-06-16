@@ -72,13 +72,15 @@ class MainUpdateServiceImpl @Inject() (
    *
    * @throws IOException
    */
-  override def processDatabaseUpdates: Unit = {
+  override def processDatabaseUpdates: Int = {
     val allGames = tx { _ getAll }
     val newGames = processUpdates(
       "fixture", mainPageService.fixturesUri, fixturesHtmlGamesScanner, allGames)
     ticketsHtmlGamesScannerFactory.get map { ticketsHtmlGamesScanner =>
-      processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, allGames ++ newGames)
-    }
+      val allAndNewGames = allGames ++ newGames
+      processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, allAndNewGames)
+      allAndNewGames.size
+    } getOrElse 0
   }
 
   /**
