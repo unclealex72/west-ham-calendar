@@ -3,7 +3,13 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                           @controllers.Application.index
+
+# Json (only allow POST to avoid JSON array vunerabilities).
+
+POST     /seasons.json               @controllers.Application.seasons
+POST     /latestSeason.json          @controllers.Application.latestSeason
+POST     /:season/games.json         @controllers.Application.games(season: Int)
 
 # Updates
 
@@ -14,3 +20,6 @@ GET     /calendars/$mask<(free|busy)>/:location/:type/calendar.ics   @controller
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# Webjars
+GET     /webjars/*file                    controllers.WebJarAssets.at(file)

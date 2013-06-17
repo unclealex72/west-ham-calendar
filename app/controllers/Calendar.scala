@@ -22,23 +22,21 @@
 package controllers
 
 import java.io.StringWriter
-
 import javax.inject.Inject
 import play.api.mvc.Action
-import play.api.mvc.Results.NotFound
-import play.api.mvc.Results.Ok
 import uk.co.unclealex.hammers.calendar.cal.CalendarFactory
 import uk.co.unclealex.hammers.calendar.cal.CalendarWriter
 import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
 import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
+import play.api.mvc.Controller
 
 /**
  * The controller that handles generating calendars.
  * @author alex
  *
  */
-class Calendar @Inject() (calendarFactory: CalendarFactory, calendarWriter: CalendarWriter) {
+class Calendar @Inject() (calendarFactory: CalendarFactory, calendarWriter: CalendarWriter) extends Controller {
 
   def searchSecure(attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     calendar(

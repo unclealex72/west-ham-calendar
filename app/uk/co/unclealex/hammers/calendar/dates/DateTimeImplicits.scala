@@ -26,6 +26,7 @@ package uk.co.unclealex.hammers.calendar.dates
 
 import org.joda.time.DateTime
 import org.joda.time.DateTimeConstants
+import java.util.Date
 
 /**
  * Implicit predicates for DateTimes.
@@ -38,6 +39,9 @@ object DateTimeImplicits {
    * Order by the number of milliseconds since the epoch.
    */
   implicit val ord = Ordering.by((dt: DateTime) => dt.getMillis)
+
+  implicit val asJavaDate: DateTime => Date = dt => new Date(dt.getMillis)
+  implicit val asOptionalJavaDate: Option[DateTime] => Option[Date] = odt => odt map asJavaDate
 
   implicit class Implicits(dateTime: DateTime) {
 

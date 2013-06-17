@@ -46,6 +46,12 @@ import uk.co.unclealex.hammers.calendar.cal.CalendarWriter
 import uk.co.unclealex.hammers.calendar.cal.IcalCalendarWriter
 import uk.co.unclealex.hammers.calendar.dates.NowService
 import uk.co.unclealex.hammers.calendar.dates.SystemNowService
+import com.google.inject.Provides
+import services.GameRowFactory
+import services.GameRowFactory
+import services.GameRowFactory
+import services.GameRowFactory
+import services.GameRowFactoryImpl
 
 /**
  * @author alex
@@ -77,5 +83,8 @@ class CalendarModule extends ScalaModule {
     // Calendars
     bind[CalendarFactory].to[CalendarFactoryImpl]
     bind[CalendarWriter].to[IcalCalendarWriter]
+
+    //MVC
+    bind[GameRowFactory].toInstance(GameRowFactoryImpl(config.getString("ticketType")))
   }
 }

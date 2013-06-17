@@ -1,0 +1,27 @@
+<table class="table">
+  <tbody>
+    <tr>
+      <th>ID</th>
+      <th colspan="2">Date</th>
+      <th>Opponents</th>
+      <th>Competition</th>
+      <th>Location</th>
+      <th>Map</th>
+      <th>Result</th>
+      <th>Tickets</th>
+      <th>Attended</th>
+    </tr>
+    <tr ng-repeat="game in games">
+      <td>{{game.id}}</td>
+      <td>{{game.gameTimeType.value}}</td>
+      <td>{{game.at | date:'yyyy-MM-dd HH:mm'}}</td>
+      <td>{{game.opponents}}</td>
+      <td>{{game.competition.name}}</td>
+      <td>{{game.location.persistableToken}}</td>
+      <td><a href="{{game.geoLocation.url}}" target="_blank">map</a></td>
+      <td>{{game.result}}</td>
+      <td>{{game.ticketsAt  | date:'yyyy-MM-dd HH:mm'}}</td>
+      <td>{{game.attended}}</td>
+    </tr>
+  </tbody>
+</table>
