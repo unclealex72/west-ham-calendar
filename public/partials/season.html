@@ -28,7 +28,12 @@
         <a ng-show="game.result &amp;&amp; game.matchReport" href="{{game.matchReport}}" target="_blank">{{game.result}}</a>
       </td>
       <td>{{game.ticketsAt  | date:'yyyy-MM-dd HH:mm'}}</td>
-      <td>{{game.attended}}</td>
+      <td>
+        <button type="button" class="btn btn-primary" ng-model="game.attended" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">
+          <i ng-show="game.attended" class="icon-ok"></i>
+          <i ng-hide="game.attended" class="icon-remove"></i>
+        </button>
+      </td>
     </tr>
   </tbody>
 </table>
