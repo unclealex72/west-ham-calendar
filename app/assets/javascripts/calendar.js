@@ -4,7 +4,7 @@ angular.module('calendar', ['ui.bootstrap']).
       when('/season', {templateUrl: 'assets/partials/season.html',   controller: SeasonCtrl}).
       when('/season/:season', {templateUrl: 'assets/partials/season.html', controller: SeasonCtrl}).
       otherwise({redirectTo: '/season'});
-}]);
+  }]);
 
 function SeasonsCtrl($scope, $http, $location, $routeParams) {
   $scope.setCurrentSeason = function(season) {

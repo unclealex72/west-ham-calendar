@@ -42,7 +42,7 @@
               </a>
               <ul class="dropdown-menu">
                 <li ng-repeat="season in seasons">
-                    <a ng-click="setCurrentSeason(season)">{{season}}</a>
+                  <a ng-click="setCurrentSeason(season)">{{season}}</a>
                 </li>
               </ul>
             </li>
@@ -51,6 +51,8 @@
       </div>
     </div>
   </div>
-  <div ng-view></div>
+  <div class="container">
+    <div ng-view></div>
+  </div>
 </body>
 </html>

@@ -13,7 +13,10 @@
     </tr>
     <tr ng-repeat="game in games">
       <td>{{game.id}}</td>
-      <td>{{game.gameTimeType.value}}</td>
+      <td>
+        <span ng-show="game.gameTimeType.value == 'Weekday'" class="badge badge-important">!</span>
+        <span ng-show="game.gameTimeType.value == 'Weekend'" class="badge badge-warning">!</span>
+      </td>
       <td>{{game.at | date:'yyyy-MM-dd HH:mm'}}</td>
       <td>{{game.opponents}}</td>
       <td>{{game.competition.name}}</td>
