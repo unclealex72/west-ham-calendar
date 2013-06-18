@@ -51,6 +51,7 @@ case class GameRow(
   location: Location,
   geoLocation: Option[GeoLocation],
   result: Option[String],
+  matchReport: Option[String],
   ticketsAt: Option[Date],
   attended: Boolean) {
 

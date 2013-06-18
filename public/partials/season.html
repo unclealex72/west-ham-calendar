@@ -14,15 +14,18 @@
     <tr ng-repeat="game in games">
       <td>{{game.id}}</td>
       <td>
-        <span ng-show="game.gameTimeType.value == 'Weekday'" class="badge badge-important">!</span>
-        <span ng-show="game.gameTimeType.value == 'Weekend'" class="badge badge-warning">!</span>
+        <span ng-show="game.gameTimeType.value == 'Weekday'" class="badge badge-important" title="This game is being played on a weekday">!</span>
+        <span ng-show="game.gameTimeType.value == 'Weekend'" class="badge badge-warning" title="This game is being played during the weekend but not at 3pm on a Saturday">!</span>
       </td>
       <td>{{game.at | date:'yyyy-MM-dd HH:mm'}}</td>
       <td>{{game.opponents}}</td>
       <td>{{game.competition.name}}</td>
       <td>{{game.location.persistableToken}}</td>
       <td><a href="{{game.geoLocation.url}}" target="_blank">map</a></td>
-      <td>{{game.result}}</td>
+      <td>
+        <span ng-show="game.result &amp;&amp !game.matchReport">{{game.result}}</span>
+        <a ng-show="game.result &amp;&amp; game.matchReport" href="{{game.matchReport}}" target="_blank">{{game.result}}</a>
+      </td>
       <td>{{game.ticketsAt  | date:'yyyy-MM-dd HH:mm'}}</td>
       <td>{{game.attended}}</td>
     </tr>

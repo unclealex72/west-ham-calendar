@@ -64,6 +64,7 @@ class GameRowFactoryImpl(ticketFactory: Game => Option[DateTime]) extends GameRo
             case AWAY => GeoLocation(game.opponents)
           },
           result = game.result,
+          matchReport = game.matchReport,
           ticketsAt = ticketFactory(game),
           attended = game.attended getOrElse false)
       case None => throw new IllegalStateException(s"Game $game did not have it's date played attribute set.")
