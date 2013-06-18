@@ -6,14 +6,16 @@ angular.module('calendar', ['ui.bootstrap']).
       otherwise({redirectTo: '/season'});
 }]);
 
-function SeasonsCtrl($scope, $http, $location) {
+function SeasonsCtrl($scope, $http, $location, $routeParams) {
   $scope.setCurrentSeason = function(season) {
     $scope.currentSeason = season;
     $location.path("/season/" + season);
   };
   $http.post('seasons.json').success(function(seasons, status) {
-    $scope.seasons = _.map(seasons, 'year');
-    $scope.currentSeason = _.max($scope.seasons);
+    $scope.seasons = _(seasons).map('year').sort().reverse().value();
+    currentSeason($http, $routeParams, function(currentSeason) {
+      $scope.currentSeason = currentSeason;  
+    }); 
   });
 };
 
@@ -24,12 +26,16 @@ function SeasonCtrl($scope, $http, $routeParams) {
       $scope.games = games;
     });
   };
+  currentSeason($http, $routeParams, gamesSupplier);
+};
+
+function currentSeason($http, $routeParams, callback) {
   if ($routeParams.season) {
-    gamesSupplier($routeParams.season);
+    callback($routeParams.season);
   }
   else {
     $http.post('/latestSeason.json').success(function(latestSeason, status) {
-      gamesSupplier(latestSeason.year);
+      callback(latestSeason.year);
     });
-  }
-};
+  }  
+}
