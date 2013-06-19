@@ -14,9 +14,24 @@
         {{game.month}}
       </td>
       <td ng-hide="game.type == 'month'">
-        {{game.at | customDate}}
-        <span ng-show="game.gameTimeType.value == 'Weekday'" class="badge badge-important" title="This game is being played on a weekday">!</span>
-        <span ng-show="game.gameTimeType.value == 'Weekend'" class="badge badge-warning" title="This game is being played during the weekend but not at 3pm on a Saturday">!</span>
+        <span 
+          ng-show="game.gameTimeType.value == 'ThreePmSaturday'"
+          class="badge badge-success" 
+          title="Rejoice for a game at 3pm on a Saturday!">
+          {{game.at | customDate}}
+        </span>
+        <span 
+          ng-show="game.gameTimeType.value == 'Weekday'"
+          class="badge badge-important" 
+          title="This game is being played on a weekday">
+          {{game.at | customDate}}
+        </span>
+        <span 
+          ng-show="game.gameTimeType.value == 'Weekend'" 
+          class="badge badge-warning" 
+          title="This game is being played during the weekend but not at 3pm on a Saturday">
+          {{game.at | customDate}}
+        </span>
       </td>
       <td ng-hide="game.type == 'month'">{{game.opponents}}</td>
       <td ng-hide="game.type == 'month'">{{game.competition.name}}</td>
