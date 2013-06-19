@@ -1,10 +1,38 @@
-angular.module('calendar', ['ui.bootstrap']).
-  config(['$routeProvider', function($routeProvider) {
-    $routeProvider.
-      when('/season', {templateUrl: 'assets/partials/season.html',   controller: SeasonCtrl}).
-      when('/season/:season', {templateUrl: 'assets/partials/season.html', controller: SeasonCtrl}).
-      otherwise({redirectTo: '/season'});
-  }]);
+var app = angular.module('calendar', ['ui.bootstrap']);
+
+app.config(['$routeProvider', function($routeProvider) {
+  $routeProvider.
+    when('/season', {templateUrl: 'assets/partials/season.html',   controller: SeasonCtrl}).
+    when('/season/:season', {templateUrl: 'assets/partials/season.html', controller: SeasonCtrl}).
+    otherwise({redirectTo: '/season'});
+}]);
+
+app.filter('customDate', ['$filter', '$log', function($filter, $log) {
+  return function(input) {
+	  if (!input) {
+		  return;
+	  }
+	  var date = new Date(input);
+	  var day = date.getDate();
+	  var daySuffixDiscriminator = day % 10;
+	  var daySuffix;
+	  if (daySuffixDiscriminator == 1 && day != 11) {
+		  daySuffix = "st";
+	  }
+	  else if (daySuffixDiscriminator == 2 && day != 12) {
+		  daySuffix = "nd";
+	  }
+	  else if (daySuffixDiscriminator == 3 && day != 13) {
+		  daySuffix = "rd";
+	  }
+	  else {
+		  daySuffix = "th";
+	  }
+	  var includeMinutes = date.getMinutes() != 0;
+	  var formatString = "EEE d'" + daySuffix + "', h" + (includeMinutes?":mm":"") + "a";
+	  return $filter('date')(input, formatString).replace("PM", "pm").replace("AM", "am");
+  }
+}]);
 
 function SeasonsCtrl($scope, $http, $location, $routeParams) {
   $scope.setCurrentSeason = function(season) {

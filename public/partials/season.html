@@ -14,7 +14,7 @@
         {{game.month}}
       </td>
       <td ng-hide="game.month">
-        {{game.at | date:'yyyy-MM-dd HH:mm'}}
+        {{game.at | customDate}}
         <span ng-show="game.gameTimeType.value == 'Weekday'" class="badge badge-important" title="This game is being played on a weekday">!</span>
         <span ng-show="game.gameTimeType.value == 'Weekend'" class="badge badge-warning" title="This game is being played during the weekend but not at 3pm on a Saturday">!</span>
       </td>
