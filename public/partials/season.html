@@ -10,26 +10,39 @@
       <th>Attended</th>
     </tr>
     <tr ng-repeat="game in games">
-      <td>
+      <td ng-show="game.month" colspan="7">
+        {{game.month}}
+      </td>
+      <td ng-hide="game.month">
         {{game.at | date:'yyyy-MM-dd HH:mm'}}
         <span ng-show="game.gameTimeType.value == 'Weekday'" class="badge badge-important" title="This game is being played on a weekday">!</span>
         <span ng-show="game.gameTimeType.value == 'Weekend'" class="badge badge-warning" title="This game is being played during the weekend but not at 3pm on a Saturday">!</span>
       </td>
-      <td>{{game.opponents}}</td>
-      <td>{{game.competition.name}}</td>
-      <td>
+      <td ng-hide="game.month">{{game.opponents}}</td>
+      <td ng-hide="game.month">{{game.competition.name}}</td>
+      <td ng-hide="game.month">
         <span ng-hide="game.geoLocation">{{game.location.persistableToken}}</span>
         <a ng-show="game.geoLocation" href="{{game.geoLocation.url}}" target="_blank">{{game.location.persistableToken}}</a>
       </td>
-      <td>
+      <td ng-hide="game.month">
         <span ng-show="game.result &amp;&amp !game.matchReport">{{game.result}}</span>
         <a ng-show="game.result &amp;&amp; game.matchReport" href="{{game.matchReport}}" target="_blank">{{game.result}}</a>
       </td>
-      <td>{{game.ticketsAt  | date:'yyyy-MM-dd HH:mm'}}</td>
-      <td>
-        <button type="button" class="btn btn-primary" ng-model="game.attended" btn-checkbox btn-checkbox-true="true" btn-checkbox-false="false">
-          <i ng-show="game.attended" class="icon-ok"></i>
-          <i ng-hide="game.attended" class="icon-remove"></i>
+      <td ng-hide="game.month">{{game.ticketsAt  | date:'yyyy-MM-dd HH:mm'}}</td>
+      <td ng-hide="game.month">
+        <button ng-show="game.attended" type="button"
+          class="btn btn-success" 
+          ng-model="game.attended" 
+          btn-checkbox 
+          btn-checkbox-true="true" btn-checkbox-false="false">
+          <i class="icon-ok"></i>
+        </button>
+        <button ng-hide="game.attended" type="button"
+          class="btn btn-danger" 
+          ng-model="game.attended" 
+          btn-checkbox 
+          btn-checkbox-true="true" btn-checkbox-false="false">
+          <i class="icon-remove"></i>
         </button>
       </td>
     </tr>

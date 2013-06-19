@@ -19,11 +19,21 @@ function SeasonsCtrl($scope, $http, $location, $routeParams) {
   });
 };
 
-function SeasonCtrl($scope, $http, $routeParams) {
+function SeasonCtrl($scope, $http, $routeParams, $filter) {
   var gamesSupplier = function(season) {
     $http.post(season + '/games.json').success(function(games, status) {
       $scope.season = parseInt(season);
-      $scope.games = games;
+      var gamesByMonth = _.groupBy(games, function(game) {
+        return $filter('date')(game.at, 'MMMM yyyy');
+      });
+      var monthOrGames = new Array();
+      for(var month in gamesByMonth){
+        monthOrGames.push({"month": month});
+        _.forEach(gamesByMonth[month], function(game) {
+          monthOrGames.push(game);
+        });
+      }
+      $scope.games = monthOrGames;
     });
   };
   currentSeason($http, $routeParams, gamesSupplier);
