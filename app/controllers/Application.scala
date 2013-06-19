@@ -5,6 +5,7 @@ import play.api.mvc._
 import javax.inject.Inject
 import uk.co.unclealex.hammers.calendar.dao.Transactional
 import services.GameRowFactory
+import uk.co.unclealex.hammers.calendar.update.MainUpdateService
 
 class Application @Inject() (
   /**

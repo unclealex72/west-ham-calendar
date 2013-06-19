@@ -11,9 +11,14 @@ POST     /seasons.json               @controllers.Application.seasons
 POST     /latestSeason.json          @controllers.Application.latestSeason
 POST     /:season/games.json         @controllers.Application.games(season: Int)
 
-# Updates
+# Game attendence
 
-GET     /update.html                @controllers.Update.update
+PUT     /attend/:gameId              @controllers.Update.attend(gameId: Long)
+PUT     /unattend/:gameId            @controllers.Update.unattend(gameId: Long)
+
+# Updates
+POST     /update.html                @controllers.Update.update
+
 # Calendars
 GET     /calendars/:attended/:location/:type/aj.ics   @controllers.Calendar.searchSecure(attended, location, type)
 GET     /calendars/$mask<(free|busy)>/:location/:type/calendar.ics   @controllers.Calendar.search(mask, location, type)

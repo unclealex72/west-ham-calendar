@@ -28,6 +28,7 @@ import play.api.mvc.Action
 import play.api.mvc.Results._
 import java.io.StringWriter
 import java.io.PrintWriter
+import org.omg.PortableServer.CurrentPackage.NoContext
 
 /**
  * @author alex
@@ -39,6 +40,9 @@ class Update @Inject() (
    */
   mainUpdateService: MainUpdateService) {
 
+  /**
+   * Update all games in the database from the web.
+   */
   def update = Action {
     try {
       val gameCount = mainUpdateService.processDatabaseUpdates
@@ -52,5 +56,23 @@ class Update @Inject() (
         InternalServerError(buffer.toString)
       }
     }
+  }
+
+  /**
+   * Attend a game.
+   */
+  def attend(gameId: Long) = empty { mainUpdateService attendGame gameId }
+
+  /**
+   * Unattend a game.
+   */
+  def unattend(gameId: Long) = empty { mainUpdateService unattendGame gameId }
+
+  /**
+   * Execute code and return a no-content response.
+   */
+  def empty(block: => Unit) = Action {
+    block
+    NoContent
   }
 }

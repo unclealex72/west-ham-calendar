@@ -1,3 +1,7 @@
 button i.icon-ok, button i.icon-remove {
   color: white;
 }
+
+tr.row-month {
+  font-weight: bold;
+}
