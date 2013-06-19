@@ -8,7 +8,7 @@ app.config(['$routeProvider', function($routeProvider) {
 }]);
 
 app.filter('customDate', ['$filter', '$log', function($filter, $log) {
-  return function(input) {
+  return function(input, includeMonth) {
 	  if (!input) {
 		  return;
 	  }
@@ -29,7 +29,7 @@ app.filter('customDate', ['$filter', '$log', function($filter, $log) {
 		  daySuffix = "th";
 	  }
 	  var includeMinutes = date.getMinutes() != 0;
-	  var formatString = "EEE d'" + daySuffix + "', h" + (includeMinutes?":mm":"") + "a";
+	  var formatString = "EEE d'" + daySuffix + "'" + (includeMonth?" MMM":"") + ", h" + (includeMinutes?":mm":"") + "a";
 	  return $filter('date')(input, formatString).replace("PM", "pm").replace("AM", "am");
   }
 }]);

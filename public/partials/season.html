@@ -1,4 +1,4 @@
-<table class="table">
+<table class="table table-hover table-condensed">
   <tbody>
     <tr>
       <th>Date</th>
@@ -43,7 +43,7 @@
         <span ng-show="game.result &amp;&amp !game.matchReport">{{game.result}}</span>
         <a ng-show="game.result &amp;&amp; game.matchReport" href="{{game.matchReport}}" target="_blank">{{game.result}}</a>
       </td>
-      <td ng-hide="game.type == 'month'">{{game.ticketsAt  | date:'yyyy-MM-dd HH:mm'}}</td>
+      <td ng-hide="game.type == 'month'">{{game.ticketsAt  | customDate:true}}</td>
       <td ng-hide="game.type == 'month'">
         <button ng-show="game.attended" type="button"
           class="btn btn-success" 
