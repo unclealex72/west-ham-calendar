@@ -10,7 +10,7 @@
       <th>Attended</th>
     </tr>
     <tr ng-repeat="game in games" class="row-{{game.type}}">
-      <td ng-show="game.type == 'month'" colspan="7">
+      <td ng-show="game.type == 'month'">
         {{game.month}}
       </td>
       <td ng-hide="game.type == 'month'">
@@ -51,7 +51,7 @@
           ng-click="unattendGame(game)"
           btn-checkbox 
           btn-checkbox-true="true" btn-checkbox-false="false">
-          <i class="icon-ok"></i>
+          <i class="icon-ok icon-white"></i>
         </button>
         <button ng-hide="game.attended" type="button"
           class="btn btn-danger" 
@@ -59,7 +59,7 @@
           ng-click="attendGame(game)"
           btn-checkbox 
           btn-checkbox-true="true" btn-checkbox-false="false">
-          <i class="icon-remove"></i>
+          <i class="icon-remove icon-white"></i>
         </button>
       </td>
     </tr>

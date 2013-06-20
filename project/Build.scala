@@ -18,6 +18,7 @@ object ApplicationBuild extends Build {
     "org.webjars" % "bootstrap" % "2.3.2",
     "org.webjars" % "jquery" % "1.9.1",
     "org.webjars" % "lodash" % "1.2.0",
+    "org.webjars" % "angularjs" % "[1.0.7]" force(),
     // JSON
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.2.2",
     "com.fasterxml.jackson.core" % "jackson-annotations" % "2.2.2",

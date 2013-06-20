@@ -1,7 +1,21 @@
-button i.icon-ok, button i.icon-remove {
-  color: white;
-}
-
 tr.row-month {
   font-weight: bold;
+  background-color: #801638;
+  color: white;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+/* Add top padding for navbar-top-fixed */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+
+/* Remove top padding when top navbar goes static in narrow viewports */
+@media (max-width: 979px) {
+  body {
+    padding-top: 0;
+  }
 }

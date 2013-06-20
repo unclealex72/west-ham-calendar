@@ -1,43 +1,34 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="calendar" ng-controller='SeasonsCtrl'>
-<head>
-<meta charset="utf-8">
-<title>West Ham Calendar {{currentSeason}}</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="">
-<meta name="author" content="Alex Jones">
+  <head>
+    <meta charset="utf-8">
+    <title>West Ham Calendar {{currentSeason}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Alex Jones">
 
-<script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("lodash.min.js"))'></script>
-<script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("1.9.1/jquery.min.js"))'></script>
-<script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("angular.min.js"))'></script>
-<script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("angular-resource.min.js"))'></script>
-<script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("ui-bootstrap-tpls.min.js"))'></script>
-<script type="text/javascript" src='@routes.Assets.at("javascripts/calendar.js")'></script>
+    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("lodash.min.js"))'></script>
+    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("1.9.1/jquery.min.js"))'></script>
+    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("angular.min.js"))'></script>
+    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("angular-resource.min.js"))'></script>
+    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("ui-bootstrap-tpls.min.js"))'></script>
+    <script type="text/javascript" src='@routes.Assets.at("javascripts/calendar.js")'></script>
 
-<!-- Styles -->
-<link href='@routes.Assets.at("stylesheets/calendar.css")' rel="stylesheet">
-<link href='@routes.WebJarAssets.at(WebJarAssets.locate("css/font-awesome.min.css"))' rel="stylesheet">
-<link href='@routes.WebJarAssets.at(WebJarAssets.locate("2.3.2/css/bootstrap.min.css"))' rel="stylesheet" media="screen">
-<link href='@routes.WebJarAssets.at(WebJarAssets.locate("2.3.2/css/bootstrap-responsive.min.css"))' rel="stylesheet" media="screen">
-<style>
-  body {
-    padding-top: 60px;
-    padding-bottom: 40px;
-  }
-</style>
-</head>
+    <!-- Styles -->
+    <link href='@routes.Assets.at("stylesheets/calendar.css")' rel="stylesheet">
+    <link href='@routes.WebJarAssets.at(WebJarAssets.locate("css/font-awesome.min.css"))' rel="stylesheet">
+    <link href='@routes.WebJarAssets.at(WebJarAssets.locate("2.3.2/css/bootstrap.min.css"))' rel="stylesheet" media="screen">
+    <link href='@routes.WebJarAssets.at(WebJarAssets.locate("2.3.2/css/bootstrap-responsive.min.css"))' rel="stylesheet" media="screen">
+  </head>
 
-<body>
-  <div class="navbar navbar-inverse navbar-fixed-top" ng-controller='SeasonsCtrl'>
-    <div class="navbar-inner">
-      <div class="container">
-        <a class="brand" ng-click="goToLatestSeason()">Hammers Calendar</a>
-        <div class="nav-collapse collapse">
+  <body>
+    <div class="navbar navbar-inverse navbar-fixed-top" ng-controller='SeasonsCtrl'>
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" ng-click="goToLatestSeason()">Hammers Calendar</a>
           <ul class="nav">
             <li class="dropdown">
-              <a class="dropdown-toggle">
-                {{currentSeason}} <b class="caret"></b>
-              </a>
+              <a class="dropdown-toggle"> {{currentSeason}} <b class="caret"></b> </a>
               <ul class="dropdown-menu">
                 <li ng-repeat="season in seasons">
                   <a ng-click="setCurrentSeason(season)">{{season}}</a>
@@ -48,9 +39,10 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="container">
-    <div ng-view></div>
-  </div>
-</body>
+    <div class="container">
+      <div class="row">
+        <div class="span12" ng-view></div>
+      </div>
+    </div>
+  </body>
 </html>
