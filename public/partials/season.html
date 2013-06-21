@@ -1,4 +1,4 @@
-<table class="table table-hover table-condensed">
+<table class="table table-hover table-condensed main-table">
   <tbody>
     <tr>
       <th>Date</th>
@@ -9,9 +9,9 @@
       <th>Tickets</th>
       <th>Attended</th>
     </tr>
-    <tr ng-repeat="game in games" class="row-{{game.type}}">
-      <td ng-show="game.type == 'month'">
-        {{game.month}}
+    <tr ng-repeat="game in games">
+      <td ng-show="game.type == 'month'" colspan="7">
+        <span class="label label-month">{{game.month}}</span>
       </td>
       <td ng-hide="game.type == 'month'">
         <span 
