@@ -88,7 +88,7 @@ class CalendarModule extends ScalaModule {
     bind[CalendarWriter].to[IcalCalendarWriter]
 
     //MVC
-    bind[GameRowFactory].toInstance(GameRowFactoryImpl(config.getString("ticketType")))
+    bind[GameRowFactory].to[GameRowFactoryImpl]
 
     //Authorisation
     bind[Authorization].toInstance(Authorised(config.getString("valid-users.users").split(",").map(_.trim())))

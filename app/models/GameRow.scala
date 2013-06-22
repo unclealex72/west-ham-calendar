@@ -35,8 +35,13 @@ object GameTimeType extends Enumeration {
   type GameTimeType = Value
   val ThreePmSaturday, Weekend, Weekday = Value
 }
+object TicketType extends Enumeration {
+  type TicketType = Value
+  val Bondholder, PriorityPoint, SeasonTicket, Academy, GeneralSale = Value
+}
 
 import GameTimeType._
+import TicketType._
 
 /**
  * A game row allows a game to be shown as a row in a table.
@@ -52,7 +57,7 @@ case class GameRow(
   geoLocation: Option[GeoLocation],
   result: Option[String],
   matchReport: Option[String],
-  ticketsAt: Option[Date],
+  ticketsAt: Map[TicketType, Option[Date]],
   attended: Option[Boolean]) {
 
 }

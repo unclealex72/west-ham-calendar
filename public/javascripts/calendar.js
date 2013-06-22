@@ -3,7 +3,7 @@ var app = angular.module('calendar', ['ui.bootstrap']);
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider.
     when('/season', {templateUrl: 'assets/partials/season.html',   controller: MainCtrl}).
-    when('/season/:season', {templateUrl: 'assets/partials/season.html', controller: MainCtrl}).
+    when('/season/:season/tickets/:ticketType', {templateUrl: 'assets/partials/season.html', controller: MainCtrl}).
     otherwise({redirectTo: '/season'});
 }]);
 
@@ -34,23 +34,22 @@ app.filter('customDate', ['$filter', function($filter, $log) {
   }
 }]);
 
-app.filter('possessive', [function($filter, $log) {
-  return function(input) {
-    if (!input) {
-      return ""
-    }
-    else if (/[sx]$/.test(input)) {
-      return input + "'";
-    }
-    else {
-      return input + "'s";
-    }
-  };
-}]);
+var PRIORITY_POINT = {name: "PriorityPoint", label: "Priority point"};
+var ticketTypes = new Array(
+  {name: "Bondholder", label: "Bondholder"},
+  PRIORITY_POINT,
+  {name: "SeasonTicket", label: "Season"},
+  {name: "Academy", label: "Academy members"},
+  {name: "GeneralSale", label: "General sale"});
 
 function MainCtrl($scope, $http, $location, $routeParams, $filter) {
   $http.post('base.json').success(function(base, status) {
     $scope.currentSeason = ($routeParams.season) ? parseInt($routeParams.season) : parseInt(base.year);
+    $scope.ticketType = _.find(ticketTypes, function(ticketType) { return $routeParams.ticketType == ticketType.name });
+    if (!$scope.ticketType) {
+      $scope.ticketType = PRIORITY_POINT;
+    }
+    $scope.ticketTypes = ticketTypes
     $scope.user = base.name;
     $scope.authorised = $scope.user ? 1 : 0;
     populateDropdowns($scope, $http, $location);
@@ -59,10 +58,15 @@ function MainCtrl($scope, $http, $location, $routeParams, $filter) {
 }
 
 function populateDropdowns($scope, $http, $location) {
-  $scope.setCurrentSeason = function(season) {
-    $scope.currentSeason = parseInt(season);
-    $location.path("/season/" + season);
+  var goto = function(season, ticketType) {
+    $location.path("/season/" + season + "/tickets/" + ticketType.name)
   };
+  $scope.setCurrentSeason = function(season) {
+    goto(season, $scope.ticketType);
+  };
+  $scope.setTicketType = function(ticketType) {
+    goto($scope.currentSeason, ticketType);
+  };  
   $http.post('seasons.json').success(function(seasons, status) {
     $scope.seasons = _(seasons).map('year').sort().reverse().value();
   });

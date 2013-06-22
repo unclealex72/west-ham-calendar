@@ -57,7 +57,7 @@ class Application @Inject() (
   def games(season: Int) = UserAwareAction { implicit request =>
     val includeAttended = emailAndName.isDefined
     json {
-      tx { gameDao => gameDao.getAllForSeason(season).map(gameRowFactory.toRow(includeAttended) _) }
+      tx { gameDao => gameDao.getAllForSeason(season).map(gameRowFactory.toRow(includeAttended)) }
     }(request)
   }
 }

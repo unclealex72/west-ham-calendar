@@ -31,12 +31,14 @@ import uk.co.unclealex.hammers.calendar.geo.GeoLocation
 import uk.co.unclealex.hammers.calendar.geo.GeoLocation._
 import uk.co.unclealex.hammers.calendar.model.Location._
 import java.util.Date
+import models.TicketType
+import models.TicketType._
 
 /**
  * @author alex
  *
  */
-class GameRowFactoryImpl(ticketFactory: Game => Option[DateTime]) extends GameRowFactory {
+class GameRowFactoryImpl extends GameRowFactory {
 
   def timeTypeOf(dateTime: DateTime): GameTimeType = {
     if (dateTime.isThreeOClockOnASaturday) {
@@ -48,7 +50,7 @@ class GameRowFactoryImpl(ticketFactory: Game => Option[DateTime]) extends GameRo
     }
   }
 
-  def toRow(includeAttended: Boolean)(game: Game): GameRow = {
+  def toRow(includeAttended: Boolean): Game => GameRow = { game =>
     game.at match {
       case Some(gameAt) =>
         GameRow(
@@ -70,19 +72,13 @@ class GameRowFactoryImpl(ticketFactory: Game => Option[DateTime]) extends GameRo
       case None => throw new IllegalStateException(s"Game $game did not have it's date played attribute set.")
     }
   }
-}
 
-object GameRowFactoryImpl {
-
-  def apply(ticketType: String): GameRowFactory = {
-    val ticketFactory: Game => Option[DateTime] = ticketType.toUpperCase match {
-      case "BONDHOLDER" => game => game.bondholdersAvailable
-      case "PRIORITYPOINT" => game => game.priorityPointAvailable
-      case "SEASON" => game => game.seasonTicketsAvailable
-      case "ACADEMY" => game => game.academyMembersAvailable
-      case "GENERAL" => game => game.generalSaleAvailable
-      case _ => throw new IllegalArgumentException(s"$ticketType is not a valid type of ticket")
-    }
-    new GameRowFactoryImpl(ticketFactory)
+  def ticketFactory(game: Game): Map[TicketType, Option[Date]] = {
+    Map(
+      TicketType.Bondholder -> game.bondholdersAvailable,
+      TicketType.PriorityPoint -> game.priorityPointAvailable,
+      TicketType.SeasonTicket -> game.seasonTicketsAvailable,
+      TicketType.Academy -> game.academyMembersAvailable,
+      TicketType.GeneralSale -> game.generalSaleAvailable)
   }
 }
