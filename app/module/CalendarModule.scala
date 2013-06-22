@@ -91,9 +91,8 @@ class CalendarModule extends ScalaModule {
     bind[GameRowFactory].to[GameRowFactoryImpl]
 
     //Authorisation
-    bind[Authorization].toInstance(Authorised(Option(config.getString("valid-users.users")) match {
-      case Some(users) => users.split(",").map(_.trim())
-      case None => Seq.empty[String]
-    }))
+    val validUsers = ((path: String) => if (config.hasPath(path)) config.getString(path) else "")("valid-users.users")
+    bind[Authorization].toInstance(Authorised(validUsers.split(",").map(_.trim())));
   }
+
 }
