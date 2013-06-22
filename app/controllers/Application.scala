@@ -6,8 +6,15 @@ import javax.inject.Inject
 import uk.co.unclealex.hammers.calendar.dao.Transactional
 import services.GameRowFactory
 import uk.co.unclealex.hammers.calendar.update.MainUpdateService
+import securesocial.core.SecureSocial
+import securesocial.core.Authorization
+import securesocial.core.RequestWithUser
 
 class Application @Inject() (
+  /**
+   * The authorization object to check for authorised users.
+   */
+  implicit authorization: Authorization,
   /**
    * The transactional object used to get games and seasons.
    */
@@ -15,7 +22,7 @@ class Application @Inject() (
   /**
    * The game row factory used to get game row models.
    */
-  gameRowFactory: GameRowFactory) extends Controller with Json {
+  gameRowFactory: GameRowFactory) extends Controller with Secure with Json {
 
   /**
    * Redirect to the  homepage.
@@ -24,20 +31,33 @@ class Application @Inject() (
     Ok(views.html.index())
   }
 
-  val yearMapper: Int => Map[String, Int] = year => Map("year" -> year)
+  def yearMapper(parameters: Pair[String, Any]*): Int => Map[String, Any] =
+    year => Map("year" -> year) ++ parameters
 
   /**
    * Get all seasons
    */
   def seasons = json {
-    tx { gameDao => gameDao.getAllSeasons.toList.map(yearMapper) }
+    tx { gameDao => gameDao.getAllSeasons.toList.map(yearMapper()) }
   }
 
-  def latestSeason = json {
-    tx { gameDao => gameDao.getLatestSeason.map(yearMapper) }
+  /**
+   * Get the base information required: the latest season and the email of the logged in user if present.
+   */
+  def base = UserAwareAction { implicit request =>
+    val jsonFactory = emailAndName match {
+      case Some((email, name)) => yearMapper("name" -> name)
+      case None => yearMapper()
+    }
+    json {
+      tx { gameDao => gameDao.getLatestSeason.map(jsonFactory) }
+    }(request)
   }
 
-  def games(season: Int) = json {
-    tx { gameDao => gameDao.getAllForSeason(season).map(gameRowFactory.toRow _) }
+  def games(season: Int) = UserAwareAction { implicit request =>
+    val includeAttended = emailAndName.isDefined
+    json {
+      tx { gameDao => gameDao.getAllForSeason(season).map(gameRowFactory.toRow(includeAttended) _) }
+    }(request)
   }
 }

@@ -19,41 +19,28 @@
  * under the License.
  *
  */
-package models
+package controllers
 
-import uk.co.unclealex.hammers.calendar.model.Competition
-import uk.co.unclealex.hammers.calendar.model.Location
-import uk.co.unclealex.hammers.calendar.geo.GeoLocation
-
-import java.util.Date
+import securesocial.core.SecureSocial
+import securesocial.core.RequestWithUser
+import securesocial.core.Authorization
 
 /**
  * @author alex
  *
  */
-object GameTimeType extends Enumeration {
-  type GameTimeType = Value
-  val ThreePmSaturday, Weekend, Weekday = Value
-}
+trait Secure extends SecureSocial {
 
-import GameTimeType._
-
-/**
- * A game row allows a game to be shown as a row in a table.
- */
-case class GameRow(
-  id: Long,
-  at: Date,
-  gameTimeType: GameTimeType,
-  season: Int,
-  opponents: String,
-  competition: Competition,
-  location: Location,
-  geoLocation: Option[GeoLocation],
-  result: Option[String],
-  matchReport: Option[String],
-  ticketsAt: Option[Date],
-  attended: Option[Boolean]) {
+  /**
+   * Get the email and name of an authorised, logged in user or none if no such user currently exists.
+   */
+  def emailAndName(implicit request: RequestWithUser[_ <: Any], authorization: Authorization): Option[Pair[String, String]] =
+    request.user match {
+      case Some(user) => user.email match {
+        case Some(email) => if (authorization.isAuthorized(user)) Some(email, user.fullName) else None
+        case None => None
+      }
+      case None => None
+    }
 
 }
-

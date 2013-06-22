@@ -33,6 +33,7 @@ trait GameRowFactory {
 
   /**
    * Convert a game into a game row.
+   * @param includeAttended True if the attended flag should be included, false otherwise.
    */
-  def toRow(game: Game): GameRow
+  def toRow(includeAttended: Boolean)(game: Game): GameRow
 }

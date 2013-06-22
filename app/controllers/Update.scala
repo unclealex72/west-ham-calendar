@@ -29,6 +29,9 @@ import play.api.mvc.Results._
 import java.io.StringWriter
 import java.io.PrintWriter
 import org.omg.PortableServer.CurrentPackage.NoContext
+import securesocial.core.SecureSocial
+import securesocial.core.Authorization
+import play.api.mvc.Request
 
 /**
  * @author alex
@@ -36,9 +39,13 @@ import org.omg.PortableServer.CurrentPackage.NoContext
  */
 class Update @Inject() (
   /**
+   * The authorization object used to check a user is authorised.
+   */
+  implicit authorization: Authorization,
+  /**
    * The main update service used to scrape the West Ham site and update game information.
    */
-  mainUpdateService: MainUpdateService) {
+  mainUpdateService: MainUpdateService) extends Controller with Secure {
 
   /**
    * Update all games in the database from the web.
@@ -61,17 +68,17 @@ class Update @Inject() (
   /**
    * Attend a game.
    */
-  def attend(gameId: Long) = empty { mainUpdateService attendGame gameId }
+  def attend(gameId: Long) = SecuredAction(authorization) { empty { mainUpdateService attendGame gameId } }
 
   /**
    * Unattend a game.
    */
-  def unattend(gameId: Long) = empty { mainUpdateService unattendGame gameId }
+  def unattend(gameId: Long) = SecuredAction(authorization) { empty { mainUpdateService unattendGame gameId } }
 
   /**
    * Execute code and return a no-content response.
    */
-  def empty(block: => Unit) = Action {
+  def empty(block: => Unit) = (request: Request[Any]) => {
     block
     NoContent
   }

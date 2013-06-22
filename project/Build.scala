@@ -12,6 +12,8 @@ object ApplicationBuild extends Build {
   val appName = "west-ham-calendar"
 
   val appDependencies = Seq(
+    //security
+    "securesocial" %% "securesocial" % "master-SNAPSHOT",
     //web dependencies
     "org.webjars" % "webjars-play" % "2.1.0-1",
     "org.webjars" % "angular-ui-bootstrap" % "0.3.0-1",
@@ -63,6 +65,8 @@ object ApplicationBuild extends Build {
     libraryDependencies ++= appDependencies,
     resolvers ++= Seq(
       "scala-tools" at "https://oss.sonatype.org/content/groups/scala-tools/",
+      Resolver.url("sbt-plugin-snapshots", url("http://repo.scala-sbt.org/scalasbt/sbt-plugin-snapshots/"))(Resolver.ivyStylePatterns),
+      Resolver.url("sbt-plugin-releases", url("http://repo.scala-sbt.org/scalasbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns),
       "cloudbees-private-release-repository" at "https://repository-unclealex.forge.cloudbees.com/release",
       "cloudbees-private-snapshot-repository" at "https://repository-unclealex.forge.cloudbees.com/snapshot"))
 

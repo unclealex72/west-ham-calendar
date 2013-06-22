@@ -52,6 +52,9 @@ import services.GameRowFactory
 import services.GameRowFactory
 import services.GameRowFactory
 import services.GameRowFactoryImpl
+import securesocial.core.Authorization
+import controllers.Authorised
+import controllers.Authorised
 
 /**
  * @author alex
@@ -86,5 +89,8 @@ class CalendarModule extends ScalaModule {
 
     //MVC
     bind[GameRowFactory].toInstance(GameRowFactoryImpl(config.getString("ticketType")))
+
+    //Authorisation
+    bind[Authorization].toInstance(Authorised(config.getString("valid-users.users").split(",").map(_.trim())))
   }
 }

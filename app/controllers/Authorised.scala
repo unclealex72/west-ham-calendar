@@ -19,41 +19,24 @@
  * under the License.
  *
  */
-package models
+package controllers
 
-import uk.co.unclealex.hammers.calendar.model.Competition
-import uk.co.unclealex.hammers.calendar.model.Location
-import uk.co.unclealex.hammers.calendar.geo.GeoLocation
-
-import java.util.Date
+import securesocial.core.Authorization
+import securesocial.core.Identity
 
 /**
+ * An Authorization object that allows users with known email addresses to be authorised.
  * @author alex
  *
  */
-object GameTimeType extends Enumeration {
-  type GameTimeType = Value
-  val ThreePmSaturday, Weekend, Weekday = Value
+case class Authorised(
+  /**
+   * The email addresses that are allowed to login.
+   */
+  emailAddresses: Seq[String]) extends Authorization {
+
+  def isAuthorized(identity: Identity): Boolean = identity.email match {
+    case Some(email) => emailAddresses contains email
+    case None => false
+  }
 }
-
-import GameTimeType._
-
-/**
- * A game row allows a game to be shown as a row in a table.
- */
-case class GameRow(
-  id: Long,
-  at: Date,
-  gameTimeType: GameTimeType,
-  season: Int,
-  opponents: String,
-  competition: Competition,
-  location: Location,
-  geoLocation: Option[GeoLocation],
-  result: Option[String],
-  matchReport: Option[String],
-  ticketsAt: Option[Date],
-  attended: Option[Boolean]) {
-
-}
-

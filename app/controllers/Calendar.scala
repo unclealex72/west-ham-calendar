@@ -30,13 +30,16 @@ import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
 import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
 import play.api.mvc.Controller
+import securesocial.core.Authorization
 
 /**
  * The controller that handles generating calendars.
  * @author alex
  *
  */
-class Calendar @Inject() (calendarFactory: CalendarFactory, calendarWriter: CalendarWriter) extends Controller {
+class Calendar @Inject() (
+  calendarFactory: CalendarFactory,
+  calendarWriter: CalendarWriter) extends Controller {
 
   def searchSecure(attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     calendar(

@@ -48,7 +48,7 @@ class GameRowFactoryImpl(ticketFactory: Game => Option[DateTime]) extends GameRo
     }
   }
 
-  def toRow(game: Game): GameRow = {
+  def toRow(includeAttended: Boolean)(game: Game): GameRow = {
     game.at match {
       case Some(gameAt) =>
         GameRow(
@@ -66,7 +66,7 @@ class GameRowFactoryImpl(ticketFactory: Game => Option[DateTime]) extends GameRo
           result = game.result,
           matchReport = game.matchReport,
           ticketsAt = ticketFactory(game),
-          attended = game.attended getOrElse false)
+          attended = if (includeAttended) game.attended orElse Some(false) else None)
       case None => throw new IllegalStateException(s"Game $game did not have it's date played attribute set.")
     }
   }

@@ -21,15 +21,17 @@
  */
 package controllers
 
+import scala.collection.GenTraversableOnce
+
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
+
+import play.api.http.HeaderNames.CONTENT_TYPE
 import play.api.mvc.Action
+import play.api.mvc.Headers
+import play.api.mvc.Request
 import play.api.mvc.Results
 import play.api.mvc.WithHeaders
-import play.api.mvc.Headers
-import com.google.common.net.MediaType
-import play.api.http.HeaderNames.CONTENT_TYPE
-import scala.collection.GenTraversableOnce
 /**
  * A trait that allows controllers to automatically return JSON serialisable objects as strings.
  * @author alex
@@ -43,8 +45,8 @@ trait Json extends Results {
    * Create an action that returns an object as a JSON serialised string.
    * @param obj The object to serialise.
    */
-  def json(block: => Any) = Action { resp =>
-    resp.method match {
+  def json(block: => Any) = Action { implicit req =>
+    req.method match {
       // only allow POST to avoid JSON array vunerabilities
       case "POST" => Ok(objectMapper.writeValueAsString(block)).withHeaders(CONTENT_TYPE -> "application/json")
       case _ => NotFound

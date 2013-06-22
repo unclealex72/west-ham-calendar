@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="calendar" ng-controller='SeasonsCtrl'>
+<html lang="en" ng-app="calendar" ng-controller='MainCtrl'>
   <head>
     <meta charset="utf-8">
     <title>West Ham Calendar {{currentSeason}}</title>
@@ -21,28 +21,6 @@
     <link href='@routes.Assets.at("stylesheets/calendar.css")' rel="stylesheet">
   </head>
 
-  <body>
-    <div class="navbar navbar-inverse navbar-fixed-top" ng-controller='SeasonsCtrl'>
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="brand" ng-click="goToLatestSeason()">Hammers Calendar</a>
-          <ul class="nav">
-            <li class="dropdown">
-              <a class="dropdown-toggle"> {{currentSeason}} <b class="caret"></b> </a>
-              <ul class="dropdown-menu">
-                <li ng-repeat="season in seasons">
-                  <a ng-click="setCurrentSeason(season)">{{season}}</a>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-    <div class="container">
-      <div class="row">
-        <div class="span12" ng-view></div>
-      </div>
-    </div>
+  <body ng-view>
   </body>
 </html>
