@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory
 import com.typesafe.scalalogging.slf4j.Logging
 import scala.collection.JavaConversions._
 import uk.co.unclealex.hammers.calendar.html.TagNodeImplicits._
-import com.google.inject.Provider
+import javax.inject.Provider
 import javax.inject.Inject
 import javax.inject.Named
 

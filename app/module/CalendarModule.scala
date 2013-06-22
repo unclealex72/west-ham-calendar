@@ -80,7 +80,7 @@ class CalendarModule extends ScalaModule {
     bind[HtmlGamesScanner].to[SeasonHtmlGamesScanner]
     bind[URI].annotatedWithName("mainPage").toInstance(new URI("http://www.whufc.com/page/Home/0,,12562,00.html"))
     bind[HtmlPageLoader].to[HtmlPageLoaderImpl]
-    bind[MainPageService].toProvider[MainPageServiceProvider]
+    bind[MainPageService].toProvider(classOf[MainPageServiceProvider])
     bind[MainUpdateService].to[MainUpdateServiceImpl]
 
     // Calendars
