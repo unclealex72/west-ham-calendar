@@ -91,6 +91,9 @@ class CalendarModule extends ScalaModule {
     bind[GameRowFactory].to[GameRowFactoryImpl]
 
     //Authorisation
-    bind[Authorization].toInstance(Authorised(config.getString("valid-users.users").split(",").map(_.trim())))
+    bind[Authorization].toInstance(Authorised(Option(config.getString("valid-users.users")) match {
+      case Some(users) => users.split(",").map(_.trim())
+      case None => Seq.empty[String]
+    }))
   }
 }
