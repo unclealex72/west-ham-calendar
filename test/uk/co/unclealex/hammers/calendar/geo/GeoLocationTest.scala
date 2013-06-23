@@ -22,7 +22,6 @@
 package uk.co.unclealex.hammers.calendar.geo
 
 import org.specs2.mutable.Specification
-
 import GeoLocation.ALDERSHOT_TOWN
 import GeoLocation.ARSENAL
 import GeoLocation.ASTON_VILLA
@@ -66,6 +65,10 @@ import GeoLocation.TOTTENHAM_HOTSPUR
 import GeoLocation.WATFORD
 import GeoLocation.WEST_HAM
 import GeoLocation.WIGAN_ATHLETIC
+import GeoLocation.WOLVERHAMPTON_WANDERERS
+import GeoLocation.WEST_BROMWICH_ALBION
+import GeoLocation.QUEENS_PARK_RANGERS
+
 /**
  * @author alex
  *
@@ -100,6 +103,30 @@ class GeoLocationTest extends Specification {
   "Southend" should {
     "be at Roots Hall" in {
       GeoLocation("Southend") must be equalTo (Some(SOUTHEND_UNITED))
+    }
+  }
+
+  "Wolves" should {
+    "be at Molyneux" in {
+      GeoLocation("Wolves") must be equalTo (Some(WOLVERHAMPTON_WANDERERS))
+    }
+  }
+
+  "WBA" should {
+    "be at The Hawthorns" in {
+      GeoLocation("WBA") must be equalTo (Some(WEST_BROMWICH_ALBION))
+    }
+  }
+
+  "West Brom" should {
+    "be at The Hawthorns" in {
+      GeoLocation("West Brom") must be equalTo (Some(WEST_BROMWICH_ALBION))
+    }
+  }
+
+  "QPR" should {
+    "be at Loftus Road" in {
+      GeoLocation("QPR") must be equalTo (Some(QUEENS_PARK_RANGERS))
     }
   }
 
@@ -147,12 +174,13 @@ class GeoLocationTest extends Specification {
     ("Tottenham" -> TOTTENHAM_HOTSPUR),
     ("Watford" -> WATFORD),
     ("Wigan Athletic" -> WIGAN_ATHLETIC))
-    
-    teams foreach { case (team, expectedGeoLocation) =>
+
+  teams foreach {
+    case (team, expectedGeoLocation) =>
       s"Harvested team $team" should {
         s"be at ${expectedGeoLocation.name}" in {
-          GeoLocation(team) should be equalTo(Some(expectedGeoLocation))
+          GeoLocation(team) should be equalTo (Some(expectedGeoLocation))
         }
       }
-    }
+  }
 }

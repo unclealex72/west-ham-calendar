@@ -21,11 +21,12 @@
  */
 package uk.co.unclealex.hammers.calendar.geo
 
-import scala.math.BigDecimal
-import com.rockymadden.stringmetric.similarity.WeightedLevenshteinMetric
-import com.typesafe.scalalogging.slf4j.Logging
 import scala.collection.immutable.SortedMap
+import scala.math.BigDecimal
+
 import com.rockymadden.stringmetric.similarity.JaroWinklerMetric
+import com.typesafe.scalalogging.slf4j.Logging
+
 import uk.co.unclealex.hammers.calendar.model.Game
 import uk.co.unclealex.hammers.calendar.model.Location
 
@@ -62,16 +63,20 @@ sealed abstract class GeoLocation(
   /**
    * The name of the ground.
    */
-  val name: String, 
+  val name: String,
   /**
    * The latitude of the ground.
    */
-  val latitude: BigDecimal, 
+  val latitude: BigDecimal,
   /**
    * The longitude of the ground.
    */
-  val longitude: BigDecimal) extends GeoLocation.Value {
-  
+  val longitude: BigDecimal,
+  /**
+   * A list of common alternative names.
+   */
+  val alternativeNames: String*) extends GeoLocation.Value {
+
   /**
    * The URL for Google maps.
    */
@@ -154,7 +159,7 @@ object GeoLocation extends GeoLocationLike {
   case object NOTTS_COUNTY extends GeoLocation("Notts County", "Meadow Lane", BigDecimal("52.9425"), BigDecimal("-1.13703")); NOTTS_COUNTY
   case object BRISTOL_ROVERS extends GeoLocation("Bristol Rovers", "Memorial Stadium", BigDecimal("51.4862"), BigDecimal("-2.58315")); BRISTOL_ROVERS
   case object WALES extends GeoLocation("Wales", "Millennium Stadium", BigDecimal("51.4782"), BigDecimal("-3.18281")); WALES
-  case object WOLVERHAMPTON_WANDERERS extends GeoLocation("Wolverhampton Wanderers", "Molineux", BigDecimal("52.5904"), BigDecimal("-2.13061")); WOLVERHAMPTON_WANDERERS
+  case object WOLVERHAMPTON_WANDERERS extends GeoLocation("Wolverhampton Wanderers", "Molineux", BigDecimal("52.5904"), BigDecimal("-2.13061"), "Wolves"); WOLVERHAMPTON_WANDERERS
   case object MACCLESFIELD_TOWN extends GeoLocation("Macclesfield Town", "Moss Rose", BigDecimal("53.2427"), BigDecimal("-2.127")); MACCLESFIELD_TOWN
   case object AIRDRIE_UNITED extends GeoLocation("Airdrie United", "New Broomfield", BigDecimal("55.8601"), BigDecimal("-3.95997")); AIRDRIE_UNITED
   case object HAMILTON_ACADEMICAL extends GeoLocation("Hamilton Academical", "New Douglas Park", BigDecimal("55.7821"), BigDecimal("-4.058")); HAMILTON_ACADEMICAL
@@ -202,7 +207,7 @@ object GeoLocation extends GeoLocationLike {
   case object SWINDON_TOWN extends GeoLocation("Swindon Town", "The County Ground", BigDecimal("51.5645"), BigDecimal("-1.77107")); SWINDON_TOWN
   case object MILLWALL extends GeoLocation("Millwall", "The Den", BigDecimal("51.4859"), BigDecimal("-0.050743")); MILLWALL
   case object HUDDERSFIELD_TOWN extends GeoLocation("Huddersfield Town", "The Galpharm Stadium", BigDecimal("53.6543"), BigDecimal("-1.76837")); HUDDERSFIELD_TOWN
-  case object WEST_BROMWICH_ALBION extends GeoLocation("West Bromwich Albion", "The Hawthorns", BigDecimal("52.509"), BigDecimal("-1.96418")); WEST_BROMWICH_ALBION
+  case object WEST_BROMWICH_ALBION extends GeoLocation("West Bromwich Albion", "The Hawthorns", BigDecimal("52.509"), BigDecimal("-1.96418"), "WBA"); WEST_BROMWICH_ALBION
   case object STEVENAGE_BOROUGH extends GeoLocation("Stevenage Borough", "The Lamex Stadium", BigDecimal("51.8898"), BigDecimal("-0.193664")); STEVENAGE_BOROUGH
   case object CHARLTON_ATHLETIC extends GeoLocation("Charlton Athletic", "The Valley", BigDecimal("51.4865"), BigDecimal("0.036757")); CHARLTON_ATHLETIC
   case object BURNLEY extends GeoLocation("Burnley", "Turf Moor", BigDecimal("53.7888"), BigDecimal("-2.23018")); BURNLEY
@@ -219,32 +224,32 @@ object GeoLocation extends GeoLocationLike {
   case object COLCHESTER_UNITED extends GeoLocation("Colchester United", "Weston Homes Community Stadium", BigDecimal("51.9234"), BigDecimal("0.897861")); COLCHESTER_UNITED
   case object CHELTENHAM_TOWN extends GeoLocation("Cheltenham Town", "Whaddon Road", BigDecimal("51.9062"), BigDecimal("-2.06021")); CHELTENHAM_TOWN
   case object TOTTENHAM_HOTSPUR extends GeoLocation("Tottenham Hotspur", "White Hart Lane", BigDecimal("51.6033"), BigDecimal("-0.065684")); TOTTENHAM_HOTSPUR
-  
+
   def lookFor(team: String): Option[GeoLocation] = {
-    val none: Option[Pair[GeoLocation, Double]] = None
-    val search = values.values.foldLeft(none) { (closestMatch, geoLocation) =>
-      JaroWinklerMetric.compare(team, geoLocation.team.toLowerCase) match {
-        case Some(difference) => {
-          closestMatch match {
-            case Some(closestMatch) => {
-              Some(if (difference > closestMatch._2) (geoLocation, difference) else closestMatch)
-            }
-            case None => Some(geoLocation, difference)
-          }
-        }
-        case None => {
-          closestMatch
-        }
+    val lowerCaseTeam = team.toLowerCase
+    val largestDifference = { (geolocation: GeoLocation) =>
+      val differences = geolocation.team :: geolocation.alternativeNames.toList flatMap {
+        (teamName: String) => JaroWinklerMetric.compare(lowerCaseTeam, teamName.toLowerCase)
+      }
+      differences match {
+        case Nil => None
+        case _ => Some(differences.max)
       }
     }
-    search map { case (geoLocation, difference) => geoLocation }
+    val largestDifferences: GeoLocation => Traversable[Pair[GeoLocation, Double]] = { (geoLocation: GeoLocation) =>
+      largestDifference(geoLocation) map (difference => geoLocation -> difference)
+    }
+    values.values.flatMap(largestDifferences).toList match {
+      case Nil => None
+      case largestDifferences => Some(largestDifferences.maxBy(_._2)._1)
+    }
   }
-  
+
   /**
    * Get a geographic location from a team.
    */
   def apply(team: String): Option[GeoLocation] = { val lc = team.toLowerCase; values.get(lc) orElse lookFor(lc) }
-  
+
   /**
    * Get a geographic location for a game.
    */
