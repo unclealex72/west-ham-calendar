@@ -32,6 +32,7 @@ import org.omg.PortableServer.CurrentPackage.NoContext
 import securesocial.core.SecureSocial
 import securesocial.core.Authorization
 import play.api.mvc.Request
+import javax.inject.Named
 
 /**
  * @author alex
@@ -39,18 +40,24 @@ import play.api.mvc.Request
  */
 class Update @Inject() (
   /**
+   * The secret used to protect the update path.
+   */
+  @Named("secret") val secret: String,
+  /**
    * The authorization object used to check a user is authorised.
    */
-  implicit authorization: Authorization,
+  authorization: Authorization,
   /**
    * The main update service used to scrape the West Ham site and update game information.
    */
-  mainUpdateService: MainUpdateService) extends Controller with Secure {
+  mainUpdateService: MainUpdateService) extends Controller with Secure with Secret {
+
+  implicit val implicitAuthorization = authorization
 
   /**
    * Update all games in the database from the web.
    */
-  def update = Action {
+  def update(secretPayload: String) = SecretResult(secretPayload) {
     try {
       val gameCount = mainUpdateService.processDatabaseUpdates
       Ok(s"Updated: There are now ${gameCount} games in the database")

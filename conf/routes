@@ -17,10 +17,10 @@ PUT     /attend/:gameId              @controllers.Update.attend(gameId: Long)
 PUT     /unattend/:gameId            @controllers.Update.unattend(gameId: Long)
 
 # Updates
-POST     /update.html                @controllers.Update.update
+POST     /:secretPayload/update.html                @controllers.Update.update(secretPayload)
 
 # Calendars
-GET     /calendars/:attended/:location/:type/aj.ics   @controllers.Calendar.searchSecure(attended, location, type)
+GET     /calendars/:secretPayload/:attended/:location/:type/calendar.ics   @controllers.Calendar.searchSecure(secretPayload, attended, location, type)
 GET     /calendars/$mask<(free|busy)>/:location/:type/calendar.ics   @controllers.Calendar.search(mask, location, type)
 
 # Map static resources from the /public folder to the /assets URL path
@@ -38,16 +38,16 @@ GET     /login                      securesocial.controllers.LoginPage.login
 GET     /logout                     securesocial.controllers.LoginPage.logout
 
 # User Registration and password handling 
-GET     /signup                     securesocial.controllers.Registration.startSignUp
-POST    /signup                     securesocial.controllers.Registration.handleStartSignUp
-GET     /signup/:token              securesocial.controllers.Registration.signUp(token)
-POST    /signup/:token              securesocial.controllers.Registration.handleSignUp(token)
-GET     /reset                      securesocial.controllers.Registration.startResetPassword
-POST    /reset                      securesocial.controllers.Registration.handleStartResetPassword
-GET     /reset/:token               securesocial.controllers.Registration.resetPassword(token)
-POST    /reset/:token               securesocial.controllers.Registration.handleResetPassword(token)
-GET     /password                   securesocial.controllers.PasswordChange.page
-POST    /password                   securesocial.controllers.PasswordChange.handlePasswordChange
+#GET     /signup                     securesocial.controllers.Registration.startSignUp
+#POST    /signup                     securesocial.controllers.Registration.handleStartSignUp
+#GET     /signup/:token              securesocial.controllers.Registration.signUp(token)
+#POST    /signup/:token              securesocial.controllers.Registration.handleSignUp(token)
+#GET     /reset                      securesocial.controllers.Registration.startResetPassword
+#POST    /reset                      securesocial.controllers.Registration.handleStartResetPassword
+#GET     /reset/:token               securesocial.controllers.Registration.resetPassword(token)
+#POST    /reset/:token               securesocial.controllers.Registration.handleResetPassword(token)
+#GET     /password                   securesocial.controllers.PasswordChange.page
+#POST    /password                   securesocial.controllers.PasswordChange.handlePasswordChange
 
 # Providers entry points
 GET     /authenticate/:provider     securesocial.controllers.ProviderController.authenticate(provider)

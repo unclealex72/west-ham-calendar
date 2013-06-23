@@ -31,6 +31,7 @@ import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
 import play.api.mvc.Controller
 import securesocial.core.Authorization
+import javax.inject.Named
 
 /**
  * The controller that handles generating calendars.
@@ -38,28 +39,42 @@ import securesocial.core.Authorization
  *
  */
 class Calendar @Inject() (
+  /**
+   * The secret used to protect the update path.
+   */
+  @Named("secret") val secret: String,
+  /**
+   * The calendar factory used to generate calendars.
+   */
   calendarFactory: CalendarFactory,
-  calendarWriter: CalendarWriter) extends Controller {
+  /**
+   * The calendar write used to write calendars.
+   */
+  calendarWriter: CalendarWriter) extends Controller with Secret {
 
-  def searchSecure(attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
-    calendar(
-      None,
-      AttendedSearchOption(attendedSearchOption),
-      LocationSearchOption(locationSearchOption),
-      GameOrTicketSearchOption(gameOrTicketSearchOption))
+  def searchSecure(secretPayload: String, attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
+    SecretResult(secretPayload) {
+      calendar(
+        None,
+        AttendedSearchOption(attendedSearchOption),
+        LocationSearchOption(locationSearchOption),
+        GameOrTicketSearchOption(gameOrTicketSearchOption))
+    }
 
   def search(mask: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
-    calendar(
-      Some("busy" == mask),
-      Some(AttendedSearchOption.ANY),
-      LocationSearchOption(locationSearchOption),
-      GameOrTicketSearchOption(gameOrTicketSearchOption))
+    Action {
+      calendar(
+        Some("busy" == mask),
+        Some(AttendedSearchOption.ANY),
+        LocationSearchOption(locationSearchOption),
+        GameOrTicketSearchOption(gameOrTicketSearchOption))
+    }
 
   def calendar(
     busyMask: Option[Boolean],
     a: Option[AttendedSearchOption],
     l: Option[LocationSearchOption],
-    g: Option[GameOrTicketSearchOption]) = Action {
+    g: Option[GameOrTicketSearchOption]) = {
     (a, l, g) match {
       case (Some(a), Some(l), Some(g)) => {
         val calendar = calendarFactory.create(busyMask, a, l, g)

@@ -89,7 +89,8 @@ class CalendarModule extends ScalaModule {
 
     //MVC
     bind[GameRowFactory].to[GameRowFactoryImpl]
-
+    bind[String].annotatedWithName("secret").toInstance(config.getString("secret"))
+    
     //Authorisation
     val validUsers = ((path: String) => if (config.hasPath(path)) config.getString(path) else "")("valid-users.users")
     bind[Authorization].toInstance(Authorised(validUsers.split(",").map(_.trim())));
