@@ -44,6 +44,8 @@ import play.api.mvc.RequestHeader
 import play.api.mvc.Results
 import uk.co.unclealex.hammers.calendar.dao.SquerylGameDao
 import play.api.Configuration
+import java.io.File
+import play.api.Mode
 
 /**
  * The Play Framework global entry point.
@@ -71,35 +73,4 @@ object Global extends GlobalSettings with Logging with Results {
   }
 
   def getSession(adapter: DatabaseAdapter, app: Application) = Session.create(DB.getConnection()(app), adapter)
-
-  /**
-   * Enforce SSL if secure social requires it.
-   */
-  override def onRouteRequest(request: RequestHeader) = {
-    onRouteRequest(
-      configuration.getBoolean("securesocial.ssl").getOrElse(false),
-      request,
-      new SslRouter() {
-        def onAllowed(request: RequestHeader) = Global.super.onRouteRequest(request)
-        def onRedirectRequired(request: RequestHeader, url: String) = Action(MovedPermanently(url))
-      })
-  }
-
-  /**
-   * Allow different configurations for unit testing.
-   */
-  def onRouteRequest(
-    requireSsl: Boolean, request: RequestHeader, sslRouter: SslRouter): Option[Handler] = {
-    val uri = request.uri
-    if (requireSsl && !uri.startsWith("https")) {
-      Some(sslRouter.onRedirectRequired(request, "https" + uri.substring(4)))
-    } else {
-      sslRouter.onAllowed(request)
-    }
-  }
-}
-
-trait SslRouter {
-  def onAllowed(request: RequestHeader): Option[Handler]
-  def onRedirectRequired(request: RequestHeader, url: String): Handler
 }

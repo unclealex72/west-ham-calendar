@@ -14,7 +14,7 @@ class Application @Inject() (
   /**
    * The authorization object to check for authorised users.
    */
-  implicit authorization: Authorization,
+  authorization: Authorization,
   /**
    * The transactional object used to get games and seasons.
    */
@@ -23,6 +23,8 @@ class Application @Inject() (
    * The game row factory used to get game row models.
    */
   gameRowFactory: GameRowFactory) extends Controller with Secure with Json {
+
+  implicit val implicitAuthorization = authorization
 
   /**
    * Redirect to the  homepage.

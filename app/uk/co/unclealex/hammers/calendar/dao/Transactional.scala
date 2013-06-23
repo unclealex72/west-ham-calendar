@@ -33,11 +33,21 @@ trait Transactional {
    * @param block The code to run with a DAO injected.
    */
   def apply[T](block: GameDao => T): T = tx(block)
-  
+
   /**
    * Run code within a transaction.
    * @param block The code to run with a DAO injected.
    */
-  def tx[T](block:GameDao => T): T
+  def tx[T](block: GameDao => T): T
 
+}
+
+/**
+ * A helper object for quickly injecting static game DAOs.
+ */
+object Transactional {
+
+  def apply(gameDao: GameDao) = new Transactional() {
+    def tx[T](block: GameDao => T): T = block(gameDao)
+  }
 }
