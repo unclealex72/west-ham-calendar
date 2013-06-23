@@ -86,11 +86,13 @@ function populateGames($scope, $http, $filter) {
     }
     $scope.games = monthOrGames;
   });
-  $scope.attendGame = function(game) {
-	  $http.put('/attend/' + game.id);
-  }
-  $scope.unattendGame = function(game) {
-	  $http.put('/unattend/' + game.id);
-  }
+  var attendOrUnattend = function(path, resetValue, game) {
+    $http.put('/' + path + '/' + game.id).error(function(data, status, headers, config) {
+      game.attended = resetValue;
+      alert("This game could not be updated: " + status)
+    });
+  };
+  $scope.attendGame = _.partial(attendOrUnattend, 'attend', false);
+  $scope.unattendGame = _.partial(attendOrUnattend, 'unattend', true);
 };
 
