@@ -68,12 +68,12 @@ class Update @Inject() (
   /**
    * Attend a game.
    */
-  def attend(gameId: Long) = SecuredAction(authorization) { empty { mainUpdateService attendGame gameId } }
+  def attend(gameId: Long) = SecuredAction(true, authorization) { empty { mainUpdateService attendGame gameId } }
 
   /**
    * Unattend a game.
    */
-  def unattend(gameId: Long) = SecuredAction(authorization) { empty { mainUpdateService unattendGame gameId } }
+  def unattend(gameId: Long) = SecuredAction(true, authorization) { empty { mainUpdateService unattendGame gameId } }
 
   /**
    * Execute code and return a no-content response.
