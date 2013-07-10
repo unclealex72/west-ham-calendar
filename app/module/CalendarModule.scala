@@ -55,6 +55,8 @@ import services.GameRowFactoryImpl
 import securesocial.core.Authorization
 import controllers.Authorised
 import controllers.Authorised
+import uk.co.unclealex.hammers.calendar.html.LinkHarvester
+import uk.co.unclealex.hammers.calendar.html.TicketsLinkHarvester
 
 /**
  * @author alex
@@ -77,12 +79,13 @@ class CalendarModule extends ScalaModule {
 
     // Game harvesting and update services
     bind[TicketsHtmlGamesScannerFactory].to[TicketsHtmlGamesScannerFactoryImpl]
+    bind[LinkHarvester].to[TicketsLinkHarvester]
     bind[HtmlGamesScanner].to[SeasonHtmlGamesScanner]
     bind[URI].annotatedWithName("mainPage").toInstance(new URI("http://www.whufc.com/page/Home/0,,12562,00.html"))
     bind[HtmlPageLoader].to[HtmlPageLoaderImpl]
     bind[MainPageService].toProvider(classOf[MainPageServiceProvider])
     bind[MainUpdateService].to[MainUpdateServiceImpl]
-
+    
     // Calendars
     bind[CalendarFactory].to[CalendarFactoryImpl]
     bind[CalendarWriter].to[IcalCalendarWriter]

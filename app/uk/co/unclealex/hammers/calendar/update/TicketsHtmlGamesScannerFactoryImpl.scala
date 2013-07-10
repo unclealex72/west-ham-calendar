@@ -26,6 +26,9 @@ import uk.co.unclealex.hammers.calendar.html.HtmlPageLoader
 import uk.co.unclealex.hammers.calendar.dates.DateService
 import uk.co.unclealex.hammers.calendar.dao.Transactional
 import javax.inject.Inject
+import uk.co.unclealex.hammers.calendar.html.DelegatingHtmlGamesScanner
+import uk.co.unclealex.hammers.calendar.html.HtmlGamesScanner
+import uk.co.unclealex.hammers.calendar.html.LinkHarvester
 
 /**
  * The default implementation of {@link TicketsHtmlGamesScannerFactory}.
@@ -44,8 +47,15 @@ class TicketsHtmlGamesScannerFactoryImpl @Inject() (
   /**
    * The {@link DateService} to use for date and time manipulation.
    */
-  dateService: DateService) extends TicketsHtmlGamesScannerFactory {
+  dateService: DateService,
+  /**
+   * The link harvester used to find ticket pages.
+   */
+  linkHarvester: LinkHarvester,
+  htmlGamesScanner : HtmlGamesScanner) extends TicketsHtmlGamesScannerFactory {
 
-  def get = tx ( _.getLatestSeason map (season => new TicketsHtmlSingleGameScanner(htmlPageLoader, dateService, season) ))
-    
+  def get = tx ( _.getLatestSeason map ( season => 
+    new DelegatingHtmlGamesScanner(
+      htmlPageLoader, dateService, linkHarvester, 
+      new TicketsHtmlSingleGameScanner(htmlPageLoader, dateService, season))))
 }
