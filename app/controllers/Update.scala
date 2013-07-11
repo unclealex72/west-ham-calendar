@@ -21,19 +21,18 @@
  */
 package controllers
 
-import play.mvc.Controller
-import javax.inject.Inject
-import uk.co.unclealex.hammers.calendar.update.MainUpdateService
-import play.api.mvc.Action
-import play.api.mvc.Results._
-import java.io.StringWriter
 import java.io.PrintWriter
-import org.omg.PortableServer.CurrentPackage.NoContext
-import securesocial.core.SecureSocial
-import securesocial.core.Authorization
-import play.api.mvc.Request
-import javax.inject.Named
+import java.io.StringWriter
 
+import javax.inject.Inject
+import javax.inject.Named
+import play.api.mvc.Action
+import play.api.mvc.Request
+import play.api.mvc.Results._
+import play.mvc.Controller
+import securesocial.core.Authorization
+import uk.co.unclealex.hammers.calendar.update.MainUpdateService
+import scala.concurrent.ExecutionContext.Implicits.global
 /**
  * @author alex
  *
@@ -58,17 +57,9 @@ class Update @Inject() (
    * Update all games in the database from the web.
    */
   def update(secretPayload: String) = SecretResult(secretPayload) {
-    try {
-      val gameCount = mainUpdateService.processDatabaseUpdates
-      Ok(s"Updated: There are now ${gameCount} games in the database")
-    } catch {
-      case e: Exception => {
-        val buffer = new StringWriter
-        val writer = new PrintWriter(buffer)
-        e.printStackTrace(writer)
-        writer.close()
-        InternalServerError(buffer.toString)
-      }
+    val futureInt = scala.concurrent.Future { mainUpdateService.processDatabaseUpdates() }
+    Async {
+      futureInt.map(i => Ok(s"Updated: There are now ${i} games in the database"))
     }
   }
 
