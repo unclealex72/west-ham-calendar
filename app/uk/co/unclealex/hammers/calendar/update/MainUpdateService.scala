@@ -23,6 +23,7 @@
 package uk.co.unclealex.hammers.calendar.update
 
 import java.io.IOException
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 
 /**
  * The service used to combine reading game information from the web and
@@ -73,5 +74,5 @@ trait MainUpdateService {
    * Update a list of game update commands from an HTML scan.
    * @return The number of games processed.
    */
-  def processDatabaseUpdates(): Int
+  def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Int
 }

@@ -35,6 +35,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.iteratee.Concurrent
 import play.api.mvc.ChunkedResult
 import play.api.mvc.ResponseHeader
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 /**
  * @author alex
  *
@@ -60,7 +61,17 @@ class Update @Inject() (
    */
   def update(secretPayload: String) = SecretResult(secretPayload) {
     val (enumerator, channel) = Concurrent.broadcast[String]
-    scala.concurrent.Future { mainUpdateService.processDatabaseUpdates() }
+    implicit val remoteStream = new RemoteStream() {
+      
+      def logToRemote(message: String): Unit = {
+        channel.push(message)
+      }
+    }
+    scala.concurrent.Future { 
+      val gameCount = mainUpdateService.processDatabaseUpdates
+      channel.push(s"There are now ${gameCount} games.")
+      channel.eofAndEnd
+    }
     Ok.stream(enumerator)
   }
 

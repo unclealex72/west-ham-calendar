@@ -43,6 +43,7 @@ import uk.co.unclealex.hammers.calendar.model.GameKey
 import uk.co.unclealex.hammers.calendar.model.Location.HOME
 import uk.co.unclealex.hammers.calendar.dao.Transactional
 import javax.inject.Inject
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 
 /**
  * The Class MainUpdateServiceImpl.
@@ -72,7 +73,7 @@ class MainUpdateServiceImpl @Inject() (
    *
    * @throws IOException
    */
-  override def processDatabaseUpdates: Int = {
+  override def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Int = {
     val allGames = tx { _ getAll }
     val newGames = processUpdates(
       "fixture", mainPageService.fixturesUri, fixturesHtmlGamesScanner, allGames)
@@ -95,7 +96,7 @@ class MainUpdateServiceImpl @Inject() (
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def processUpdates(updatesType: String, uri: URI, scanner: HtmlGamesScanner, allGames: List[Game]): List[Game] = {
+  def processUpdates(updatesType: String, uri: URI, scanner: HtmlGamesScanner, allGames: List[Game])(implicit remoteStream: RemoteStream): List[Game] = {
     logger info s"Scanning for $updatesType changes."
     val allGameUpdateCommands = scanner.scan(uri)
     val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)

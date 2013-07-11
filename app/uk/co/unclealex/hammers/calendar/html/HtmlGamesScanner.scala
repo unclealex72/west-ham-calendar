@@ -23,6 +23,7 @@
 package uk.co.unclealex.hammers.calendar.html;
 
 import java.net.URI
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 
 /**
  * The common interface for services that scan web pages for details on West Ham games. Such details can either
@@ -40,5 +41,5 @@ trait HtmlGamesScanner {
    * @return A set of changes found.
    * @throws IOException Thrown if there are any network problems.
    */
-  def scan(uri: URI): List[GameUpdateCommand]
+  def scan(uri: URI)(implicit remoteStream: RemoteStream): List[GameUpdateCommand]
 }

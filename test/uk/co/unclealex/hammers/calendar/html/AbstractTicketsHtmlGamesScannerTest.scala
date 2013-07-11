@@ -28,13 +28,14 @@ import uk.co.unclealex.hammers.calendar.Instant
 import uk.co.unclealex.hammers.calendar.dates.DateServiceImpl
 import org.specs2.mutable.Specification
 import scala.collection.JavaConverters._
+import uk.co.unclealex.hammers.calendar.log.SimpleRemoteStream
 
 /**
  * Test that the Tickets HTML scanner works.
  * @author alex
  *
  */
-abstract class AbstractTicketsHtmlGamesScannerTest(val year: Int) extends Specification {
+abstract class AbstractTicketsHtmlGamesScannerTest(val year: Int) extends Specification with SimpleRemoteStream {
 
   /**
    * The actual test runner.

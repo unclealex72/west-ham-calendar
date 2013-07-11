@@ -26,6 +26,7 @@ import org.htmlcleaner.TagNode
 import uk.co.unclealex.hammers.calendar.dates.DateService
 import scala.collection.SortedSet
 import scala.collection.JavaConversions._
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 
 /**
  * A base class for {@link HtmlGamesScanner}s that read a page and then
@@ -55,7 +56,7 @@ class DelegatingHtmlGamesScanner(
   /**
    * {@inheritDoc}
    */
-  def scan(uri: URI, tagNode: TagNode): List[GameUpdateCommand] = {
+  def scan(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
     linkHarvester.harvestLinks(uri, tagNode).flatMap(htmlGamesScanner.scan _)
   }
 }

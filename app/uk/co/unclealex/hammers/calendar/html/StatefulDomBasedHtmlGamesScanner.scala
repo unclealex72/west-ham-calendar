@@ -23,10 +23,9 @@
 package uk.co.unclealex.hammers.calendar.html;
 
 import java.net.URI
-
 import org.htmlcleaner.TagNode
-
 import uk.co.unclealex.hammers.calendar.dates.DateService
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 
 /**
  * A base class for {@link HtmlGamesScanner}s that require state. Really, is to avoid writing Spring factories.
@@ -46,7 +45,7 @@ abstract class StatefulDomBasedHtmlGamesScanner(
   /**
    * {@inheritDoc}
    */
-  override def scan(uri: URI, tagNode: TagNode): List[GameUpdateCommand] = {
+  override def scan(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
     val scanner = createScanner(uri, tagNode)
     scanner.scan()
   }
@@ -81,6 +80,6 @@ abstract class StatefulDomBasedHtmlGamesScanner(
      * @throws IOException
      *           Signals that an I/O exception has occurred.
      */
-    def scan(): List[GameUpdateCommand]
+    def scan()(implicit remoteStream: RemoteStream): List[GameUpdateCommand]
   }
 }

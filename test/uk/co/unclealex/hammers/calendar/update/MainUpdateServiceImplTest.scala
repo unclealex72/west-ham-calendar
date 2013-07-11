@@ -40,12 +40,13 @@ import uk.co.unclealex.hammers.calendar.html.AttendenceUpdateCommand
 import uk.co.unclealex.hammers.calendar.html.SeasonTicketsUpdateCommand
 import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
 import uk.co.unclealex.hammers.calendar.Instant
+import uk.co.unclealex.hammers.calendar.log.SimpleRemoteStream
 
 /**
  * @author alex
  *
  */
-class MainUpdateServiceImplTest extends Specification with MockFactory {
+class MainUpdateServiceImplTest extends Specification with MockFactory with SimpleRemoteStream {
 
   val TICKETS_URL = new URI("http://tickets")
   val FIXTURES_URL = new URI("http://fixtures")

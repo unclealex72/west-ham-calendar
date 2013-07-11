@@ -31,6 +31,8 @@ import uk.co.unclealex.hammers.calendar.dates.DateService
 import uk.co.unclealex.hammers.calendar.dates.DateTimeImplicits._
 import uk.co.unclealex.hammers.calendar.html.TagNodeImplicits.Implicits
 import javax.inject.Inject
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
+import uk.co.unclealex.hammers.calendar.logging.RemoteLogging
 
 /**
  * A {@link HtmlGamesScanner} that scans a page for ticket sales.
@@ -47,7 +49,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
    * The {@link DateService} to use for date and time manipulation.
    */
   dateService: DateService,
-  season: Int) extends StatefulDomBasedHtmlGamesScanner(htmlPageLoader, dateService) with Logging {
+  season: Int) extends StatefulDomBasedHtmlGamesScanner(htmlPageLoader, dateService) with RemoteLogging {
 
   /**
    * The text that indicates the ticket selling date is for Bondholders.
@@ -127,7 +129,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
        * @param dateText
        *          The dateText to search for or parse a date time.
        */
-      def execute(dateText: String): Option[TicketsUpdateCommand] = {
+      def execute(dateText: String)(implicit remoteStream: RemoteStream): Option[TicketsUpdateCommand] = {
         parseDateTime(dateText) match {
           case Some(dateTime) => execute(dateTime)
           case None => {
@@ -154,7 +156,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
        * @param dateTime
        *          The {@link DateTime} that has been found.
        */
-      def execute(dateTime: DateTime): Option[TicketsUpdateCommand]
+      def execute(dateTime: DateTime)(implicit remoteStream: RemoteStream): Option[TicketsUpdateCommand]
 
     }
 
@@ -187,7 +189,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
        *          The found {@link DateTime}.
        *
        */
-      def execute(dateTime: DateTime): Option[TicketsUpdateCommand] = {
+      def execute(dateTime: DateTime)(implicit remoteStream: RemoteStream): Option[TicketsUpdateCommand] = {
         logger info s"The game with tickets at URL $uri is being played at $dateTime"
         dateTimePlayed = Some(dateTime)
         gameLocator = Some(DatePlayedLocator(dateTime))
@@ -233,7 +235,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
         }
       }
 
-      override def execute(dateTime: DateTime): Option[TicketsUpdateCommand] = {
+      override def execute(dateTime: DateTime)(implicit remoteStream: RemoteStream): Option[TicketsUpdateCommand] = {
         logger info s"Found ticket type ${containedText.trim()} for game at ${dateTimePlayed.get} being sold at $dateTime"
         Some(createTicketsUpdateCommand(gameLocator.get, dateTime))
       }
@@ -316,7 +318,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
      * @throws IOException
      *           Signals that an I/O exception has occurred.
      */
-    override def scan: List[TicketsUpdateCommand] = {
+    override def scan()(implicit remoteStream: RemoteStream): List[TicketsUpdateCommand] = {
       val parsingActions = List(
         GameDatePlayedParsingAction,
         BondHoldersTicketParsingAction,

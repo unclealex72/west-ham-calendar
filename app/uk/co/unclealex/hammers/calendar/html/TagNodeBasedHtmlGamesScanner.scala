@@ -29,6 +29,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import uk.co.unclealex.hammers.calendar.dates.DateService
 import com.typesafe.scalalogging.slf4j.Logging
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
+import uk.co.unclealex.hammers.calendar.logging.RemoteLogging
 
 /**
  * A base class for {@link HtmlGamesScanner}s that first parse a URL into an XML
@@ -45,9 +47,9 @@ abstract class TagNodeBasedHtmlGamesScanner(
   /**
    * The {@link DateService} to use for date and time manipulation.
    */
-  dateService: DateService) extends HtmlGamesScanner with Logging {
+  dateService: DateService) extends HtmlGamesScanner with RemoteLogging {
 
-  override def scan(uri: URI): List[GameUpdateCommand] = {
+  override def scan(uri: URI)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
     logger info s"Scanning URI $uri"
     val tagNode = htmlPageLoader.loadPage(uri.toURL())
     scan(uri, tagNode) distinct
@@ -64,5 +66,5 @@ abstract class TagNodeBasedHtmlGamesScanner(
    * @throws IOException
    *           If there are any network problems.
    */
-  def scan(uri: URI, tagNode: TagNode): List[GameUpdateCommand]
+  def scan(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand]
 }

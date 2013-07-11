@@ -25,24 +25,25 @@ package uk.co.unclealex.hammers.calendar.html;
 import java.net.URI
 import org.htmlcleaner.TagNode
 import org.specs2.mutable.Specification
-
 import uk.co.unclealex.hammers.calendar.dates.DateServiceImpl
 import uk.co.unclealex.hammers.calendar.model.Competition
 import uk.co.unclealex.hammers.calendar.model.GameKey
 import uk.co.unclealex.hammers.calendar.model.Location
+import uk.co.unclealex.hammers.calendar.log.SimpleRemoteStream
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 /**
  * Tests for the DelegatingHtmlGamesScanner class.
  *
  * @author alex
  */
-class DelegatingHtmlGamesScannerTest extends Specification {
+class DelegatingHtmlGamesScannerTest extends Specification with SimpleRemoteStream {
 
   "The delegating HTML games scanner" should {
     "delegate its results" in {
       val htmlGamesScanner = new HtmlGamesScanner() {
         var season = 2012
 
-        override def scan(uri: URI): List[GameUpdateCommand] = {
+        override def scan(uri: URI)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
           val gameUpdateCommand =
             MatchReportUpdateCommand(new GameKeyLocator(new GameKey(
               Competition.FACP,

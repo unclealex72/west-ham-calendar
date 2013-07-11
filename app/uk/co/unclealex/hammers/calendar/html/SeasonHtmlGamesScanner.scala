@@ -36,6 +36,7 @@ import uk.co.unclealex.hammers.calendar.model.Competition
 import uk.co.unclealex.hammers.calendar.model.GameKey
 import uk.co.unclealex.hammers.calendar.model.Location
 import javax.inject.Inject
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 
 /**
  * An {@link HtmlGamesScanner} that scans the season's fixtures page for game
@@ -82,7 +83,7 @@ class SeasonHtmlGamesScanner @Inject() (
      */
     var startOfSeason: Option[DateTime] = None
 
-    def scan: List[GameUpdateCommand] = {
+    def scan()(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
       updateSeason
       val tableTagNode = tagNode.evaluateXPath("//table[@class='fixtureList']")(0).asInstanceOf[TagNode]
       val tableRowFilter = new TagNodeFilter(tg => "tr" == tg.getName)
@@ -109,7 +110,7 @@ class SeasonHtmlGamesScanner @Inject() (
     /**
      * Find which season page represents.
      */
-    def updateSeason: Unit = {
+    def updateSeason()(implicit remoteStream: RemoteStream): Unit = {
       val seasonPattern = """s\.prop3="([0-9]+)""".r.unanchored
       TagNodeWalker.walk { tagNode =>
         if (season.isEmpty && "script" == tagNode.getName) {
@@ -132,7 +133,7 @@ class SeasonHtmlGamesScanner @Inject() (
      * @param row
      *          The table row containing the month.
      */
-    def updateMonth(row: TagNode): Unit = {
+    def updateMonth(row: TagNode)(implicit remoteStream: RemoteStream): Unit = {
       val child = row.findElementByName("td", false);
       val month = child.normalisedText
       logger info s"Found $month ${season.get}"
@@ -152,7 +153,7 @@ class SeasonHtmlGamesScanner @Inject() (
      * @param row
      *          The current row in the fixtures table.
      */
-    def updateGame(row: TagNode): List[GameUpdateCommand] = {
+    def updateGame(row: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
       val tds: Iterator[TagNode] = row.getElementsByName("td", false).toSeq.iterator
       val date = padStart(tds.next.normalisedText.replaceAll("[^0-9]", ""))(2, '0')
       val time = tds.next.normalisedText

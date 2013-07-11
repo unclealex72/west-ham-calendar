@@ -25,15 +25,15 @@
 package uk.co.unclealex.hammers.calendar.html
 
 import org.specs2.mutable.Specification
-
 import uk.co.unclealex.hammers.calendar.dates.DateServiceImpl
 import scala.collection.JavaConverters._
 import uk.co.unclealex.hammers.calendar.model.GameKey
+import uk.co.unclealex.hammers.calendar.log.SimpleRemoteStream
 /**
  * @author alex
  *
  */
-class SeasonHtmlGamesScannerTest extends Specification with SeasonHtmlGamesScannerExpectations {
+class SeasonHtmlGamesScannerTest extends Specification with SeasonHtmlGamesScannerExpectations with SimpleRemoteStream {
 
   "Scanning for all the games in 2007" should {
     scan(2007, expectedGameUpdateCommandsFor2007)
