@@ -56,7 +56,7 @@ class DelegatingHtmlGamesScanner(
   /**
    * {@inheritDoc}
    */
-  def scan(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
-    linkHarvester.harvestLinks(uri, tagNode).flatMap(htmlGamesScanner.scan _)
+  def scanPage(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
+    linkHarvester.harvestLinks(uri, tagNode).flatMap(uri => htmlGamesScanner.scan(remoteStream, uri))
   }
 }

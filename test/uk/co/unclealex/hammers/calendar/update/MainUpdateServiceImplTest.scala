@@ -57,14 +57,14 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
     "create and update a new game" in {
       val s = new Services()
       (s.gameDao.getAll _) expects () returning (List.empty[Game])
-      (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List(
+      (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List(
         DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at (15, 0))))
-      (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List.empty[GameUpdateCommand])
+      (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List.empty[GameUpdateCommand])
       val expectedStoredGame = game(SOUTHAMPTON) { g =>
         g.at = Some(September(5, 2013) at (15, 0))
       }
       (s.gameDao.store _) expects (where(expectedStoredGame)) returning (expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
+      s.mainUpdateService.processDatabaseUpdates()(remoteStream) must be equalTo (1)
     }
   }
 
@@ -75,9 +75,9 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
         g.at = Some(September(5, 2013) at (15, 0))
       }
       (s.gameDao.getAll _) expects () returning (List(existingStoredGame))
-      (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List(
+      (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List(
         AttendenceUpdateCommand(SOUTHAMPTON, 34966)))
-      (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List.empty[GameUpdateCommand])
+      (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List.empty[GameUpdateCommand])
       val expectedStoredGame = game(SOUTHAMPTON) { g =>
         g.at = Some(September(5, 2013) at (15, 0))
         g.attendence = Some(34966)
@@ -95,9 +95,9 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
         g.attendence = Some(34966)
       }
       (s.gameDao.getAll _) expects () returning (List(existingStoredGame))
-      (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List(
+      (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List(
         AttendenceUpdateCommand(SOUTHAMPTON, 34966)))
-      (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List.empty[GameUpdateCommand])
+      (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List.empty[GameUpdateCommand])
       val expectedStoredGame = game(SOUTHAMPTON) { g =>
         g.at = Some(September(5, 2013) at (15, 0))
         g.attendence = Some(34966)
@@ -113,8 +113,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
         g.at = Some(September(5, 2013) at (15, 0))
       }
       (s.gameDao.getAll _) expects () returning (List(existingStoredGame))
-      (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List.empty)
-      (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List(
+      (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List.empty)
+      (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List(
         SeasonTicketsUpdateCommand(September(5, 2013) at (15, 0), September(3, 2013) at (9, 0))))
       val expectedStoredGame = game(SOUTHAMPTON) { g =>
         g.at = Some(September(5, 2013) at (15, 0))
@@ -133,8 +133,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
         g.seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
       }
       (s.gameDao.getAll _) expects () returning (List(existingStoredGame))
-      (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List.empty)
-      (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List(
+      (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List.empty)
+      (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List(
         SeasonTicketsUpdateCommand(September(5, 2013) at (15, 0), September(3, 2013) at (9, 0))))
       s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
@@ -144,9 +144,9 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
     "create and update the game" in {
       val s = new Services()
       (s.gameDao.getAll _) expects () returning (List.empty)
-      (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List(
+      (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List(
         DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at (15, 0))))
-      (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List(
+      (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List(
         SeasonTicketsUpdateCommand(September(5, 2013) at (15, 0), September(3, 2013) at (9, 0))))
       val firstStoredGame = game(SOUTHAMPTON) { g =>
         g.at = Some(September(5, 2013) at (15, 0))
@@ -166,8 +166,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
     "be ignored" in {
       val s = new Services()
       (s.gameDao.getAll _) expects () returning (List.empty)
-      (s.fixturesHtmlGamesScanner.scan _) expects (FIXTURES_URL) returning (List.empty)
-      (s.ticketsHtmlGamesScanner.scan _) expects (TICKETS_URL) returning (List(
+      (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List.empty)
+      (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List(
         SeasonTicketsUpdateCommand(September(5, 2013) at (15, 0), September(3, 2013) at (9, 0))))
       s.mainUpdateService.processDatabaseUpdates() must be equalTo (0)
     }

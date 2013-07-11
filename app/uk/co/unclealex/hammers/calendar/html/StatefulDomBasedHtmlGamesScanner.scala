@@ -45,7 +45,7 @@ abstract class StatefulDomBasedHtmlGamesScanner(
   /**
    * {@inheritDoc}
    */
-  override def scan(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
+  override def scanPage(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
     val scanner = createScanner(uri, tagNode)
     scanner.scan()
   }

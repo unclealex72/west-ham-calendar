@@ -41,5 +41,5 @@ trait HtmlGamesScanner {
    * @return A set of changes found.
    * @throws IOException Thrown if there are any network problems.
    */
-  def scan(uri: URI)(implicit remoteStream: RemoteStream): List[GameUpdateCommand]
+  def scan(remoteStream: RemoteStream, uri: URI): List[GameUpdateCommand]
 }

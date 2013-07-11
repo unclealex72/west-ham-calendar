@@ -98,7 +98,7 @@ class MainUpdateServiceImpl @Inject() (
    */
   def processUpdates(updatesType: String, uri: URI, scanner: HtmlGamesScanner, allGames: List[Game])(implicit remoteStream: RemoteStream): List[Game] = {
     logger info s"Scanning for $updatesType changes."
-    val allGameUpdateCommands = scanner.scan(uri)
+    val allGameUpdateCommands = scanner.scan(remoteStream, uri)
     val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
     updatesByGameLocator.toList flatMap {
       case (gameLocator, updates) =>

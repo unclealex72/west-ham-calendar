@@ -43,7 +43,7 @@ class DelegatingHtmlGamesScannerTest extends Specification with SimpleRemoteStre
       val htmlGamesScanner = new HtmlGamesScanner() {
         var season = 2012
 
-        override def scan(uri: URI)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
+        override def scan(remoteStream: RemoteStream, uri: URI): List[GameUpdateCommand] = {
           val gameUpdateCommand =
             MatchReportUpdateCommand(new GameKeyLocator(new GameKey(
               Competition.FACP,
@@ -65,7 +65,7 @@ class DelegatingHtmlGamesScannerTest extends Specification with SimpleRemoteStre
       val delegatingHtmlGamesScanner = new DelegatingHtmlGamesScanner(
         new HtmlPageLoaderImpl, new DateServiceImpl, linkHarvester, htmlGamesScanner)
       val uri = getClass().getClassLoader().getResource("delegate.xml").toURI
-      val actualGameUpdateCommands = delegatingHtmlGamesScanner.scan(uri)
+      val actualGameUpdateCommands = delegatingHtmlGamesScanner.scan(remoteStream, uri)
       val expectedGameUpdateCommands: List[GameUpdateCommand] = (1 to 4).toList map { (index: Int) =>
         MatchReportUpdateCommand(new GameKeyLocator(new GameKey(
           Competition.FACP,

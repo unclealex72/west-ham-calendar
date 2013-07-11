@@ -69,7 +69,7 @@ class Update @Inject() (
     }
     scala.concurrent.Future { 
       val gameCount = mainUpdateService.processDatabaseUpdates
-      channel.push(s"There are now ${gameCount} games.")
+      channel.push(s"There are now ${gameCount} games.\n")
       channel.eofAndEnd
     }
     Ok.stream(enumerator)

@@ -49,10 +49,11 @@ abstract class TagNodeBasedHtmlGamesScanner(
    */
   dateService: DateService) extends HtmlGamesScanner with RemoteLogging {
 
-  override def scan(uri: URI)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
+  override def scan(remoteStream: RemoteStream, uri: URI): List[GameUpdateCommand] = {
+    implicit val _remoteStream = remoteStream
     logger info s"Scanning URI $uri"
     val tagNode = htmlPageLoader.loadPage(uri.toURL())
-    scan(uri, tagNode) distinct
+    scanPage(uri, tagNode)(remoteStream) distinct
   }
 
   /**
@@ -66,5 +67,5 @@ abstract class TagNodeBasedHtmlGamesScanner(
    * @throws IOException
    *           If there are any network problems.
    */
-  def scan(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand]
+  def scanPage(uri: URI, tagNode: TagNode)(implicit remoteStream: RemoteStream): List[GameUpdateCommand]
 }

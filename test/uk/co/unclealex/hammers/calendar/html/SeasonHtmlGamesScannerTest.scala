@@ -45,7 +45,7 @@ class SeasonHtmlGamesScannerTest extends Specification with SeasonHtmlGamesScann
 
   def scan(season: Int, expectedGameUpdateCommands: List[GameUpdateCommand]) {
     val seasonHtmlGamesScanner = new SeasonHtmlGamesScanner(new HtmlPageLoaderImpl, new DateServiceImpl)
-    val actualGameUpdateCommands = seasonHtmlGamesScanner.scan(
+    val actualGameUpdateCommands = seasonHtmlGamesScanner.scan(remoteStream,
       getClass.getClassLoader.getResource(s"html/fixtures-${season}.html").toURI())
     "encompass all the games" in {
       actualGameUpdateCommands diff expectedGameUpdateCommands must be equalTo (List())
