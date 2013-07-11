@@ -23,7 +23,6 @@ package controllers
 
 import java.io.PrintWriter
 import java.io.StringWriter
-
 import javax.inject.Inject
 import javax.inject.Named
 import play.api.mvc.Action
@@ -33,6 +32,9 @@ import play.mvc.Controller
 import securesocial.core.Authorization
 import uk.co.unclealex.hammers.calendar.update.MainUpdateService
 import scala.concurrent.ExecutionContext.Implicits.global
+import play.api.libs.iteratee.Concurrent
+import play.api.mvc.ChunkedResult
+import play.api.mvc.ResponseHeader
 /**
  * @author alex
  *
@@ -57,10 +59,9 @@ class Update @Inject() (
    * Update all games in the database from the web.
    */
   def update(secretPayload: String) = SecretResult(secretPayload) {
-    val futureInt = scala.concurrent.Future { mainUpdateService.processDatabaseUpdates() }
-    Async {
-      futureInt.map(i => Ok(s"Updated: There are now ${i} games in the database"))
-    }
+    val (enumerator, channel) = Concurrent.broadcast[String]
+    scala.concurrent.Future { mainUpdateService.processDatabaseUpdates() }
+    Ok.stream(enumerator)
   }
 
   /**
