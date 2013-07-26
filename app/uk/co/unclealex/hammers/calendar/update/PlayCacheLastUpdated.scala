@@ -19,32 +19,21 @@
  * under the License.
  *
  */
-package controllers
+package uk.co.unclealex.hammers.calendar.update
 
-import play.api.mvc.Action
-import play.api.mvc.Results.NotFound
-import play.api.mvc.Request
-import play.api.mvc.AnyContent
-import play.api.mvc.Result
+import org.joda.time.DateTime
+import play.api.cache.Cache
+import play.api.Play.current
 
 /**
- * A trait that defines a secret action that is kept secret(ish) by its path containing a random string
  * @author alex
  *
  */
-trait Secret {
+class PlayCacheLastUpdated extends LastUpdated {
 
-  /**
-   * The secret part of the path.
-   */
-  val secret: String
-
-  def Secret[A](secretPayload: String)(action: Action[A]): Action[A] =
-    Action(action.parser) { request =>
-      if (secret == secretPayload) {
-        action(request)
-      } else {
-        NotFound
-      }
-    }
+  val cacheKey = s"${getClass()}.lastUpdated";
+  
+  def at(lastUpdatedTime: DateTime) = Cache.set(cacheKey, lastUpdatedTime)
+  
+  def when = Cache.get(cacheKey) map { _.asInstanceOf[DateTime]}
 }

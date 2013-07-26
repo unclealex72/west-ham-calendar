@@ -41,6 +41,8 @@ import uk.co.unclealex.hammers.calendar.html.SeasonTicketsUpdateCommand
 import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
 import uk.co.unclealex.hammers.calendar.Instant
 import uk.co.unclealex.hammers.calendar.log.SimpleRemoteStream
+import uk.co.unclealex.hammers.calendar.dates.NowService
+import org.joda.time.DateTime
 
 /**
  * @author alex
@@ -64,6 +66,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
         g.at = Some(September(5, 2013) at (15, 0))
       }
       (s.gameDao.store _) expects (where(expectedStoredGame)) returning (expectedStoredGame)
+      (s.nowService.now _) expects() returning (s.now)
+      (s.lastUpdated.at _ ) expects(s.now)
       s.mainUpdateService.processDatabaseUpdates()(remoteStream) must be equalTo (1)
     }
   }
@@ -83,6 +87,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
         g.attendence = Some(34966)
       }
       (s.gameDao.store _) expects (where(expectedStoredGame)) returning (expectedStoredGame)
+      (s.nowService.now _) expects() returning (s.now)
+      (s.lastUpdated.at _ ) expects(s.now)
       s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
@@ -102,6 +108,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
         g.at = Some(September(5, 2013) at (15, 0))
         g.attendence = Some(34966)
       }
+      (s.nowService.now _) expects() returning (s.now)
+      (s.lastUpdated.at _ ) expects(s.now)
       s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
@@ -121,6 +129,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
         g.seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
       }
       (s.gameDao.store _) expects (where(expectedStoredGame)) returning (expectedStoredGame)
+      (s.nowService.now _) expects() returning (s.now)
+      (s.lastUpdated.at _ ) expects(s.now)
       s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
@@ -136,6 +146,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
       (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List.empty)
       (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List(
         SeasonTicketsUpdateCommand(September(5, 2013) at (15, 0), September(3, 2013) at (9, 0))))
+      (s.nowService.now _) expects() returning (s.now)
+      (s.lastUpdated.at _ ) expects(s.now)
       s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
@@ -158,6 +170,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
       List(firstStoredGame, secondStoredGame) foreach { game =>
         (s.gameDao.store _) expects (where(game)) returning (game)
       }
+      (s.nowService.now _) expects() returning (s.now)
+      (s.lastUpdated.at _ ) expects(s.now)
       s.mainUpdateService.processDatabaseUpdates() must be equalTo (1)
     }
   }
@@ -169,6 +183,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
       (s.fixturesHtmlGamesScanner.scan _) expects (remoteStream, FIXTURES_URL) returning (List.empty)
       (s.ticketsHtmlGamesScanner.scan _) expects (remoteStream, TICKETS_URL) returning (List(
         SeasonTicketsUpdateCommand(September(5, 2013) at (15, 0), September(3, 2013) at (9, 0))))
+      (s.nowService.now _) expects() returning (s.now)
+      (s.lastUpdated.at _ ) expects(s.now)
       s.mainUpdateService.processDatabaseUpdates() must be equalTo (0)
     }
   }
@@ -250,7 +266,10 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
    * A class that holds all the mocked services
    */
   class Services {
+    val now = new DateTime
+    val nowService = mock[NowService]
     val gameDao = mock[GameDao]
+    val lastUpdated = mock[LastUpdated]
     val mainPageService = new MainPageService {
       val ticketsUri = TICKETS_URL
       val fixturesUri = FIXTURES_URL
@@ -263,7 +282,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
     val transactional = new Transactional {
       def tx[T](block: GameDao => T): T = block(gameDao)
     }
-    val mainUpdateService = new MainUpdateServiceImpl(transactional, mainPageService, ticketsHtmlGamesScannerFactory, fixturesHtmlGamesScanner)
+    val mainUpdateService = new MainUpdateServiceImpl(transactional, mainPageService, ticketsHtmlGamesScannerFactory, fixturesHtmlGamesScanner, lastUpdated, nowService)
   }
 }
 

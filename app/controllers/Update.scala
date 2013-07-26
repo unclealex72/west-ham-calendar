@@ -59,20 +59,22 @@ class Update @Inject() (
   /**
    * Update all games in the database from the web.
    */
-  def update(secretPayload: String) = SecretResult(secretPayload) {
-    val (enumerator, channel) = Concurrent.broadcast[String]
-    implicit val remoteStream = new RemoteStream() {
-      
-      def logToRemote(message: String): Unit = {
-        channel.push(message)
+  def update(secretPayload: String) = Secret(secretPayload) {
+    Action { implicit request =>
+      val (enumerator, channel) = Concurrent.broadcast[String]
+      implicit val remoteStream = new RemoteStream() {
+
+        def logToRemote(message: String): Unit = {
+          channel.push(message)
+        }
       }
+      scala.concurrent.Future {
+        val gameCount = mainUpdateService.processDatabaseUpdates
+        channel.push(s"There are now ${gameCount} games.\n")
+        channel.eofAndEnd
+      }
+      Ok.stream(enumerator)
     }
-    scala.concurrent.Future { 
-      val gameCount = mainUpdateService.processDatabaseUpdates
-      channel.push(s"There are now ${gameCount} games.\n")
-      channel.eofAndEnd
-    }
-    Ok.stream(enumerator)
   }
 
   /**

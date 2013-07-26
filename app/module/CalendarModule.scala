@@ -57,6 +57,8 @@ import controllers.Authorised
 import controllers.Authorised
 import uk.co.unclealex.hammers.calendar.html.LinkHarvester
 import uk.co.unclealex.hammers.calendar.html.TicketsLinkHarvester
+import uk.co.unclealex.hammers.calendar.update.PlayCacheLastUpdated
+import uk.co.unclealex.hammers.calendar.update.LastUpdated
 
 /**
  * @author alex
@@ -76,7 +78,8 @@ class CalendarModule extends ScalaModule {
 
     // Dates
     bind[DateService].to[DateServiceImpl]
-
+    bind[LastUpdated].to[PlayCacheLastUpdated]
+    
     // Game harvesting and update services
     bind[TicketsHtmlGamesScannerFactory].to[TicketsHtmlGamesScannerFactoryImpl]
     bind[LinkHarvester].to[TicketsLinkHarvester]

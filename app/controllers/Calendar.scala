@@ -32,6 +32,10 @@ import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
 import play.api.mvc.Controller
 import securesocial.core.Authorization
 import javax.inject.Named
+import play.api.mvc.Request
+import play.api.mvc.Response
+import play.api.mvc.AnyContent
+import uk.co.unclealex.hammers.calendar.update.LastUpdated
 
 /**
  * The controller that handles generating calendars.
@@ -44,16 +48,20 @@ class Calendar @Inject() (
    */
   @Named("secret") val secret: String,
   /**
+   * The last update service to get when the calendars were last updated.
+   */
+  lastUpdated: LastUpdated,
+  /**
    * The calendar factory used to generate calendars.
    */
   calendarFactory: CalendarFactory,
   /**
    * The calendar write used to write calendars.
    */
-  calendarWriter: CalendarWriter) extends Controller with Secret {
+  calendarWriter: CalendarWriter) extends Controller with Secret with Etag {
 
   def searchSecure(secretPayload: String, attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
-    SecretResult(secretPayload) {
+    Secret(secretPayload) {
       calendar(
         None,
         AttendedSearchOption(attendedSearchOption),
@@ -62,13 +70,11 @@ class Calendar @Inject() (
     }
 
   def search(mask: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
-    Action {
-      calendar(
-        Some("busy" == mask),
-        Some(AttendedSearchOption.ANY),
-        LocationSearchOption(locationSearchOption),
-        GameOrTicketSearchOption(gameOrTicketSearchOption))
-    }
+    calendar(
+      Some("busy" == mask),
+      Some(AttendedSearchOption.ANY),
+      LocationSearchOption(locationSearchOption),
+      GameOrTicketSearchOption(gameOrTicketSearchOption))
 
   def calendar(
     busyMask: Option[Boolean],
@@ -76,14 +82,28 @@ class Calendar @Inject() (
     l: Option[LocationSearchOption],
     g: Option[GameOrTicketSearchOption]) = {
     (a, l, g) match {
-      case (Some(a), Some(l), Some(g)) => {
-        val calendar = calendarFactory.create(busyMask, a, l, g)
-        val buffer = new StringWriter
-        calendarWriter.write(calendar, buffer)
-        val output = buffer.toString
-        Ok(output).as(calendarWriter.mimeType)
+      case (Some(a), Some(l), Some(g)) => ETag(calculateETag(busyMask, Some(a), Some(l), Some(g))) {
+        Action { implicit request =>
+          val calendar = calendarFactory.create(busyMask, a, l, g)
+          val buffer = new StringWriter
+          calendarWriter.write(calendar, buffer)
+          val output = buffer.toString
+          Ok(output).as(calendarWriter.mimeType)
+        }
       }
-      case _ => NotFound
+      case _ => Action { implicit request => NotFound }
     }
   }
+
+  def calculateETag(parts: Option[Any]*): String = {
+    val allParts = (lastUpdated when) :: parts.toList
+    val toStringFactory = { any: Option[Any] => 
+      any match {
+        case Some(any) => any.toString
+        case None => ""
+      }
+    }
+    allParts.map(toStringFactory).mkString(",")
+  }
+
 }

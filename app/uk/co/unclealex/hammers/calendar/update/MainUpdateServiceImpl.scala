@@ -44,6 +44,7 @@ import uk.co.unclealex.hammers.calendar.model.Location.HOME
 import uk.co.unclealex.hammers.calendar.dao.Transactional
 import javax.inject.Inject
 import uk.co.unclealex.hammers.calendar.logging.RemoteStream
+import uk.co.unclealex.hammers.calendar.dates.NowService
 
 /**
  * The Class MainUpdateServiceImpl.
@@ -66,7 +67,15 @@ class MainUpdateServiceImpl @Inject() (
   /**
    * The {@link HtmlGamesScanner} for getting fixture information.
    */
-  fixturesHtmlGamesScanner: HtmlGamesScanner) extends MainUpdateService with Logging {
+  fixturesHtmlGamesScanner: HtmlGamesScanner,
+  /**
+   * The {@link LastUpdated} used to notify the application when calendars were last updated.
+   */
+  lastUpdated: LastUpdated,
+  /**
+   * The {@link NowService} used to get the current date and time.
+   */
+  nowService: NowService) extends MainUpdateService with Logging {
 
   /**
    * Process all updates required in the database.
@@ -80,6 +89,7 @@ class MainUpdateServiceImpl @Inject() (
     ticketsHtmlGamesScannerFactory.get map { ticketsHtmlGamesScanner =>
       val allAndNewGames = allGames ++ newGames
       processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, allAndNewGames)
+      lastUpdated at nowService.now
       allAndNewGames.size
     } getOrElse 0
   }
