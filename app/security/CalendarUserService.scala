@@ -23,11 +23,12 @@ package security
 
 import securesocial.core.UserService
 import securesocial.core.UserServicePlugin
-import securesocial.core.UserId
+import securesocial.core
 import securesocial.core.providers.Token
 import securesocial.core.Identity
 import play.api.Application
 import play.cache.Cache
+import securesocial.core.IdentityId
 
 /**
  * @author alex
@@ -40,7 +41,7 @@ class CalendarUserService(application: Application) extends UserServicePlugin(ap
    * @param id the user id
    * @return an optional user
    */
-  def find(id: UserId): Option[Identity] = {
+  def find(id: IdentityId): Option[Identity] = {
     Option(Cache.get(key(id)).asInstanceOf[Identity]) map { user =>
       // Reset the timeout
       save(user)
@@ -53,14 +54,14 @@ class CalendarUserService(application: Application) extends UserServicePlugin(ap
    * @param user
    */
   def save(user: Identity) = {
-    Cache.set(key(user.id), user, 15 * 60)
+    Cache.set(key(user.identityId), user, 15 * 60)
     user
   }
 
   /**
    * Create the key used to store a user in the cache.
    */
-  def key(id: UserId) = s"${id.providerId}:${id.id}"
+  def key(id: IdentityId) = s"${id.providerId}:${id.userId}"
 
   /**
    * Finds a user by email and provider id.

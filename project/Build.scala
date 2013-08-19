@@ -13,7 +13,7 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     //security
-    "securesocial" %% "securesocial" % "master-SNAPSHOT",
+    "securesocial" %% "securesocial" % "2.1.1",
     //web dependencies
     "org.webjars" % "webjars-play" % "2.1.0-1",
     "org.webjars" % "angular-ui-bootstrap" % "0.3.0-1",
