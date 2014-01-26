@@ -58,14 +58,14 @@ function MainCtrl($scope, $http, $location, $routeParams, $filter) {
 }
 
 function populateDropdowns($scope, $http, $location) {
-  var goto = function(season, ticketType) {
+  var gotoCal = function(season, ticketType) {
     $location.path("/season/" + season + "/tickets/" + ticketType.name)
   };
   $scope.setCurrentSeason = function(season) {
-    goto(season, $scope.ticketType);
+    gotoCal(season, $scope.ticketType);
   };
   $scope.setTicketType = function(ticketType) {
-    goto($scope.currentSeason, ticketType);
+    gotoCal($scope.currentSeason, ticketType);
   };  
   $http.post('seasons.json').success(function(seasons, status) {
     $scope.seasons = _(seasons).map('year').sort().reverse().value();
