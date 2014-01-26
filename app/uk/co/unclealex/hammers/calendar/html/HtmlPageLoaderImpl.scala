@@ -25,8 +25,7 @@ package uk.co.unclealex.hammers.calendar.html
 import java.io.IOException
 import java.net.URL
 
-import org.htmlcleaner.HtmlCleaner
-import org.htmlcleaner.TagNode
+import org.htmlcleaner.{CleanerTransformations, TagTransformation, HtmlCleaner, TagNode}
 
 /**
  * The default implementation of {@link HtmlPageLoader} that cleans a page using
@@ -41,6 +40,9 @@ class HtmlPageLoaderImpl extends HtmlPageLoader {
    * The {@link HtmlCleaner} used to create a clean HTML page.
    */
   val htmlCleaner = new HtmlCleaner()
+  val transformations = new CleanerTransformations
+  transformations.addTransformation(new TagTransformation("br", "p", true))
+  htmlCleaner.setTransformations(transformations)
 
   /**
    * {@inheritDoc}

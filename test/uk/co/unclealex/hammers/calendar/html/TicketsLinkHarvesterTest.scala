@@ -36,31 +36,18 @@ import org.specs2.mutable.Specification
  */
 class TicketsLinkHarvesterTest extends Specification {
 
-  "Harvesting the tickets links in 2011" should {
-    2011 expects (
-      "http://www.whufc.com/articles/20110601/a-v-peterborough-united_2236896_2480754",
-      "http://www.whufc.com/articles/20110601/h-v-southampton_2236896_2479769",
-      "http://www.whufc.com/articles/20110601/a-v-blackpool_2236896_2480761",
-      "http://www.whufc.com/articles/20110601/h-v-crystal-palace_2236896_2480447",
-      "http://www.whufc.com/articles/20110601/h-v-watford_2236896_2479773",
-      "http://www.whufc.com/articles/20110601/h-v-doncaster-rovers_2236896_2480528",
-      "http://www.whufc.com/articles/20110601/h-v-middlesbrough_2236896_2479825",
-      "http://www.whufc.com/articles/20110601/a-v-burnley_2236896_2480811")
-  }
-
-  "Harvesting the tickets links in 2012" should {
-    2012 expects (
-      "http://www.whufc.com/articles/20120601/h-v-aston-villa_2236896_2836514",
-      "http://www.whufc.com/articles/20120601/a-v-swansea-city_2236896_2840504",
-      "http://www.whufc.com/articles/20120601/h-v-crewe-alexandra_2236896_2885073",
-      "http://www.whufc.com/articles/20120601/h-v-fulham_2236896_2836518",
-      "http://www.whufc.com/articles/20120601/a-v-norwich-city_2236896_2873919",
-      "http://www.whufc.com/articles/20120601/h-v-sunderland_2236896_2862415",
-      "http://www.whufc.com/articles/20120601/a-v-queens-park-rangers_2236896_2874349",
-      "http://www.whufc.com/articles/20120601/h-v-arsenal_2236896_2862432",
-      "http://www.whufc.com/articles/20120601/h-v-southampton_2236896_2867091",
-      "http://www.whufc.com/articles/20120601/h-v-manchester-city_2236896_2867078",
-      "http://www.whufc.com/articles/20120601/h-v-stoke-city_2236896_2867074")
+  "Harvesting the tickets links in 2013" should {
+    2013 expects (
+      "http://www.whufc.com/articles/20130601/v-chelsea-a_2236896_3215399",
+      "http://www.whufc.com/articles/20130601/v-swansea-city-h_2236896_3215417",
+      "http://www.whufc.com/articles/20130601/v-aston-villa-a_2236896_3215425",
+      "http://www.whufc.com/articles/20130601/v-norwich-city-h_2236896_3215426",
+      "http://www.whufc.com/articles/20130601/v-southampton-h_2236896_3215430",
+      "http://www.whufc.com/articles/20130601/v-everton-a_2236896_3215433",
+      "http://www.whufc.com/articles/20130601/v-hull-city-h_2236896_3215437",
+      "http://www.whufc.com/articles/20130601/v-manchester-united-h_2236896_3215448",
+      "http://www.whufc.com/articles/20130601/v-liverpool-h_2236896_3215451",
+      "http://www.whufc.com/articles/20130601/v-tottenham-hotspur-h_2236896_3215475")
   }
 
   /**

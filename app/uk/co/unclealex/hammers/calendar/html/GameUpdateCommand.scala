@@ -72,7 +72,11 @@ case object SEASON_TICKETS extends UpdateType(8, "season ticket selling date")
 // The type for changing the Academy members' ticket selling dates.
 case object ACADEMY_TICKETS extends UpdateType(9, "academy ticket selling date")
 // The type for changing the general sale ticket selling dates.
-case object GENERAL_SALE_TICKETS extends UpdateType(10, "general sale ticket selling date")
+case object ACADEMY_POSTAL_TICKETS extends UpdateType(10, "academy ticket postal selling date")
+// The type for changing the general sale ticket selling dates.
+case object GENERAL_SALE_TICKETS extends UpdateType(11, "general sale ticket selling date")
+// The type for changing the general sale ticket selling dates.
+case object GENERAL_SALE_POSTAL_TICKETS extends UpdateType(12, "general sale postal ticket selling date")
 
 sealed abstract class BaseGameUpdateCommand[V](
   /**
@@ -313,6 +317,24 @@ case class AcademyTicketsUpdateCommand(
 }
 
 /**
+ * Create a {@link GameUpdateCommand} that updates a game's academy tickets postal
+ * availability date.
+ *
+ * @param gameLocator
+ *          The locator to use to locate the game.
+ * @param newValue
+ *          The new date for academy ticket availabilty.
+ * @return A {@link GameUpdateCommand} that updates a game's academy ticket
+ *         availability date.
+ */
+case class AcademyPostalTicketsUpdateCommand(
+  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(ACADEMY_POSTAL_TICKETS, gameLocator, newValue) {
+
+  override def currentValue(game: Game) = game.academyMembersPostalAvailable
+  override def setNewValue(game: Game) = game.academyMembersPostalAvailable = Some(newValue)
+
+}
+/**
  * Create a {@link GameUpdateCommand} that updates a game's general sale
  * tickets availability date.
  *
@@ -328,4 +350,22 @@ case class GeneralSaleTicketsUpdateCommand(
 
   override def currentValue(game: Game) = game.generalSaleAvailable
   override def setNewValue(game: Game) = game.generalSaleAvailable = Some(newValue)
+}
+
+/**
+ * Create a {@link GameUpdateCommand} that updates a game's general sale postal
+ * tickets availability date.
+ *
+ * @param gameLocator
+ *          The locator to use to locate the game.
+ * @param newValue
+ *          The new date for general sale ticket availabilty.
+ * @return A {@link GameUpdateCommand} that updates a game's general sale
+ *         ticket availability date.
+ */
+case class GeneralSalePostalTicketsUpdateCommand(
+  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(GENERAL_SALE_POSTAL_TICKETS, gameLocator, newValue) {
+
+  override def currentValue(game: Game) = game.generalSalePostalAvailable
+  override def setNewValue(game: Game) = game.generalSalePostalAvailable = Some(newValue)
 }

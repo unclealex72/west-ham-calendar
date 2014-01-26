@@ -35,7 +35,7 @@ import com.typesafe.scalalogging.slf4j.Logging
  */
 class TicketsLinkHarvester extends ElementLinkHarvester("a") with Logging {
 
-  val ticketsLinkRegex = "/articles/[0-9]+/(?:h|a)-v-.+".r
+  val ticketsLinkRegex = "/articles/[0-9]+/v-.+".r
   /**
    * {@inheritDoc}
    */

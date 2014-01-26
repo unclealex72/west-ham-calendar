@@ -73,9 +73,17 @@ case class Game(
    */
   @Column("academymembers") var academyMembersAvailable: Option[DateTime],
   /**
+   * The {@link DateTime} that Academy members' postal tickets went on sale.
+   */
+  @Column("academymemberspostal") var academyMembersPostalAvailable: Option[DateTime],
+  /**
    * The {@link DateTime} that tickets went on general sale.
    */
   @Column("generalsale") var generalSaleAvailable: Option[DateTime],
+  /**
+   * The {@link DateTime} that tickets went on postal general sale.
+   */
+  @Column("generalsalepostal") var generalSalePostalAvailable: Option[DateTime],
   /**
    * The game's result.
    */
@@ -113,8 +121,8 @@ case class Game(
   protected def this() =
     this(
       0, Competition.PREM, Location.HOME, "", 0,
-      Some(new DateTime()), Some(new DateTime()), Some(new DateTime()),
-      Some(new DateTime()), Some(new DateTime()), Some(new DateTime()),
+      Some(new DateTime()), Some(new DateTime()), Some(new DateTime()), Some(new DateTime()),
+      Some(new DateTime()), Some(new DateTime()), Some(new DateTime()), Some(new DateTime()),
       Some("result"), Some(0), Some("matchReport"), Some("televionChannel"), Some(false), null, null)
   /**
    * Create a new game from a business key.
@@ -122,7 +130,7 @@ case class Game(
   def this(gameKey: GameKey) =
     this(
       0, gameKey.competition, gameKey.location, gameKey.opponents, gameKey.season,
-      None, None, None, None, None, None, None, None, None, None, Some(false), null, null)
+      None, None, None, None, None, None, None, None, None, None, None, None, Some(false), null, null)
 
   def competition: Competition = _competition
 

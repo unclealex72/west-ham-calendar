@@ -59,6 +59,7 @@ object ApplicationBuild extends Build {
       setNextVersion,
       commitNextVersion,
       pushChanges),
+    Keys.fork in (Test) := false,
     scalaVersion := "2.10.1",
     organization := "uk.co.unclealex.calendar",
     version <<= version in ThisBuild,

@@ -53,7 +53,9 @@ class GameUpdateCommandTest extends Specification {
   val DEFAULT_PRIORITY_POINT_AVAILABLE = September(5, 1974)
   val DEFAULT_SEASON_TICKETS_AVAILABLE = September(5, 1975)
   val DEFAULT_ACADEMY_TICKETS_AVAILABLE = September(5, 1976)
+  val DEFAULT_ACADEMY_POSTAL_TICKETS_AVAILABLE = September(5, 1979)
   val DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE = September(5, 1977)
+  val DEFAULT_GENERAL_SALE_POSTAL_TICKETS_AVAILABLE = September(5, 1980)
   val DEFAULT_UPDATE_DATE = September(5, 2013) at (9, 12)
   val DEFAULT_RESULT = "1-0"
   val DEFAULT_ATTENDENCE = 100000
@@ -144,12 +146,28 @@ class GameUpdateCommandTest extends Specification {
       DEFAULT_ACADEMY_TICKETS_AVAILABLE plusDays 1)
   }
 
+  "Updating the academy members' postal ticket sale date" should {
+    testGameUpdateCommand[DateTime](
+      gameLocator => (saleDate: DateTime) => AcademyPostalTicketsUpdateCommand(gameLocator, saleDate),
+      game => game.academyMembersPostalAvailable,
+      DEFAULT_ACADEMY_POSTAL_TICKETS_AVAILABLE,
+      DEFAULT_ACADEMY_POSTAL_TICKETS_AVAILABLE plusDays 1)
+  }
+
   "Updating the general ticket sale date" should {
     testGameUpdateCommand[DateTime](
       gameLocator => (saleDate: DateTime) => GeneralSaleTicketsUpdateCommand(gameLocator, saleDate),
       game => game.generalSaleAvailable,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE plusDays 1)
+  }
+
+  "Updating the general ticket postal sale date" should {
+    testGameUpdateCommand[DateTime](
+      gameLocator => (saleDate: DateTime) => GeneralSalePostalTicketsUpdateCommand(gameLocator, saleDate),
+      game => game.generalSalePostalAvailable,
+      DEFAULT_GENERAL_SALE_POSTAL_TICKETS_AVAILABLE,
+      DEFAULT_GENERAL_SALE_POSTAL_TICKETS_AVAILABLE plusDays 1)
   }
 
   /**
@@ -202,7 +220,9 @@ class GameUpdateCommandTest extends Specification {
       Some(DEFAULT_PRIORITY_POINT_AVAILABLE),
       Some(DEFAULT_SEASON_TICKETS_AVAILABLE),
       Some(DEFAULT_ACADEMY_TICKETS_AVAILABLE),
+      Some(DEFAULT_ACADEMY_POSTAL_TICKETS_AVAILABLE),
       Some(DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE),
+      Some(DEFAULT_GENERAL_SALE_POSTAL_TICKETS_AVAILABLE),
       Some(DEFAULT_RESULT),
       Some(DEFAULT_ATTENDENCE),
       Some(DEFAULT_MATCH_REPORT),

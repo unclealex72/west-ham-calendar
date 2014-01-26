@@ -54,29 +54,39 @@ class TicketsHtmlSingleGameScanner @Inject() (
   /**
    * The text that indicates the ticket selling date is for Bondholders.
    */
-  val BOND_HOLDER_PATTERN = "Bondholders";
+  val BOND_HOLDER_PATTERN = "Bond Holder"
 
   /**
    * The text that indicates the ticket selling date is for priority point
    * holders.
    */
-  val PRIORITY_POINT_PATTERN = "Priority Point";
+  val PRIORITY_POINT_PATTERN = "Priority"
 
   /**
    * The text that indicates the ticket selling date is for season ticket
    * holders.
    */
-  val SEASON_TICKET_PATTERN = "Season Ticket ";
+  val SEASON_TICKET_PATTERN = "Season Ticket"
 
   /**
    * The text that indicates the ticket selling date is for Academy members.
    */
-  val ACADEMY_MEMBER_PATTERN = "Academy Members ";
+  val ACADEMY_MEMBER_PATTERN = "Member"
+
+  /**
+   * The text that indicates the ticket selling date is for postal Academy members.
+   */
+  val ACADEMY_MEMBER_POSTAL_PATTERN = "Members Postal"
 
   /**
    * The text that indicates the ticket selling date is for general sale.
    */
-  val GENERAL_SALE_PATTERN = "General Sale";
+  val GENERAL_SALE_PATTERN = "General"
+
+  /**
+   * The text that indicates the ticket selling date is for postal general sale.
+   */
+  val GENERAL_SALE_POSTAL_PATTERN = "Sale Postal"
 
   /**
    * {@inheritDoc}
@@ -168,9 +178,9 @@ class TicketsHtmlSingleGameScanner @Inject() (
      * @author alex
      *
      */
-    case object GameDatePlayedParsingAction extends ParsingAction("k/o", {
-      val formats = List("EEEE dd MMMM yyyy - hha", "EEEE d MMMM yyyy - hha",
-        "EEEE dd MMMM yyyy - hh.mma", "EEEE d MMMM yyyy - hh.mma")
+    case object GameDatePlayedParsingAction extends ParsingAction("", {
+      val formats = List("EEEE dd MMMM yyyy, hha", "EEEE d MMMM yyyy, hha",
+        "EEEE dd MMMM yyyy, hh.mma", "EEEE d MMMM yyyy, hh.mma")
       val dateSuffixes = List("", "'st'", "'nd'", "'rd'", "'th'")
       for (format <- formats; dateSuffix <- dateSuffixes) yield format.replace("d ", s"d${dateSuffix} ")
     }) {
@@ -207,14 +217,8 @@ class TicketsHtmlSingleGameScanner @Inject() (
      */
     abstract class TicketParsingAction(containedText: String) extends ParsingAction(
       containedText,
-      "hha EEE dd MMM",
-      "ha EEE dd MMM",
-      "hha EEE d MMM",
-      "ha EEE d MMM",
-      "hha 'on' EEEE dd MMMM",
-      "hh.mma 'on' EEE dd MMM",
-      "HH'noon on' EEEE dd MMMM",
-      "hh.mma'noon on' EEE dd MMM") {
+      "EEEE dd MMMM",
+      "EEEE d MMMM") {
 
       /**
        * {@inheritDoc}
@@ -228,8 +232,8 @@ class TicketsHtmlSingleGameScanner @Inject() (
               dateTimePlayed,
               true,
               possiblyYearlessDateFormats: _*) map { dateTime =>
-                // Account for noon being interpreted as midnight
-                if (dateTime.getHourOfDay == 0) dateTime withHourOfDay 12 else dateTime
+                // Set everything to 9am
+                dateTime withHourOfDay 9 withMinuteOfHour 0 withMillisOfSecond 0
               }
           case None => None
         }
@@ -301,6 +305,17 @@ class TicketsHtmlSingleGameScanner @Inject() (
     }
 
     /**
+     * The {@link TicketParsingAction} that looks for Academy members' postal tickets.
+     *
+     * @author alex
+     *
+     */
+    case object AcademyMemberPostalTicketParsingAction extends TicketParsingAction(ACADEMY_MEMBER_POSTAL_PATTERN) {
+      protected def createTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime) =
+        AcademyPostalTicketsUpdateCommand(gameLocator, dateTime)
+    }
+
+    /**
      * The {@link TicketParsingAction} that looks for general sale tickets.
      *
      * @author alex
@@ -312,6 +327,17 @@ class TicketsHtmlSingleGameScanner @Inject() (
     }
 
     /**
+     * The {@link TicketParsingAction} that looks for general sale tickets.
+     *
+     * @author alex
+     *
+     */
+    case object GeneralSalePostalTicketParsingAction extends TicketParsingAction(GENERAL_SALE_POSTAL_PATTERN) {
+      protected def createTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime) =
+        GeneralSalePostalTicketsUpdateCommand(gameLocator, dateTime)
+    }
+
+    /**
      * Scan the page, first looking for the date the game was played and then
      * looking for any ticket selling dates.
      *
@@ -320,28 +346,36 @@ class TicketsHtmlSingleGameScanner @Inject() (
      */
     override def scan()(implicit remoteStream: RemoteStream): List[TicketsUpdateCommand] = {
       val parsingActions = List(
-        GameDatePlayedParsingAction,
         BondHoldersTicketParsingAction,
         PriorityPointTicketParsingAction,
         SeasonTicketParsingAction,
+        AcademyMemberPostalTicketParsingAction,
         AcademyMemberTicketParsingAction,
-        GeneralSaleTicketParsingAction)
-      val filter = new TagNodeFilter(_ => true)
-      val allTicketsUpdateCommands = filter.list(tagNode) flatMap { tagNode =>
-        val text = tagNode.normalisedText
-        text match {
-          case "" => List.empty
-          case _ => {
-            val parsingAction = parsingActions.find(pa => text.contains(pa.containedText))
-            val newTicketsUpdateCommands = parsingAction.flatMap { parsingAction =>
-              val textForDate = text.replace(parsingAction.containedText, "")
-              parsingAction.execute(textForDate)
+        GeneralSalePostalTicketParsingAction,
+        GeneralSaleTicketParsingAction,
+        GameDatePlayedParsingAction)
+      val articleDiv = Option(tagNode.findElementByAttValue("id", "articleBody", true, false))
+      articleDiv match {
+        case Some(tagNode) => {
+          val childNodes = new TagNodeFilter(_ => true).list(tagNode)
+          val allTicketsUpdateCommands = childNodes flatMap { tagNode =>
+            val text = tagNode.normalisedText
+            text match {
+              case "" => List.empty
+              case _ => {
+                val parsingAction = parsingActions.find(pa => text.contains(pa.containedText))
+                val newTicketsUpdateCommands = parsingAction.flatMap { parsingAction =>
+                  val textForDate = text.replace(parsingAction.containedText, "")
+                  parsingAction.execute(textForDate)
+                }
+                newTicketsUpdateCommands
+              }
             }
-            newTicketsUpdateCommands
           }
+          takeEarliestOnly(allTicketsUpdateCommands)
         }
+        case None => List.empty
       }
-      takeEarliestOnly(allTicketsUpdateCommands)
     }
 
     /**
