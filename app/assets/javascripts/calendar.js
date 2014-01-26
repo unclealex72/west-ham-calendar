@@ -1,4 +1,4 @@
-var app = angular.module('calendar', ['ui.bootstrap']);
+var app = angular.module('calendar', ['ngRoute', 'ui.bootstrap']);
 
 app.config(['$routeProvider', function($routeProvider) {
   $routeProvider.

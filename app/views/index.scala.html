@@ -7,10 +7,12 @@
     <meta name="description" content="">
     <meta name="author" content="Alex Jones">
 
-    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("lodash.min.js"))'></script>
-    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("1.9.1/jquery.min.js"))'></script>
-    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("angular.min.js"))'></script>
-    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("angular-resource.min.js"))'></script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+    @for(suffix <- Seq("", "-sanitize", "-route", "-animate")) {
+    <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular@{suffix}.min.js'></script>
+    }
+    <script src='//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js'></script>
+
     <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("ui-bootstrap-tpls.min.js"))'></script>
     <script type="text/javascript" src='@routes.Assets.at("javascripts/calendar.js")'></script>
 
