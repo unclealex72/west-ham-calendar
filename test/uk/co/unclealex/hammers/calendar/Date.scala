@@ -48,7 +48,6 @@ case class Date(val monthAndDay: MonthAndDay, val year: Int) {
   override def toString = s"$monthAndDay, $year"
   def at(hours: Int, minutes: Int) = Instant(this, hours, minutes)
   def toDateTime = at(0, 0) toDateTime
-
 }
 
 object Date {

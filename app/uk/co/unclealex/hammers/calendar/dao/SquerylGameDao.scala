@@ -95,7 +95,9 @@ class SquerylGameDao @Inject() (
       case GameOrTicketSearchOption.PRIORITY_POINT => Some(g => g.priorityPointAvailable isNotNull)
       case GameOrTicketSearchOption.SEASON => Some(g => g.seasonTicketsAvailable isNotNull)
       case GameOrTicketSearchOption.ACADEMY => Some(g => g.academyMembersAvailable isNotNull)
+      case GameOrTicketSearchOption.ACADEMY_POSTAL => Some(g => g.academyMembersPostalAvailable isNotNull)
       case GameOrTicketSearchOption.GENERAL_SALE => Some(g => g.generalSaleAvailable isNotNull)
+      case GameOrTicketSearchOption.GENERAL_SALE_POSTAL => Some(g => g.generalSalePostalAvailable isNotNull)
     }
   }
 

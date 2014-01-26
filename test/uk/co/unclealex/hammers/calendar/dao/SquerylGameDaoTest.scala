@@ -222,7 +222,6 @@ class SquerylGameDaoTest extends Specification {
   "Searching for games" should txn { implicit gameDao =>
     nowService =>
       val allGames = Buffer.empty[Game]
-      var day = 1
       var index = 0
       // Generate a game for each possible search option
       for (
@@ -232,24 +231,25 @@ class SquerylGameDaoTest extends Specification {
       ) {
         val opponents = String.format("Opponents %02d", new Integer(index))
         val game = location match {
-          case LocationSearchOption.HOME => opponents home September(day, 2013)
-          case LocationSearchOption.AWAY => opponents away September(day, 2013)
+          case LocationSearchOption.HOME => opponents home (September(1, 2013).plusDays(index))
+          case LocationSearchOption.AWAY => opponents away (September(1, 2013).plusDays(index))
         }
         game.attended = attended match {
           case AttendedSearchOption.ATTENDED => Some(true)
           case AttendedSearchOption.UNATTENDED => Some(false)
         }
-        val tickets: Option[DateTime] = Some(August(day, 2013) at (9, 0))
+        val tickets: Option[DateTime] = Some((August(1, 2013) at (9, 0)).plusDays(index))
         ticket match {
           case GameOrTicketSearchOption.BONDHOLDERS => game.bondholdersAvailable = tickets
           case GameOrTicketSearchOption.PRIORITY_POINT => game.priorityPointAvailable = tickets
           case GameOrTicketSearchOption.SEASON => game.seasonTicketsAvailable = tickets
           case GameOrTicketSearchOption.ACADEMY => game.academyMembersAvailable = tickets
+          case GameOrTicketSearchOption.ACADEMY_POSTAL => game.academyMembersPostalAvailable = tickets
           case GameOrTicketSearchOption.GENERAL_SALE => game.generalSaleAvailable = tickets
+          case GameOrTicketSearchOption.GENERAL_SALE_POSTAL => game.generalSalePostalAvailable = tickets
           case GameOrTicketSearchOption.GAME =>
         }
         allGames += gameDao store game
-        day = day + 1
         index = index + 1
       }
       // Create predicates for each possible search option
@@ -269,7 +269,9 @@ class SquerylGameDaoTest extends Specification {
         case GameOrTicketSearchOption.PRIORITY_POINT => g.priorityPointAvailable.isDefined
         case GameOrTicketSearchOption.SEASON => g.seasonTicketsAvailable.isDefined
         case GameOrTicketSearchOption.ACADEMY => g.academyMembersAvailable.isDefined
+        case GameOrTicketSearchOption.ACADEMY_POSTAL => g.academyMembersPostalAvailable.isDefined
         case GameOrTicketSearchOption.GENERAL_SALE => g.generalSaleAvailable.isDefined
+        case GameOrTicketSearchOption.GENERAL_SALE_POSTAL => g.generalSalePostalAvailable.isDefined
         case GameOrTicketSearchOption.GAME => true
       }
       // Search for each possible option
@@ -314,10 +316,12 @@ class SquerylGameDaoTest extends Specification {
    */
   implicit class StringImplicit(opponents: String) {
     def home(date: Date)(implicit gameDao: GameDao) = on(Location.HOME, date)
+    def home(date: DateTime)(implicit gameDao: GameDao) = on(Location.HOME, date)
     def away(date: Date)(implicit gameDao: GameDao) = on(Location.AWAY, date)
-    def on(location: Location, date: Date)(implicit gameDao: GameDao): Game = {
-      val game = Game(GameKey(Competition.FACP, location, opponents, date.year))
-      game.at = Some(date at (15, 0))
+    def away(date: DateTime)(implicit gameDao: GameDao) = on(Location.AWAY, date)
+    def on(location: Location, date: DateTime)(implicit gameDao: GameDao): Game = {
+      val game = Game(GameKey(Competition.FACP, location, opponents, date.getYear))
+      game.at = Some(date.withHourOfDay(15).withMinuteOfHour(0).withMillisOfSecond(0))
       gameDao store game
     }
   }

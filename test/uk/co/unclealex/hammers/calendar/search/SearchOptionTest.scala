@@ -53,7 +53,9 @@ class SearchOptionTest extends Specification {
       "prioritypoint" -> GameOrTicketSearchOption.PRIORITY_POINT,
       "season" -> GameOrTicketSearchOption.SEASON,
       "academy" -> GameOrTicketSearchOption.ACADEMY,
-      "general" -> GameOrTicketSearchOption.GENERAL_SALE)
+      "academypostal" -> GameOrTicketSearchOption.ACADEMY_POSTAL,
+      "general" -> GameOrTicketSearchOption.GENERAL_SALE,
+      "generalpostal" -> GameOrTicketSearchOption.GENERAL_SALE_POSTAL)
   }
 
   def checkSearchOptions[E <: SearchOption](obj: SearchOptionLike[E], expectedResults: Pair[String, E]*) = {

@@ -40,7 +40,9 @@ var ticketTypes = new Array(
   PRIORITY_POINT,
   {name: "SeasonTicket", label: "Season"},
   {name: "Academy", label: "Academy members"},
-  {name: "GeneralSale", label: "General sale"});
+  {name: "AcademyPostal", label: "Academy members (postal)"},
+  {name: "GeneralSale", label: "General sale"},
+  {name: "GeneralSalePostal", label: "General sale (postal)"});
 
 function MainCtrl($scope, $http, $location, $routeParams, $filter) {
   $http.post('base.json').success(function(base, status) {

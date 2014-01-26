@@ -79,6 +79,8 @@ class GameRowFactoryImpl extends GameRowFactory {
       TicketType.PriorityPoint -> game.priorityPointAvailable,
       TicketType.SeasonTicket -> game.seasonTicketsAvailable,
       TicketType.Academy -> game.academyMembersAvailable,
-      TicketType.GeneralSale -> game.generalSaleAvailable)
+      TicketType.AcademyPostal -> game.academyMembersPostalAvailable,
+      TicketType.GeneralSale -> game.generalSaleAvailable,
+      TicketType.GeneralSalePostal -> game.generalSalePostalAvailable)
   }
 }

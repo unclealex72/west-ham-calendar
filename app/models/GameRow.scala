@@ -37,7 +37,7 @@ object GameTimeType extends Enumeration {
 }
 object TicketType extends Enumeration {
   type TicketType = Value
-  val Bondholder, PriorityPoint, SeasonTicket, Academy, GeneralSale = Value
+  val Bondholder, PriorityPoint, SeasonTicket, Academy, AcademyPostal, GeneralSale, GeneralSalePostal = Value
 }
 
 import GameTimeType._
