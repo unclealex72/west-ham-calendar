@@ -4,17 +4,15 @@ app.service('Attendance', ['$http', '$window', function($http) {
   var attendOrUnattend = function(path, game) {
     if (!game.busy) {
       game.busy = true;
-      setTimeout(function() {
-        $http.put('/' + path + '/' + game.id).
+      $http.put('/' + path + '/' + game.id).
         success(function(newGame) {
-          game.attended = newGame.attended;
-          game.busy = false;
-        }).
-        error(function(data, status, headers, config) {
-          game.busy = false;
-          $window.alert("This game could not be updated: " + status)
-        });
-      }, 5000);
+        game.attended = newGame.attended;
+        game.busy = false;
+      }).
+      error(function(data, status, headers, config) {
+        game.busy = false;
+        $window.alert("This game could not be updated: " + status)
+      });
     }
   };
   var service = {
