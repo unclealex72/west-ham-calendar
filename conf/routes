@@ -5,12 +5,13 @@
 # Home page
 GET     /                           @controllers.Application.index
 
-# Json (only allow POST to avoid JSON array vunerabilities).
+# Dynamic Javascript
+GET     /constants.js                @controllers.Application.constants
 
-POST     /seasons.json               @controllers.Application.seasons
-POST     /base.json                  @controllers.Application.base
-POST     /:season/games.json         @controllers.Application.games(season: Int)
+# Json
 
+GET     /:season/games              @controllers.Application.games(season: Int)
+GET     /game/:gameId                   @controllers.Application.game(gameId: Long)
 # Game attendence
 
 PUT     /attend/:gameId              @controllers.Update.attend(gameId: Long)
@@ -29,8 +30,6 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # FavIcon
 
 GET	/favicon.ico		    controllers.Assets.at(path="/public", file="favicon.ico")
-# Webjars
-GET     /webjars/*file                    controllers.WebJarAssets.at(file)
 
 # Secure Social
 # Login page

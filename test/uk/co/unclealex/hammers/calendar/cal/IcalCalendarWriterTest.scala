@@ -128,13 +128,13 @@ UID:1@calendar.unclealex.co.uk
 CREATED:20130904T090000Z
 DESCRIPTION:
 LAST-MODIFIED:20130905T100000Z
-LOCATION:Boleyn Ground near 51.5321\, 0.039225
+LOCATION:The Boleyn Ground near 51.5321\, 0.039225
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:West Ham vs Tottingham (Premiership)
 GEO:51.5321;0.039225
-ATTACH:https://maps.google.com/maps?q=51.5321,+0.039225+(Boleyn+Ground)&i
- wloc=A&hl=en
+ATTACH:https://maps.google.com/maps?q=51.5321,+0.039225+(The+Boleyn+Groun
+ d)&iwloc=A&hl=en
 TRANSP:OPAQUE
 END:VEVENT
 END:VCALENDAR"""

@@ -186,7 +186,7 @@ class GameUpdateCommandTest extends Specification {
     gameUpdateCommandFactory: GameLocator => E => GameUpdateCommand,
     valueFactory: Game => Option[E],
     currentValue: E,
-    newValue: E)(implicit ct: ClassTag[E]) {
+    newValue: E)(implicit ct: ClassTag[E]) = {
     val updateCommandFactory = (game: Game) => gameUpdateCommandFactory(GameKeyLocator(game.gameKey))
     "not change for equal values" in {
       val game = createFullyPopulatedGame

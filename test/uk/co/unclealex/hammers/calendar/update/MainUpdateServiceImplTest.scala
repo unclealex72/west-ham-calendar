@@ -197,7 +197,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
 
       (s.gameDao.findById _) expects (1l) returning (Some(unattendedGame))
       (s.gameDao.store _) expects (where(attendedGame)) returning (attendedGame)
-      s.mainUpdateService.attendGame(1l)
+      val changedGame = s.mainUpdateService.attendGame(1l)
+      changedGame.map(_.attended) must be equalTo(Some(Some(true)))
     }
   }
 
@@ -209,7 +210,8 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
 
       (s.gameDao.findById _) expects (1l) returning (Some(attendedGame))
       (s.gameDao.store _) expects (where(unattendedGame)) returning (unattendedGame)
-      s.mainUpdateService.unattendGame(1l)
+      val changedGame = s.mainUpdateService.unattendGame(1l)
+      changedGame.map(_.attended) must be equalTo(Some(Some(false)))
     }
   }
 
@@ -222,7 +224,7 @@ class MainUpdateServiceImplTest extends Specification with MockFactory with Simp
 
       (s.gameDao.getAllForSeasonAndLocation _) expects (2013, HOME) returning (unattendedGames)
       attendedGames foreach (attendedGame => (s.gameDao.store _) expects (where(attendedGame)) returning (attendedGame))
-      s.mainUpdateService.attendAllHomeGamesForSeason(2013)
+      s.mainUpdateService.attendAllHomeGamesForSeason(2013).map(_.attended) must be equalTo(List(Some(true), Some(true)))
     }
   }
 

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="calendar" ng-controller='MainCtrl'>
+<html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>West Ham Calendar {{currentSeason}}</title>
+    <title>West Ham Calendar</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="Alex Jones">
@@ -12,17 +12,25 @@
     <script src='//ajax.googleapis.com/ajax/libs/angularjs/1.2.9/angular@{suffix}.min.js'></script>
     }
     <script src='//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js'></script>
+    <script src='//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js'></script>
 
-    <script type="text/javascript" src='@routes.WebJarAssets.at(WebJarAssets.locate("ui-bootstrap-tpls.min.js"))'></script>
-    <script type="text/javascript" src='@routes.Assets.at("javascripts/calendar.js")'></script>
+    <script type="text/javascript" src="@routes.Application.constants"></script>
+    @for(script <- Seq("attendance", "navigation", "season", "game", "calendar")) {
+    <script type="text/javascript" src='@routes.Assets.at("javascripts/" + script + ".js")'></script>
+    }
 
     <!-- Styles -->
-    <link href='@routes.WebJarAssets.at(WebJarAssets.locate("css/font-awesome.min.css"))' rel="stylesheet">
-    <link href='@routes.WebJarAssets.at(WebJarAssets.locate("2.3.2/css/bootstrap.min.css"))' rel="stylesheet" media="screen">
-    <link href='@routes.WebJarAssets.at(WebJarAssets.locate("2.3.2/css/bootstrap-responsive.min.css"))' rel="stylesheet" media="screen">
-    <link href='@routes.Assets.at("stylesheets/calendar.css")' rel="stylesheet" media="screen">
+    <link href='//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css' rel="stylesheet">
+    <link href='//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css' rel="stylesheet">
+
+    <link href='@routes.Assets.at("stylesheets/calendar.css")' rel="stylesheet">
+    <link href='@routes.Assets.at("stylesheets/carousel.css")' rel="stylesheet">
   </head>
 
-  <body ng-view>
-  </body>
+  <body ng-app="calendar">
+  <navigation></navigation>
+  <div class="container">
+    <div ng-view></div>
+  </div>
+</body>
 </html>

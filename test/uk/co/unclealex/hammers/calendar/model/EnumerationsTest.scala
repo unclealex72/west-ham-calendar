@@ -45,6 +45,7 @@ class EnumerationsTest extends Specification {
                 lower.index must be lessThan (higher.index)
               }
           }
+          1 must be equalTo(1)
         }
       }
   }

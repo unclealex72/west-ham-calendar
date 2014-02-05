@@ -1,14 +1,16 @@
 package controllers
 
 import play.api._
+import models.Globals._
+import models.Globals
+import models.TicketType._
+import json.JsonResults
 import play.api.mvc._
 import javax.inject.Inject
 import uk.co.unclealex.hammers.calendar.dao.Transactional
 import services.GameRowFactory
-import uk.co.unclealex.hammers.calendar.update.MainUpdateService
-import securesocial.core.SecureSocial
 import securesocial.core.Authorization
-import securesocial.core.RequestWithUser
+import json.JsonResults
 
 class Application @Inject() (
   /**
@@ -22,7 +24,7 @@ class Application @Inject() (
   /**
    * The game row factory used to get game row models.
    */
-  gameRowFactory: GameRowFactory) extends Controller with Secure with Json {
+  gameRowFactory: GameRowFactory) extends Controller with Secure with JsonResults {
 
   implicit val implicitAuthorization = authorization
 
@@ -33,33 +35,31 @@ class Application @Inject() (
     Ok(views.html.index())
   }
 
-  def yearMapper(parameters: Pair[String, Any]*): Int => Map[String, Any] =
-    year => Map("year" -> year) ++ parameters
-
   /**
-   * Get all seasons
+   * Get the global information required: all seasons, all ticket types and the email of the logged in user if present.
    */
-  def seasons = json {
-    tx { gameDao => gameDao.getAllSeasons.toList.map(yearMapper()) }
-  }
-
-  /**
-   * Get the base information required: the latest season and the email of the logged in user if present.
-   */
-  def base = UserAwareAction { implicit request =>
-    val jsonFactory = emailAndName match {
-      case Some((email, name)) => yearMapper("name" -> name)
-      case None => yearMapper()
+  def constants = UserAwareAction { implicit request =>
+    val constants = tx { gameDao =>
+      val seasons = gameDao.getAllSeasons
+      val username = emailAndName.map(_._2)
+      Globals(seasons.toList, username)
     }
-    json {
-      tx { gameDao => gameDao.getLatestSeason.map(jsonFactory) }
-    }(request)
+    Ok(views.js.constants(constants))
   }
 
   def games(season: Int) = UserAwareAction { implicit request =>
     val includeAttended = emailAndName.isDefined
     json {
-      tx { gameDao => gameDao.getAllForSeason(season).map(gameRowFactory.toRow(includeAttended)) }
-    }(request)
+      tx { gameDao =>
+        Map("games" -> gameDao.getAllForSeason(season).map(gameRowFactory.toRow(includeAttended))) }
+    }
+  }
+
+  def game(id: Long) = UserAwareAction { implicit request =>
+    val includeAttended = emailAndName.isDefined
+    json {
+      tx { gameDao =>
+        gameDao.findById(id).map(gameRowFactory.toRow(includeAttended)) }
+    }
   }
 }

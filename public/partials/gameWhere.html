@@ -1,0 +1,9 @@
+<div class="{{class}}">
+  <span ng-show="{{game.home}}">Home</span>
+  <span ng-hide="{{game.home || showLink}}">Away</span>
+  <a ng-show="{{!game.home &amp;&amp; showLink}}"
+     target="_blank"
+     href="https://maps.google.de/maps?q=loc:{{game.geoLocation.latitude}},{{game.geoLocation.longitude}}">
+      Away
+  </a>
+</div>

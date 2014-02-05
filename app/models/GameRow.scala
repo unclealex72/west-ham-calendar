@@ -25,7 +25,11 @@ import uk.co.unclealex.hammers.calendar.model.Competition
 import uk.co.unclealex.hammers.calendar.model.Location
 import uk.co.unclealex.hammers.calendar.geo.GeoLocation
 
-import java.util.Date
+import argonaut._, Argonaut._, DecodeResult._
+import org.joda.time.DateTime
+import json.Json._
+import dates.DateTimeJsonCodec._
+import uk.co.unclealex.hammers.calendar.model.Location.HOME
 
 /**
  * @author alex
@@ -35,20 +39,19 @@ object GameTimeType extends Enumeration {
   type GameTimeType = Value
   val ThreePmSaturday, Weekend, Weekday = Value
 }
-object TicketType extends Enumeration {
-  type TicketType = Value
-  val Bondholder, PriorityPoint, SeasonTicket, Academy, AcademyPostal, GeneralSale, GeneralSalePostal = Value
-}
+
+/**
+ * The types of tickets available from West Ham Utd.
+ */
 
 import GameTimeType._
-import TicketType._
 
 /**
  * A game row allows a game to be shown as a row in a table.
  */
 case class GameRow(
   id: Long,
-  at: Date,
+  at: DateTime,
   gameTimeType: GameTimeType,
   season: Int,
   opponents: String,
@@ -57,8 +60,20 @@ case class GameRow(
   geoLocation: Option[GeoLocation],
   result: Option[String],
   matchReport: Option[String],
-  ticketsAt: Map[TicketType, Option[Date]],
+  ticketsAt: Map[TicketType.Name, Option[DateTime]],
   attended: Option[Boolean]) {
 
 }
 
+object GameRow {
+
+  /**
+   * Json Serialisation
+   */
+  implicit val GameRowEncodeJson: EncodeJson[GameRow] =
+    jencode13L((gr: GameRow) =>
+      (gr.id, gr.at, gr.gameTimeType.toString, gr.season, gr.opponents, gr.competition.name, gr.competition.isLeague,
+       gr.location == Location.HOME, gr.geoLocation, gr.result, gr.matchReport, gr.ticketsAt, gr.attended))(
+        "id", "at", "gameTimeType", "season", "opponents", "competition", "league",
+        "home", "geoLocation", "result", "matchReport", "ticketsAt", "attended")
+}

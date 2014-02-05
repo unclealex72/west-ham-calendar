@@ -66,6 +66,9 @@ class CalendarFactoryImplTest extends Specification with MockFactory {
           actualResult must be equalTo (expectedResult)
         }
     }
+    "nothing else" in {
+      1 must be equalTo(1)
+    }
   }
   "Generating a calendar" should {
     val game = Game(GameKey(Competition.FACP, Location.HOME, "Them", 2013))
@@ -135,8 +138,11 @@ class CalendarFactoryImplTest extends Specification with MockFactory {
           val actualCalendar = new CalendarFactoryImpl(tx).create(None, a, l, g)
           actualCalendar.title must be equalTo (expectedTitle)
           actualCalendar.events must have size (1)
-          actualCalendar.events foreach (_ must be equalTo (expectedEvent))
+          actualCalendar.events.toList must be equalTo(List(expectedEvent))
         }
+    }
+    "nothing else" in {
+      1 must be equalTo(1)
     }
   }
 

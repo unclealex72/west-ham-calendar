@@ -22,13 +22,11 @@
 package controllers
 
 import play.api.mvc.Action
-import play.api.mvc.Result
-import play.api.mvc.Request
-import play.api.mvc.AnyContent
-import play.api.mvc.Headers
 import play.api.http.HeaderNames
 import play.api.mvc.Results.NotModified
 import com.typesafe.scalalogging.slf4j.Logging
+import scala.concurrent.Future
+import play.api.libs.concurrent.Execution.Implicits._
 
 /**
  * A trait for controllers that allows for ETag headers to be queried and a 304 No Content to be returned if
@@ -36,27 +34,28 @@ import com.typesafe.scalalogging.slf4j.Logging
  */
 trait Etag extends Logging {
 
-  def ETag[A](calculatedETag: String)(action: Action[A]): Action[A] = Action(action.parser) { implicit request =>
-    val quotedETag = '"' + calculatedETag + '"'
-    val modified = request.headers.get(HeaderNames.IF_NONE_MATCH) match {
-      case None => {
-        logger.info(s"No ${HeaderNames.IF_NONE_MATCH} header was sent for resource $request.uri")
-        true
+  def ETag[A](calculatedETag: String)(action: Action[A]): Action[A] =
+    Action.async(action.parser) { implicit request =>
+      val quotedETag = '"' + calculatedETag + '"'
+      val modified = request.headers.get(HeaderNames.IF_NONE_MATCH) match {
+        case None => {
+          logger.info(s"No ${HeaderNames.IF_NONE_MATCH} header was sent for resource $request.uri")
+          true
+        }
+        case Some(etag) => {
+          logger.info(s"Header ${HeaderNames.IF_NONE_MATCH} for $request.uri has value $etag")
+          etag != quotedETag
+        }
       }
-      case Some(etag) => {
-        logger.info(s"Header ${HeaderNames.IF_NONE_MATCH} for $request.uri has value $etag")
-        etag != quotedETag
+      val response =
+      if (modified) {
+        logger.info(s"Request $request.uri has been modified.")
+        action(request)
+      } else {
+        logger.info(s"Request $request.uri has not been modified.")
+        Future(NotModified)
       }
+      response.map(_.withHeaders(HeaderNames.ETAG -> quotedETag))
     }
-    val response = 
-    if (modified) {
-      logger.info(s"Request $request.uri has been modified.")
-      action(request)
-    } else {
-      logger.info(s"Request $request.uri has not been modified.")
-      NotModified
-    }
-    response.withHeaders(HeaderNames.ETAG -> quotedETag)
-  }
 
 }

@@ -19,31 +19,38 @@
  * under the License.
  *
  */
-package controllers
 
-import play.api.mvc.Action
-import play.api.mvc.Results.NotFound
-import scala.concurrent.Future
-import play.api.libs.concurrent.Execution.Implicits._
+package dates
+
+import org.joda.time.format.ISODateTimeFormat
+import argonaut._, Argonaut._, DecodeResult._
+import org.joda.time.DateTime
 
 /**
- * A trait that defines a secret action that is kept secret(ish) by its path containing a random string
+ * Serialisation and deserialisation into ISO 8601 UTC strings.
  * @author alex
  *
  */
-trait Secret {
+object DateTimeJsonCodec {
 
-  /**
-   * The secret part of the path.
-   */
-  val secret: String
-
-  def Secret[A](secretPayload: String)(action: Action[A]): Action[A] =
-    Action.async(action.parser) { request =>
-      if (secret == secretPayload) {
-        action(request)
-      } else {
-        Future(NotFound)
+  private val formatter = ISODateTimeFormat.dateTime
+  
+  implicit def dateTimeJsonField: DateTime => JsonField = formatter.print
+  
+  implicit val DateTimeJsonCodec: CodecJson[DateTime] = CodecJson(
+    dt => jString(dt),
+    c => c.focus.string match {
+      case Some(str) => {
+        try {
+          ok(formatter.parseDateTime(str))
+        }
+        catch {
+          case e: IllegalArgumentException => fail(e.getMessage, c.history)
+        }
       }
+     case None => fail("Expected a string for a date time.", c.history)
     }
+  )
+  
+  
 }

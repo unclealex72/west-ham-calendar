@@ -46,7 +46,7 @@ import uk.co.unclealex.hammers.calendar.Instant._
  */
 trait SeasonHtmlGamesScannerExpectations {
 
-  val expectedGameUpdateCommandsFor2007 = List(
+  val expectedGameUpdateCommandsFor2007: List[GameUpdateCommand] = List(
     DatePlayedUpdateCommand(GameKeyLocator(new GameKey(Competition.PREM, Location.HOME, "Arsenal", 2007)), September(29, 2007) at (15, 0)),
     ResultUpdateCommand(GameKeyLocator(new GameKey(Competition.PREM, Location.HOME, "Arsenal", 2007)), "0-1"),
     AttendenceUpdateCommand(GameKeyLocator(new GameKey(Competition.PREM, Location.HOME, "Arsenal", 2007)), 34966),
@@ -223,7 +223,7 @@ trait SeasonHtmlGamesScannerExpectations {
     AttendenceUpdateCommand(GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Manchester City", 2007)), 27809),
     MatchReportUpdateCommand(GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Manchester City", 2007)), "file:/page/MatchReport/0,,12562~43288,00.html"))
 
-  val expectedGameUpdateCommandsFor2011 = List(
+  val expectedGameUpdateCommandsFor2011: List[GameUpdateCommand] = List(
     DatePlayedUpdateCommand(GameKeyLocator(new GameKey(Competition.LGCP, Location.HOME, "Aldershot Town", 2011)), August(24, 2011) at (19, 45)),
     ResultUpdateCommand(GameKeyLocator(new GameKey(Competition.LGCP, Location.HOME, "Aldershot Town", 2011)), "1-2"),
     AttendenceUpdateCommand(GameKeyLocator(new GameKey(Competition.LGCP, Location.HOME, "Aldershot Town", 2011)), 19879),

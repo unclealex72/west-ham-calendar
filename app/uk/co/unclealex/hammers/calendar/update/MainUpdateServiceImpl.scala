@@ -170,20 +170,21 @@ class MainUpdateServiceImpl @Inject() (
     }
   }
 
-  def attendGame(gameId: Long): Unit = attendOrUnattendGame(gameId, true)
+  def attendGame(gameId: Long): Option[Game] = attendOrUnattendGame(gameId, true)
 
-  def unattendGame(gameId: Long): Unit = attendOrUnattendGame(gameId, false)
+  def unattendGame(gameId: Long): Option[Game] = attendOrUnattendGame(gameId, false)
 
   def attendOrUnattendGame(gameId: Long, attend: Boolean) =
-    attendOrUnattendGames(_ findById gameId, attend)
+    attendOrUnattendGames(_ findById gameId, attend).headOption
 
   def attendAllHomeGamesForSeason(season: Int) = attendOrUnattendGames(_ getAllForSeasonAndLocation (season, HOME), true)
 
-  def attendOrUnattendGames(gamesFactory: GameDao => Traversable[Game], attend: Boolean): Unit = {
+  def attendOrUnattendGames(gamesFactory: GameDao => Traversable[Game], attend: Boolean): List[Game] = {
     tx { gameDao =>
-      gamesFactory(gameDao) foreach { game =>
+      gamesFactory(gameDao).foldRight(List.empty[Game]) { (game, games) =>
         game.attended = Some(attend)
-        gameDao store game
+        gameDao.store(game)
+        game :: games
       }
     }
   }

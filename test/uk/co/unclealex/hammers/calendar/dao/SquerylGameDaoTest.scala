@@ -293,6 +293,9 @@ class SquerylGameDaoTest extends Specification {
             actualSearchesByPredicates.get(key) must be equalTo (Some(expectedSearchResults))
           }
       }
+      "nothing else" in {
+        1 must be equalTo(1)
+      }
   }
 
   /**

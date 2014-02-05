@@ -1,0 +1,4 @@
+<div class="{{class}}"
+     ng-class="{'text-warning': game.gameTimeType == 'Weekend', 'text-danger': game.gameTimeType == 'Weekday'}">
+    {{game.at | customDate:"EEE dth, h:mm!a" }}
+</div>

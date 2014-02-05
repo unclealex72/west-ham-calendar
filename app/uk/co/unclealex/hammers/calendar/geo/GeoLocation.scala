@@ -30,6 +30,8 @@ import com.typesafe.scalalogging.slf4j.Logging
 import uk.co.unclealex.hammers.calendar.model.Game
 import uk.co.unclealex.hammers.calendar.model.Location
 
+import argonaut._, Argonaut._, DecodeResult._
+
 /**
  * Geographic locations of all UK football league stadia
  * @author alex
@@ -94,15 +96,15 @@ object GeoLocation extends GeoLocationLike {
   case object EAST_FIFE extends GeoLocation("East Fife", "Bayview Stadium", BigDecimal("56.1889"), BigDecimal("-2.99914")); EAST_FIFE
   case object WALSALL extends GeoLocation("Walsall", "Bescot Stadium", BigDecimal("52.5655"), BigDecimal("-1.99053")); WALSALL
   case object BLACKPOOL extends GeoLocation("Blackpool", "Bloomfield Road", BigDecimal("53.8046"), BigDecimal("-3.04834")); BLACKPOOL
-  case object WEST_HAM extends GeoLocation("West Ham", "Boleyn Ground", BigDecimal("51.5321"), BigDecimal("0.039225")); WEST_HAM
+  case object WEST_HAM extends GeoLocation("West Ham", "The Boleyn Ground", BigDecimal("51.5321"), BigDecimal("0.039225")); WEST_HAM
   case object YORK_CITY extends GeoLocation("York City", "Bootham Crescent", BigDecimal("53.9695"), BigDecimal("-1.08833")); YORK_CITY
   case object ELGIN_CITY extends GeoLocation("Elgin City", "Borough Briggs", BigDecimal("57.6518"), BigDecimal("-3.3209")); ELGIN_CITY
   case object OLDHAM_ATHLETIC extends GeoLocation("Oldham Athletic", "Boundary Park", BigDecimal("53.5551"), BigDecimal("-2.12847")); OLDHAM_ATHLETIC
   case object SHEFFIELD_UNITED extends GeoLocation("Sheffield United", "Bramall Lane", BigDecimal("53.3703"), BigDecimal("-1.47083")); SHEFFIELD_UNITED
   case object LEYTON_ORIENT extends GeoLocation("Leyton Orient", "Brisbane Road", BigDecimal("51.5601"), BigDecimal("-0.012551")); LEYTON_ORIENT
-  case object STOKE_CITY extends GeoLocation("Stoke City", "Britannia Stadium", BigDecimal("52.9884"), BigDecimal("-2.17542")); STOKE_CITY
+  case object STOKE_CITY extends GeoLocation("Stoke City", "The Britannia Stadium", BigDecimal("52.9884"), BigDecimal("-2.17542")); STOKE_CITY
   case object CRAWLEY_TOWN extends GeoLocation("Crawley Town", "Broadfield Stadium", BigDecimal("51.0996"), BigDecimal("-0.194579")); CRAWLEY_TOWN
-  case object CLYDE extends GeoLocation("Clyde", "Broadwood Stadium", BigDecimal("55.9447"), BigDecimal("-4.0379")); CLYDE
+  case object CLYDE extends GeoLocation("Clyde", "The Broadwood Stadium", BigDecimal("55.9447"), BigDecimal("-4.0379")); CLYDE
   case object CARLISLE_UNITED extends GeoLocation("Carlisle United", "Brunton Park", BigDecimal("54.8955"), BigDecimal("-2.91365")); CARLISLE_UNITED
   case object GREENOCK_MORTON extends GeoLocation("Greenock Morton", "Cappielow Park", BigDecimal("55.9414"), BigDecimal("-4.72719")); GREENOCK_MORTON
   case object CARDIFF_CITY extends GeoLocation("Cardiff City", "Cardiff City Stadium", BigDecimal("51.4729"), BigDecimal("-3.20413")); CARDIFF_CITY
@@ -120,7 +122,7 @@ object GeoLocation extends GeoLocationLike {
   case object HIBERNIAN extends GeoLocation("Hibernian", "Easter Road", BigDecimal("55.9616"), BigDecimal("-3.16521")); HIBERNIAN
   case object HEREFORD_UNITED extends GeoLocation("Hereford United", "Edgar Street", BigDecimal("52.0607"), BigDecimal("-2.71774")); HEREFORD_UNITED
   case object LEEDS_UNITED extends GeoLocation("Leeds United", "Elland Road", BigDecimal("53.7775"), BigDecimal("-1.57212")); LEEDS_UNITED
-  case object ARSENAL extends GeoLocation("Arsenal", "Emirates Stadium", BigDecimal("51.5549"), BigDecimal("-0.108436")); ARSENAL
+  case object ARSENAL extends GeoLocation("Arsenal", "The Emirates Stadium", BigDecimal("51.5549"), BigDecimal("-0.108436")); ARSENAL
   case object MANCHESTER_CITY extends GeoLocation("Manchester City", "Etihad Stadium", BigDecimal("53.483"), BigDecimal("-2.20024")); MANCHESTER_CITY
   case object BLACKBURN_ROVERS extends GeoLocation("Blackburn Rovers", "Ewood Park", BigDecimal("53.7286"), BigDecimal("-2.48937")); BLACKBURN_ROVERS
   case object FALKIRK extends GeoLocation("Falkirk", "Falkirk Stadium", BigDecimal("56.0053"), BigDecimal("-3.75262")); FALKIRK
@@ -133,7 +135,7 @@ object GeoLocation extends GeoLocationLike {
   case object BURY extends GeoLocation("Bury", "Gigg Lane", BigDecimal("53.5805"), BigDecimal("-2.29487")); BURY
   case object SCUNTHORPE_UNITED extends GeoLocation("Scunthorpe United", "Glanford Park", BigDecimal("53.5867"), BigDecimal("-0.695244")); SCUNTHORPE_UNITED
   case object BRECHIN_CITY extends GeoLocation("Brechin City", "Glebe Park", BigDecimal("56.7353"), BigDecimal("-2.6565")); BRECHIN_CITY
-  case object MORECAMBE extends GeoLocation("Morecambe", "Globe Arena", BigDecimal("54.0675"), BigDecimal("-2.84707")); MORECAMBE
+  case object MORECAMBE extends GeoLocation("Morecambe", "The Globe Arena", BigDecimal("54.0675"), BigDecimal("-2.84707")); MORECAMBE
   case object EVERTON extends GeoLocation("Everton", "Goodison Park", BigDecimal("53.4387"), BigDecimal("-2.96619")); EVERTON
   case object CREWE_ALEXANDRA extends GeoLocation("Crewe Alexandra", "Gresty Road", BigDecimal("53.0875"), BigDecimal("-2.43569")); CREWE_ALEXANDRA
   case object BRENTFORD extends GeoLocation("Brentford", "Griffin Park", BigDecimal("51.4882"), BigDecimal("-0.302621")); BRENTFORD
@@ -145,20 +147,20 @@ object GeoLocation extends GeoLocationLike {
   case object YEOVIL_TOWN extends GeoLocation("Yeovil Town", "Huish Park", BigDecimal("50.9503"), BigDecimal("-2.67383")); YEOVIL_TOWN
   case object RANGERS extends GeoLocation("Rangers", "Ibrox", BigDecimal("55.8529"), BigDecimal("-4.30962")); RANGERS
   case object OXFORD_UNITED extends GeoLocation("Oxford United", "Kassam Stadium", BigDecimal("51.7164"), BigDecimal("-1.20775")); OXFORD_UNITED
-  case object HULL_CITY extends GeoLocation("Hull City", "KC Stadium", BigDecimal("53.7465"), BigDecimal("-0.368009")); HULL_CITY
+  case object HULL_CITY extends GeoLocation("Hull City", "The KC Stadium", BigDecimal("53.7465"), BigDecimal("-0.368009")); HULL_CITY
   case object DONCASTER_ROVERS extends GeoLocation("Doncaster Rovers", "Keepmoat Stadium", BigDecimal("53.5099"), BigDecimal("-1.11382")); DONCASTER_ROVERS
-  case object LEICESTER_CITY extends GeoLocation("Leicester City", "King Power Stadium", BigDecimal("52.6203"), BigDecimal("-1.14217")); LEICESTER_CITY
+  case object LEICESTER_CITY extends GeoLocation("Leicester City", "The King Power Stadium", BigDecimal("52.6203"), BigDecimal("-1.14217")); LEICESTER_CITY
   case object AFC_WIMBLEDON extends GeoLocation("AFC Wimbledon", "Kingsmeadow", BigDecimal("51.4051"), BigDecimal("-0.281984")); AFC_WIMBLEDON
   case object KINGSTONIAN extends GeoLocation("Kingstonian", "Kingsmeadow", BigDecimal("51.4051"), BigDecimal("-0.281984")); KINGSTONIAN
   case object SWANSEA_CITY extends GeoLocation("Swansea City", "Liberty Stadium", BigDecimal("51.6428"), BigDecimal("-3.93473")); SWANSEA_CITY
   case object MONTROSE extends GeoLocation("Montrose", "Links Park", BigDecimal("56.714"), BigDecimal("-2.45902")); MONTROSE
   case object QUEENS_PARK_RANGERS extends GeoLocation("Queens Park Rangers", "Loftus Road", BigDecimal("51.5093"), BigDecimal("-0.232204")); QUEENS_PARK_RANGERS
   case object PETERBOROUGH_UNITED extends GeoLocation("Peterborough United", "London Road", BigDecimal("52.5648"), BigDecimal("-0.240434")); PETERBOROUGH_UNITED
-  case object READING extends GeoLocation("Reading", "Madjeski Stadium", BigDecimal("51.4222"), BigDecimal("-0.982777")); READING
+  case object READING extends GeoLocation("Reading", "The Madjeski Stadium", BigDecimal("51.4222"), BigDecimal("-0.982777")); READING
   case object ST_JOHNSTONE extends GeoLocation("St Johnstone", "McDiarmid Park", BigDecimal("56.4099"), BigDecimal("-3.47684")); ST_JOHNSTONE
   case object NOTTS_COUNTY extends GeoLocation("Notts County", "Meadow Lane", BigDecimal("52.9425"), BigDecimal("-1.13703")); NOTTS_COUNTY
-  case object BRISTOL_ROVERS extends GeoLocation("Bristol Rovers", "Memorial Stadium", BigDecimal("51.4862"), BigDecimal("-2.58315")); BRISTOL_ROVERS
-  case object WALES extends GeoLocation("Wales", "Millennium Stadium", BigDecimal("51.4782"), BigDecimal("-3.18281")); WALES
+  case object BRISTOL_ROVERS extends GeoLocation("Bristol Rovers", "The Memorial Stadium", BigDecimal("51.4862"), BigDecimal("-2.58315")); BRISTOL_ROVERS
+  case object WALES extends GeoLocation("Wales", "The Millennium Stadium", BigDecimal("51.4782"), BigDecimal("-3.18281")); WALES
   case object WOLVERHAMPTON_WANDERERS extends GeoLocation("Wolverhampton Wanderers", "Molineux", BigDecimal("52.5904"), BigDecimal("-2.13061"), "Wolves"); WOLVERHAMPTON_WANDERERS
   case object MACCLESFIELD_TOWN extends GeoLocation("Macclesfield Town", "Moss Rose", BigDecimal("53.2427"), BigDecimal("-2.127")); MACCLESFIELD_TOWN
   case object AIRDRIE_UNITED extends GeoLocation("Airdrie United", "New Broomfield", BigDecimal("55.8601"), BigDecimal("-3.95997")); AIRDRIE_UNITED
@@ -170,16 +172,16 @@ object GeoLocation extends GeoLocationLike {
   case object STENHOUSEMUIR extends GeoLocation("Stenhousemuir", "Ochilview Park", BigDecimal("56.0282"), BigDecimal("-3.81449")); STENHOUSEMUIR
   case object MANCHESTER_UNITED extends GeoLocation("Manchester United", "Old Trafford", BigDecimal("53.4631"), BigDecimal("-2.29139")); MANCHESTER_UNITED
   case object QUEEN_OF_THE_SOUTH extends GeoLocation("Queen of the South", "Palmerston Park", BigDecimal("55.0703"), BigDecimal("-3.6246")); QUEEN_OF_THE_SOUTH
-  case object BURTON_ALBION extends GeoLocation("Burton Albion", "Pirelli Stadium", BigDecimal("52.8219"), BigDecimal("-1.62708")); BURTON_ALBION
+  case object BURTON_ALBION extends GeoLocation("Burton Albion", "The Pirelli Stadium", BigDecimal("52.8219"), BigDecimal("-1.62708")); BURTON_ALBION
   case object ABERDEEN extends GeoLocation("Aberdeen", "Pittodrie", BigDecimal("57.1593"), BigDecimal("-2.08872")); ABERDEEN
   case object TORQUAY_UNITED extends GeoLocation("Torquay United", "Plainmoor", BigDecimal("50.4764"), BigDecimal("-3.52382")); TORQUAY_UNITED
   case object IPSWICH_TOWN extends GeoLocation("Ipswich Town", "Portman Road", BigDecimal("52.0544"), BigDecimal("1.14554")); IPSWICH_TOWN
   case object TRANMERE_ROVERS extends GeoLocation("Tranmere Rovers", "Prenton Park", BigDecimal("53.3738"), BigDecimal("-3.03269")); TRANMERE_ROVERS
   case object DERBY_COUNTY extends GeoLocation("Derby County", "Pride Park", BigDecimal("52.9149"), BigDecimal("-1.44727")); DERBY_COUNTY
   case object GILLINGHAM extends GeoLocation("Gillingham", "Priestfield Stadium", BigDecimal("51.3844"), BigDecimal("0.560367")); GILLINGHAM
-  case object ALDERSHOT_TOWN extends GeoLocation("Aldershot Town", "Recreation Ground", BigDecimal("51.2484"), BigDecimal("-0.754869")); ALDERSHOT_TOWN
-  case object ALLOA_ATHLETIC extends GeoLocation("Alloa Athletic", "Recreation Park", BigDecimal("56.1166"), BigDecimal("-3.77865")); ALLOA_ATHLETIC
-  case object BOLTON_WANDERERS extends GeoLocation("Bolton Wanderers", "Reebok Stadium", BigDecimal("53.5805"), BigDecimal("-2.53571")); BOLTON_WANDERERS
+  case object ALDERSHOT_TOWN extends GeoLocation("Aldershot Town", "The Recreation Ground", BigDecimal("51.2484"), BigDecimal("-0.754869")); ALDERSHOT_TOWN
+  case object ALLOA_ATHLETIC extends GeoLocation("Alloa Athletic", "The Recreation Park", BigDecimal("56.1166"), BigDecimal("-3.77865")); ALLOA_ATHLETIC
+  case object BOLTON_WANDERERS extends GeoLocation("Bolton Wanderers", "The Reebok Stadium", BigDecimal("53.5805"), BigDecimal("-2.53571")); BOLTON_WANDERERS
   case object COVENTRY_CITY extends GeoLocation("Coventry City", "Ricoh Arena", BigDecimal("52.4481"), BigDecimal("-1.49563")); COVENTRY_CITY
   case object MIDDLESBROUGH extends GeoLocation("Middlesbrough", "Riverside", BigDecimal("54.5781"), BigDecimal("-1.21776")); MIDDLESBROUGH
   case object SOUTHEND_UNITED extends GeoLocation("Southend United", "Roots Hall", BigDecimal("51.5491"), BigDecimal("0.701572")); SOUTHEND_UNITED
@@ -195,8 +197,8 @@ object GeoLocation extends GeoLocationLike {
   case object EXETER_CITY extends GeoLocation("Exeter City", "St James Park, Exeter", BigDecimal("50.7307"), BigDecimal("-3.52109")); EXETER_CITY
   case object SOUTHAMPTON extends GeoLocation("Southampton", "St Mary's Stadium", BigDecimal("50.9058"), BigDecimal("-1.39114")); SOUTHAMPTON
   case object ST_MIRREN extends GeoLocation("St Mirren", "St Mirren Park", BigDecimal("55.8529"), BigDecimal("-4.42879")); ST_MIRREN
-  case object SUNDERLAND extends GeoLocation("Sunderland", "Stadium of Light", BigDecimal("54.9146"), BigDecimal("-1.38837")); SUNDERLAND
-  case object MK_DONS extends GeoLocation("MK Dons", "Stadiummk", BigDecimal("52.0096"), BigDecimal("-0.733507")); MK_DONS
+  case object SUNDERLAND extends GeoLocation("Sunderland", "The Stadium of Light", BigDecimal("54.9146"), BigDecimal("-1.38837")); SUNDERLAND
+  case object MK_DONS extends GeoLocation("MK Dons", "StadiumMK", BigDecimal("52.0096"), BigDecimal("-0.733507")); MK_DONS
   case object STRANRAER extends GeoLocation("Stranraer", "Stair Park", BigDecimal("54.9022"), BigDecimal("-5.01249")); STRANRAER
   case object CHELSEA extends GeoLocation("Chelsea", "Stamford Bridge", BigDecimal("51.4816"), BigDecimal("-0.191034")); CHELSEA
   case object RAITH_ROVERS extends GeoLocation("Raith Rovers", "Stark's Park", BigDecimal("56.0999"), BigDecimal("-3.16851")); RAITH_ROVERS
@@ -221,7 +223,7 @@ object GeoLocation extends GeoLocationLike {
   case object DAGENHAM_AND_REDBRIDGE extends GeoLocation("Dagenham and Redbridge", "Victoria Road", BigDecimal("51.5478"), BigDecimal("0.159739")); DAGENHAM_AND_REDBRIDGE
   case object ASTON_VILLA extends GeoLocation("Aston Villa", "Villa Park", BigDecimal("52.5092"), BigDecimal("-1.88508")); ASTON_VILLA
   case object ENGLAND extends GeoLocation("England", "Wembley", BigDecimal("51.5559"), BigDecimal("-0.279543")); ENGLAND
-  case object COLCHESTER_UNITED extends GeoLocation("Colchester United", "Weston Homes Community Stadium", BigDecimal("51.9234"), BigDecimal("0.897861")); COLCHESTER_UNITED
+  case object COLCHESTER_UNITED extends GeoLocation("Colchester United", "The Weston Homes Community Stadium", BigDecimal("51.9234"), BigDecimal("0.897861")); COLCHESTER_UNITED
   case object CHELTENHAM_TOWN extends GeoLocation("Cheltenham Town", "Whaddon Road", BigDecimal("51.9062"), BigDecimal("-2.06021")); CHELTENHAM_TOWN
   case object TOTTENHAM_HOTSPUR extends GeoLocation("Tottenham Hotspur", "White Hart Lane", BigDecimal("51.6033"), BigDecimal("-0.065684")); TOTTENHAM_HOTSPUR
 
@@ -257,4 +259,11 @@ object GeoLocation extends GeoLocationLike {
     case Location.HOME => Some(WEST_HAM)
     case Location.AWAY => apply(game.opponents)
   }
+
+  /**
+   * Json Serialisation
+   */
+  implicit val GeoLocationEncodeJson: EncodeJson[GeoLocation] =
+    jencode3L((geo: GeoLocation) => (geo.name, geo.latitude.toString, geo.longitude.toString))(
+      "name", "latitude", "longitude")
 }

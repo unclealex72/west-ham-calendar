@@ -30,11 +30,7 @@ import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
 import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
 import play.api.mvc.Controller
-import securesocial.core.Authorization
 import javax.inject.Named
-import play.api.mvc.Request
-import play.api.mvc.Response
-import play.api.mvc.AnyContent
 import uk.co.unclealex.hammers.calendar.update.LastUpdated
 
 /**

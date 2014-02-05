@@ -19,31 +19,20 @@
  * under the License.
  *
  */
-package controllers
 
-import play.api.mvc.Action
-import play.api.mvc.Results.NotFound
-import scala.concurrent.Future
-import play.api.libs.concurrent.Execution.Implicits._
+package json
 
+import play.api.http.HeaderNames._
+import play.api.mvc.Results
+import argonaut._, Argonaut._
 /**
- * A trait that defines a secret action that is kept secret(ish) by its path containing a random string
  * @author alex
  *
  */
-trait Secret {
+trait JsonResults extends Results {
 
-  /**
-   * The secret part of the path.
-   */
-  val secret: String
+  def json[A](a: A)(implicit encoder: EncodeJson[A]) = 
+    Ok(encoder.encode(a).nospaces).withHeaders(
+        CONTENT_TYPE -> "application/json", CACHE_CONTROL -> "max-age=0, no-cache, must-revalidate")
 
-  def Secret[A](secretPayload: String)(action: Action[A]): Action[A] =
-    Action.async(action.parser) { request =>
-      if (secret == secretPayload) {
-        action(request)
-      } else {
-        Future(NotFound)
-      }
-    }
 }

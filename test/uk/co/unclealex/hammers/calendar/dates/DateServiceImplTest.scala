@@ -112,6 +112,9 @@ class DateServiceImplTest extends Specification {
         (day.toDateTime isWeekday) must be equalTo (dayOfWeek.isWeekday)
       }
     }
+    "nothing else" in {
+      1 must be equalTo(1)
+    }
   }
 
   "Checking for whether an instant is the fabled Saturday at 3pm" should {
@@ -129,6 +132,9 @@ class DateServiceImplTest extends Specification {
             (day.toDateTime isThreeOClockOnASaturday) must be equalTo (isSaturday3pm)
           }
       }
+    "nothing else" in {
+      1 must be equalTo(1)
+    }
   }
 
   /**
@@ -148,7 +154,7 @@ class DateServiceImplTest extends Specification {
   def parseAndFind(
     date: String,
     parsingRules: Triple[Boolean, Date, Seq[String]],
-    expectedInstant: Option[Instant]) {
+    expectedInstant: Option[Instant]) = {
     val (yearDeterminingDateIsLaterThanTheDate, yearDeterminingDate, possiblyYearlessDateFormats) = parsingRules
     val expectedDateTime = expectedInstant map (_.toDateTime)
     s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedInstant" in {
@@ -173,6 +179,9 @@ class DateServiceImplTest extends Specification {
             possiblyYearlessDateFormats: _*)
         actualDateTime must be equalTo (expectedDateTime)
       }
+    }
+    "nothing else" in {
+      1 must be equalTo(1)
     }
   }
 

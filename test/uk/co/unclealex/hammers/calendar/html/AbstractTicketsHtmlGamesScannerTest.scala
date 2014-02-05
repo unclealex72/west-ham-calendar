@@ -42,7 +42,7 @@ abstract class AbstractTicketsHtmlGamesScannerTest(val year: Int) extends Specif
    */
   case class GameResourceAtInstant(gameResource: String, instant: Instant) {
 
-    def expects(expectations: GameLocator => List[GameUpdateCommand]) {
+    def expects(expectations: GameLocator => List[GameUpdateCommand]) = {
       val ticketsHtmlSingleGameScanner =
         new TicketsHtmlSingleGameScanner(new HtmlPageLoaderImpl, new DateServiceImpl, year)
       val url = getClass().getClassLoader().getResource(s"html/tickets/${year}/${gameResource}")

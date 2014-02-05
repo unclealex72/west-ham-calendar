@@ -24,6 +24,7 @@ package uk.co.unclealex.hammers.calendar.update
 
 import java.io.IOException
 import uk.co.unclealex.hammers.calendar.logging.RemoteStream
+import uk.co.unclealex.hammers.calendar.model.Game
 
 /**
  * The service used to combine reading game information from the web and
@@ -44,7 +45,7 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def attendGame(gameId: Long): Unit
+  def attendGame(gameId: Long): Option[Game]
 
   /**
    * Move a game to the unattendend calendar.
@@ -56,7 +57,7 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def unattendGame(gameId: Long): Unit
+  def unattendGame(gameId: Long): Option[Game]
 
   /**
    * Attend all home games in a season.
@@ -68,7 +69,7 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def attendAllHomeGamesForSeason(season: Int): Unit
+  def attendAllHomeGamesForSeason(season: Int): List[Game]
 
   /**
    * Update a list of game update commands from an HTML scan.

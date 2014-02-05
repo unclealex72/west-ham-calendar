@@ -1,0 +1,71 @@
+<div>
+  <header class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar-inner">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-3" ng-click="isCollapsed = !isCollapsed">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand visible-xs" href="#">Hammers Calendar</a>
+        </div>
+        <nav class="hidden-xs">
+          <ul class="nav navbar-nav">
+            <a href="#" role="button" class="navbar-brand">
+              Hammers Calendar
+            </a>
+            <li class="dropdown">
+              <a role="button" class="dropdown-toggle">
+                {{currentSeason}} <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="season in seasons">
+                  <a ng-click="alterSeason(season)">{{season}}</a>
+                </li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle"> {{currentTicketType.label}} tickets <b class="caret"></b> </a>
+              <ul class="dropdown-menu">
+                <li ng-repeat="ticketType in ticketTypes">
+                  <a ng-click="alterTicketType(ticketType)">{{ticketType.label}} tickets</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+          <p class="navbar-text navbar-right">
+            <a ng-show="authorised" href="logout" class="navbar-link">Logout {{username}}</a>
+            <a ng-hide="authorised" href="authenticate/google" class="navbar-link">Login</a>
+          </p>
+        </nav>
+        <nav class="visible-xs" collapse="!isCollapsed">
+          <ul class="nav navbar-nav">
+            <li style="height: 2em;">
+              <carousel interval="-1">
+                <slide ng-repeat="seasonSlider in seasonSliders" active="seasonSlider.active">
+                  <p>
+                    <a ng-click="alterSeason(seasonSlider.year)">{{seasonSlider.year}}</a>
+                  </p>
+                </slide>
+              </carousel>
+            </li>
+            <li style="height: 2em;">
+              <carousel interval="-1">
+                <slide ng-repeat="ticketTypeSlider in ticketTypeSliders" active="ticketTypeSlider.active">
+                    <a ng-click="alterTicketType(ticketTypeSlider.ticketType)">{{ticketTypeSlider.ticketType.label}}</a>
+                </slide>
+              </carousel>
+            </li>
+            <li>
+              <a ng-show="authorised" href="logout" class="navbar-link">Logout {{username}}</a>
+              <a ng-hide="authorised" href="authenticate/google" class="navbar-link">Login</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </header>
+  <div class="header-placeholder"></div>
+</div>

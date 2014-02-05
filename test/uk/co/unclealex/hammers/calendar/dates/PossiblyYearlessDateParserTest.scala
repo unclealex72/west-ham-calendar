@@ -75,9 +75,11 @@ class PossiblyYearlessDateParserTest extends Specification {
      * @param expectedYearlessFormat
      *          The expected yearless format.
      */
-    def mustProduce(expectedFormats: NeedsYear*): Unit = {
-      val possiblyYearlessDateParser = new PossiblyYearlessDateParser(new DateTime(), false, dateFormat)
-      possiblyYearlessDateParser.dateFormats.toList mustEqual expectedFormats.toList
+    def mustProduce(expectedFormats: NeedsYear*) = {
+      dateFormat in {
+        val possiblyYearlessDateParser = new PossiblyYearlessDateParser(new DateTime(), false, dateFormat)
+        possiblyYearlessDateParser.dateFormats.toList mustEqual expectedFormats.toList
+      }
     }
   }
 }

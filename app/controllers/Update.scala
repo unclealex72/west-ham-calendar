@@ -36,6 +36,10 @@ import play.api.libs.iteratee.Concurrent
 import play.api.mvc.ChunkedResult
 import play.api.mvc.ResponseHeader
 import uk.co.unclealex.hammers.calendar.logging.RemoteStream
+import json.JsonResults
+import uk.co.unclealex.hammers.calendar.model.Game
+import services.GameRowFactory
+
 /**
  * @author alex
  *
@@ -52,7 +56,11 @@ class Update @Inject() (
   /**
    * The main update service used to scrape the West Ham site and update game information.
    */
-  mainUpdateService: MainUpdateService) extends Controller with Secure with Secret {
+  mainUpdateService: MainUpdateService,
+  /**
+   * The game row factory used to get game row models.
+   */
+  gameRowFactory: GameRowFactory) extends Controller with Secure with Secret with JsonResults {
 
   implicit val implicitAuthorization = authorization
 
@@ -78,20 +86,21 @@ class Update @Inject() (
   }
 
   /**
+   * Attend or unattend a game.
+   */
+  def attendOrUnattend(gameUpdater: Long => Option[Game], gameId: Long) =
+    SecuredAction(true, authorization) {
+      json(gameUpdater(gameId).map(gameRowFactory.toRow(true)))
+    }
+
+  /**
    * Attend a game.
    */
-  def attend(gameId: Long) = SecuredAction(true, authorization) { empty { mainUpdateService attendGame gameId } }
+  def attend(gameId: Long) = attendOrUnattend(mainUpdateService.attendGame, gameId)
 
   /**
    * Unattend a game.
    */
-  def unattend(gameId: Long) = SecuredAction(true, authorization) { empty { mainUpdateService unattendGame gameId } }
+  def unattend(gameId: Long) = attendOrUnattend(mainUpdateService.unattendGame, gameId)
 
-  /**
-   * Execute code and return a no-content response.
-   */
-  def empty(block: => Unit) = (request: Request[Any]) => {
-    block
-    NoContent
-  }
 }

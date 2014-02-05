@@ -21,18 +21,19 @@
  */
 package services
 
-import models.GameRow
+import models._
 import uk.co.unclealex.hammers.calendar.model.Game
 import org.joda.time.DateTime
-import models.GameTimeType
 import models.GameTimeType._
 import uk.co.unclealex.hammers.calendar.dates.DateTimeImplicits._
 import uk.co.unclealex.hammers.calendar.geo.GeoLocation
 import uk.co.unclealex.hammers.calendar.geo.GeoLocation._
 import uk.co.unclealex.hammers.calendar.model.Location._
 import java.util.Date
-import models.TicketType
 import models.TicketType._
+import models.GameTimeType
+import models.GameRow
+import scala.Some
 
 /**
  * @author alex
@@ -73,14 +74,15 @@ class GameRowFactoryImpl extends GameRowFactory {
     }
   }
 
-  def ticketFactory(game: Game): Map[TicketType, Option[Date]] = {
+  def ticketFactory(game: Game): Map[TicketType.Name, Option[DateTime]] = {
+    implicit val dt = (date : Date) => new DateTime(date)
     Map(
-      TicketType.Bondholder -> game.bondholdersAvailable,
-      TicketType.PriorityPoint -> game.priorityPointAvailable,
-      TicketType.SeasonTicket -> game.seasonTicketsAvailable,
-      TicketType.Academy -> game.academyMembersAvailable,
-      TicketType.AcademyPostal -> game.academyMembersPostalAvailable,
-      TicketType.GeneralSale -> game.generalSaleAvailable,
-      TicketType.GeneralSalePostal -> game.generalSalePostalAvailable)
+      BondholderTicketType.name -> game.bondholdersAvailable,
+      PriorityPointTicketType.name -> game.priorityPointAvailable,
+      SeasonTicketType.name -> game.seasonTicketsAvailable,
+      AcademyTicketType.name -> game.academyMembersAvailable,
+      AcademyPostalTicketType.name -> game.academyMembersPostalAvailable,
+      GeneralSaleTicketType.name -> game.generalSaleAvailable,
+      GeneralSalePostalTicketType.name -> game.generalSalePostalAvailable)
   }
 }

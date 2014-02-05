@@ -1,0 +1,38 @@
+<div>
+  <h2>
+    <span ng-show="game.home">West Ham</span>
+    <span ng-hide="game.home">{{game.opponents}}</span>
+    vs.
+    <span ng-hide="game.home">West Ham</span>
+    <span ng-show="game.home">{{game.opponents}}</span>
+    <i class="fa fa-trophy" ng-hide="game.league"></i>
+  </h2>
+  <p>on {{game.at | customDate:"EEEE 'the' dth 'of' MMMM yyyy, h:mm!a" }}</p>
+  <p>at
+    <a href="https://maps.google.de/maps?q=loc:{{game.geoLocation.latitude}},{{game.geoLocation.longitude}}"
+       target="_blank">{{game.geoLocation.name}}</a>.
+  </p>
+  <p ng-show="game.result">
+    The result was <game-result game="game"></game-result>
+  </p>
+  <p ng-show="!game.result &amp;&amp; game.ticketsAt[ticketType.name]">
+    {{ticketType.label}} tickets go on sale at
+    {{game.ticketsAt[ticketType.name] | customDate:"h:mm!a 'on the' dth 'of' MMMM, yyyy" }}
+  </p>
+  <div class="row" ng-show="game.attended != null">
+    <div class="col-xs-6">
+      <a ng-click="attend(game)" class="btn btn-block btn-success"
+         ng-class="{'disabled': game.attended || game.busy}">
+        <span ng-hide="game.busy">Attend</span>
+        <i ng-show="game.busy" class="fa fa-spinner fa-spin"></i>
+      </a>
+    </div>
+    <div class="col-xs-6">
+      <a ng-click="unattend(game)" class="btn btn-block btn-danger"
+         ng-class="{'disabled': !game.attended || game.busy}">
+        <span ng-hide="game.busy">Unattend</span>
+        <i ng-show="game.busy" class="fa fa-spinner fa-spin"></i>
+      </a>
+    </div>
+  </div>
+</div>

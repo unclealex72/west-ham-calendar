@@ -29,44 +29,45 @@ import org.specs2.mutable.Specification
  */
 class SearchOptionTest extends Specification {
 
-  "Attended search options" should {
-    checkSearchOptions(
-      AttendedSearchOption,
-      "attended" -> AttendedSearchOption.ATTENDED,
-      "unattended" -> AttendedSearchOption.UNATTENDED,
-      "anyattendence" -> AttendedSearchOption.ANY)
-  }
+  checkSearchOptions(
+    "Attended search options",
+    AttendedSearchOption,
+    "attended" -> AttendedSearchOption.ATTENDED,
+    "unattended" -> AttendedSearchOption.UNATTENDED,
+    "anyattendence" -> AttendedSearchOption.ANY)
 
-  "Location search options" should {
-    checkSearchOptions(
-      LocationSearchOption,
-      "home" -> LocationSearchOption.HOME,
-      "away" -> LocationSearchOption.AWAY,
-      "anylocation" -> LocationSearchOption.ANY)
-  }
+  checkSearchOptions(
+    "Location search options",
+    LocationSearchOption,
+    "home" -> LocationSearchOption.HOME,
+    "away" -> LocationSearchOption.AWAY,
+    "anylocation" -> LocationSearchOption.ANY)
 
-  "Game or ticket search options" should {
-    checkSearchOptions(
-      GameOrTicketSearchOption,
-      "games" -> GameOrTicketSearchOption.GAME,
-      "bondholders" -> GameOrTicketSearchOption.BONDHOLDERS,
-      "prioritypoint" -> GameOrTicketSearchOption.PRIORITY_POINT,
-      "season" -> GameOrTicketSearchOption.SEASON,
-      "academy" -> GameOrTicketSearchOption.ACADEMY,
-      "academypostal" -> GameOrTicketSearchOption.ACADEMY_POSTAL,
-      "general" -> GameOrTicketSearchOption.GENERAL_SALE,
-      "generalpostal" -> GameOrTicketSearchOption.GENERAL_SALE_POSTAL)
-  }
+  checkSearchOptions(
+    "Game or ticket search options",
+    GameOrTicketSearchOption,
+    "games" -> GameOrTicketSearchOption.GAME,
+    "bondholders" -> GameOrTicketSearchOption.BONDHOLDERS,
+    "prioritypoint" -> GameOrTicketSearchOption.PRIORITY_POINT,
+    "season" -> GameOrTicketSearchOption.SEASON,
+    "academy" -> GameOrTicketSearchOption.ACADEMY,
+    "academypostal" -> GameOrTicketSearchOption.ACADEMY_POSTAL,
+    "general" -> GameOrTicketSearchOption.GENERAL_SALE,
+    "generalpostal" -> GameOrTicketSearchOption.GENERAL_SALE_POSTAL)
 
-  def checkSearchOptions[E <: SearchOption](obj: SearchOptionLike[E], expectedResults: Pair[String, E]*) = {
-    "have the correct number of options" in {
-      obj.values must have size(expectedResults.size)
+  def checkSearchOptions[E <: SearchOption](description: String, obj: SearchOptionLike[E], expectedResults: Pair[String, E]*) = {
+    description should {
+      "have the correct number of options" in {
+        obj.values must have size(expectedResults.size)
+      }
     }
     expectedResults foreach {
       case (key, value) =>
+        description should {
         s"return $value the token $key" in {
           obj(key) must be equalTo (Some(value))
         }
+      }
     }
   }
 }

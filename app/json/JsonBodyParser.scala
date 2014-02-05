@@ -19,31 +19,35 @@
  * under the License.
  *
  */
-package controllers
 
-import play.api.mvc.Action
-import play.api.mvc.Results.NotFound
+package json
+
+import play.api.mvc.BodyParser
+import play.api.mvc.BodyParsers.parse.json
+import play.api.mvc.BodyParsers.parse.error
+import play.api.libs.json.JsValue
 import scala.concurrent.Future
-import play.api.libs.concurrent.Execution.Implicits._
+import play.api.Play
+import play.api.mvc.RequestHeader
+import play.api.mvc.Results
+import play.api.mvc.SimpleResult
+import play.api.libs.json.{Json => PlayJson}
+import scalaz.Validation
+import argonaut.DecodeJson
 
 /**
- * A trait that defines a secret action that is kept secret(ish) by its path containing a random string
+ * Parse JSON bodies into objects using {@link Json} support.
  * @author alex
  *
  */
-trait Secret {
+object JsonBodyParser {
 
   /**
-   * The secret part of the path.
+   * Parse the body as Json if the Content-Type is text/json or application/json.
+   * TODO: Error handling.
    */
-  val secret: String
+  def apply[T](implicit e: DecodeJson[T]): BodyParser[Validation[String, T]] = json map {
+    jsValue => Json.read[T](PlayJson.stringify(jsValue))
+  }
 
-  def Secret[A](secretPayload: String)(action: Action[A]): Action[A] =
-    Action.async(action.parser) { request =>
-      if (secret == secretPayload) {
-        action(request)
-      } else {
-        Future(NotFound)
-      }
-    }
 }

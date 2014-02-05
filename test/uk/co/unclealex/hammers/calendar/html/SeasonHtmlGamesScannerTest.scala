@@ -43,13 +43,10 @@ class SeasonHtmlGamesScannerTest extends Specification with SeasonHtmlGamesScann
     scan(2011, expectedGameUpdateCommandsFor2011)
   }
 
-  def scan(season: Int, expectedGameUpdateCommands: List[GameUpdateCommand]) {
+  def scan(season: Int, expectedGameUpdateCommands: List[GameUpdateCommand]) = {
     val seasonHtmlGamesScanner = new SeasonHtmlGamesScanner(new HtmlPageLoaderImpl, new DateServiceImpl)
     val actualGameUpdateCommands = seasonHtmlGamesScanner.scan(remoteStream,
       getClass.getClassLoader.getResource(s"html/fixtures-${season}.html").toURI())
-    "encompass all the games" in {
-      actualGameUpdateCommands diff expectedGameUpdateCommands must be equalTo (List())
-    }
     val grouper: GameUpdateCommand => GameKey = { gameUpdateCommand =>
       gameUpdateCommand.gameLocator match {
         case locator: GameKeyLocator => locator.gameKey
@@ -62,6 +59,9 @@ class SeasonHtmlGamesScannerTest extends Specification with SeasonHtmlGamesScann
         s"find ${gameKey.opponents} at ${gameKey.location} in ${gameKey.competition}" in {
           (groupedActualGameUpdateCommands get gameKey) map (_.sorted) must be equalTo (Some(expectedGameUpdateCommands.sorted))
         }
+    }
+    "encompass all the games" in {
+      actualGameUpdateCommands diff expectedGameUpdateCommands must be equalTo (List())
     }
   }
 }
