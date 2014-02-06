@@ -15,7 +15,7 @@
     <script src='//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js'></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
     <script type="text/javascript" src="@routes.Application.constants"></script>
-    @for(script <- Seq("attendance", "navigation", "season", "game", "calendar")) {
+    @for(script <- Seq("attendance", "navigation", "season", "game", "main")) {
     <script type="text/javascript" src='@routes.Assets.at("javascripts/" + script + ".js")'></script>
     }
 
