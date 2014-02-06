@@ -1,14 +1,5 @@
 var app = angular.module('calendar', ['navigation', 'season', 'game', 'ui.bootstrap']);
 
-app.config(['$routeProvider', 'Constants', function($routeProvider, Constants) {
-  var defaultSeason = _.max(Constants.seasons);
-  var defaultTicketType = _.find(Constants.ticketTypes, function(ticketType) { return ticketType['default']; });
-  $routeProvider.
-    when('/season/:season/tickets/:ticketType', {templateUrl: 'assets/partials/season.html', controller: 'SeasonCtrl'}).
-    when('/season/:season/tickets/:ticketType/game/:gameId', {templateUrl: 'assets/partials/game.html', controller: 'GameCtrl'}).
-    otherwise({redirectTo: '/season/' + defaultSeason + '/tickets/' + defaultTicketType.name});
-}]);
-
 app.filter('customDate', ['$filter', function($filter, $log) {
   return function(input, format) {
 	  if (!input) {
