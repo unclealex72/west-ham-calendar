@@ -1,5 +1,10 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu);
 
+.slider {
+  text-align: center;
+  width: 100%;
+}
+
 /* Clickable game rows */
 .small-game-row {
   cursor: pointer;

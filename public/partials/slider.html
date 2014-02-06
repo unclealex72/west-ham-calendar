@@ -1,0 +1,10 @@
+<li>
+  <a ng-repeat="slide in slides"
+     ng-hide="!isCurrentSlideIndex($index)"
+     ng-swipe-left="previousSlide()"
+     ng-swipe-right="nextSlide()"
+     ng-click="slideSelect()(slide)"
+     class="navbar-text slide-animation slider">
+      {{slideDisplay()(slide)}}
+    </a>
+</li>

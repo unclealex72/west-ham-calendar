@@ -18,7 +18,7 @@ PUT     /attend/:gameId              @controllers.Update.attend(gameId: Long)
 PUT     /unattend/:gameId            @controllers.Update.unattend(gameId: Long)
 
 # Updates
-POST     /:secretPayload/update.html                @controllers.Update.update(secretPayload)
+POST     /:secretPayload/update                @controllers.Update.update(secretPayload)
 
 # Calendars
 GET     /calendars/:secretPayload/:attended/:location/:type/calendar.ics   @controllers.Calendar.searchSecure(secretPayload, attended, location, type)
