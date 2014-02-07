@@ -15,7 +15,8 @@
     <script src='//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js'></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
     <script type="text/javascript" src="@routes.Application.constants"></script>
-    @for(script <- Seq("attendance", "navigation", "season", "game", "main")) {
+    @scripts = @{ if (play.Play.isProd()) Seq("calendar.min") else Seq("calendar", "attendance", "navigation", "season", "game") }
+    @for(script <- scripts) {
     <script type="text/javascript" src='@routes.Assets.at("javascripts/" + script + ".js")'></script>
     }
 
@@ -24,7 +25,6 @@
     <link href='//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css' rel="stylesheet">
 
     <link href='@routes.Assets.at("stylesheets/calendar.css")' rel="stylesheet">
-    <link href='@routes.Assets.at("stylesheets/carousel.css")' rel="stylesheet">
   </head>
 
   <body ng-app="calendar">
