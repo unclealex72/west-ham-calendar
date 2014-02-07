@@ -21,7 +21,7 @@ app.service('Navigation', ['$route', '$location', 'Constants', function($route, 
   }
   var service = {
     currentSeason: function() {
-      return $route.current.params.season;
+      return parseInt($route.current.params.season);
     },
     currentTicketType: function() {
       return _.find(Constants.ticketTypes, function(ticketType) {
@@ -67,12 +67,6 @@ app.directive('navigation', ['Navigation', 'Constants', function(Navigation, Con
       Navigation.onNavigationChange($scope, function() {
         $scope.currentSeason = Navigation.currentSeason();
         $scope.currentTicketType = Navigation.currentTicketType();
-        $scope.seasonSliders = _.map($scope.seasons, function(season) {
-          return { year: season, active: season == $scope.currentSeason };
-        });
-        $scope.ticketTypeSliders = _.map($scope.ticketTypes, function(ticketType) {
-          return { ticketType: ticketType, active: ticketType == $scope.currentTicketType };
-        });
       });
       $scope.alterSeason = Navigation.alterSeason;
       $scope.alterTicketType = Navigation.alterTicketType;
@@ -96,12 +90,17 @@ app.directive('slider', [function() {
     scope: {
       slideSelect: '&',
       slideDisplay: '&',
+      slideInitial: '=',
       slides: '='
     },
     templateUrl: 'assets/partials/slider.html',
     link : function($scope, element, attrs) {
       $scope.direction = 'left';
-      $scope.currentIndex = 0;
+      var initialIndex = _.indexOf($scope.slides, $scope.slideInitial);
+      if (!initialIndex || initialIndex < 0) {
+        initialIndex = 0;
+      }
+      $scope.currentIndex = initialIndex;
 
       $scope.setCurrentSlideIndex = function (index) {
         $scope.direction = (index > $scope.currentIndex) ? 'left' : 'right';

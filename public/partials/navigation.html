@@ -42,8 +42,18 @@
         </nav>
         <nav class="visible-xs" collapse="!isCollapsed">
           <ul class="nav navbar-nav">
-            <slider slides="seasons" slide-select="alterSeason" slide-display="displaySeason"></slider>
-            <slider slides="ticketTypes" slide-select="alterTicketType" slide-display="displayTicketType"></slider>
+            <slider
+                    slides="seasons"
+                    slide-select="alterSeason"
+                    slide-initial="currentSeason"
+                    slide-display="displaySeason">
+            </slider>
+            <slider
+                    slides="ticketTypes"
+                    slide-select="alterTicketType"
+                    slide-initial="currentTicketType"
+                    slide-display="displayTicketType">
+            </slider>
             <li>
               <a ng-show="authorised" href="logout" class="navbar-link">Logout {{username}}</a>
               <a ng-hide="authorised" href="authenticate/google" class="navbar-link">Login</a>
