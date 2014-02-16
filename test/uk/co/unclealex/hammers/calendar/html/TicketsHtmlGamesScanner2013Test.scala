@@ -115,4 +115,21 @@ class TicketsHtmlGamesScanner2013Test extends AbstractTicketsHtmlGamesScannerTes
         GeneralSaleTicketsUpdateCommand(gameLocator, January(21, 2014) at (9, 0)))
     }
   }
+
+  "The tickets for Stoke away" should {
+    //Saturday 22 February 2014, 3pm
+    "tickets-stoke-away.html" on (March(15, 2014) at (15, 0)) expects { gameLocator =>
+      List(
+        //<p>Priority Post: Wednesday 15 January (to be processed by Friday 17 January
+        PriorityPointTicketsUpdateCommand(gameLocator, February(19, 2014) at (9, 0)),
+        //<br>Corporate/Bond Holders: Thursday 16 January
+        BondHolderTicketsUpdateCommand(gameLocator, February(20, 2014) at (9, 0)),
+        //<br>Season Ticket General Sale: Saturday 18 January
+        SeasonTicketsUpdateCommand(gameLocator, February(22, 2014) at (9, 0)),
+        //<br>Members Sale: Monday 20 January
+        AcademyTicketsUpdateCommand(gameLocator, February(24, 2014) at (9, 0)),
+        //<br>General Sale: Tuesday 21 January</p>
+        GeneralSaleTicketsUpdateCommand(gameLocator, February(25, 2014) at (9, 0)))
+    }
+  }
 }
