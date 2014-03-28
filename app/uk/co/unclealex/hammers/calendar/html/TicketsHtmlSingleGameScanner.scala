@@ -33,6 +33,7 @@ import uk.co.unclealex.hammers.calendar.html.TagNodeImplicits.Implicits
 import javax.inject.Inject
 import uk.co.unclealex.hammers.calendar.logging.RemoteStream
 import uk.co.unclealex.hammers.calendar.logging.RemoteLogging
+import scala.util.matching.Regex
 
 /**
  * A {@link HtmlGamesScanner} that scans a page for ticket sales.
@@ -54,39 +55,39 @@ class TicketsHtmlSingleGameScanner @Inject() (
   /**
    * The text that indicates the ticket selling date is for Bondholders.
    */
-  val BOND_HOLDER_PATTERN = "Bond Holder"
+  val BOND_HOLDER_PATTERN = "Bond Holder".r
 
   /**
    * The text that indicates the ticket selling date is for priority point
    * holders.
    */
-  val PRIORITY_POINT_PATTERN = "Priority"
+  val PRIORITY_POINT_PATTERN = "Pri?ority".r
 
   /**
    * The text that indicates the ticket selling date is for season ticket
    * holders.
    */
-  val SEASON_TICKET_PATTERN = "Season Ticket"
+  val SEASON_TICKET_PATTERN = "Season Ticket".r
 
   /**
    * The text that indicates the ticket selling date is for Academy members.
    */
-  val ACADEMY_MEMBER_PATTERN = "Member"
+  val ACADEMY_MEMBER_PATTERN = "Member".r
 
   /**
    * The text that indicates the ticket selling date is for postal Academy members.
    */
-  val ACADEMY_MEMBER_POSTAL_PATTERN = "Members Postal"
+  val ACADEMY_MEMBER_POSTAL_PATTERN = "Members Postal".r
 
   /**
    * The text that indicates the ticket selling date is for general sale.
    */
-  val GENERAL_SALE_PATTERN = "General"
+  val GENERAL_SALE_PATTERN = "General".r
 
   /**
    * The text that indicates the ticket selling date is for postal general sale.
    */
-  val GENERAL_SALE_POSTAL_PATTERN = "Sale Postal"
+  val GENERAL_SALE_POSTAL_PATTERN = "Sale Postal".r
 
   /**
    * {@inheritDoc}
@@ -125,13 +126,13 @@ class TicketsHtmlSingleGameScanner @Inject() (
       /**
        * The text that must be contained in the segment of the web page.
        */
-      val containedText: String,
+      val containedText: Regex,
       /**
        * An array of date formats to look for a date to associate with action.
        */
       val possiblyYearlessDateFormats: String*) {
 
-      def this(containedText: String, possiblyYearlessDateFormats: List[String]) = this(containedText, possiblyYearlessDateFormats: _*)
+      def this(containedText: Regex, possiblyYearlessDateFormats: List[String]) = this(containedText, possiblyYearlessDateFormats: _*)
       /**
        * Search for or parse text for a {@link DateTime} and, if one is found,
        * do something.
@@ -141,7 +142,10 @@ class TicketsHtmlSingleGameScanner @Inject() (
        */
       def execute(dateText: String)(implicit remoteStream: RemoteStream): Option[TicketsUpdateCommand] = {
         parseDateTime(dateText) match {
-          case Some(dateTime) => execute(dateTime)
+          case Some(dateTime) => {
+            logger debug s"Found a date for URL $uri in text $dateText"
+            execute(dateTime)
+          }
           case None => {
             logger debug s"Could not find a date for URL $uri in text $dateText"
             None
@@ -178,7 +182,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
      * @author alex
      *
      */
-    case object GameDatePlayedParsingAction extends ParsingAction("", {
+    case object GameDatePlayedParsingAction extends ParsingAction("".r, {
       val formats = List("EEEE dd MMMM yyyy, hha", "EEEE d MMMM yyyy, hha",
         "EEEE dd MMMM yyyy, hh.mma", "EEEE d MMMM yyyy, hh.mma")
       val dateSuffixes = List("", "'st'", "'nd'", "'rd'", "'th'")
@@ -215,7 +219,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
      * @author alex
      *
      */
-    abstract class TicketParsingAction(containedText: String) extends ParsingAction(
+    abstract class TicketParsingAction(containedText: Regex) extends ParsingAction(
       containedText,
       "EEEE dd MMMM",
       "EEEE d MMMM") {
@@ -240,7 +244,7 @@ class TicketsHtmlSingleGameScanner @Inject() (
       }
 
       override def execute(dateTime: DateTime)(implicit remoteStream: RemoteStream): Option[TicketsUpdateCommand] = {
-        logger info s"Found ticket type ${containedText.trim()} for game at ${dateTimePlayed.get} being sold at $dateTime"
+        logger info s"Found ticket type ${containedText} for game at ${dateTimePlayed.get} being sold at $dateTime"
         Some(createTicketsUpdateCommand(gameLocator.get, dateTime))
       }
 
@@ -363,10 +367,9 @@ class TicketsHtmlSingleGameScanner @Inject() (
             text match {
               case "" => List.empty
               case _ => {
-                val parsingAction = parsingActions.find(pa => text.contains(pa.containedText))
+                val parsingAction = parsingActions.find(pa => pa.containedText.findFirstIn(text).isDefined)
                 val newTicketsUpdateCommands = parsingAction.flatMap { parsingAction =>
-                  val textForDate = text.replace(parsingAction.containedText, "")
-                  parsingAction.execute(textForDate)
+                  parsingAction.execute(text)
                 }
                 newTicketsUpdateCommands
               }
