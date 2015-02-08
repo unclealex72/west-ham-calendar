@@ -2,6 +2,8 @@ name := "west-ham-calendar"
 
 version := "1.0-SNAPSHOT"
 
+scalacOptions += "-target:jvm-1.7"
+
 libraryDependencies ++= Seq(
     //security
     "securesocial" %% "securesocial" % "2.1.2",

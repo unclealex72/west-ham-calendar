@@ -81,7 +81,7 @@ class Update @Inject() (
         channel.push(s"There are now ${gameCount} games.\n")
         channel.eofAndEnd
       }
-      Ok.stream(enumerator)
+      Ok.chunked(enumerator)
     }
   }
 
