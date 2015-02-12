@@ -5,6 +5,8 @@ version := "1.0-SNAPSHOT"
 scalacOptions += "-target:jvm-1.7"
 
 libraryDependencies ++= Seq(
+    //pdf
+    "org.apache.pdfbox" % "pdfbox" % "1.8.8",
     //security
     "securesocial" %% "securesocial" % "2.1.2",
     // JSON

@@ -28,13 +28,17 @@ package uk.co.unclealex.hammers.calendar.model
  * @author alex
  *
  */
-sealed trait Location extends Location.Value
+sealed trait Location extends Location.Value {
+  val isHome: Boolean
+  val isAway = !isHome
+}
 object Location extends PersistableEnumeration[Location] {
   /**
    * Home
    */
   case object HOME extends Location {
     val persistableToken = "HOME"
+    val isHome = true
   }
   HOME
 
@@ -43,10 +47,7 @@ object Location extends PersistableEnumeration[Location] {
    */
   case object AWAY extends Location {
     val persistableToken = "AWAY"
+    val isHome = false
   }
   AWAY
-  
-  implicit def serialiseLocation(location: Location): String = location.persistableToken
-  implicit def deserialiseLocation(s: String): Location = Location.values.find(_.persistableToken == s).get
-
 }

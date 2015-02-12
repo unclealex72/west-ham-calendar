@@ -16,7 +16,7 @@ class Application @Inject() (
   /**
    * The authorization object to check for authorised users.
    */
-  authorization: Authorization,
+  val authorization: Authorization,
   /**
    * The transactional object used to get games and seasons.
    */

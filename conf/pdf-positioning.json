@@ -1,0 +1,87 @@
+{
+  "name" : {
+    "x" : 162,
+    "y" : 599
+  },
+  "clientNameOffset" : 90,
+  "league" : {
+    "bottomLeft" : {
+      "x" : 320,
+      "y" : 626
+    },
+    "size" : {
+      "width" : 53,
+      "height" : 12
+    }
+  },
+  "emailAddress" : {
+    "x" : 144,
+    "y" : 515
+  },
+  "ref" : {
+    "x" : 430,
+    "y" : 599
+  },
+  "nameOnCard" : {
+    "x" : 178,
+    "y" : 152
+  },
+  "cup" : {
+    "bottomLeft" : {
+      "x" : 373,
+      "y" : 626
+    },
+    "size" : {
+      "width" : 44,
+      "height" : 12
+    }
+  },
+  "expiryDate" : {
+    "point" : {
+      "x" : 208,
+      "y" : 175
+    },
+    "offset" : 22
+  },
+  "mobilePhone" : {
+    "x" : 361,
+    "y" : 536
+  },
+  "juniorOffset" : 352,
+  "creditCard" : {
+    "point" : {
+      "x" : 98,
+      "y" : 228
+    },
+    "offset" : 22
+  },
+  "clientRef" : {
+    "x" : 121,
+    "y" : 442
+  },
+  "numberOfTickets" : {
+    "x" : 145,
+    "y" : 126
+  },
+  "daytimePhone" : {
+    "x" : 144,
+    "y" : 536
+  },
+  "team" : {
+    "x" : 67,
+    "y" : 628
+  },
+  "oapOffset" : 289,
+  "address" : {
+    "x" : 115,
+    "y" : 578
+  },
+  "securityCode" : {
+    "point" : {
+      "x" : 450,
+      "y" : 175
+    },
+    "offset" : 22
+  },
+  "nextClientOffset" : 22
+}

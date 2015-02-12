@@ -24,6 +24,9 @@
 
 package uk.co.unclealex.hammers.calendar.model
 
+import argonaut.Argonaut._
+import argonaut.{DecodeResult, DecodeJson, EncodeJson}
+
 /**
  * A base class for enumeration type objects that can be persisted in a database
  * @author alex
@@ -45,13 +48,15 @@ trait PersistableEnumeration[E] {
     _values :+= this
 
     implicit def ordering = Ordering.by((v: Value) => v.index)
-
   }
 
   /**
    * A list of all the registered instances of this type.
    */
-  private var _values = List.empty[E]
+  private var _values = List.empty[E with Value]
   def values: List[E] = _values
+
+  implicit def serialise(value: Value): String = value.persistableToken
+  implicit def deserialise(s: String): E = _values.find(_.persistableToken == s).get
 
 }

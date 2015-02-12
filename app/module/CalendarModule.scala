@@ -23,6 +23,8 @@ package module
 
 import com.typesafe.config.ConfigFactory
 import com.tzavellas.sse.guice.ScalaModule
+import json.ConfigurationReader
+import pdf.{PriorityPointsConfiguration, PdfPositioning, PdfBoxPriorityPointsPdfFactory, PriorityPointsPdfFactory}
 import uk.co.unclealex.hammers.calendar.dao.GameDao
 import uk.co.unclealex.hammers.calendar.dao.SquerylGameDao
 import uk.co.unclealex.hammers.calendar.dao.Transactional
@@ -99,7 +101,12 @@ class CalendarModule extends ScalaModule {
     
     //Authorisation
     val validUsers = ((path: String) => if (config.hasPath(path)) config.getString(path) else "")("valid-users.users")
-    bind[Authorization].toInstance(Authorised(validUsers.split(",").map(_.trim())));
+    bind[Authorization].toInstance(Authorised(validUsers.split(",").map(_.trim())))
+
+    // PDF
+    bind[PriorityPointsPdfFactory].to[PdfBoxPriorityPointsPdfFactory]
+    bind[PdfPositioning].toInstance(ConfigurationReader[PdfPositioning]("pdf-positioning.json"))
+    bind[PriorityPointsConfiguration].toInstance(ConfigurationReader[PriorityPointsConfiguration]("secure/priority-points.json"))
   }
 
 }

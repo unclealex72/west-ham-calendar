@@ -31,10 +31,12 @@ import securesocial.core.Authorization
  */
 trait Secure extends SecureSocial {
 
+  val authorization: Authorization
+
   /**
    * Get the email and name of an authorised, logged in user or none if no such user currently exists.
    */
-  def emailAndName(implicit request: RequestWithUser[_ <: Any], authorization: Authorization): Option[Pair[String, String]] =
+  def emailAndName(implicit request: RequestWithUser[_ <: Any]): Option[Pair[String, String]] =
     request.user match {
       case Some(user) => user.email match {
         case Some(email) => if (authorization.isAuthorized(user)) Some(email, user.fullName) else None

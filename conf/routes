@@ -24,6 +24,9 @@ POST     /:secretPayload/update                @controllers.Update.update(secret
 GET     /calendars/:secretPayload/:attended/:location/:type/calendar.ics   @controllers.Calendar.searchSecure(secretPayload, attended, location, type)
 GET     /calendars/$mask<(free|busy)>/:location/:type/calendar.ics   @controllers.Calendar.search(mask, location, type)
 
+# Priority points form
+
+GET     /prioritypoints/:gameId     @controllers.PriorityPointsPdf.priorityPoints(gameId: Long)
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 

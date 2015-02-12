@@ -116,8 +116,5 @@ object Competition extends PersistableEnumeration[Competition] {
   def findByToken(token: String): Competition = values find (_.tokens contains token) getOrElse {
     throw new IllegalArgumentException(s"$token is not a valid competition token.")
   }
-  
-  implicit def serialiseCompetition(competition: Competition): String = competition.persistableToken
-  implicit def deserialiseCompetition(s: String): Competition = Competition.values.find(_.persistableToken == s).get
 
 }

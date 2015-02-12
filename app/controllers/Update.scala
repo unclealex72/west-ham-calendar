@@ -52,7 +52,7 @@ class Update @Inject() (
   /**
    * The authorization object used to check a user is authorised.
    */
-  authorization: Authorization,
+  val authorization: Authorization,
   /**
    * The main update service used to scrape the West Ham site and update game information.
    */
