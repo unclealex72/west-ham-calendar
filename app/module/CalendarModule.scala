@@ -21,46 +21,20 @@
  */
 package module
 
+import java.net.URI
+
 import com.typesafe.config.ConfigFactory
 import com.tzavellas.sse.guice.ScalaModule
+import controllers.Authorised
 import json.ConfigurationReader
-import pdf.{PriorityPointsConfiguration, PdfPositioning, PdfBoxPriorityPointsPdfFactory, PriorityPointsPdfFactory}
-import uk.co.unclealex.hammers.calendar.dao.GameDao
-import uk.co.unclealex.hammers.calendar.dao.SquerylGameDao
-import uk.co.unclealex.hammers.calendar.dao.Transactional
-import uk.co.unclealex.hammers.calendar.html.HtmlGamesScanner
-import uk.co.unclealex.hammers.calendar.html.TicketsHtmlSingleGameScanner
-import uk.co.unclealex.hammers.calendar.html.SeasonHtmlGamesScanner
-import uk.co.unclealex.hammers.calendar.html.HtmlPageLoader
-import uk.co.unclealex.hammers.calendar.html.HtmlPageLoaderImpl
-import uk.co.unclealex.hammers.calendar.dates.DateServiceImpl
-import uk.co.unclealex.hammers.calendar.dates.DateService
-import uk.co.unclealex.hammers.calendar.html.MainPageServiceProvider
-import uk.co.unclealex.hammers.calendar.html.MainPageService
-import uk.co.unclealex.hammers.calendar.update.MainUpdateService
-import uk.co.unclealex.hammers.calendar.update.MainUpdateServiceImpl
-import java.net.URI
-import uk.co.unclealex.hammers.calendar.update.TicketsHtmlGamesScannerFactory
-import uk.co.unclealex.hammers.calendar.update.TicketsHtmlGamesScannerFactoryImpl
-import uk.co.unclealex.hammers.calendar.cal.CalendarFactory
-import uk.co.unclealex.hammers.calendar.cal.CalendarFactoryImpl
-import uk.co.unclealex.hammers.calendar.cal.CalendarWriter
-import uk.co.unclealex.hammers.calendar.cal.IcalCalendarWriter
-import uk.co.unclealex.hammers.calendar.dates.NowService
-import uk.co.unclealex.hammers.calendar.dates.SystemNowService
-import com.google.inject.Provides
-import services.GameRowFactory
-import services.GameRowFactory
-import services.GameRowFactory
-import services.GameRowFactory
-import services.GameRowFactoryImpl
+import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsConfiguration, PriorityPointsPdfFactory}
 import securesocial.core.Authorization
-import controllers.Authorised
-import controllers.Authorised
-import uk.co.unclealex.hammers.calendar.html.LinkHarvester
-import uk.co.unclealex.hammers.calendar.html.TicketsLinkHarvester
-import uk.co.unclealex.hammers.calendar.update.PlayCacheLastUpdated
-import uk.co.unclealex.hammers.calendar.update.LastUpdated
+import services.{GameRowFactory, GameRowFactoryImpl}
+import uk.co.unclealex.hammers.calendar.cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
+import uk.co.unclealex.hammers.calendar.dao.{SquerylPriorityPointsConfigurationDao, PriorityPointsConfigurationDao, SquerylGameDao, Transactional}
+import uk.co.unclealex.hammers.calendar.dates.{DateService, DateServiceImpl, NowService, SystemNowService}
+import uk.co.unclealex.hammers.calendar.html.{HtmlGamesScanner, HtmlPageLoader, HtmlPageLoaderImpl, LinkHarvester, MainPageService, MainPageServiceProvider, SeasonHtmlGamesScanner, TicketsLinkHarvester}
+import uk.co.unclealex.hammers.calendar.update.{LastUpdated, MainUpdateService, MainUpdateServiceImpl, PlayCacheLastUpdated, TicketsHtmlGamesScannerFactory, TicketsHtmlGamesScannerFactoryImpl}
 
 /**
  * @author alex
@@ -106,7 +80,7 @@ class CalendarModule extends ScalaModule {
     // PDF
     bind[PriorityPointsPdfFactory].to[PdfBoxPriorityPointsPdfFactory]
     bind[PdfPositioning].toInstance(ConfigurationReader[PdfPositioning]("pdf-positioning.json"))
-    bind[PriorityPointsConfiguration].toInstance(ConfigurationReader[PriorityPointsConfiguration]("secure/priority-points.json"))
+    bind[PriorityPointsConfigurationDao].to[SquerylPriorityPointsConfigurationDao]
   }
 
 }

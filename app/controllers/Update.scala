@@ -60,7 +60,7 @@ class Update @Inject() (
   /**
    * The game row factory used to get game row models.
    */
-  gameRowFactory: GameRowFactory) extends Controller with Secure with Secret with JsonResults {
+  gameRowFactory: GameRowFactory) extends Controller with Secure with Secret with TicketForms with JsonResults {
 
   implicit val implicitAuthorization = authorization
 
@@ -89,8 +89,8 @@ class Update @Inject() (
    * Attend or unattend a game.
    */
   def attendOrUnattend(gameUpdater: Long => Option[Game], gameId: Long) =
-    SecuredAction(true, authorization) {
-      json(gameUpdater(gameId).map(gameRowFactory.toRow(true)))
+    SecuredAction(true, authorization) { implicit request =>
+      json(gameUpdater(gameId).map(gameRowFactory.toRow(true, ticketFormUrlFactory)))
     }
 
   /**

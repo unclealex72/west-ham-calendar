@@ -3,6 +3,7 @@ package controllers
 import javax.inject.Inject
 
 import pdf.PriorityPointsPdfFactory
+import play.Routes
 import play.api.libs.iteratee.Enumerator
 import play.mvc.Controller
 import securesocial.core.Authorization

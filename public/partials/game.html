@@ -15,10 +15,14 @@
   <p ng-show="game.result">
     The result was <game-result game="game"></game-result>
   </p>
-  <p ng-show="!game.result &amp;&amp; game.ticketsAt[ticketType.name]">
+  <p ng-show="!game.result &amp;&amp; game.tickets[ticketType.name] &amp;&amp; !game.tickets[ticketType.name].formUrl">
     {{ticketType.label}} tickets go on sale at
-    {{game.ticketsAt[ticketType.name] | customDate:"h:mm!a 'on the' dth 'of' MMMM, yyyy" }}
+    {{game.tickets[ticketType.name].at | customDate:"h:mm!a 'on the' dth 'of' MMMM, yyyy" }}
   </p>
+  <a ng-show="!game.result &amp;&amp; game.tickets[ticketType.name] &amp;&amp; game.tickets[ticketType.name].formUrl" ng-href="{{game.tickets[ticketType.name].formUrl}}">
+    {{ticketType.label}} tickets go on sale at
+    {{game.tickets[ticketType.name].at | customDate:"h:mm!a 'on the' dth 'of' MMMM, yyyy" }}
+  </a>
   <div class="row" ng-show="game.attended != null">
     <div class="col-xs-6">
       <a ng-click="attend(game)" class="btn btn-block btn-success"

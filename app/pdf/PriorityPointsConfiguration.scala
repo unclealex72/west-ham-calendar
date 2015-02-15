@@ -2,22 +2,25 @@ package pdf
 
 import argonaut.Argonaut._
 import argonaut._
+import pdf.PriorityPointsConfiguration.ClientType
+import uk.co.unclealex.hammers.calendar.model.PersistedClientType
+import uk.co.unclealex.hammers.calendar.model.PersistedClientType._
 
 /**
  * Created by alex on 09/02/15.
  */
+
 case class PriorityPointsConfiguration(clients: List[Client], contactDetails: ContactDetails, creditCard: CreditCard)
 case class Client(name: String, referenceNumber: Int, clientType: Option[ClientType])
 
-sealed trait ClientType
-object OAP extends ClientType
-object Junior extends ClientType
 
-case class ContactDetails(address: List[String], daytimeTelephoneNumber: String, mobilePhoneNumber: String, emailAddress: String)
+case class ContactDetails(address: String, daytimeTelephoneNumber: String, mobilePhoneNumber: String, emailAddress: String)
 case class CreditCard(number: String, expiry: CreditCardDate, securityCode: Int, nameOnCard: String)
 case class CreditCardDate(month: Int, year: Int)
 
 object PriorityPointsConfiguration {
+
+  type ClientType = PersistedClientType
 
   // JSON codecs
   private val clientTypeMappings = Seq(OAP -> "oap", Junior -> "junior")

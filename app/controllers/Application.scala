@@ -2,7 +2,7 @@ package controllers
 
 import play.api._
 import models.Globals._
-import models.Globals
+import models.{PriorityPointTicketType, TicketType, Globals}
 import models.TicketType._
 import json.JsonResults
 import play.api.mvc._
@@ -11,6 +11,7 @@ import uk.co.unclealex.hammers.calendar.dao.Transactional
 import services.GameRowFactory
 import securesocial.core.Authorization
 import json.JsonResults
+import uk.co.unclealex.hammers.calendar.model.Game
 
 class Application @Inject() (
   /**
@@ -24,7 +25,7 @@ class Application @Inject() (
   /**
    * The game row factory used to get game row models.
    */
-  gameRowFactory: GameRowFactory) extends Controller with Secure with JsonResults {
+  gameRowFactory: GameRowFactory) extends Controller with Secure with TicketForms with JsonResults {
 
   implicit val implicitAuthorization = authorization
 
@@ -51,7 +52,7 @@ class Application @Inject() (
     val includeAttended = emailAndName.isDefined
     json {
       tx { gameDao =>
-        Map("games" -> gameDao.getAllForSeason(season).map(gameRowFactory.toRow(includeAttended))) }
+        Map("games" -> gameDao.getAllForSeason(season).map(gameRowFactory.toRow(includeAttended, ticketFormUrlFactory))) }
     }
   }
 
@@ -59,7 +60,7 @@ class Application @Inject() (
     val includeAttended = emailAndName.isDefined
     json {
       tx { gameDao =>
-        gameDao.findById(id).map(gameRowFactory.toRow(includeAttended)) }
+        gameDao.findById(id).map(gameRowFactory.toRow(includeAttended, ticketFormUrlFactory(request))) }
     }
   }
 }

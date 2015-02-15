@@ -22,8 +22,8 @@
 package uk.co.unclealex.hammers.calendar.dao
 
 import org.squeryl.Schema
-import uk.co.unclealex.hammers.calendar.model.Game
-import SquerylEntryPoint._
+import uk.co.unclealex.hammers.calendar.dao.SquerylEntryPoint._
+import uk.co.unclealex.hammers.calendar.model.{Game, PersistedClient, PersistedPriorityPointsConfiguration}
 
 /**
  * The Squeryl schema definition for this application.
@@ -40,5 +40,19 @@ object CalendarSchema extends Schema {
   on(games)(g => declare(
     g.id is (autoIncremented),
     g.gameKeyComposite is (unique)))
+
+  // Priority point form configuration
+
+  val priorityPointsConfigurations = table[PersistedPriorityPointsConfiguration]("prioritypointsconfiguration")
+  on(priorityPointsConfigurations)(p => declare(
+    p.id is (primaryKey, autoIncremented("ppc_seq"))))
+
+  val clients = table[PersistedClient]("client")
+  on(clients)(c => declare(
+    c.id is (primaryKey, autoIncremented("c_seq")),
+    c.priorityPointsConfigurationId is (indexed("idxPpcIdIdx"))))
+
+  val priorityPointsConfigurationToClients =
+    oneToManyRelation(priorityPointsConfigurations, clients).via((p, c) => p.id === c.priorityPointsConfigurationId)
 
 }

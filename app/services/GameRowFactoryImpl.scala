@@ -51,7 +51,7 @@ class GameRowFactoryImpl extends GameRowFactory {
     }
   }
 
-  def toRow(includeAttended: Boolean): Game => GameRow = { game =>
+  def toRow(includeAttended: Boolean, ticketFormUrlFactory: TicketType => Option[Game => String]): Game => GameRow = { game =>
     game.at match {
       case Some(gameAt) =>
         GameRow(
@@ -68,21 +68,28 @@ class GameRowFactoryImpl extends GameRowFactory {
           },
           result = game.result,
           matchReport = game.matchReport,
-          ticketsAt = ticketFactory(game),
+          tickets = ticketFactory(game, ticketFormUrlFactory),
           attended = if (includeAttended) game.attended orElse Some(false) else None)
       case None => throw new IllegalStateException(s"Game $game did not have it's date played attribute set.")
     }
   }
 
-  def ticketFactory(game: Game): Map[TicketType.Name, Option[DateTime]] = {
+  def ticketFactory(game: Game, ticketFormUrlFactory: TicketType => Option[Game => String]): Map[TicketType.Name, TicketingInformation] = {
     implicit val dt = (date : Date) => new DateTime(date)
-    Map(
-      BondholderTicketType.name -> game.bondholdersAvailable,
-      PriorityPointTicketType.name -> game.priorityPointAvailable,
-      SeasonTicketType.name -> game.seasonTicketsAvailable,
-      AcademyTicketType.name -> game.academyMembersAvailable,
-      AcademyPostalTicketType.name -> game.academyMembersPostalAvailable,
-      GeneralSaleTicketType.name -> game.generalSaleAvailable,
-      GeneralSalePostalTicketType.name -> game.generalSalePostalAvailable)
+    val ticketsAt: Map[TicketType, Option[DateTime]] = Map(
+      BondholderTicketType -> game.bondholdersAvailable,
+      PriorityPointTicketType -> game.priorityPointAvailable,
+      SeasonTicketType -> game.seasonTicketsAvailable,
+      AcademyTicketType -> game.academyMembersAvailable,
+      AcademyPostalTicketType -> game.academyMembersPostalAvailable,
+      GeneralSaleTicketType -> game.generalSaleAvailable,
+      GeneralSalePostalTicketType -> game.generalSalePostalAvailable)
+    ticketsAt.foldLeft(Map.empty[TicketType.Name, TicketingInformation]) {
+      case (tickets, (ticketType, Some(availableAt))) => {
+        val ticketFormUrl = ticketFormUrlFactory(ticketType).map(f => f(game))
+        tickets + (ticketType.name -> TicketingInformation(availableAt, ticketFormUrl))
+      }
+      case (tickets, _) => tickets
+    }
   }
 }

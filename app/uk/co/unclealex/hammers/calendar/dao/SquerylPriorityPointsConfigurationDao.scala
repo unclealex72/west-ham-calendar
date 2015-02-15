@@ -19,36 +19,24 @@
  * under the License.
  *
  */
-package controllers
+package uk.co.unclealex.hammers.calendar.dao
 
-import play.api.mvc.Request
-import securesocial.core._
+import javax.inject.Inject
+
+import pdf.PriorityPointsConfiguration
+import uk.co.unclealex.hammers.calendar.dao.CalendarSchema._
+import uk.co.unclealex.hammers.calendar.dao.SquerylEntryPoint._
+import uk.co.unclealex.hammers.calendar.dates.NowService
+import uk.co.unclealex.hammers.calendar.model.PersistedPriorityPointsConfiguration
 
 /**
+ * The Squeryl implementation of both GameDao and Transactional.
  * @author alex
  *
  */
-trait Secure extends SecureSocial {
+class SquerylPriorityPointsConfigurationDao extends PriorityPointsConfigurationDao {
 
-  val authorization: Authorization
-
-  /**
-   * Get the email and name of an authorised, logged in user or none if no such user currently exists.
-   */
-  def emailAndName(implicit request: Request[_ <: Any]): Option[(String, String)] = {
-    request match {
-      case requestWithUser: RequestWithUser[_] => {
-        for {
-          user <- requestWithUser.user if (authorization.isAuthorized(user))
-          email <- user.email
-        }
-        yield (email, user.fullName)
-      }
-      case securedRequest: SecuredRequest[_] => {
-        val user = securedRequest.user
-        user.email.map(email => (email, user.fullName))
-      }
-      case _ => None
-    }
+  def get: Option[PriorityPointsConfiguration] = inTransaction {
+    priorityPointsConfigurations.allRows.headOption.map(PersistedPriorityPointsConfiguration.toPriorityPointsConfiguration)
   }
 }

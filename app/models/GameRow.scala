@@ -60,20 +60,25 @@ case class GameRow(
   geoLocation: Option[GeoLocation],
   result: Option[String],
   matchReport: Option[String],
-  ticketsAt: Map[TicketType.Name, Option[DateTime]],
+  tickets: Map[TicketType.Name, TicketingInformation],
   attended: Option[Boolean]) {
 
 }
+
+case class TicketingInformation(at: DateTime, formUrl: Option[String])
 
 object GameRow {
 
   /**
    * Json Serialisation
    */
+  implicit val TicketingInformationEncodeJson: EncodeJson[TicketingInformation] =
+    casecodec2(TicketingInformation.apply, TicketingInformation.unapply)("at", "formUrl")
+
   implicit val GameRowEncodeJson: EncodeJson[GameRow] =
     jencode13L((gr: GameRow) =>
       (gr.id, gr.at, gr.gameTimeType.toString, gr.season, gr.opponents, gr.competition.name, gr.competition.isLeague,
-       gr.location == Location.HOME, gr.geoLocation, gr.result, gr.matchReport, gr.ticketsAt, gr.attended))(
+       gr.location == Location.HOME, gr.geoLocation, gr.result, gr.matchReport, gr.tickets, gr.attended))(
         "id", "at", "gameTimeType", "season", "opponents", "competition", "league",
-        "home", "geoLocation", "result", "matchReport", "ticketsAt", "attended")
+        "home", "geoLocation", "result", "matchReport", "tickets", "attended")
 }

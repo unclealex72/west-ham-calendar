@@ -30,7 +30,12 @@
       </div>
     </div>
     <div class="col-sm-2">
-      {{game.ticketsAt[ticketType.name] | customDate:'dth MMM'}}
+        <p ng-show="!game.result &amp;&amp; game.tickets[ticketType.name] &amp;&amp; !game.tickets[ticketType.name].formUrl">
+            {{game.tickets[ticketType.name].at | customDate:'dth MMM'}}
+        </p>
+        <a ng-show="!game.result &amp;&amp; game.tickets[ticketType.name] &amp;&amp; game.tickets[ticketType.name].formUrl" ng-href="{{game.tickets[ticketType.name].formUrl}}">
+            {{game.tickets[ticketType.name].at | customDate:'dth MMM'}}
+        </a>
     </div>
   </div>
   <div class="row visible-xs small-game-row well" ng-repeat="game in month.games" ng-click="showGame(game)">

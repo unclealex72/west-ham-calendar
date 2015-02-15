@@ -3,21 +3,39 @@ package pdf
 import java.io.{FileOutputStream, OutputStream}
 import javax.inject.Inject
 
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
 import org.apache.pdfbox.pdmodel.font.PDType1Font
 import org.apache.pdfbox.pdmodel.{PDDocument, PDPage}
+import uk.co.unclealex.hammers.calendar.dao.PriorityPointsConfigurationDao
+import uk.co.unclealex.hammers.calendar.model.PersistedClientType.{Junior, OAP}
 
 import scala.sys.process._
 /**
  * Created by alex on 08/02/15.
  */
-class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, priorityPointsConfiguration: PriorityPointsConfiguration) extends PriorityPointsPdfFactory with App {
+class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, priorityPointsConfigurationDao: PriorityPointsConfigurationDao) extends PriorityPointsPdfFactory with App with StrictLogging {
 
   override def generate(team: String, league: Boolean, out: OutputStream): Unit = {
+    try {
+     doGenerate(team, league, out)
+    }
+    catch {
+      case e: Exception => {
+        logger.error("Cannot generate a priority points pdf form.", e)
+        throw e
+      }
+    }
+  }
+
+  def doGenerate(team: String, league: Boolean, out: OutputStream): Unit = {
+    val priorityPointsConfiguration = priorityPointsConfigurationDao.get.getOrElse {
+      throw new IllegalStateException("No configuration for the priorty points PDF form has been set.")
+    }
+
     val url = classOf[PdfBoxPriorityPointsPdfFactory].getResource("prioritypoints.pdf")
     val document = PDDocument.load(url)
     val page = document.getDocumentCatalog().getAllPages().get(0).asInstanceOf[PDPage]
-    val font = PDType1Font.HELVETICA_BOLD
     val contentStream = new PDPageContentStream(document, page, true, true) with ContentStreamExtensions
     page.getContents().getStream()
 
@@ -35,7 +53,7 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, 
     }
 
     // Main address
-    contentStream.write(priorityPointsConfiguration.contactDetails.address.mkString(", ").toUpperCase, pdfPositioning.address)
+    contentStream.write(priorityPointsConfiguration.contactDetails.address.toUpperCase, pdfPositioning.address)
 
     // Telephone numbers
     contentStream.write(priorityPointsConfiguration.contactDetails.daytimeTelephoneNumber, pdfPositioning.daytimePhone)
