@@ -2,7 +2,7 @@ name := "west-ham-calendar"
 
 version := "1.0-SNAPSHOT"
 
-scalacOptions += "-target:jvm-1.7"
+scalacOptions += "-target:jvm-1.6"
 
 libraryDependencies ++= Seq(
     //pdf
