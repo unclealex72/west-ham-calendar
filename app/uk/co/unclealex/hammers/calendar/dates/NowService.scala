@@ -35,3 +35,15 @@ trait NowService {
    */
   def now: DateTime
 }
+
+object NowService {
+
+  /**
+   * Generate a static NowService.
+   * @param dateTime
+   * @return
+   */
+  def apply(dateTime: DateTime): NowService = new NowService {
+    override def now: DateTime = dateTime
+  }
+}

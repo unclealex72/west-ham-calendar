@@ -19,7 +19,17 @@ class RemoteLogger(logger: Logger) {
     logger warn (message, e)
     remoteStream log(message, Some(e))
   }
-  
+
+  def error(message: String)(implicit remoteStream: RemoteStream) = {
+    logger error message
+    remoteStream log(message, None)
+  }
+
+  def error(message: String, e: Throwable)(implicit remoteStream: RemoteStream) = {
+    logger error (message, e)
+    remoteStream log(message, Some(e))
+  }
+
   def debug(message: String)(implicit remoteStream: RemoteStream) = {
     logger debug message
     remoteStream log(message, None)

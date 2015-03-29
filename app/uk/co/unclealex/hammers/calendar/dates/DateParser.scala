@@ -23,6 +23,7 @@
 package uk.co.unclealex.hammers.calendar.dates;
 
 import org.joda.time.DateTime
+import uk.co.unclealex.hammers.calendar.logging.{RemoteLogging, RemoteStream}
 
 /**
  * An interface for objects that parse dates from strings or find dates embedded within strings.
@@ -39,7 +40,36 @@ trait DateParser {
 
   /**
    * Find a date within a string.
-   * @return The found {@link DateTime} or None if the date could not be parsed.
+   * @return The found {@link DateTime} or None if the date could not be found.
    */
   def find(str: String): Option[DateTime]
+
+  def logFailures: LoggingDateParser = new LoggingDateParser with RemoteLogging {
+
+    override def parse(str: String)(implicit remoteStream: RemoteStream): Option[DateTime] =
+      execute(DateParser.this.parse _, str, s"Cannot parse $str as a date")
+
+    override def find(str: String)(implicit remoteStream: RemoteStream): Option[DateTime] =
+      execute(DateParser.this.find _, str, s"Cannot find a date in $str")
+
+    def execute(f: String => Option[DateTime], str: String, failureMessage: String)(implicit remoteStream: RemoteStream): Option[DateTime] = {
+      logOnEmpty(f(str), failureMessage)
+    }
+  }
+}
+
+trait LoggingDateParser {
+
+  /**
+   * Parse a date from a string.
+   * @return The parsed {@link DateTime} or None if the date could not be parsed.
+   */
+  def parse(str: String)(implicit remoteStream: RemoteStream): Option[DateTime]
+
+  /**
+   * Find a date within a string.
+   * @return The found {@link DateTime} or None if the date could not be found.
+   */
+  def find(str: String)(implicit remoteStream: RemoteStream): Option[DateTime]
+
 }

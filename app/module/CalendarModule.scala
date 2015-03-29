@@ -33,8 +33,9 @@ import services.{GameRowFactory, GameRowFactoryImpl}
 import uk.co.unclealex.hammers.calendar.cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
 import uk.co.unclealex.hammers.calendar.dao.{SquerylPriorityPointsConfigurationDao, PriorityPointsConfigurationDao, SquerylGameDao, Transactional}
 import uk.co.unclealex.hammers.calendar.dates.{DateService, DateServiceImpl, NowService, SystemNowService}
-import uk.co.unclealex.hammers.calendar.html.{HtmlGamesScanner, HtmlPageLoader, HtmlPageLoaderImpl, LinkHarvester, MainPageService, MainPageServiceProvider, SeasonHtmlGamesScanner, TicketsLinkHarvester}
-import uk.co.unclealex.hammers.calendar.update.{LastUpdated, MainUpdateService, MainUpdateServiceImpl, PlayCacheLastUpdated, TicketsHtmlGamesScannerFactory, TicketsHtmlGamesScannerFactoryImpl}
+import uk.co.unclealex.hammers.calendar.update._
+import uk.co.unclealex.hammers.calendar.update.fixtures.FixturesGameScanner
+import uk.co.unclealex.hammers.calendar.update.tickets.TicketsGameScanner
 
 /**
  * @author alex
@@ -57,12 +58,9 @@ class CalendarModule extends ScalaModule {
     bind[LastUpdated].to[PlayCacheLastUpdated]
     
     // Game harvesting and update services
-    bind[TicketsHtmlGamesScannerFactory].to[TicketsHtmlGamesScannerFactoryImpl]
-    bind[LinkHarvester].to[TicketsLinkHarvester]
-    bind[HtmlGamesScanner].to[SeasonHtmlGamesScanner]
-    bind[URI].annotatedWithName("mainPage").toInstance(new URI("http://www.whufc.com/page/Home/0,,12562,00.html"))
-    bind[HtmlPageLoader].to[HtmlPageLoaderImpl]
-    bind[MainPageService].toProvider(classOf[MainPageServiceProvider])
+    bind[URI].toInstance(new URI("http://www.whufc.com"))
+    bind[GameScanner].annotatedWithName("fixturesGameScanner").to[FixturesGameScanner]
+    bind[GameScanner].annotatedWithName("ticketsGameScanner").to[TicketsGameScanner]
     bind[MainUpdateService].to[MainUpdateServiceImpl]
     
     // Calendars

@@ -81,9 +81,7 @@ class GameRowFactoryImpl extends GameRowFactory {
       PriorityPointTicketType -> game.priorityPointAvailable,
       SeasonTicketType -> game.seasonTicketsAvailable,
       AcademyTicketType -> game.academyMembersAvailable,
-      AcademyPostalTicketType -> game.academyMembersPostalAvailable,
-      GeneralSaleTicketType -> game.generalSaleAvailable,
-      GeneralSalePostalTicketType -> game.generalSalePostalAvailable)
+      GeneralSaleTicketType -> game.generalSaleAvailable)
     ticketsAt.foldLeft(Map.empty[TicketType.Name, TicketingInformation]) {
       case (tickets, (ticketType, Some(availableAt))) => {
         val ticketFormUrl = ticketFormUrlFactory(ticketType).map(f => f(game))

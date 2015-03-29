@@ -17,6 +17,9 @@
 package models
 
 import argonaut._, Argonaut._, DecodeResult._
+import org.joda.time.DateTime
+import uk.co.unclealex.hammers.calendar.html._
+import uk.co.unclealex.hammers.calendar.logging.{RemoteLogging, RemoteStream}
 
 /**
  * The different types of tickets available from the website.
@@ -37,25 +40,50 @@ sealed trait TicketType {
    * True if this is the default ticket type, false otherwise.
    */
   val default: Boolean
+
+  /**
+   * HTML strings that match this ticket type
+   * @param gameLocator
+   * @param dateTime
+   * @return
+   */
+  val tokens: Seq[String]
+
+  def toTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime): TicketsUpdateCommand
 }
 
-abstract class AbstractTicketType(val name: TicketType.Name, val label: String, val default: Boolean = false) extends TicketType
+sealed class AbstractTicketType(
+                                   val name: TicketType.Name, val label: String,
+                                   ticketUpdateCommandFactory: (GameLocator, DateTime) => TicketsUpdateCommand,
+                                   val default: Boolean, firstToken: String, extraTokens: String*) extends TicketType {
 
-case object BondholderTicketType extends AbstractTicketType("Bondholder", "Bond holder")
-case object PriorityPointTicketType extends AbstractTicketType("PriorityPoint", "Priority point", true)
-case object SeasonTicketType extends AbstractTicketType("Season", "Season")
-case object AcademyTicketType extends AbstractTicketType("Academy", "Academy member")
-case object AcademyPostalTicketType extends AbstractTicketType("AcademyPostal", "Academy member postal")
-case object GeneralSaleTicketType extends AbstractTicketType("GeneralSale", "General sale")
-case object GeneralSalePostalTicketType extends AbstractTicketType("GeneralSalePostal", "General sale postal")
+  val tokens = Seq(firstToken) ++ extraTokens
 
-object TicketType {
+  override def toTicketsUpdateCommand(gameLocator: GameLocator, dateTime: DateTime): TicketsUpdateCommand = {
+    ticketUpdateCommandFactory(gameLocator, dateTime)
+  }
+}
+
+
+case object BondholderTicketType extends AbstractTicketType(
+  "Bondholder", "Bond holder", BondHolderTicketsUpdateCommand.apply _, false, "Bondholders")
+case object PriorityPointTicketType extends AbstractTicketType(
+  "PriorityPoint", "Priority point", PriorityPointTicketsUpdateCommand.apply _, true, "Priority Point Applications")
+case object SeasonTicketType extends AbstractTicketType(
+  "Season", "Season", SeasonTicketsUpdateCommand.apply _, false, "Season Ticket Holder General Sale", "Season Ticket Holder Additional")
+case object AcademyTicketType extends AbstractTicketType(
+  "Academy", "Academy member", AcademyTicketsUpdateCommand.apply _, false, "Members")
+case object GeneralSaleTicketType extends AbstractTicketType(
+  "GeneralSale", "General sale", GeneralSaleTicketsUpdateCommand.apply _, false, "General Sale")
+
+object TicketType extends RemoteLogging {
   type Name = String
 
   // The list of all ticket types.
-  val ticketTypes = List(
-    BondholderTicketType, PriorityPointTicketType, SeasonTicketType, AcademyTicketType,
-    AcademyPostalTicketType, GeneralSaleTicketType, GeneralSalePostalTicketType)
+  val ticketTypes: List[TicketType] = List(
+    BondholderTicketType, PriorityPointTicketType, SeasonTicketType, AcademyTicketType, GeneralSaleTicketType)
+
+  def apply(token: String)(implicit remoteStream: RemoteStream) = logOnEmpty(ticketTypes.find(ticketType => ticketType.tokens.contains(token)), s"$token is not a valid ticket type")
 
   /**
    * Json Serialisation

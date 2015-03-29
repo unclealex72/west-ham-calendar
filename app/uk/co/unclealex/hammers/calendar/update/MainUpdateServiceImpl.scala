@@ -22,29 +22,16 @@
 
 package uk.co.unclealex.hammers.calendar.update;
 
-import java.net.URI
-import scala.collection.JavaConversions._
-import org.joda.time.DateTime
-import org.slf4j.Logger
-import com.typesafe.scalalogging.slf4j.Logging
-import javax.inject.Named
-import uk.co.unclealex.hammers.calendar.dao.GameDao
-import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
-import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
-import uk.co.unclealex.hammers.calendar.html.DatePlayedLocator
-import uk.co.unclealex.hammers.calendar.html.GameKeyLocator
-import uk.co.unclealex.hammers.calendar.html.GameKeyLocator
-import uk.co.unclealex.hammers.calendar.html.GameLocator
-import uk.co.unclealex.hammers.calendar.html.GameUpdateCommand
-import uk.co.unclealex.hammers.calendar.html.HtmlGamesScanner
-import uk.co.unclealex.hammers.calendar.html.MainPageService
-import uk.co.unclealex.hammers.calendar.model.Game
-import uk.co.unclealex.hammers.calendar.model.GameKey
-import uk.co.unclealex.hammers.calendar.model.Location.HOME
-import uk.co.unclealex.hammers.calendar.dao.Transactional
 import javax.inject.Inject
-import uk.co.unclealex.hammers.calendar.logging.RemoteStream
+
+import com.google.inject.name.Named
+import com.typesafe.scalalogging.slf4j.Logging
+import uk.co.unclealex.hammers.calendar.dao.{GameDao, Transactional}
 import uk.co.unclealex.hammers.calendar.dates.NowService
+import uk.co.unclealex.hammers.calendar.html.{DatePlayedLocator, GameKeyLocator, GameLocator, GameUpdateCommand}
+import uk.co.unclealex.hammers.calendar.logging.RemoteStream
+import uk.co.unclealex.hammers.calendar.model.Game
+import uk.co.unclealex.hammers.calendar.model.Location.HOME
 
 /**
  * The Class MainUpdateServiceImpl.
@@ -57,17 +44,16 @@ class MainUpdateServiceImpl @Inject() (
    */
   tx: Transactional,
   /**
-   * The {@link MainPageService} for finding the links off the main page.
+   * The {@link GamesScanner} for getting game information.
    */
-  mainPageService: MainPageService,
+  @Named("fixturesGameScanner")
+  fixturesGameScanner: GameScanner,
   /**
-   * The {@link HtmlGamesScanner} for getting ticketing information.
+   * The {@link GamesScanner} for getting game information.
    */
-  ticketsHtmlGamesScannerFactory: TicketsHtmlGamesScannerFactory,
-  /**
-   * The {@link HtmlGamesScanner} for getting fixture information.
-   */
-  fixturesHtmlGamesScanner: HtmlGamesScanner,
+  @Named("ticketsGameScanner")
+  ticketsGameScanner: GameScanner,
+
   /**
    * The {@link LastUpdated} used to notify the application when calendars were last updated.
    */
@@ -84,14 +70,11 @@ class MainUpdateServiceImpl @Inject() (
    */
   override def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Int = {
     val allGames = tx { _ getAll }
-    val newGames = processUpdates(
-      "fixture", mainPageService.fixturesUri, fixturesHtmlGamesScanner, allGames)
-    ticketsHtmlGamesScannerFactory.get map { ticketsHtmlGamesScanner =>
-      val allAndNewGames = allGames ++ newGames
-      processUpdates("ticket", mainPageService.ticketsUri, ticketsHtmlGamesScanner, allAndNewGames)
-      lastUpdated at nowService.now
-      allAndNewGames.size
-    } getOrElse 0
+    val newGames = processUpdates("fixture", fixturesGameScanner, allGames)
+    val allAndNewGames = allGames ++ newGames
+    processUpdates("ticket", ticketsGameScanner, allAndNewGames)
+    lastUpdated at nowService.now
+    allAndNewGames.size
   }
 
   /**
@@ -106,9 +89,9 @@ class MainUpdateServiceImpl @Inject() (
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def processUpdates(updatesType: String, uri: URI, scanner: HtmlGamesScanner, allGames: List[Game])(implicit remoteStream: RemoteStream): List[Game] = {
+  def processUpdates(updatesType: String, scanner: GameScanner, allGames: List[Game])(implicit remoteStream: RemoteStream): List[Game] = {
     logger info s"Scanning for $updatesType changes."
-    val allGameUpdateCommands = scanner.scan(remoteStream, uri)
+    val allGameUpdateCommands = scanner.scan(remoteStream)
     val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
     updatesByGameLocator.toList flatMap {
       case (gameLocator, updates) =>

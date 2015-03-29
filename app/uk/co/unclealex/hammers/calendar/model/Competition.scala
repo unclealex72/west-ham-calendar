@@ -19,7 +19,9 @@
  * under the License.
  *
  */
-package uk.co.unclealex.hammers.calendar.model;
+package uk.co.unclealex.hammers.calendar.model
+
+import uk.co.unclealex.hammers.calendar.logging.{RemoteLogging, RemoteStream}
 
 /**
  * The different competitions that West Ham have taken part in.
@@ -59,14 +61,14 @@ sealed trait CupCompetition extends Competition {
   override def isLeague = false
 }
 
-object Competition extends PersistableEnumeration[Competition] {
+object Competition extends PersistableEnumeration[Competition] with RemoteLogging {
   /**
    * The FA Premiership.
    */
   case object PREM extends LeagueCompetition {
     val persistableToken = "PREM"
     val name = "Premiership"
-    val tokens = List("PREM")
+    val tokens = List("Barclays Premier League")
   }
   PREM
 
@@ -76,7 +78,7 @@ object Competition extends PersistableEnumeration[Competition] {
   case object LGCP extends CupCompetition {
     val persistableToken = "LGCP"
     val name = "League Cup"
-    val tokens = List("LGCP")
+    val tokens = List("English Capital One Cup")
   }
   LGCP
 
@@ -86,7 +88,7 @@ object Competition extends PersistableEnumeration[Competition] {
   case object FACP extends CupCompetition {
     val persistableToken = "FACP"
     val name = "FA Cup"
-    val tokens = List("FACP")
+    val tokens = List("English FA Cup")
   }
   FACP
 
@@ -110,11 +112,8 @@ object Competition extends PersistableEnumeration[Competition] {
   }
   FLCPO
 
-  /**
-   * Find a competition by its token.
-   */
-  def findByToken(token: String): Competition = values find (_.tokens contains token) getOrElse {
-    throw new IllegalArgumentException(s"$token is not a valid competition token.")
+  def apply(token: String)(implicit remoteStream: RemoteStream): Option[Competition] = {
+    logOnEmpty(values.find(_.tokens contains token), s"$token is not a valid competition token.")
   }
 
 }

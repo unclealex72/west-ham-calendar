@@ -47,9 +47,17 @@ case class MonthAndDay(val day: Int, val month: Month) {
 case class Date(val monthAndDay: MonthAndDay, val year: Int) {
   override def toString = s"$monthAndDay, $year"
   def at(hours: Int, minutes: Int) = Instant(this, hours, minutes)
+  def at(hours: Int) = Hour(this, hours)
   def toDateTime = at(0, 0) toDateTime
 }
 
+case class Hour(val date: Date, val hours: Int) {
+
+  def am = toInstant(0)
+  def pm = toInstant(12)
+
+  private def toInstant(hourModifier: Int) = Instant(date, hours + hourModifier, 0)
+}
 object Date {
   def apply(dateTime: DateTime): Date = Instant(dateTime).date
 
@@ -83,7 +91,7 @@ object Instant {
 
 }
 
-case object January extends Month("Janurary", 1)
+case object January extends Month("January", 1)
 case object February extends Month("February", 2)
 case object March extends Month("March", 3)
 case object April extends Month("April", 4)

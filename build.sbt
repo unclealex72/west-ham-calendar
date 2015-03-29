@@ -11,6 +11,7 @@ libraryDependencies ++= Seq(
     "securesocial" %% "securesocial" % "2.1.2",
     // JSON
     "io.argonaut" %% "argonaut" % "6.0.1",
+    "org.apache.httpcomponents" % "httpclient" % "4.4",
     //backend libraries
     "com.typesafe" %% "scalalogging-slf4j" % "1.0.1",
     "org.mozilla" % "rhino" % "1.7R3",
@@ -29,7 +30,8 @@ libraryDependencies ++= Seq(
     // test
     "com.h2database" % "h2" % "1.3.171" % "test",
     "org.specs2" %% "specs2" % "1.14" % "test",
-    "org.scalamock" %% "scalamock-specs2-support" % "3.0.1" % "test"
+    "org.scalamock" %% "scalamock-specs2-support" % "3.0.1" % "test",
+    "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test"
 )     
 
 resolvers += "releases" at "http://oss.sonatype.org/content/repositories/releases"
