@@ -40,6 +40,10 @@ case class Event(
    */
   val id: String,
   /**
+   * The ID of the game that created this event.
+    */
+  val gameId: Long,
+  /**
    * The game's {@link Competition}.
    */
   val competition: Competition,

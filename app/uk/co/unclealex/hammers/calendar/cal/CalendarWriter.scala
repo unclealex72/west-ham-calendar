@@ -38,7 +38,7 @@ trait CalendarWriter {
    * @param calendar The calendar to writer.
    * @param writer The writer to write the calendar to.
    */
-  def write(calendar: Calendar, writer: Writer): Unit
+  def write(calendar: Calendar, writer: Writer, linkFactory: LinkFactory): Unit
 
   /**
    * The mime type of calendars created by this class.

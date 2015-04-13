@@ -112,6 +112,7 @@ class CalendarFactoryImplTest extends Specification with MockFactory {
       val busy = a == A.ATTENDED
       val expectedEvent = Event(
         id = "0",
+        gameId = 0l,
         competition = Competition.FACP,
         location = Location.HOME,
         geoLocation = Some(GeoLocation.WEST_HAM),

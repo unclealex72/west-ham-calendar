@@ -21,9 +21,12 @@
  */
 package uk.co.unclealex.hammers.calendar.cal
 
+import java.net.URI
+
 import org.specs2.mutable.Specification
 import uk.co.unclealex.hammers.calendar._
 import uk.co.unclealex.hammers.calendar.model.Competition._
+import uk.co.unclealex.hammers.calendar.model.Location
 import uk.co.unclealex.hammers.calendar.model.Location._
 import uk.co.unclealex.hammers.calendar.geo.GeoLocation._
 import org.joda.time.Duration
@@ -42,6 +45,7 @@ class IcalCalendarWriterTest extends Specification {
     "be outputted correctly" in {
       val tottinghamHome = new Event(
         id = "1",
+        gameId = 1l,
         competition = PREM,
         location = HOME,
         geoLocation = Some(WEST_HAM),
@@ -63,6 +67,7 @@ class IcalCalendarWriterTest extends Specification {
     "be outputted correctly" in {
       val southamptonAway = new Event(
         id = "2",
+        gameId = 2l,
         competition = FACP,
         location = AWAY,
         geoLocation = Some(SOUTHAMPTON),
@@ -84,6 +89,7 @@ class IcalCalendarWriterTest extends Specification {
     "be outputted correctly" in {
       val liverpoolAway = new Event(
         id = "2",
+        gameId = 2l,
         competition = PREM,
         location = AWAY,
         geoLocation = Some(LIVERPOOL),
@@ -107,7 +113,12 @@ class IcalCalendarWriterTest extends Specification {
     }
     val icalCalendarWriter = new IcalCalendarWriter(nowService)
     val writer = new StringWriter
-    icalCalendarWriter.write(Calendar("id", "title", SortedSet(event)), writer)
+    val linkFactory = new LinkFactory {
+      override def locationLink(gameId: Long, location: Location): Option[URI] = {
+        if (location == AWAY) Some(new URI(s"http://location/${gameId}")) else None
+      }
+    }
+    icalCalendarWriter.write(Calendar("id", "title", SortedSet(event)), writer, linkFactory)
     writer.toString.trim
   }
 
@@ -157,6 +168,7 @@ LOCATION:St Mary's Stadium
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:Southampton vs West Ham (FA Cup)
+ATTACH:http://location/2
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR
@@ -186,6 +198,7 @@ STATUS:CONFIRMED
 SUMMARY:Liverpool vs West Ham (Premiership)
 ATTACH:http://awesthammatchreport.com/match/report/westham-vs-liverpool-a
  way
+ATTACH:http://location/2
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR

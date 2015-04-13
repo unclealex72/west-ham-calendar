@@ -22,10 +22,11 @@
 package controllers
 
 import java.io.StringWriter
+import java.net.URI
 import javax.inject.Inject
 import play.api.mvc.Action
-import uk.co.unclealex.hammers.calendar.cal.CalendarFactory
-import uk.co.unclealex.hammers.calendar.cal.CalendarWriter
+import uk.co.unclealex.hammers.calendar.cal.{LinkFactory, CalendarFactory, CalendarWriter}
+import uk.co.unclealex.hammers.calendar.model.Location.AWAY
 import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
 import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
 import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
@@ -82,7 +83,12 @@ class Calendar @Inject() (
         Action { implicit request =>
           val calendar = calendarFactory.create(busyMask, a, l, g)
           val buffer = new StringWriter
-          calendarWriter.write(calendar, buffer)
+          val linkFactory = new LinkFactory {
+            override def locationLink(gameId: Long, location: uk.co.unclealex.hammers.calendar.model.Location): Option[URI] = {
+              if (location == AWAY) Some(new URI(routes.Location.location(gameId).absoluteURL())) else None
+            }
+          }
+          calendarWriter.write(calendar, buffer, linkFactory)
           val output = buffer.toString
           Ok(output).as(calendarWriter.mimeType)
         }

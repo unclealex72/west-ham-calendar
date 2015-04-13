@@ -25,6 +25,8 @@
 package uk.co.unclealex.hammers.calendar.cal
 
 import java.io.Writer
+import play.api.mvc.Request
+
 import scala.math.BigDecimal._
 import org.joda.time.{ DateTime => JodaDateTime }
 import uk.co.unclealex.hammers.calendar.model.Location._
@@ -83,7 +85,7 @@ class IcalCalendarWriter @Inject() (
 
   def mimeType = "text/calendar"
 
-  def write(calendar: Calendar, writer: Writer): Unit = {
+  def write(calendar: Calendar, writer: Writer, linkFactory: LinkFactory): Unit = {
     val ical = new ICalendar
     List(
       new ProdId("-//unclealex.co.uk//West Ham Calendar 6.0//EN"),
@@ -93,16 +95,16 @@ class IcalCalendarWriter @Inject() (
       new XProperty("X-WR-CALDESC", calendar.title),
       new XProperty("X-WR-TIMEZONE", "Europe/London"),
       CalScale.GREGORIAN) foreach (ical.getProperties().add)
-    calendar.events map (toVEvent) foreach (ical.getComponents().add)
+    calendar.events map (toVEvent(linkFactory)) foreach (ical.getComponents().add)
     outputter output (ical, writer)
   }
 
   /**
    * Output a single event.
    */
-  def toVEvent(event: Event): VEvent = {
+  def toVEvent(linkFactory: LinkFactory)(event: Event): VEvent = {
     val properties: Seq[Event => Traversable[Property]] =
-      Seq(DTSTART, DTEND, DTSTAMP, UID, CREATED, DESCRIPTION, LAST_MODIFIED, LOCATION, SEQUENCE, STATUS, SUMMARY, ATTACH, TRANSP)
+      Seq(DTSTART, DTEND, DTSTAMP, UID, CREATED, DESCRIPTION, LAST_MODIFIED, LOCATION, SEQUENCE, STATUS, SUMMARY, MATCH_REPORT, LOCATION_URL(linkFactory), TRANSP)
     fluent(new VEvent(new PropertyList))(ve => properties.foreach(f => f(event).foreach(ve.getProperties.add)))
   }
 
@@ -187,7 +189,10 @@ class IcalCalendarWriter @Inject() (
   /**
    * Create an ATTACH property
    */
-  def ATTACH: Event => Option[Property] = event => event.matchReport.map(url => new Attach(new URI(url)))
+  def MATCH_REPORT: Event => Option[Property] = event => event.matchReport.map(url => new Attach(new URI(url)))
+
+  def LOCATION_URL(linkFactory: LinkFactory): Event => Option[Property] = event =>
+    linkFactory.locationLink(event.gameId, event.location).map(new Attach(_))
 
   /**
    * A small utility that allows a mutable object to be created, mutated and then returned.

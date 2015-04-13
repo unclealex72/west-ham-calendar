@@ -113,6 +113,7 @@ class CalendarFactoryImpl @Inject() (
     dateFactory(game) map { date =>
       new Event(
         id = game.id.toString,
+        gameId = game.id,
         competition = game.competition,
         location = game.location,
         geoLocation = GeoLocation(game),
