@@ -128,13 +128,10 @@ UID:1@calendar.unclealex.co.uk
 CREATED:20130904T090000Z
 DESCRIPTION:
 LAST-MODIFIED:20130905T100000Z
-LOCATION:The Boleyn Ground near 51.5321\, 0.039225
+LOCATION:The Boleyn Ground
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:West Ham vs Tottingham (Premiership)
-GEO:51.5321;0.039225
-ATTACH:https://maps.google.com/maps?q=51.5321,+0.039225+(The+Boleyn+Groun
- d)&iwloc=A&hl=en
 TRANSP:OPAQUE
 END:VEVENT
 END:VCALENDAR"""
@@ -156,13 +153,10 @@ UID:2@calendar.unclealex.co.uk
 CREATED:20131004T090000Z
 DESCRIPTION:
 LAST-MODIFIED:20131005T100000Z
-LOCATION:St Mary's Stadium near 50.9058\, -1.39114
+LOCATION:St Mary's Stadium
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:Southampton vs West Ham (FA Cup)
-GEO:50.9058;-1.39114
-ATTACH:https://maps.google.com/maps?q=50.9058,+-1.39114+(St+Mary's+Stadiu
- m)&iwloc=A&hl=en
 TRANSP:TRANSPARENT
 END:VEVENT
 END:VCALENDAR
@@ -186,13 +180,10 @@ CREATED:20131004T090000Z
 DESCRIPTION:Result: 0-3\nAttendence: 25000\nMatch Report: http://awestham
  matchreport.com/match/report/westham-vs-liverpool-away
 LAST-MODIFIED:20131005T100000Z
-LOCATION:Anfield near 53.4308\, -2.96096
+LOCATION:Anfield
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:Liverpool vs West Ham (Premiership)
-GEO:53.4308;-2.96096
-ATTACH:https://maps.google.com/maps?q=53.4308,+-2.96096+(Anfield)&iwloc=A
- &hl=en
 ATTACH:http://awesthammatchreport.com/match/report/westham-vs-liverpool-a
  way
 TRANSP:TRANSPARENT

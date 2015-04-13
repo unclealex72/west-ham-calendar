@@ -102,7 +102,7 @@ class IcalCalendarWriter @Inject() (
    */
   def toVEvent(event: Event): VEvent = {
     val properties: Seq[Event => Traversable[Property]] =
-      Seq(DTSTART, DTEND, DTSTAMP, UID, CREATED, DESCRIPTION, LAST_MODIFIED, LOCATION, SEQUENCE, STATUS, SUMMARY, GEO, ATTACH, TRANSP)
+      Seq(DTSTART, DTEND, DTSTAMP, UID, CREATED, DESCRIPTION, LAST_MODIFIED, LOCATION, SEQUENCE, STATUS, SUMMARY, ATTACH, TRANSP)
     fluent(new VEvent(new PropertyList))(ve => properties.foreach(f => f(event).foreach(ve.getProperties.add)))
   }
 
@@ -153,8 +153,7 @@ class IcalCalendarWriter @Inject() (
   /**
    * Create a LOCATION property
    */
-  def LOCATION: Event => Option[Property] = event =>
-    event.geoLocation map { gl => new Location(s"${gl.name} near ${gl.latitude}, ${gl.longitude}") }
+  def LOCATION: Event => Option[Property] = event => event.geoLocation map { gl => new Location(gl.name) }
 
   /**
    * Create a SEQUENCE property
@@ -186,15 +185,9 @@ class IcalCalendarWriter @Inject() (
   }
 
   /**
-   * Create a GEO property
-   */
-  def GEO: Event => Option[Property] = event => event.geoLocation map { gl => new Geo(gl.latitude, gl.longitude) }
-
-  /**
    * Create an ATTACH property
    */
-  def ATTACH: Event => Seq[Property] =
-    event => Seq(event.geoLocation map (_.url), event.matchReport).flatten.map(url => new Attach(new URI(url)))
+  def ATTACH: Event => Option[Property] = event => event.matchReport.map(url => new Attach(new URI(url)))
 
   /**
    * A small utility that allows a mutable object to be created, mutated and then returned.

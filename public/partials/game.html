@@ -9,8 +9,7 @@
   </h2>
   <p>on {{game.at | customDate:"EEEE 'the' dth 'of' MMMM yyyy, h:mm!a" }}</p>
   <p>at
-    <a href="https://maps.google.de/maps?q=loc:{{game.geoLocation.latitude}},{{game.geoLocation.longitude}}"
-       target="_blank">{{game.geoLocation.name}}</a>.
+    <a ng-href="location/{{game.id}}.html" target="_blank">{{game.geoLocation.name}}</a>.
   </p>
   <p ng-show="game.result">
     The result was <game-result game="game"></game-result>

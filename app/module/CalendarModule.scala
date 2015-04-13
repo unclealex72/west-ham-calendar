@@ -27,6 +27,7 @@ import com.typesafe.config.ConfigFactory
 import com.tzavellas.sse.guice.ScalaModule
 import controllers.Authorised
 import json.ConfigurationReader
+import location.{DispatchAsyncHttpClient, AsyncHttpClient, LocationServiceImpl, LocationService}
 import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsConfiguration, PriorityPointsPdfFactory}
 import securesocial.core.Authorization
 import services.{GameRowFactory, GameRowFactoryImpl}
@@ -66,6 +67,11 @@ class CalendarModule extends ScalaModule {
     // Calendars
     bind[CalendarFactory].to[CalendarFactoryImpl]
     bind[CalendarWriter].to[IcalCalendarWriter]
+
+    // Game Locations
+    bind[LocationService].to[LocationServiceImpl]
+    bind[AsyncHttpClient].to[DispatchAsyncHttpClient]
+    bind[String].annotatedWithName("locationClientKey").toInstance("AIzaSyCnaYyFjEYYaKIQ6ZQ64Tx-xkKP2kArRzE")
 
     //MVC
     bind[GameRowFactory].to[GameRowFactoryImpl]

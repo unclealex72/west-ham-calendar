@@ -27,6 +27,7 @@ libraryDependencies ++= Seq(
     "org.squeryl" %% "squeryl" % "0.9.6-RC1",
     "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
     "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
+    "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
     // test
     "com.h2database" % "h2" % "1.3.171" % "test",
     "org.specs2" %% "specs2" % "1.14" % "test",
