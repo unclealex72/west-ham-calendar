@@ -114,9 +114,7 @@ class IcalCalendarWriterTest extends Specification {
     val icalCalendarWriter = new IcalCalendarWriter(nowService)
     val writer = new StringWriter
     val linkFactory = new LinkFactory {
-      override def locationLink(gameId: Long, location: Location): Option[URI] = {
-        if (location == AWAY) Some(new URI(s"http://location/${gameId}")) else None
-      }
+      override def locationLink(gameId: Long): URI = new URI(s"http://location/${gameId}")
     }
     icalCalendarWriter.write(Calendar("id", "title", SortedSet(event)), writer, linkFactory)
     writer.toString.trim
@@ -143,6 +141,7 @@ LOCATION:The Boleyn Ground
 SEQUENCE:0
 STATUS:CONFIRMED
 SUMMARY:West Ham vs Tottingham (Premiership)
+ATTACH:http://location/1
 TRANSP:OPAQUE
 END:VEVENT
 END:VCALENDAR"""

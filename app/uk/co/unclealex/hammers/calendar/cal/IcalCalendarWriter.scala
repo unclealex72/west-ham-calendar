@@ -192,7 +192,7 @@ class IcalCalendarWriter @Inject() (
   def MATCH_REPORT: Event => Option[Property] = event => event.matchReport.map(url => new Attach(new URI(url)))
 
   def LOCATION_URL(linkFactory: LinkFactory): Event => Option[Property] = event =>
-    linkFactory.locationLink(event.gameId, event.location).map(new Attach(_))
+    Some(new Attach(linkFactory.locationLink(event.gameId)))
 
   /**
    * A small utility that allows a mutable object to be created, mutated and then returned.

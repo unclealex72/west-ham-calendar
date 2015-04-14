@@ -15,5 +15,5 @@ trait LinkFactory {
    * @param gameId
    * @return
    */
-  def locationLink(gameId: Long, location: Location): Option[URI]
+  def locationLink(gameId: Long): URI
 }

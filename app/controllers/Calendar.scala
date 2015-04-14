@@ -84,8 +84,8 @@ class Calendar @Inject() (
           val calendar = calendarFactory.create(busyMask, a, l, g)
           val buffer = new StringWriter
           val linkFactory = new LinkFactory {
-            override def locationLink(gameId: Long, location: uk.co.unclealex.hammers.calendar.model.Location): Option[URI] = {
-              if (location == AWAY) Some(new URI(routes.Location.location(gameId).absoluteURL())) else None
+            override def locationLink(gameId: Long): URI = {
+              new URI(routes.Location.location(gameId).absoluteURL())
             }
           }
           calendarWriter.write(calendar, buffer, linkFactory)

@@ -21,7 +21,7 @@ class LocationServiceImpl @Inject() (
                                       @Named("locationClientKey") val locationClientKey: String) extends LocationService {
 
   override def location(gameId: Long): Future[Option[URL]] = {
-    tx(_.findById(gameId)) filter (_.location == AWAY) flatMap (GeoLocation(_)) match {
+    tx(_.findById(gameId)) flatMap (GeoLocation(_)) match {
       case Some(geoLocation) => {
         generateUrl(geoLocation)
       }
