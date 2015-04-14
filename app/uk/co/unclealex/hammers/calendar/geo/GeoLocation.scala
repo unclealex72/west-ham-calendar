@@ -24,7 +24,10 @@ package uk.co.unclealex.hammers.calendar.geo
 import java.io.{PrintWriter, FileWriter, IOException}
 import java.net.URL
 
+import location.{LocationServiceImpl, DispatchAsyncHttpClient}
+
 import scala.collection.immutable.SortedMap
+import scala.concurrent.Await
 import scala.io.Source
 import scala.math.BigDecimal
 
@@ -162,12 +165,12 @@ object GeoLocation extends GeoLocationLike {
   case object LIVINGSTON extends GeoLocation("Livingston", "Almondvale Stadium", "ChIJn8XgIFXZh0gRivrvqNy6b3A"); LIVINGSTON
   case object MACCLESFIELD_TOWN extends GeoLocation("Macclesfield Town", "Moss Rose", "ChIJ42CAuydJekgRLFNZjWP7wso"); MACCLESFIELD_TOWN
   case object MANCHESTER_CITY extends GeoLocation("Manchester City", "Etihad Stadium", "ChIJ4wqVzA2xe0gRaod65syNmlQ"); MANCHESTER_CITY
-  case object MANCHESTER_UNITED extends GeoLocation("Manchester United", "Old Trafford", "ChIJ8WJXOXOue0gR42UazaLgj2w"); MANCHESTER_UNITED
+  case object MANCHESTER_UNITED extends GeoLocation("Manchester United", "Old Trafford", "ChIJaX_k53Kue0gRScxJi_CVlMY"); MANCHESTER_UNITED
   case object MIDDLESBROUGH extends GeoLocation("Middlesbrough", "Riverside", "ChIJMw1u5KDtfkgRN5eDTZX1Rc8"); MIDDLESBROUGH
   case object MILLWALL extends GeoLocation("Millwall", "The Den", "ChIJh-eG9hwDdkgRAn9dPECFX44"); MILLWALL
   case object MK_DONS extends GeoLocation("MK Dons", "StadiumMK", "ChIJN9TM4y9VdkgRdc9HFtqrPDI"); MK_DONS
   case object MONTROSE extends GeoLocation("Montrose", "Links Park", "ChIJ32mwHaGQhkgRONz3NfvN_1Q"); MONTROSE
-  case object MORECAMBE extends GeoLocation("Morecambe", "The Globe Arena", "ChIJ_aIdxBqefEgR4Kjv8Rv7J6k"); MORECAMBE
+  case object MORECAMBE extends GeoLocation("Morecambe", "The Globe Arena", "ChIJbWMHpwuefEgR7T0n16OvfeA"); MORECAMBE
   case object MOTHERWELL extends GeoLocation("Motherwell", "Fir Park", "ChIJO56LoKwUiEgR4XkQ6R2o800"); MOTHERWELL
   case object NEWCASTLE_UNITED extends GeoLocation("Newcastle United", "St James Park", "ChIJG-cE3DR3fkgRoCrZpWmB_is"); NEWCASTLE_UNITED
   case object NORTHAMPTON_TOWN extends GeoLocation("Northampton Town", "Sixfields Stadium", "ChIJE40YH1IOd0gRgqDW8MophXM"); NORTHAMPTON_TOWN
@@ -182,10 +185,10 @@ object GeoLocation extends GeoLocationLike {
   case object PLYMOUTH_ARGYLE extends GeoLocation("Plymouth Argyle", "Home Park", "ChIJp6C9ci-TbEgRjfkEBYO00Tw"); PLYMOUTH_ARGYLE
   case object PORT_VALE extends GeoLocation("Port Vale", "Vale Park", "ChIJoYOnm-1CekgRDuqt-BBs8oc"); PORT_VALE
   case object PORTSMOUTH extends GeoLocation("Portsmouth", "Fratton Park", "ChIJe_xpK6tddEgRc4fWnecn2sI"); PORTSMOUTH
-  case object PRESTON_NORTH_END extends GeoLocation("Preston North End", "Deepdale", "ChIJp0Sjsmpye0gR1U_Y1WjasVs"); PRESTON_NORTH_END
+  case object PRESTON_NORTH_END extends GeoLocation("Preston North End", "Deepdale", "ChIJuZwrfxVye0gRYKZ-IbBzA4w"); PRESTON_NORTH_END
   case object QUEEN_OF_THE_SOUTH extends GeoLocation("Queen of the South", "Palmerston Park", "ChIJPyrMYRDKYkgRn0ciQOGQt-E"); QUEEN_OF_THE_SOUTH
   case object QUEENS_PARK extends GeoLocation("Queen's Park", "Hampden Park", "ChIJKdz_neZGiEgR1uJIeGgNVnI"); QUEENS_PARK
-  case object QUEENS_PARK_RANGERS extends GeoLocation("Queens Park Rangers", "Loftus Road", "ChIJLYyUF9QPdkgRmzEra-FO7U4"); QUEENS_PARK_RANGERS
+  case object QUEENS_PARK_RANGERS extends GeoLocation("Queens Park Rangers", "Loftus Road", "ChIJqTg3gNMPdkgRQkkixzZU8Tk"); QUEENS_PARK_RANGERS
   case object RAITH_ROVERS extends GeoLocation("Raith Rovers", "Stark's Park", "ChIJe3Z1v5W1h0gROsUR8iYCo_0"); RAITH_ROVERS
   case object RANGERS extends GeoLocation("Rangers", "Ibrox", "ChIJoQ6BJ3NGiEgRSq_olgANDdU"); RANGERS
   case object READING extends GeoLocation("Reading", "The Madjeski Stadium", "ChIJG7PBnIOcdkgR93cyfkEOCMM"); READING
@@ -262,4 +265,3 @@ object GeoLocation extends GeoLocationLike {
   implicit val GeoLocationCodecJson: EncodeJson[GeoLocation] =
     jencode2L((geo: GeoLocation) => (geo.name, geo.placeId))("name", "placeId")
 }
-
