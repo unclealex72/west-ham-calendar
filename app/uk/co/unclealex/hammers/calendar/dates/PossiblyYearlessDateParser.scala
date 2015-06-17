@@ -82,8 +82,8 @@ case class DoesNotNeedYear(dateFormat: String) extends NeedsYear(dateFormat)
 object PossiblyYearlessDateParser {
 
   def forSeason(season: Int)(format: String, formats: String*) = {
-    // August 1st
-    val datum = new DateTime(season, 8, 1, 0, 0)
+    // July 1st
+    val datum = new DateTime(season, 7, 1, 0, 0)
     new ChainingDateParser((Seq(format) ++ formats).map(format => new PossiblyYearlessDateParser(datum, false, format)))
   }
 }
