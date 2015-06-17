@@ -112,6 +112,16 @@ object Competition extends PersistableEnumeration[Competition] with RemoteLoggin
   }
   FLCPO
 
+  /**
+   * The Championship play-offs.
+   */
+  case object FRIENDLY extends CupCompetition {
+    val persistableToken = "FRIENDLY"
+    val name = "Friendly"
+    val tokens = List("Pre-Season Match")
+  }
+  FRIENDLY
+
   def apply(token: String)(implicit remoteStream: RemoteStream): Option[Competition] = {
     logOnEmpty(values.find(_.tokens contains token), s"$token is not a valid competition token.")
   }

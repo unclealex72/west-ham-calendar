@@ -32,20 +32,17 @@ import org.specs2.mutable.Specification
  */
 class EnumerationsTest extends Specification {
 
-  List(("Competitions", Competition.values, 5), ("Locations", Location.values, 2)) foreach {
+  List(("Competitions", Competition.values, 6), ("Locations", Location.values, 2)) foreach {
     case (name, values, expectedSize) =>
       name should {
+        values sliding 2 foreach {
+          case List(lower, higher) =>
+            s"${lower.persistableToken} must be less than ${higher.persistableToken}" in {
+              lower.index must be lessThan (higher.index)
+            }
+        }
         "have the correct number of elements" in {
           values must have size (expectedSize)
-        }
-        "have strictly increasing indicies" in {
-          values sliding 2 foreach {
-            case List(lower, higher) =>
-              s"${lower.persistableToken} must be less than ${higher.persistableToken}" in {
-                lower.index must be lessThan (higher.index)
-              }
-          }
-          1 must be equalTo(1)
         }
       }
   }
