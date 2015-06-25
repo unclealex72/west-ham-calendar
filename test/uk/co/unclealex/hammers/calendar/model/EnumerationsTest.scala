@@ -32,7 +32,7 @@ import org.specs2.mutable.Specification
  */
 class EnumerationsTest extends Specification {
 
-  List(("Competitions", Competition.values, 6), ("Locations", Location.values, 2)) foreach {
+  List(("Competitions", Competition.values, 7), ("Locations", Location.values, 2)) foreach {
     case (name, values, expectedSize) =>
       name should {
         values sliding 2 foreach {
