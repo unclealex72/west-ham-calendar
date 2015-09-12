@@ -30,11 +30,11 @@
       </div>
     </div>
     <div class="col-sm-2">
-        <p ng-show="!game.result &amp;&amp; game.tickets[ticketType.name] &amp;&amp; !game.tickets[ticketType.name].formUrl">
+        <span ng-show="!game.result &amp;&amp; game.tickets[ticketType.name] &amp;&amp; !game.tickets[ticketType.name].formUrl">
             {{game.tickets[ticketType.name].at | customDate:'dth MMM'}}
-        </p>
+        </span>
         <a ng-show="!game.result &amp;&amp; game.tickets[ticketType.name] &amp;&amp; game.tickets[ticketType.name].formUrl" ng-href="{{game.tickets[ticketType.name].formUrl}}">
-            {{game.tickets[ticketType.name].at | customDate:'dth MMM'}}
+            {{game.tickets[ticketType.name].at | customDate:'dth MMM'}} <span class="badge">PDF</span>
         </a>
     </div>
   </div>
