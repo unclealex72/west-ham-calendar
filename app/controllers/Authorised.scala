@@ -21,6 +21,7 @@
  */
 package controllers
 
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import securesocial.core.Authorization
 import securesocial.core.Identity
 
@@ -33,10 +34,16 @@ case class Authorised(
   /**
    * The email addresses that are allowed to login.
    */
-  emailAddresses: Seq[String]) extends Authorization {
+  emailAddresses: Seq[String]) extends Authorization with StrictLogging {
 
   def isAuthorized(identity: Identity): Boolean = identity.email match {
-    case Some(email) => emailAddresses contains email
+    case Some(email) => {
+      val authorized = emailAddresses contains email
+      if (!authorized) {
+        logger warn s"Unauthorised user $email has attempted to log in."
+      }
+      authorized
+    }
     case None => false
   }
 }
