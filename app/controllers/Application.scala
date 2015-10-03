@@ -40,7 +40,8 @@ class Application @Inject() (
       val username = emailAndName.map(_._2)
       Globals(seasons.toList, username)
     }
-    Ok(views.js.constants(constants)).withHeaders(PRAGMA -> "no-cache")
+    Ok(views.js.constants(constants)).withHeaders(
+      PRAGMA -> "no-cache", CACHE_CONTROL -> "no-cache, no-store, must-revalidate", EXPIRES -> "0")
   }
 
   def games(season: Int) = UserAwareAction { implicit request =>
