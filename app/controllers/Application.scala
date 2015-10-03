@@ -1,18 +1,13 @@
 package controllers
 
-import play.api._
-import models.Globals._
-import models.{PriorityPointTicketType, TicketType, Globals}
-import models.TicketType._
-import json.JsonResults
-import play.api.mvc._
 import javax.inject.Inject
-import uk.co.unclealex.hammers.calendar.dao.Transactional
-import services.GameRowFactory
-import securesocial.core.Authorization
-import json.JsonResults
-import uk.co.unclealex.hammers.calendar.model.Game
 
+import json.JsonResults
+import models.Globals
+import play.api.mvc._
+import securesocial.core.Authorization
+import services.GameRowFactory
+import uk.co.unclealex.hammers.calendar.dao.Transactional
 class Application @Inject() (
   /**
    * The authorization object to check for authorised users.
@@ -45,7 +40,7 @@ class Application @Inject() (
       val username = emailAndName.map(_._2)
       Globals(seasons.toList, username)
     }
-    Ok(views.js.constants(constants))
+    Ok(views.js.constants(constants)).withHeaders(PRAGMA -> "no-cache")
   }
 
   def games(season: Int) = UserAwareAction { implicit request =>
