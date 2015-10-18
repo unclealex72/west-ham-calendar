@@ -16,9 +16,9 @@ import scala.sys.process._
  */
 class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, priorityPointsConfigurationDao: PriorityPointsConfigurationDao) extends PriorityPointsPdfFactory with App with StrictLogging {
 
-  override def generate(team: String, league: Boolean, out: OutputStream): Unit = {
+  override def generate(team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit = {
     try {
-     doGenerate(team, league, out)
+     doGenerate(team, league, clientFilter, out)
     }
     catch {
       case e: Exception => {
@@ -28,16 +28,16 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, 
     }
   }
 
-  def doGenerate(team: String, league: Boolean, out: OutputStream): Unit = {
+  def doGenerate(team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit = {
     val priorityPointsConfiguration = priorityPointsConfigurationDao.get.getOrElse {
       throw new IllegalStateException("No configuration for the priorty points PDF form has been set.")
     }
 
     val url = classOf[PdfBoxPriorityPointsPdfFactory].getResource("prioritypoints.pdf")
     val document = PDDocument.load(url)
-    val page = document.getDocumentCatalog().getAllPages().get(0).asInstanceOf[PDPage]
+    val page = document.getDocumentCatalog.getAllPages.get(0).asInstanceOf[PDPage]
     val contentStream = new PDPageContentStream(document, page, true, true) with ContentStreamExtensions
-    page.getContents().getStream()
+    page.getContents.getStream
 
     // Write the team name
     contentStream.write(team.toUpperCase, pdfPositioning.team)
@@ -46,8 +46,10 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, 
     val strikeOutBox = if (league) pdfPositioning.cup else pdfPositioning.league
     contentStream.strikeOut(strikeOutBox)
 
+    val clients = priorityPointsConfiguration.clients.filter(clientFilter)
+
     // Print out the lead client's name and reference
-    priorityPointsConfiguration.clients.headOption.foreach { client =>
+    clients.headOption.foreach { client =>
       contentStream.write(client.name.toUpperCase, pdfPositioning.name)
       contentStream.write(client.referenceNumber, pdfPositioning.ref)
     }
@@ -63,7 +65,7 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, 
     contentStream.write(priorityPointsConfiguration.contactDetails.emailAddress, pdfPositioning.emailAddress)
 
     // Full client information
-    priorityPointsConfiguration.clients.zipWithIndex foreach {
+    clients.zipWithIndex foreach {
       case (client, idx) =>
         val clientRefPoint = pdfPositioning.clientRef.downBy(pdfPositioning.nextClientOffset * idx)
         contentStream.write(client.referenceNumber, clientRefPoint)
@@ -85,7 +87,7 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, 
     contentStream.write(card.nameOnCard.toUpperCase, pdfPositioning.nameOnCard)
 
     // Number of clients
-    contentStream.write(priorityPointsConfiguration.clients.size, pdfPositioning.numberOfTickets)
+    contentStream.write(clients.size, pdfPositioning.numberOfTickets)
 
     // Write the document
     contentStream.close()

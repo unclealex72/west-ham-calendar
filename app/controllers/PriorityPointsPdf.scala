@@ -2,7 +2,7 @@ package controllers
 
 import javax.inject.Inject
 
-import pdf.PriorityPointsPdfFactory
+import pdf.{Client, PriorityPointsPdfFactory}
 import play.Routes
 import play.api.libs.iteratee.Enumerator
 import play.mvc.Controller
@@ -31,10 +31,17 @@ class PriorityPointsPdf @Inject() (
     tx { gameDao =>
       gameDao.findById(gameId).filter(_.location.isAway) match {
         case Some(game) => {
+          val optionalClientNames = request.queryString.map(kv => (kv._1.toLowerCase, kv._2)).get("name")
+          val clientFilter: Client => Boolean = optionalClientNames match {
+            case Some(clientNames) => client => clientNames.exists { clientName =>
+              client.name.toLowerCase.startsWith(clientName.toLowerCase)
+            }
+            case None => _ => true
+          }
           Ok.chunked {
             Enumerator.outputStream {
               out =>
-                priorityPointsPdfFactory.generate(game.opponents, game.competition.isLeague, out)}}.
+                priorityPointsPdfFactory.generate(game.opponents, game.competition.isLeague, clientFilter, out)}}.
             as("application/pdf")
         }
         case None => NotFound
