@@ -42,7 +42,7 @@ import play.api.mvc.Action
 import play.api.mvc.Handler
 import play.api.mvc.RequestHeader
 import play.api.mvc.Results
-import uk.co.unclealex.hammers.calendar.dao.SquerylGameDao
+import dao.SquerylGameDao
 import play.api.Configuration
 import java.io.File
 import play.api.Mode

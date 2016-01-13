@@ -3,7 +3,7 @@ package controllers
 import models.{PriorityPointTicketType, TicketType}
 import play.api.mvc.Request
 import securesocial.core.RequestWithUser
-import uk.co.unclealex.hammers.calendar.model.Game
+import model.Game
 
 /**
  * Created by alex on 13/02/15.

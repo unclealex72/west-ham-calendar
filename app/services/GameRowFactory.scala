@@ -22,7 +22,7 @@
 package services
 
 import models.{TicketType, GameRow}
-import uk.co.unclealex.hammers.calendar.model.Game
+import model.Game
 
 /**
  * A trait for classes that can transform a Game into a Game row.

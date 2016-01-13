@@ -25,14 +25,14 @@ import java.io.StringWriter
 import java.net.URI
 import javax.inject.Inject
 import play.api.mvc.Action
-import uk.co.unclealex.hammers.calendar.cal.{LinkFactory, CalendarFactory, CalendarWriter}
-import uk.co.unclealex.hammers.calendar.model.Location.AWAY
-import uk.co.unclealex.hammers.calendar.search.AttendedSearchOption
-import uk.co.unclealex.hammers.calendar.search.GameOrTicketSearchOption
-import uk.co.unclealex.hammers.calendar.search.LocationSearchOption
+import cal.{LinkFactory, CalendarFactory, CalendarWriter}
+import model.Location.AWAY
+import search.AttendedSearchOption
+import search.GameOrTicketSearchOption
+import search.LocationSearchOption
 import play.api.mvc.Controller
 import javax.inject.Named
-import uk.co.unclealex.hammers.calendar.update.LastUpdated
+import update.LastUpdated
 
 /**
  * The controller that handles generating calendars.

@@ -7,8 +7,8 @@ import com.typesafe.scalalogging.slf4j.StrictLogging
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
 import org.apache.pdfbox.pdmodel.font.PDType1Font
 import org.apache.pdfbox.pdmodel.{PDDocument, PDPage}
-import uk.co.unclealex.hammers.calendar.dao.PriorityPointsConfigurationDao
-import uk.co.unclealex.hammers.calendar.model.PersistedClientType.{Junior, OAP}
+import dao.PriorityPointsConfigurationDao
+import model.PersistedClientType.{Junior, OAP}
 
 import scala.sys.process._
 /**

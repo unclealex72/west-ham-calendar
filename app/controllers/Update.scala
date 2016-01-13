@@ -30,14 +30,14 @@ import play.api.mvc.Request
 import play.api.mvc.Results._
 import play.mvc.Controller
 import securesocial.core.Authorization
-import uk.co.unclealex.hammers.calendar.update.MainUpdateService
+import update.MainUpdateService
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api.libs.iteratee.Concurrent
 import play.api.mvc.ChunkedResult
 import play.api.mvc.ResponseHeader
-import uk.co.unclealex.hammers.calendar.logging.RemoteStream
+import logging.RemoteStream
 import json.JsonResults
-import uk.co.unclealex.hammers.calendar.model.Game
+import model.Game
 import services.GameRowFactory
 
 /**

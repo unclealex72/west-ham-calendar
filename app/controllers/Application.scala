@@ -7,7 +7,7 @@ import models.Globals
 import play.api.mvc._
 import securesocial.core.Authorization
 import services.GameRowFactory
-import uk.co.unclealex.hammers.calendar.dao.Transactional
+import dao.Transactional
 class Application @Inject() (
   /**
    * The authorization object to check for authorised users.

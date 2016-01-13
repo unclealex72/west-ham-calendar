@@ -7,7 +7,7 @@ import play.Routes
 import play.api.libs.iteratee.Enumerator
 import play.mvc.Controller
 import securesocial.core.Authorization
-import uk.co.unclealex.hammers.calendar.dao.Transactional
+import dao.Transactional
 import play.api.libs.concurrent.Execution.Implicits._
 
 /**

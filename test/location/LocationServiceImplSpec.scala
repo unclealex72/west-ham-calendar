@@ -5,10 +5,10 @@ import java.net.URL
 import org.scalamock.specs2.MockFactory
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
-import uk.co.unclealex.hammers.calendar.dao.{Transactional, GameDao}
-import uk.co.unclealex.hammers.calendar.model.Competition.PREM
-import uk.co.unclealex.hammers.calendar.model.{GameKey, Game}
-import uk.co.unclealex.hammers.calendar.model.Location.AWAY
+import dao.{Transactional, GameDao}
+import model.Competition.PREM
+import model.{GameKey, Game}
+import model.Location.AWAY
 import scala.concurrent._
 
 /**

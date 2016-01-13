@@ -22,13 +22,13 @@
 package services
 
 import models._
-import uk.co.unclealex.hammers.calendar.model.Game
+import model.Game
 import org.joda.time.DateTime
 import models.GameTimeType._
-import uk.co.unclealex.hammers.calendar.dates.DateTimeImplicits._
-import uk.co.unclealex.hammers.calendar.geo.GeoLocation
-import uk.co.unclealex.hammers.calendar.geo.GeoLocation._
-import uk.co.unclealex.hammers.calendar.model.Location._
+import dates.DateTimeImplicits._
+import geo.GeoLocation
+import geo.GeoLocation._
+import model.Location._
 import java.util.Date
 import models.TicketType._
 import models.GameTimeType

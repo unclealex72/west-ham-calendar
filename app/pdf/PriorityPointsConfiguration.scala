@@ -3,8 +3,8 @@ package pdf
 import argonaut.Argonaut._
 import argonaut._
 import pdf.PriorityPointsConfiguration.ClientType
-import uk.co.unclealex.hammers.calendar.model.PersistedClientType
-import uk.co.unclealex.hammers.calendar.model.PersistedClientType._
+import model.PersistedClientType
+import model.PersistedClientType._
 
 /**
  * Created by alex on 09/02/15.

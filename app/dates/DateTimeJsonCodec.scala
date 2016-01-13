@@ -22,9 +22,11 @@
 
 package dates
 
-import org.joda.time.format.ISODateTimeFormat
-import argonaut._, Argonaut._, DecodeResult._
+import argonaut.Argonaut._
+import argonaut.DecodeResult._
+import argonaut._
 import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
 
 /**
  * Serialisation and deserialisation into ISO 8601 UTC strings.

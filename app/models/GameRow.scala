@@ -21,15 +21,16 @@
  */
 package models
 
-import uk.co.unclealex.hammers.calendar.model.Competition
-import uk.co.unclealex.hammers.calendar.model.Location
-import uk.co.unclealex.hammers.calendar.geo.GeoLocation
+import dates.DateTimeJsonCodec
+import model.Competition
+import model.Location
+import geo.GeoLocation
 
 import argonaut._, Argonaut._, DecodeResult._
 import org.joda.time.DateTime
 import json.Json._
-import dates.DateTimeJsonCodec._
-import uk.co.unclealex.hammers.calendar.model.Location.HOME
+import DateTimeJsonCodec._
+import model.Location.HOME
 
 /**
  * @author alex

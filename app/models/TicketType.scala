@@ -18,8 +18,8 @@ package models
 
 import argonaut._, Argonaut._, DecodeResult._
 import org.joda.time.DateTime
-import uk.co.unclealex.hammers.calendar.html._
-import uk.co.unclealex.hammers.calendar.logging.{RemoteLogging, RemoteStream}
+import html._
+import logging.{RemoteLogging, RemoteStream}
 
 /**
  * The different types of tickets available from the website.

@@ -31,12 +31,12 @@ import location.{DispatchAsyncHttpClient, AsyncHttpClient, LocationServiceImpl, 
 import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsConfiguration, PriorityPointsPdfFactory}
 import securesocial.core.Authorization
 import services.{GameRowFactory, GameRowFactoryImpl}
-import uk.co.unclealex.hammers.calendar.cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
-import uk.co.unclealex.hammers.calendar.dao.{SquerylPriorityPointsConfigurationDao, PriorityPointsConfigurationDao, SquerylGameDao, Transactional}
-import uk.co.unclealex.hammers.calendar.dates.{DateService, DateServiceImpl, NowService, SystemNowService}
-import uk.co.unclealex.hammers.calendar.update._
-import uk.co.unclealex.hammers.calendar.update.fixtures.FixturesGameScanner
-import uk.co.unclealex.hammers.calendar.update.tickets.TicketsGameScanner
+import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
+import dao.{SquerylPriorityPointsConfigurationDao, PriorityPointsConfigurationDao, SquerylGameDao, Transactional}
+import dates.{DateService, DateServiceImpl, NowService, SystemNowService}
+import update._
+import update.fixtures.FixturesGameScanner
+import update.tickets.TicketsGameScanner
 
 /**
  * @author alex

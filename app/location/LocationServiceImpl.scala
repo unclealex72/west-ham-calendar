@@ -3,9 +3,9 @@ package location
 import java.net.URL
 import javax.inject.{Named, Inject}
 
-import uk.co.unclealex.hammers.calendar.dao.Transactional
-import uk.co.unclealex.hammers.calendar.geo.GeoLocation
-import uk.co.unclealex.hammers.calendar.model.Location.AWAY
+import dao.Transactional
+import geo.GeoLocation
+import model.Location.AWAY
 
 import scala.concurrent._
 import argonaut._, Argonaut._
