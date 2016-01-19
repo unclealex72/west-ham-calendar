@@ -26,6 +26,7 @@ package cal
 
 import scala.collection.Traversable
 import model.Game
+import model.Game._
 import dates.DateTimeImplicits._
 import org.joda.time.DateTime
 import org.joda.time.Duration

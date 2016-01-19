@@ -23,23 +23,25 @@ package controllers
 
 import java.io.StringWriter
 import java.net.URI
-import javax.inject.Inject
-import play.api.mvc.Action
-import cal.{LinkFactory, CalendarFactory, CalendarWriter}
-import model.Location.AWAY
-import search.AttendedSearchOption
-import search.GameOrTicketSearchOption
-import search.LocationSearchOption
-import play.api.mvc.Controller
-import javax.inject.Named
+import javax.inject.{Inject, Named}
+
+import cal.{CalendarFactory, CalendarWriter, LinkFactory}
+import com.mohiva.play.silhouette.api.Environment
+import com.mohiva.play.silhouette.impl.User
+import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, Controller}
+import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
 import update.LastUpdated
+import security.Definitions._
 
 /**
  * The controller that handles generating calendars.
- * @author alex
+  *
+  * @author alex
  *
  */
-class Calendar @Inject() (
+case class Calendar @Inject() (
   /**
    * The secret used to protect the update path.
    */
@@ -55,7 +57,8 @@ class Calendar @Inject() (
   /**
    * The calendar write used to write calendars.
    */
-  calendarWriter: CalendarWriter) extends Controller with Secret with Etag {
+  calendarWriter: CalendarWriter,
+  messagesApi: MessagesApi, env: Env) extends Secret with Etag {
 
   def searchSecure(secretPayload: String, attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     Secret(secretPayload) {

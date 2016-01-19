@@ -37,6 +37,6 @@ import model.PersistedPriorityPointsConfiguration
 class SquerylPriorityPointsConfigurationDao extends PriorityPointsConfigurationDao {
 
   def get: Option[PriorityPointsConfiguration] = inTransaction {
-    priorityPointsConfigurations.allRows.headOption.map(PersistedPriorityPointsConfiguration.toPriorityPointsConfiguration)
+    priorityPointsConfigurations.headOption.map(PersistedPriorityPointsConfiguration.toPriorityPointsConfiguration)
   }
 }

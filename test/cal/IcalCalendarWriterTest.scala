@@ -21,19 +21,17 @@
  */
 package cal
 
+import java.io.StringWriter
 import java.net.URI
 
-import org.specs2.mutable.Specification
-import uk.co.unclealex.hammers.calendar._
-import model.Competition._
-import model.Location
-import model.Location._
+import dates.{June, NowService, October, September}
 import geo.GeoLocation._
+import model.Competition._
+import model.Location._
 import org.joda.time.Duration
-import dates.{October, September, June, NowService}
+import org.specs2.mutable.Specification
+
 import scala.collection.SortedSet
-import java.io.PrintWriter
-import java.io.StringWriter
 
 /**
  * @author alex

@@ -22,18 +22,9 @@
 
 package dates
 
-import dates.{Instant, Date}
+import dates.DateTimeImplicits._
 import org.joda.time.DateTime
 import org.specs2.mutable.Specification
-import December
-import February
-import January
-import June
-import March
-import MonthAndDay
-import October
-import September
-import dates.DateTimeImplicits._
 
 /**
  * The Class DateServiceImplTest.
@@ -150,12 +141,11 @@ class DateServiceImplTest extends Specification {
    *          the possibly yearless date formats
    */
   def parseAndFind(
-    date: String,
-    parsingRules: Triple[Boolean, Date, Seq[String]],
-    expectedInstant: Option[Instant]) = {
+                    date: String,
+                    parsingRules: Triple[Boolean, Date, Seq[String]],
+                    expectedDateTime: Option[DateTime]) = {
     val (yearDeterminingDateIsLaterThanTheDate, yearDeterminingDate, possiblyYearlessDateFormats) = parsingRules
-    val expectedDateTime = expectedInstant map (_.toDateTime)
-    s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedInstant" in {
+    s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedDateTime" in {
       val actualDateTime =
         new DateServiceImpl().parsePossiblyYearlessDate(
           date,
@@ -168,7 +158,7 @@ class DateServiceImplTest extends Specification {
       val padding = (1 to paddingSize).map(_ => "x").mkString
       List(date, padding + date, date + padding, padding + date + padding)
     } foreach { date =>
-      s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedInstant" in {
+      s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedDateTime" in {
         val actualDateTime =
           new DateServiceImpl().findPossiblyYearlessDate(
             date,

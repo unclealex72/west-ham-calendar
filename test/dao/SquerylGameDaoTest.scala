@@ -21,37 +21,18 @@
  */
 package dao
 
+import dates.Date._
 import dates._
-import org.specs2.mutable.Specification
-import org.specs2.specification.Fragment
-import org.squeryl.Session
-import org.squeryl.SessionFactory
-import org.squeryl.adapters.H2Adapter
-import model.Competition
-import model.Game
-import model.GameKey
-import model.Location
-import java.sql.SQLException
-import org.squeryl.SquerylSQLException
-import Date._
-import September
-import January
-import May
-import February
-import April
-import March
-import scala.collection.SortedSet
-import scala.math.Ordering
-import search.LocationSearchOption
-import search.AttendedSearchOption
-import search.GameOrTicketSearchOption
-import scala.collection.mutable.Buffer
-import August
+import model.{Competition, Game, GameKey, Location}
 import org.joda.time.DateTime
-import scala.collection.mutable.Map
-import search.GameOrTicketSearchOption
-import org.scalamock.specs2.MockFactory
-import October
+import org.specs2.mutable.Specification
+import org.squeryl.{Session, SessionFactory}
+import org.squeryl.adapters.H2Adapter
+import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
+
+import scala.collection.SortedSet
+import scala.collection.mutable.{Buffer, Map}
+import dates.DateTimeImplicits._
 
 /**
  * @author alex
@@ -107,7 +88,7 @@ class SquerylGameDaoTest extends Specification {
           gameDao store Game(GameKey(Competition.FACP, Location.HOME, "Opponents", 2013))
           false
         } catch {
-          case _: SquerylSQLException => true
+          case _: Exception => true
         }
       }
       "be unique" in {

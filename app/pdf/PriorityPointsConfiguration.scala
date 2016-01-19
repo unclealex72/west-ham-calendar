@@ -30,7 +30,8 @@ object PriorityPointsConfiguration {
     DecodeJson { c =>
       c.as[String].flatMap { token =>
         val optClientType = clientTypeMappings.find(_._2 == token).map(_._1)
-        optClientType.map(DecodeResult.ok(_)).getOrElse(DecodeResult.fail(s"Unknown client type ${token}", c.history))
+        val optionalResult: Option[DecodeResult[ClientType]] = optClientType.map(DecodeResult.ok)
+        optionalResult.getOrElse(DecodeResult.fail(s"Unknown client type ${token}", c.history))
       }
     }
 

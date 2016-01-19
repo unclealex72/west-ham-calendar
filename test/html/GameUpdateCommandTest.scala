@@ -36,6 +36,7 @@ import model.Location
 import org.specs2.mutable.Specification
 import Date._
 import scala.reflect.ClassTag
+import dates.DateTimeImplicits._
 
 /**
  * The Class GameUpdateCommandTest.
@@ -215,14 +216,14 @@ class GameUpdateCommandTest extends Specification {
       DEFAULT_LOCATION,
       DEFAULT_OPPONENTS,
       DEFAULT_SEASON,
-      Some(DEFAULT_DATE_PLAYED),
-      Some(DEFAULT_BONDHOLDERS_AVAILABLE),
-      Some(DEFAULT_PRIORITY_POINT_AVAILABLE),
-      Some(DEFAULT_SEASON_TICKETS_AVAILABLE),
-      Some(DEFAULT_ACADEMY_TICKETS_AVAILABLE),
-      Some(DEFAULT_ACADEMY_POSTAL_TICKETS_AVAILABLE),
-      Some(DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE),
-      Some(DEFAULT_GENERAL_SALE_POSTAL_TICKETS_AVAILABLE),
+      Some(DEFAULT_DATE_PLAYED.toDateTime),
+      Some(DEFAULT_BONDHOLDERS_AVAILABLE.toDateTime),
+      Some(DEFAULT_PRIORITY_POINT_AVAILABLE.toDateTime),
+      Some(DEFAULT_SEASON_TICKETS_AVAILABLE.toDateTime),
+      Some(DEFAULT_ACADEMY_TICKETS_AVAILABLE.toDateTime),
+      Some(DEFAULT_ACADEMY_POSTAL_TICKETS_AVAILABLE.toDateTime),
+      Some(DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE.toDateTime),
+      Some(DEFAULT_GENERAL_SALE_POSTAL_TICKETS_AVAILABLE.toDateTime),
       Some(DEFAULT_RESULT),
       Some(DEFAULT_ATTENDENCE),
       Some(DEFAULT_MATCH_REPORT),

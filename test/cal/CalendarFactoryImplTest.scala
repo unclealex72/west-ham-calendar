@@ -21,27 +21,21 @@
  */
 package cal
 
-import dates.{September, August, July, Instant}
-import org.joda.time.DateTime
-import org.joda.time.Duration
-import org.scalamock.specs2.MockFactory
-import org.specs2.mutable.Specification
-import dao.GameDao
-import dao.Transactional
+import dao.{GameDao, Transactional}
+import dates.DateTimeImplicits._
+import dates.{August, July, September}
 import geo.GeoLocation
-import model.Competition
-import model.Game
-import model.GameKey
-import model.Location
-import search.{ AttendedSearchOption => A }
-import search.{ GameOrTicketSearchOption => G }
-import search.{ LocationSearchOption => L }
+import model.{Competition, Game, GameKey, Location}
+import org.joda.time.{DateTime, Duration}
+import org.specs2.mock.Mockito
+import org.specs2.mutable.Specification
+import search.{AttendedSearchOption => A, GameOrTicketSearchOption => G, LocationSearchOption => L}
 
 /**
  * @author alex
  *
  */
-class CalendarFactoryImplTest extends Specification with MockFactory {
+class CalendarFactoryImplTest extends Specification with Mockito {
 
   "The busy mask" should {
     val variations = List(
@@ -131,19 +125,19 @@ class CalendarFactoryImplTest extends Specification with MockFactory {
           val tx = new Transactional() {
             def tx[E](block: GameDao => E) = block(gameDao)
           }
-          (gameDao.search _) expects (a, l, g) returning (List(game))
+          gameDao.search(a, l, g) returns List(game)
           val actualCalendar = new CalendarFactoryImpl(tx).create(None, a, l, g)
-          actualCalendar.title must be equalTo (expectedTitle)
-          actualCalendar.events must have size (1)
-          actualCalendar.events.toList must be equalTo(List(expectedEvent))
+          actualCalendar.title must be equalTo expectedTitle
+          actualCalendar.events must have size 1
+          actualCalendar.events.toList must be equalTo List(expectedEvent)
         }
     }
     "nothing else" in {
-      1 must be equalTo(1)
+      1 must be equalTo 1
     }
   }
 
-  implicit class InstantImplicits(i: Instant) {
+  implicit class InstantImplicits(i: DateTime) {
     def lasting(hours: Int): Pair[DateTime, Duration] = (i, Duration.standardHours(hours))
   }
 }

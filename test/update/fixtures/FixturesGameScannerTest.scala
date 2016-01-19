@@ -6,18 +6,17 @@ import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import argonaut._
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import dates._
+import html._
 import logging.SimpleRemoteStream
+import model.Competition.{FACP, LGCP, PREM}
+import model.GameKey
+import model.Location.{AWAY, HOME}
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
 import org.specs2.mutable.Specification
 import org.specs2.specification._
-import uk.co.unclealex.hammers.calendar._
-import dates._
-import html._
-import model.Competition.{FACP, LGCP, PREM}
-import model.GameKey
-import model.Location.{AWAY, HOME}
 import update.fixtures.FixturesRequest._
 
 import scala.io.Source

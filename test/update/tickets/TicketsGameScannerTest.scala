@@ -4,32 +4,24 @@ import java.io.PrintWriter
 import java.net.URI
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import argonaut._
 import com.typesafe.scalalogging.slf4j.StrictLogging
+import dao.{GameDao, Transactional}
+import dates.{April, February, March}
+import html._
 import logging.SimpleRemoteStream
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
+import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.specification._
-import uk.co.unclealex.hammers.calendar._
-import dao.{Transactional, GameDao}
-import dates.{April, March, February, NowService}
-import html._
-import model.Competition.{FACP, LGCP, PREM}
-import model.{Game, GameKey}
-import model.Location.{AWAY, HOME}
-import update.{GameScanner, LastUpdated}
-import update.fixtures.FixturesRequest._
-import update.fixtures.{FixturesGameScanner, FixturesRequest}
 
 import scala.io.Source
-import org.scalamock.specs2._
 
 /**
  * Created by alex on 28/03/15.
  */
-class TicketsGameScannerTest extends Specification with StrictLogging with MockFactory with SimpleRemoteStream {
+class TicketsGameScannerTest extends Specification with StrictLogging with Mockito with SimpleRemoteStream {
 
 
   "The tickets game scanner" should {
@@ -38,7 +30,7 @@ class TicketsGameScannerTest extends Specification with StrictLogging with MockF
       val tx = new Transactional {
         def tx[T](block: GameDao => T): T = block(gameDao)
       }
-      (gameDao.getLatestSeason _) expects () returning (Some(2014))
+      gameDao.getLatestSeason returns Some(2014)
       val ticketsGameScanner = new TicketsGameScanner(new URI(s"http://localhost:$port"), tx)
       val gameUpdateCommands: List[GameUpdateCommand] = ticketsGameScanner.scan
       val arsenal = DatePlayedLocator(March(14, 2015) at 3 pm)

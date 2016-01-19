@@ -25,7 +25,7 @@ package update;
 import javax.inject.Inject
 
 import com.google.inject.name.Named
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import dao.{GameDao, Transactional}
 import dates.NowService
 import html.{DatePlayedLocator, GameKeyLocator, GameLocator, GameUpdateCommand}
@@ -61,7 +61,7 @@ class MainUpdateServiceImpl @Inject() (
   /**
    * The {@link NowService} used to get the current date and time.
    */
-  nowService: NowService) extends MainUpdateService with Logging {
+  nowService: NowService) extends MainUpdateService with StrictLogging {
 
   /**
    * Process all updates required in the database.

@@ -21,18 +21,19 @@
  */
 package controllers
 
-import play.api.mvc.Action
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import play.api.http.HeaderNames
-import play.api.mvc.Results.NotModified
-import com.typesafe.scalalogging.slf4j.Logging
-import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.mvc.Action
+import play.api.mvc.Results.NotModified
+
+import scala.concurrent.Future
 
 /**
  * A trait for controllers that allows for ETag headers to be queried and a 304 No Content to be returned if
  * the resource has not changed.
  */
-trait Etag extends Logging {
+trait Etag extends StrictLogging {
 
   def ETag[A](calculatedETag: String)(action: Action[A]): Action[A] =
     Action.async(action.parser) { implicit request =>

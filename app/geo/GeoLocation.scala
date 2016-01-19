@@ -21,23 +21,12 @@
  */
 package geo
 
-import java.io.{PrintWriter, FileWriter, IOException}
-import java.net.URL
-
-import location.{LocationServiceImpl, DispatchAsyncHttpClient}
+import argonaut.Argonaut._
+import argonaut._
+import com.rockymadden.stringmetric.similarity.JaroWinklerMetric
+import model.{Game, Location}
 
 import scala.collection.immutable.SortedMap
-import scala.concurrent.Await
-import scala.io.Source
-import scala.math.BigDecimal
-
-import com.rockymadden.stringmetric.similarity.JaroWinklerMetric
-import com.typesafe.scalalogging.slf4j.Logging
-
-import model.Game
-import model.Location
-
-import argonaut._, Argonaut._, DecodeResult._
 
 /**
  * Geographic locations of all UK football league stadia

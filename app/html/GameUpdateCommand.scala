@@ -24,7 +24,8 @@ package html;
 import scala.math.Ordered
 import org.joda.time.DateTime
 import model.Game
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.StrictLogging
+import dates.DateTimeImplicits._
 
 /**
  * A class used to encapsulate a possible update to a game as directed by an.
@@ -90,7 +91,7 @@ sealed abstract class BaseGameUpdateCommand[V](
   /**
    * The new date played value.
    */
-  val newValue: V) extends GameUpdateCommand(gameLocator) with Logging {
+  val newValue: V) extends GameUpdateCommand(gameLocator) with StrictLogging {
 
   override def update(game: Game): Boolean = {
     if (Some(newValue) != currentValue(game)) {

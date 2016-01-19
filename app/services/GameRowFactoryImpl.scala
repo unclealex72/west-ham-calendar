@@ -51,7 +51,7 @@ class GameRowFactoryImpl extends GameRowFactory {
     }
   }
 
-  def toRow(includeAttended: Boolean, ticketFormUrlFactory: TicketType => Option[Game => String]): Game => GameRow = { game =>
+  def toRow(includeAttended: Boolean, ticketFormUrlFactory: TicketType => Game => Option[String]): Game => GameRow = { game =>
     game.at match {
       case Some(gameAt) =>
         GameRow(
@@ -74,7 +74,7 @@ class GameRowFactoryImpl extends GameRowFactory {
     }
   }
 
-  def ticketFactory(game: Game, ticketFormUrlFactory: TicketType => Option[Game => String]): Map[TicketType.Name, TicketingInformation] = {
+  def ticketFactory(game: Game, ticketFormUrlFactory: TicketType => Game=> Option[String]): Map[TicketType.Name, TicketingInformation] = {
     implicit val dt = (date : Date) => new DateTime(date)
     val ticketsAt: Map[TicketType, Option[DateTime]] = Map(
       BondholderTicketType -> game.bondholdersAvailable,
@@ -84,7 +84,7 @@ class GameRowFactoryImpl extends GameRowFactory {
       GeneralSaleTicketType -> game.generalSaleAvailable)
     ticketsAt.foldLeft(Map.empty[TicketType.Name, TicketingInformation]) {
       case (tickets, (ticketType, Some(availableAt))) => {
-        val ticketFormUrl = ticketFormUrlFactory(ticketType).map(f => f(game))
+        val ticketFormUrl = ticketFormUrlFactory(ticketType)(game)
         tickets + (ticketType.name -> TicketingInformation(availableAt, ticketFormUrl))
       }
       case (tickets, _) => tickets

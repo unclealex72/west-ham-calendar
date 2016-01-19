@@ -2,25 +2,28 @@ package controllers
 
 import javax.inject.Inject
 
+import dao.Transactional
 import json.JsonResults
 import models.Globals
+import play.api.i18n.MessagesApi
 import play.api.mvc._
-import securesocial.core.Authorization
+import security.Definitions._
 import services.GameRowFactory
-import dao.Transactional
-class Application @Inject() (
-  /**
+
+case class Application @Inject() (
+                              /**
    * The authorization object to check for authorised users.
    */
-  val authorization: Authorization,
-  /**
+                              authorization: Auth,
+                              /**
    * The transactional object used to get games and seasons.
    */
-  tx: Transactional,
-  /**
+                              tx: Transactional,
+                              /**
    * The game row factory used to get game row models.
    */
-  gameRowFactory: GameRowFactory) extends Controller with Secure with TicketForms with JsonResults {
+                              gameRowFactory: GameRowFactory,
+                              messagesApi: MessagesApi, env: Env) extends Secure with TicketForms with JsonResults {
 
   implicit val implicitAuthorization = authorization
 
@@ -37,7 +40,7 @@ class Application @Inject() (
   def constants = UserAwareAction { implicit request =>
     val constants = tx { gameDao =>
       val seasons = gameDao.getAllSeasons
-      val username = emailAndName.map(_._2)
+      val username = emailAndUsername.map(_.name)
       Globals(seasons.toList, username)
     }
     Ok(views.js.constants(constants)).withHeaders(
@@ -45,7 +48,7 @@ class Application @Inject() (
   }
 
   def games(season: Int) = UserAwareAction { implicit request =>
-    val includeAttended = emailAndName.isDefined
+    val includeAttended = request.identity.isDefined
     json {
       tx { gameDao =>
         Map("games" -> gameDao.getAllForSeason(season).map(gameRowFactory.toRow(includeAttended, ticketFormUrlFactory))) }
@@ -53,7 +56,7 @@ class Application @Inject() (
   }
 
   def game(id: Long) = UserAwareAction { implicit request =>
-    val includeAttended = emailAndName.isDefined
+    val includeAttended = request.identity.isDefined
     json {
       tx { gameDao =>
         gameDao.findById(id).map(gameRowFactory.toRow(includeAttended, ticketFormUrlFactory(request))) }

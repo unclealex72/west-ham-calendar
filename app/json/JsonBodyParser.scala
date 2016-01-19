@@ -22,18 +22,13 @@
 
 package json
 
+import argonaut.DecodeJson
+import play.api.libs.json.{Json => PlayJson}
 import play.api.mvc.BodyParser
 import play.api.mvc.BodyParsers.parse.json
-import play.api.mvc.BodyParsers.parse.error
-import play.api.libs.json.JsValue
-import scala.concurrent.Future
-import play.api.Play
-import play.api.mvc.RequestHeader
-import play.api.mvc.Results
-import play.api.mvc.SimpleResult
-import play.api.libs.json.{Json => PlayJson}
+
+import scala.concurrent.ExecutionContext
 import scalaz.Validation
-import argonaut.DecodeJson
 
 /**
  * Parse JSON bodies into objects using {@link Json} support.
@@ -46,7 +41,7 @@ object JsonBodyParser {
    * Parse the body as Json if the Content-Type is text/json or application/json.
    * TODO: Error handling.
    */
-  def apply[T](implicit e: DecodeJson[T]): BodyParser[Validation[String, T]] = json map {
+  def apply[T](implicit e: DecodeJson[T], ec: ExecutionContext): BodyParser[Validation[String, T]] = json map {
     jsValue => Json.read[T](PlayJson.stringify(jsValue))
   }
 

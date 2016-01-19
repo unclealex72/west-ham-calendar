@@ -23,20 +23,26 @@ package module
 
 import java.net.URI
 
+import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
+import com.google.inject.Provides
 import com.typesafe.config.ConfigFactory
 import com.tzavellas.sse.guice.ScalaModule
-import controllers.Authorised
-import json.ConfigurationReader
-import location.{DispatchAsyncHttpClient, AsyncHttpClient, LocationServiceImpl, LocationService}
-import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsConfiguration, PriorityPointsPdfFactory}
-import securesocial.core.Authorization
-import services.{GameRowFactory, GameRowFactoryImpl}
-import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
-import dao.{SquerylPriorityPointsConfigurationDao, PriorityPointsConfigurationDao, SquerylGameDao, Transactional}
+import dao.{PriorityPointsConfigurationDao, SquerylGameDao, SquerylPriorityPointsConfigurationDao, Transactional}
 import dates.{DateService, DateServiceImpl, NowService, SystemNowService}
+import json.ConfigurationReader
+import location.{AsyncHttpClient, DispatchAsyncHttpClient, LocationService, LocationServiceImpl}
+import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsPdfFactory}
+import play.api.cache.CacheApi
+import security.Authorised
+import security.Definitions.Auth
+import security.models.daos.{CredentialsStorage, PlayCacheCredentialsStorage}
+import services.{GameRowFactory, GameRowFactoryImpl}
 import update._
 import update.fixtures.FixturesGameScanner
 import update.tickets.TicketsGameScanner
+
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 
 /**
  * @author alex
@@ -49,7 +55,7 @@ class CalendarModule extends ScalaModule {
    */
   val config = ConfigFactory.load()
 
-  override def configure {
+  override def configure() {
     // Persistence
     bind[NowService].to[SystemNowService]
     bind[Transactional].to[SquerylGameDao]
@@ -63,7 +69,7 @@ class CalendarModule extends ScalaModule {
     bind[GameScanner].annotatedWithName("fixturesGameScanner").to[FixturesGameScanner]
     bind[GameScanner].annotatedWithName("ticketsGameScanner").to[TicketsGameScanner]
     bind[MainUpdateService].to[MainUpdateServiceImpl]
-    
+
     // Calendars
     bind[CalendarFactory].to[CalendarFactoryImpl]
     bind[CalendarWriter].to[IcalCalendarWriter]
@@ -76,15 +82,20 @@ class CalendarModule extends ScalaModule {
     //MVC
     bind[GameRowFactory].to[GameRowFactoryImpl]
     bind[String].annotatedWithName("secret").toInstance(config.getString("secret"))
-    
-    //Authorisation
-    val validUsers = ((path: String) => if (config.hasPath(path)) config.getString(path) else "")("valid-users.users")
-    bind[Authorization].toInstance(Authorised(validUsers.split(",").map(_.trim())))
 
     // PDF
     bind[PriorityPointsPdfFactory].to[PdfBoxPriorityPointsPdfFactory]
     bind[PdfPositioning].toInstance(ConfigurationReader[PdfPositioning]("pdf-positioning.json"))
     bind[PriorityPointsConfigurationDao].to[SquerylPriorityPointsConfigurationDao]
+
+    // Security
+
+    val validUsers = ((path: String) => if (config.hasPath(path)) config.getString(path) else "")("valid-users.users")
+    bind[Auth].toInstance(Authorised(validUsers.split(",").map(_.trim())))
   }
 
+  @Provides
+  def provideCredentialsStorage(cacheApi: CacheApi)(implicit ec: ExecutionContext): CredentialsStorage = {
+    new PlayCacheCredentialsStorage(cacheApi, 15.minutes)
+  }
 }

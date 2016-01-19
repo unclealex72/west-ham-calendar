@@ -33,7 +33,9 @@ class PlayCacheLastUpdated extends LastUpdated {
 
   val cacheKey = s"${getClass()}.lastUpdated";
   
-  def at(lastUpdatedTime: DateTime) = Cache.set(cacheKey, lastUpdatedTime)
+  def at(lastUpdatedTime: DateTime) = {
+    Cache.set(cacheKey, lastUpdatedTime)
+  }
   
   def when = Cache.get(cacheKey) map { _.asInstanceOf[DateTime]}
 }

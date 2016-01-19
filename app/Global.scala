@@ -26,39 +26,20 @@
  * @author alex
  *
  */
-import org.squeryl.Session
-import org.squeryl.SessionFactory
-import org.squeryl.adapters.H2Adapter
-import org.squeryl.adapters.PostgreSqlAdapter
-import org.squeryl.internals.DatabaseAdapter
 import com.google.inject.Guice
-import com.typesafe.config.ConfigFactory
-import com.typesafe.scalalogging.slf4j.Logging
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import module.CalendarModule
-import play.api.Application
-import play.api.GlobalSettings
+import org.squeryl.{Session, SessionFactory}
+import org.squeryl.adapters.{H2Adapter, PostgreSqlAdapter}
+import org.squeryl.internals.DatabaseAdapter
+import play.api.{Application, GlobalSettings}
 import play.api.db.DB
-import play.api.mvc.Action
-import play.api.mvc.Handler
-import play.api.mvc.RequestHeader
 import play.api.mvc.Results
-import dao.SquerylGameDao
-import play.api.Configuration
-import java.io.File
-import play.api.Mode
 
 /**
  * The Play Framework global entry point.
  */
-object Global extends GlobalSettings with Logging with Results {
-
-  // Guice
-  private lazy val injector = Guice.createInjector(new CalendarModule)
-
-  // Guice
-  override def getControllerInstance[A](clazz: Class[A]) = {
-    injector.getInstance(clazz)
-  }
+object Global extends GlobalSettings with StrictLogging with Results {
 
   override def onStart(app: Application) {
     logger info "Setting up database access."

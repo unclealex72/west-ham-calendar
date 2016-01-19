@@ -21,46 +21,47 @@
  */
 package controllers
 
-import java.io.PrintWriter
-import java.io.StringWriter
-import javax.inject.Inject
-import javax.inject.Named
-import play.api.mvc.Action
-import play.api.mvc.Request
-import play.api.mvc.Results._
-import play.mvc.Controller
-import securesocial.core.Authorization
-import update.MainUpdateService
-import scala.concurrent.ExecutionContext.Implicits.global
-import play.api.libs.iteratee.Concurrent
-import play.api.mvc.ChunkedResult
-import play.api.mvc.ResponseHeader
-import logging.RemoteStream
+import javax.inject.{Inject, Named}
+
+import com.mohiva.play.silhouette.api.{Environment, Silhouette, Authorization}
+import com.mohiva.play.silhouette.impl.User
+import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import json.JsonResults
+import logging.RemoteStream
 import model.Game
+import play.api.i18n.MessagesApi
+import play.api.libs.iteratee.Concurrent
+import play.api.mvc.Action
+import play.mvc.Controller
 import services.GameRowFactory
+import update.MainUpdateService
+
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import security.Definitions._
 
 /**
  * @author alex
  *
  */
-class Update @Inject() (
-  /**
+case class Update @Inject() (
+                         /**
    * The secret used to protect the update path.
    */
-  @Named("secret") val secret: String,
-  /**
+                         @Named("secret") val secret: String,
+                         /**
    * The authorization object used to check a user is authorised.
    */
-  val authorization: Authorization,
-  /**
+                         val authorization: Auth,
+                         /**
    * The main update service used to scrape the West Ham site and update game information.
    */
-  mainUpdateService: MainUpdateService,
-  /**
+                         mainUpdateService: MainUpdateService,
+                         /**
    * The game row factory used to get game row models.
    */
-  gameRowFactory: GameRowFactory) extends Controller with Secure with Secret with TicketForms with JsonResults {
+                         gameRowFactory: GameRowFactory,
+                         messagesApi: MessagesApi, env: Env) extends Secure with Secret with TicketForms with JsonResults {
 
   implicit val implicitAuthorization = authorization
 
@@ -89,7 +90,7 @@ class Update @Inject() (
    * Attend or unattend a game.
    */
   def attendOrUnattend(gameUpdater: Long => Option[Game], gameId: Long) =
-    SecuredAction(true, authorization) { implicit request =>
+    SecuredAction(authorization) { implicit request =>
       json(gameUpdater(gameId).map(gameRowFactory.toRow(true, ticketFormUrlFactory)))
     }
 

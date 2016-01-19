@@ -1,7 +1,6 @@
 package logging
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import logging.RemoteStream
 
 /**
  * A trait used for tests so that an implicit remote stream can be injected.

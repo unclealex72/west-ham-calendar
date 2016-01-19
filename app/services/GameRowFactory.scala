@@ -35,5 +35,5 @@ trait GameRowFactory {
    * Convert a game into a game row.
    * @param includeAttended True if the attended flag should be included, false otherwise.
    */
-  def toRow(includeAttended: Boolean, ticketFormUrlFactory: TicketType => Option[Game => String]): Game => GameRow
+  def toRow(includeAttended: Boolean, ticketFormUrlFactory: TicketType => Game => Option[String]): Game => GameRow
 }

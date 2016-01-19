@@ -21,16 +21,12 @@
  */
 package models
 
-import dates.DateTimeJsonCodec
-import model.Competition
-import model.Location
+import argonaut.Argonaut._
+import argonaut._
+import dates.DateTimeJsonCodec._
 import geo.GeoLocation
-
-import argonaut._, Argonaut._, DecodeResult._
+import model.{Competition, Location}
 import org.joda.time.DateTime
-import json.Json._
-import DateTimeJsonCodec._
-import model.Location.HOME
 
 /**
  * @author alex
@@ -45,7 +41,7 @@ object GameTimeType extends Enumeration {
  * The types of tickets available from West Ham Utd.
  */
 
-import GameTimeType._
+import models.GameTimeType._
 
 /**
  * A game row allows a game to be shown as a row in a table.

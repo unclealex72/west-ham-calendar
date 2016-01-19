@@ -21,12 +21,14 @@
  */
 package model
 
+import java.sql.Timestamp
+
+import dates.DateTimeImplicits._
+import model.Location._
 import org.joda.time.DateTime
 import org.squeryl.KeyedEntity
-import org.squeryl.dsl.CompositeKey4
-import Competition._
-import Location._
 import org.squeryl.annotations.Column
+import org.squeryl.dsl.CompositeKey4
 
 /**
  * A persistable unit that represents an advertised West Ham game.
@@ -55,35 +57,35 @@ case class Game(
   /**
    * The {@link DateTime} the game was played.
    */
-  var at: Option[DateTime],
+  var at: Option[Timestamp],
   /**
    * The {@link DateTime} that Bondholder tickets went on sale.
    */
-  @Column("bondholders") var bondholdersAvailable: Option[DateTime],
+  @Column("bondholders") var bondholdersAvailable: Option[Timestamp],
   /**
    * The {@link DateTime} that priority point tickets went on sale.
    */
-  @Column("prioritypoint") var priorityPointAvailable: Option[DateTime],
+  @Column("prioritypoint") var priorityPointAvailable: Option[Timestamp],
   /**
    * The {@link DateTime} that season ticker holder tickets went on sale.
    */
-  @Column("seasontickets") var seasonTicketsAvailable: Option[DateTime],
+  @Column("seasontickets") var seasonTicketsAvailable: Option[Timestamp],
   /**
    * The {@link DateTime} that Academy members' tickets went on sale.
    */
-  @Column("academymembers") var academyMembersAvailable: Option[DateTime],
+  @Column("academymembers") var academyMembersAvailable: Option[Timestamp],
   /**
    * The {@link DateTime} that Academy members' postal tickets went on sale.
    */
-  @Column("academymemberspostal") var academyMembersPostalAvailable: Option[DateTime],
+  @Column("academymemberspostal") var academyMembersPostalAvailable: Option[Timestamp],
   /**
    * The {@link DateTime} that tickets went on general sale.
    */
-  @Column("generalsale") var generalSaleAvailable: Option[DateTime],
+  @Column("generalsale") var generalSaleAvailable: Option[Timestamp],
   /**
    * The {@link DateTime} that tickets went on postal general sale.
    */
-  @Column("generalsalepostal") var generalSalePostalAvailable: Option[DateTime],
+  @Column("generalsalepostal") var generalSalePostalAvailable: Option[Timestamp],
   /**
    * The game's result.
    */
@@ -108,7 +110,7 @@ case class Game(
   /**
    * The date and time at which this game entry was originally created.
    */
-  @Column("datecreated") var dateCreated: DateTime,
+  @Column("datecreated") var dateCreated: Timestamp,
   /**
    * The date and time at which this game entry was last updated.
    */

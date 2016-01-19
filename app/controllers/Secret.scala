@@ -21,17 +21,17 @@
  */
 package controllers
 
-import play.api.mvc.Action
-import play.api.mvc.Results.NotFound
-import scala.concurrent.Future
 import play.api.libs.concurrent.Execution.Implicits._
+import play.api.mvc.{Action, Controller}
+
+import scala.concurrent.Future
 
 /**
  * A trait that defines a secret action that is kept secret(ish) by its path containing a random string
  * @author alex
  *
  */
-trait Secret {
+trait Secret extends Controller {
 
   /**
    * The secret part of the path.

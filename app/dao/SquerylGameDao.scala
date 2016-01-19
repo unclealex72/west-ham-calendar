@@ -21,21 +21,18 @@
  */
 package dao
 
-import SquerylEntryPoint._
-import model.Game
-import org.squeryl.Schema
-import org.joda.time.DateTime
-import scala.collection.SortedSet
-import model.Location
-import model.Competition
-import search.SearchOption
-import search.AttendedSearchOption
-import search.LocationSearchOption
-import search.GameOrTicketSearchOption
-import org.squeryl.dsl.ast.LogicalBoolean
-import CalendarSchema._
 import javax.inject.Inject
+
+import dao.CalendarSchema._
+import dao.SquerylEntryPoint._
+import dates.DateTimeImplicits._
 import dates.NowService
+import model.{Competition, Game, Location}
+import org.joda.time.DateTime
+import org.squeryl.dsl.ast.LogicalBoolean
+import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption, SearchOption}
+
+import scala.collection.SortedSet
 
 /**
  * The Squeryl implementation of both GameDao and Transactional.
@@ -66,7 +63,7 @@ class SquerylGameDao @Inject() (
 
   def findById(id: Long): Option[Game] = games.lookup(id)
 
-  def findByDatePlayed(datePlayed: DateTime): Option[Game] = games.where(g => g.at === Some(datePlayed))
+  def findByDatePlayed(datePlayed: DateTime): Option[Game] = games.where(g => g.at === Some(convertToJdbc(datePlayed)))
 
   def getAllForSeason(season: Int): List[Game] = from(games)(g => where(g.season === season) select (g) orderBy (g.at))
 

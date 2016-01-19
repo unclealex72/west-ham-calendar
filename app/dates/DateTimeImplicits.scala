@@ -24,9 +24,10 @@
 
 package dates
 
-import org.joda.time.DateTime
-import org.joda.time.DateTimeConstants
+import java.sql.Timestamp
 import java.util.Date
+
+import org.joda.time.{DateTime, DateTimeConstants}
 
 /**
  * Implicit predicates for DateTimes.
@@ -42,6 +43,12 @@ object DateTimeImplicits {
 
   implicit val asJavaDate: DateTime => Date = dt => new Date(dt.getMillis)
   implicit val asOptionalJavaDate: Option[DateTime] => Option[Date] = odt => odt map asJavaDate
+
+  implicit val convertFromJdbc: Timestamp => DateTime = t => JodaDateTime(t)
+  implicit val convertToJdbc: DateTime => Timestamp = t => new Timestamp(t.getMillis)
+
+  implicit val oConvertFromJdbc: Option[Timestamp] => Option[DateTime] = _.map(convertFromJdbc)
+  implicit val oConvertToJdbc: Option[DateTime] => Option[Timestamp] = _.map(convertToJdbc)
 
   implicit class Implicits(dateTime: DateTime) {
 

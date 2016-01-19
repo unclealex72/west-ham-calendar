@@ -2,22 +2,24 @@ package controllers
 
 import javax.inject.Inject
 
+import com.mohiva.play.silhouette.api.{Environment, Authorization, Silhouette}
+import com.mohiva.play.silhouette.impl.User
+import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import pdf.{Client, PriorityPointsPdfFactory}
-import play.Routes
+import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Enumerator
-import play.mvc.Controller
-import securesocial.core.Authorization
 import dao.Transactional
 import play.api.libs.concurrent.Execution.Implicits._
+import security.Definitions._
 
 /**
  * Created by alex on 12/02/15.
  */
-class PriorityPointsPdf @Inject() (
+case class PriorityPointsPdf @Inject() (
                                     /**
                                      * The authorization object used to check a user is authorised.
                                      */
-                                    val authorization: Authorization,
+                                    val authorization: Auth,
                                     /**
                                      * The transactional object used to get games and seasons.
                                      */
@@ -25,7 +27,8 @@ class PriorityPointsPdf @Inject() (
                                     /**
                                      * The game row factory used to get game row models.
                                      */
-                                    priorityPointsPdfFactory: PriorityPointsPdfFactory) extends Controller with Secure {
+                                    priorityPointsPdfFactory: PriorityPointsPdfFactory,
+                                    messagesApi: MessagesApi, env: Env) extends Secure {
 
   def priorityPoints(gameId: Long) = SecuredAction(authorization) { implicit request =>
     tx { gameDao =>
