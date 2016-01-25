@@ -1,24 +1,22 @@
 package pdf
 
-import java.io.{FileOutputStream, OutputStream}
+import java.io.OutputStream
 import javax.inject.Inject
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
 import org.apache.pdfbox.pdmodel.font.PDType1Font
 import org.apache.pdfbox.pdmodel.{PDDocument, PDPage}
-import dao.PriorityPointsConfigurationDao
-import model.PersistedClientType.{Junior, OAP}
+import pdf.ClientType.{Junior, OAP}
 
-import scala.sys.process._
 /**
  * Created by alex on 08/02/15.
  */
-class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, priorityPointsConfigurationDao: PriorityPointsConfigurationDao) extends PriorityPointsPdfFactory with App with StrictLogging {
+class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning) extends PriorityPointsPdfFactory with App with StrictLogging {
 
-  override def generate(team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit = {
+  override def generate(priorityPointsConfiguration: PriorityPointsConfiguration, team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit = {
     try {
-     doGenerate(team, league, clientFilter, out)
+     doGenerate(priorityPointsConfiguration, team, league, clientFilter, out)
     }
     catch {
       case e: Exception => {
@@ -28,11 +26,7 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning, 
     }
   }
 
-  def doGenerate(team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit = {
-    val priorityPointsConfiguration = priorityPointsConfigurationDao.get.getOrElse {
-      throw new IllegalStateException("No configuration for the priorty points PDF form has been set.")
-    }
-
+  def doGenerate(priorityPointsConfiguration: PriorityPointsConfiguration, team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit = {
     val url = classOf[PdfBoxPriorityPointsPdfFactory].getResource("prioritypoints.pdf")
     val document = PDDocument.load(url)
     val page = document.getDocumentCatalog.getAllPages.get(0).asInstanceOf[PDPage]

@@ -27,7 +27,7 @@ import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWr
 import com.google.inject.Provides
 import com.typesafe.config.ConfigFactory
 import com.tzavellas.sse.guice.ScalaModule
-import dao.{PriorityPointsConfigurationDao, SquerylGameDao, SquerylPriorityPointsConfigurationDao, Transactional}
+import dao._
 import dates.{DateService, DateServiceImpl, NowService, SystemNowService}
 import json.ConfigurationReader
 import location.{AsyncHttpClient, DispatchAsyncHttpClient, LocationService, LocationServiceImpl}
@@ -58,7 +58,7 @@ class CalendarModule extends ScalaModule {
   override def configure() {
     // Persistence
     bind[NowService].to[SystemNowService]
-    bind[Transactional].to[SquerylGameDao]
+    bind[GameDao].to[SlickGameDao]
 
     // Dates
     bind[DateService].to[DateServiceImpl]
@@ -86,7 +86,7 @@ class CalendarModule extends ScalaModule {
     // PDF
     bind[PriorityPointsPdfFactory].to[PdfBoxPriorityPointsPdfFactory]
     bind[PdfPositioning].toInstance(ConfigurationReader[PdfPositioning]("pdf-positioning.json"))
-    bind[PriorityPointsConfigurationDao].to[SquerylPriorityPointsConfigurationDao]
+    bind[PriorityPointsConfigurationDao].to[SlickPriorityPointsConfigurationDao]
 
     // Security
 

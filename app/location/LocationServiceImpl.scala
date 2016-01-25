@@ -1,15 +1,15 @@
 package location
 
 import java.net.URL
-import javax.inject.{Named, Inject}
+import javax.inject.{Inject, Named}
 
-import dao.Transactional
+import argonaut._
+import dao.GameDao
 import geo.GeoLocation
-import model.Location.AWAY
-
+import monads.FO
+import scalaz._
+import Scalaz._
 import scala.concurrent._
-import argonaut._, Argonaut._
-import play.api.libs.concurrent.Execution.Implicits._
 
 /**
  * The default implementation of LocationService.
@@ -17,16 +17,16 @@ import play.api.libs.concurrent.Execution.Implicits._
  */
 class LocationServiceImpl @Inject() (
                                       val asyncHttpClient: AsyncHttpClient,
-                                      val tx: Transactional,
-                                      @Named("locationClientKey") val locationClientKey: String) extends LocationService {
+                                      val gameDao: GameDao,
+                                      @Named("locationClientKey") val locationClientKey: String)(implicit ec: ExecutionContext) extends LocationService {
 
   override def location(gameId: Long): Future[Option[URL]] = {
-    tx(_.findById(gameId)) flatMap (GeoLocation(_)) match {
-      case Some(geoLocation) => {
-        generateUrl(geoLocation)
-      }
-      case None => Promise.successful(None).future
-    }
+    val urlT = for {
+      game <- FO <~ gameDao.findById(gameId)
+      geo <- FO <~ GeoLocation(game)
+      url <- FO <~ generateUrl(geo)
+    } yield url
+    urlT.run
   }
 
   def generateUrl(geoLocation: GeoLocation): Future[Option[URL]] = {
@@ -34,13 +34,12 @@ class LocationServiceImpl @Inject() (
       "maps.googleapis.com",
       Seq("maps", "api", "place", "details", "json"),
       Map("placeid" -> geoLocation.placeId, "key" -> locationClientKey))
-    futureOptionalBody.map { optionalBody =>
-      for {
-        body <- optionalBody
-        json <- Parse.parseOption(body)
-        locationField <- (json.acursor --\ "result" --\ "url").focus
-        location <- locationField.string
-      } yield new URL(location)
-    }
+    val urlT = for {
+      body <- FO <~ futureOptionalBody
+      json <- FO <~ Parse.parseOption(body)
+      locationField <- FO <~ (json.acursor --\ "result" --\ "url").focus
+      location <- FO <~ locationField.string
+    } yield new URL(location)
+    urlT.run
   }
 }

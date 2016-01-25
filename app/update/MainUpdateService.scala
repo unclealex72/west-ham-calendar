@@ -26,6 +26,8 @@ import java.io.IOException
 import logging.RemoteStream
 import model.Game
 
+import scala.concurrent.Future
+
 /**
  * The service used to combine reading game information from the web and
  * transforming that information into google calendars.
@@ -45,7 +47,7 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def attendGame(gameId: Long): Option[Game]
+  def attendGame(gameId: Long): Future[Option[Game]]
 
   /**
    * Move a game to the unattendend calendar.
@@ -57,7 +59,7 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def unattendGame(gameId: Long): Option[Game]
+  def unattendGame(gameId: Long): Future[Option[Game]]
 
   /**
    * Attend all home games in a season.
@@ -69,11 +71,12 @@ trait MainUpdateService {
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def attendAllHomeGamesForSeason(season: Int): List[Game]
+  def attendAllHomeGamesForSeason(season: Int): Future[List[Game]]
 
   /**
    * Update a list of game update commands from an HTML scan.
-   * @return The number of games processed.
+    *
+    * @return The number of games processed.
    */
-  def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Int
+  def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Future[Int]
 }

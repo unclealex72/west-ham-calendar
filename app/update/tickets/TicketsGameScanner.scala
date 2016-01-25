@@ -3,34 +3,33 @@ package update.tickets
 import java.net.URI
 import javax.inject.Inject
 
+import dao.GameDao
+import dates.PossiblyYearlessDateParser
+import html._
+import logging.{RemoteLogging, RemoteStream}
 import models._
 import org.apache.http.client.utils.URIBuilder
 import org.htmlcleaner.{HtmlCleaner, SimpleXmlSerializer}
 import org.joda.time.DateTime
-import dao.Transactional
-import dates.PossiblyYearlessDateParser
-import html._
-import logging.{RemoteLogging, RemoteStream}
 import update.GameScanner
 
-import scala.xml.{NodeSeq, Elem, Node, XML}
+import scala.xml.{Elem, Node, XML}
 
 /**
  * Created by alex on 28/03/15.
  */
-class TicketsGameScanner @Inject() (val rootUri: URI, val tx: Transactional) extends GameScanner with RemoteLogging {
+class TicketsGameScanner @Inject() (val rootUri: URI) extends GameScanner with RemoteLogging {
 
-  override def scan(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
-    val latestSeason = tx { gameDao => gameDao.getLatestSeason }
+  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
     latestSeason match {
-      case Some(latestSeason) => {
+      case Some(ls) => {
         val ticketsUri = new URIBuilder(rootUri).setPath("/Tickets/Match-Tickets").build()
         val ticketsXml = loadPage(ticketsUri)
         val matchRegex = "(?:Home|Away)-Matches".r
         for {
           a <- (ticketsXml \\ "a").toList
           href <- a.attributes.asAttrMap.get("href").toList if matchRegex.findFirstMatchIn(href).isDefined
-          updateCommands <- createUpdateCommands(latestSeason, rootUri.resolve(new URI(href)))
+          updateCommands <- createUpdateCommands(ls, rootUri.resolve(new URI(href)))
         } yield updateCommands
       }
       case _ => {
@@ -60,7 +59,7 @@ class TicketsGameScanner @Inject() (val rootUri: URI, val tx: Transactional) ext
 
     object NodeImplicits {
       implicit class NodeHasAttribute(node: Node) {
-        def hasAttr(name: String, value: String): Boolean = node.attributes.asAttrMap.get(name) == Some(value)
+        def hasAttr(name: String, value: String): Boolean = node.attributes.asAttrMap.get(name).contains(value)
         def hasClass(value: String) = hasAttr("class", value)
         def trimmed: String = node.text.trim
       }

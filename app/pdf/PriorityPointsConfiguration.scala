@@ -2,9 +2,7 @@ package pdf
 
 import argonaut.Argonaut._
 import argonaut._
-import pdf.PriorityPointsConfiguration.ClientType
-import model.PersistedClientType
-import model.PersistedClientType._
+import model.PersistableEnumeration
 
 /**
  * Created by alex on 09/02/15.
@@ -18,9 +16,23 @@ case class ContactDetails(address: String, daytimeTelephoneNumber: String, mobil
 case class CreditCard(number: String, expiry: CreditCardDate, securityCode: Int, nameOnCard: String)
 case class CreditCardDate(month: Int, year: Int)
 
+sealed trait ClientType extends ClientType.Value
+
+object ClientType extends PersistableEnumeration[ClientType] {
+  case object OAP extends ClientType {
+    val persistableToken = "OAP"
+  }
+  OAP
+
+  case object Junior extends ClientType {
+    val persistableToken = "JUNIOR"
+  }
+  Junior
+}
+
 object PriorityPointsConfiguration {
 
-  type ClientType = PersistedClientType
+  import ClientType._
 
   // JSON codecs
   private val clientTypeMappings = Seq(OAP -> "oap", Junior -> "junior")
@@ -31,7 +43,7 @@ object PriorityPointsConfiguration {
       c.as[String].flatMap { token =>
         val optClientType = clientTypeMappings.find(_._2 == token).map(_._1)
         val optionalResult: Option[DecodeResult[ClientType]] = optClientType.map(DecodeResult.ok)
-        optionalResult.getOrElse(DecodeResult.fail(s"Unknown client type ${token}", c.history))
+        optionalResult.getOrElse(DecodeResult.fail(s"Unknown client type $token", c.history))
       }
     }
 

@@ -23,8 +23,7 @@ package update
 
 import java.net.URI
 
-import dao.{GameDao, Transactional}
-import dates.DateTimeImplicits._
+import dao.GameDao
 import dates.{Instant, NowService, September}
 import html.{AttendenceUpdateCommand, DatePlayedLocator, DatePlayedUpdateCommand, GameKeyLocator, GameUpdateCommand, SeasonTicketsUpdateCommand}
 import logging.SimpleRemoteStream
@@ -32,8 +31,12 @@ import model.Competition._
 import model.Location._
 import model.{Game, GameKey}
 import org.joda.time.DateTime
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
+
+import scala.concurrent.Future
+import scala.concurrent.duration._
 
 /**
  * @author alex
@@ -41,177 +44,197 @@ import org.specs2.mutable.Specification
  */
 class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRemoteStream {
 
+  sequential
+
   val TICKETS_URL = new URI("http://tickets")
   val FIXTURES_URL = new URI("http://fixtures")
   val SOUTHAMPTON = GameKey(FACP, HOME, "Southampton", 2014)
   val LIVERPOOL = GameKey(FACP, HOME, "Liverpool", 2014)
+  val LATEST_SEASON = Some(2015)
 
   "Adding a completely new game" should {
-    "create and update a new game" in {
+    "create and update a new game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      s.gameDao.getAll returns List.empty[Game]
-      s.fixturesGameScanner.scan(remoteStream) returns List(
+      implicit val nowService = s.nowService
+      s.gameDao.getAll returns Future.successful(List.empty[Game])
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns List(
         DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0)))
-      s.ticketsGameScanner.scan(remoteStream) returns List.empty[GameUpdateCommand]
-      val expectedStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-      }
-      s.gameDao.store(expectedStoredGame) returns expectedStoredGame
-      s.nowService.now returns s.now
-      s.mainUpdateService.processDatabaseUpdates()(remoteStream) must be equalTo 1
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns List.empty[GameUpdateCommand]
+      val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(at = Some(September(5, 2013) at (15, 0)))
+      s.gameDao.store(expectedStoredGame) returns Future.successful(expectedStoredGame)
+      s.mainUpdateService.processDatabaseUpdates()(remoteStream) must be_==(1).await
+      there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
   }
 
   "Updating an existing game with new information" should {
-    "update the game" in {
+    "update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      val existingStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-      }
-      s.gameDao.getAll returns List(existingStoredGame)
-      s.fixturesGameScanner.scan(remoteStream) returns List(
+      implicit val nowService = s.nowService
+      val existingStoredGame = Game.gameKey(SOUTHAMPTON).copy(
+        at = Some(September(5, 2013) at (15, 0))
+      )
+      s.gameDao.getAll returns Future.successful(List(existingStoredGame))
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns List(
         AttendenceUpdateCommand(SOUTHAMPTON, 34966))
-      s.ticketsGameScanner.scan(remoteStream) returns List.empty[GameUpdateCommand]
-      val expectedStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-        g.attendence = Some(34966)
-      }
-      s.gameDao.store(expectedStoredGame) returns expectedStoredGame
-      s.nowService.now returns s.now
-      s.mainUpdateService.processDatabaseUpdates() must be equalTo 1
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns List.empty[GameUpdateCommand]
+      val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(
+        at = Some(September(5, 2013) at (15, 0)),
+        attendance = Some(34966)
+      )
+      s.gameDao.store(expectedStoredGame) returns Future.successful(expectedStoredGame)
+      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+      there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
   }
 
   "Updating an existing game with no extra information" should {
-    "not update the game" in {
+    "not update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      val existingStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-        g.attendence = Some(34966)
-      }
-      s.gameDao.getAll returns List(existingStoredGame)
-      s.fixturesGameScanner.scan(remoteStream) returns List(
+      implicit val nowService = s.nowService
+      val existingStoredGame = Game.gameKey(SOUTHAMPTON).copy(
+        at = Some(September(5, 2013) at (15, 0)),
+        attendance = Some(34966)
+      )
+      s.gameDao.getAll returns Future.successful(List(existingStoredGame))
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns List(
         AttendenceUpdateCommand(SOUTHAMPTON, 34966))
-      s.ticketsGameScanner.scan(remoteStream) returns List.empty[GameUpdateCommand]
-      s.nowService.now returns s.now
-      s.mainUpdateService.processDatabaseUpdates() must be equalTo 1
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns List.empty[GameUpdateCommand]
+      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+      there were no(s.gameDao).store(any[Game])(any[NowService])
       there was one(s.lastUpdated).at(s.now)
     }
   }
 
   "Updating an existing game with new ticket information" should {
-    "update the game" in {
+    "update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      val existingStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-      }
-      s.gameDao.getAll returns List(existingStoredGame)
-      s.fixturesGameScanner.scan(remoteStream) returns List.empty
-      s.ticketsGameScanner.scan(remoteStream) returns List(
+      implicit val nowService = s.nowService
+      val existingStoredGame = Game.gameKey(SOUTHAMPTON).copy(
+        at = Some(September(5, 2013) at (15, 0))
+      )
+      s.gameDao.getAll returns Future.successful(List(existingStoredGame))
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns List.empty
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns List(
         SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0)))
-      val expectedStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-        g.seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
-      }
-      s.gameDao.store(expectedStoredGame) returns expectedStoredGame
-      s.nowService.now returns s.now
-      s.mainUpdateService.processDatabaseUpdates() must be equalTo 1
+      val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(
+        at = Some(September(5, 2013) at (15, 0)),
+        seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
+      )
+      s.gameDao.store(expectedStoredGame)(s.nowService) returns Future.successful(expectedStoredGame)
+      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+      there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
   }
 
   "Updating an existing game with no new ticket information" should {
-    "not update the game" in {
+    "not update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      val existingStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-        g.seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
-      }
-      s.gameDao.getAll returns List(existingStoredGame)
-      s.fixturesGameScanner.scan(remoteStream) returns List.empty
-      s.ticketsGameScanner.scan(remoteStream) returns List(
+      implicit val nowService = s.nowService
+      val existingStoredGame = Game.gameKey(SOUTHAMPTON).copy(
+        at = Some(September(5, 2013) at (15, 0)),
+        seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
+      )
+      s.gameDao.getAll returns Future.successful(List(existingStoredGame))
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns List.empty
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns List(
         SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0)))
-      s.nowService.now returns s.now
-      s.mainUpdateService.processDatabaseUpdates() must be equalTo 1
+      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+      there were no(s.gameDao).store(any[Game])(any[NowService])
       there was one(s.lastUpdated).at(s.now)
     }
   }
 
   "Creating a new game and also updating its ticket information" should {
-    "create and update the game" in {
+    "create and update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      s.gameDao.getAll returns List.empty
-      s.fixturesGameScanner.scan(remoteStream) returns List(
+      implicit val nowService = s.nowService
+      s.gameDao.getAll returns Future.successful(List.empty)
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns List(
         DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0)))
-      s.ticketsGameScanner.scan(remoteStream) returns List(
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns List(
         SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0)))
-      val firstStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-      }
-      val secondStoredGame = game(SOUTHAMPTON) { g =>
-        g.at = Some(September(5, 2013) at (15, 0))
-        g.seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
-      }
+      val firstStoredGame = Game.gameKey(SOUTHAMPTON).copy(at = Some(September(5, 2013) at (15, 0)))
+      val secondStoredGame = Game.gameKey(SOUTHAMPTON).copy(
+        at = Some(September(5, 2013) at (15, 0)),
+        seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
+      )
       List(firstStoredGame, secondStoredGame) foreach { game =>
-        s.gameDao.store(game) returns game
+        s.gameDao.store(game) returns Future.successful(game)
       }
-      s.nowService.now returns s.now
-      s.mainUpdateService.processDatabaseUpdates() must be equalTo 1
+      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+      there was one(s.gameDao).store(firstStoredGame)
+      there was one(s.gameDao).store(secondStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
   }
 
-  "html.Tickets for a non-existing game" should {
-    "be ignored" in {
+  "Tickets for a non-existing game" should {
+    "be ignored" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      s.gameDao.getAll returns List.empty
-      s.fixturesGameScanner.scan(remoteStream) returns List.empty
-      s.ticketsGameScanner.scan(remoteStream) returns List(
+      implicit val nowService = s.nowService
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.gameDao.getAll returns Future.successful(List.empty)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns List.empty
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns List(
         SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0)))
-      s.nowService.now returns s.now
-      s.mainUpdateService.processDatabaseUpdates() must be equalTo 0
+      s.mainUpdateService.processDatabaseUpdates() must be_==(0).await
+      there were no(s.gameDao).store(any[Game])(any[NowService])
       there was one(s.lastUpdated).at(s.now)
     }
   }
 
   "Attending a game" should {
-    "persist its attended flag to true" in {
+    "persist its attended flag to true" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      val unattendedGame = Game(SOUTHAMPTON)
-      val attendedGame = game(SOUTHAMPTON)(_.attended = Some(true))
+      implicit val nowService = s.nowService
+      val unattendedGame = Game.gameKey(SOUTHAMPTON)
+      val attendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = Some(true))
 
-      s.gameDao.findById(1l) returns Some(unattendedGame)
-      s.gameDao.store(attendedGame) returns attendedGame
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.gameDao.findById(1l) returns Future.successful(Some(unattendedGame))
+      s.gameDao.store(attendedGame) returns Future.successful(attendedGame)
       val changedGame = s.mainUpdateService.attendGame(1l)
-      changedGame.map(_.attended) must be equalTo Some(Some(true))
+      changedGame.map(_.flatMap(_.attended)) must beSome(true).await
+      there was one(s.gameDao).store(attendedGame)
     }
   }
 
   "Unattending a game" should {
-    "persist its attended flag to false" in {
+    "persist its attended flag to false" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      val unattendedGame = Game(SOUTHAMPTON)
-      val attendedGame = game(SOUTHAMPTON)(_.attended = Some(true))
+      implicit val nowService = s.nowService
+      val unattendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = Some(false))
+      val attendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = Some(true))
 
-      s.gameDao.findById(1l) returns Some(attendedGame)
-      s.gameDao.store(unattendedGame) returns unattendedGame
+      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      s.gameDao.findById(1l) returns Future.successful(Some(attendedGame))
+      s.gameDao.store(unattendedGame) returns Future.successful(unattendedGame)
       val changedGame = s.mainUpdateService.unattendGame(1l)
-      changedGame.map(_.attended) must be equalTo Some(Some(false))
+      changedGame.map(_.flatMap(_.attended)) must beSome(false).await
     }
   }
 
   "Attending all home games in a season" should {
-    "persist all home games attended flag to true" in {
+    "persist all home games attended flag to true" in { implicit ee: ExecutionEnv =>
       val s = new Services()
+      implicit val nowService = s.nowService
       val homeGames2013 = List(SOUTHAMPTON, LIVERPOOL)
-      val unattendedGames = homeGames2013 map (Game(_))
-      val attendedGames = homeGames2013 map (game(_)(_.attended = Some(true)))
+      val unattendedGames = homeGames2013.map(Game.gameKey)
+      val attendedGames = homeGames2013.map(Game.gameKey(_).copy(attended = Some(true)))
 
-      s.gameDao.getAllForSeasonAndLocation(2013, HOME) returns unattendedGames
-      attendedGames foreach (attendedGame => s.gameDao.store(attendedGame) returns attendedGame)
-      s.mainUpdateService.attendAllHomeGamesForSeason(2013).map(_.attended) must be equalTo List(Some(true), Some(true))
+      s.gameDao.getAllForSeasonAndLocation(2013, HOME) returns Future.successful(unattendedGames)
+      attendedGames foreach (attendedGame => s.gameDao.store(attendedGame) returns Future.successful(attendedGame))
+      s.mainUpdateService.attendAllHomeGamesForSeason(2013).map(_.map(_.attended)) must be_==(List(Some(true), Some(true))).await
     }
   }
 
@@ -227,7 +250,7 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
     g2 =>
       g1.gameKey == g2.gameKey &&
         g1.attended == g2.attended &&
-        g1.attendence == g2.attendence &&
+        g1.attendance == g2.attendance &&
         g1.academyMembersAvailable == g2.academyMembersAvailable &&
         g1.bondholdersAvailable == g2.bondholdersAvailable &&
         g1.generalSaleAvailable == g2.generalSaleAvailable &&
@@ -242,29 +265,16 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
   }
 
   /**
-   * Create a new game from a game key and  alter its properties in a code block
-   */
-  def game: GameKey => (Game => Unit) => Game = { gameKey =>
-    f =>
-      val game = Game(gameKey)
-      f(game)
-      game
-  }
-
-  /**
    * A class that holds all the mocked services
    */
-  class Services {
+  class Services(implicit ee: ExecutionEnv) {
     val now = new DateTime
-    val nowService = mock[NowService]
+    implicit val nowService = NowService(now)
     val gameDao = mock[GameDao]
     val lastUpdated = mock[LastUpdated]
     val ticketsGameScanner = mock[GameScanner]
     val fixturesGameScanner = mock[GameScanner]
-    val transactional = new Transactional {
-      def tx[T](block: GameDao => T): T = block(gameDao)
-    }
-    val mainUpdateService = new MainUpdateServiceImpl(transactional, fixturesGameScanner, ticketsGameScanner, lastUpdated, nowService)
+    val mainUpdateService = new MainUpdateServiceImpl(gameDao, fixturesGameScanner, ticketsGameScanner, lastUpdated)
   }
 }
 

@@ -17,7 +17,7 @@ trait RemoteStream {
   /**
    * Log a message with an optional exception.
    */
-  def log(message: String, optionalException: Option[Throwable]) : Unit = {
+  def log(message: String, optionalException: Option[Throwable] = None) : Unit = {
     logToRemote(message + '\n')
     optionalException foreach { t =>
       val w = new StringWriter

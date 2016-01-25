@@ -5,7 +5,6 @@ import java.net.URI
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import dao.{GameDao, Transactional}
 import dates.{April, February, March}
 import html._
 import logging.SimpleRemoteStream
@@ -26,13 +25,8 @@ class TicketsGameScannerTest extends Specification with StrictLogging with Mocki
 
   "The tickets game scanner" should {
     "find all the known tickets" in new ServerContext {
-      val gameDao = mock[GameDao]
-      val tx = new Transactional {
-        def tx[T](block: GameDao => T): T = block(gameDao)
-      }
-      gameDao.getLatestSeason returns Some(2014)
-      val ticketsGameScanner = new TicketsGameScanner(new URI(s"http://localhost:$port"), tx)
-      val gameUpdateCommands: List[GameUpdateCommand] = ticketsGameScanner.scan
+      val ticketsGameScanner = new TicketsGameScanner(new URI(s"http://localhost:$port"))
+      val gameUpdateCommands: List[GameUpdateCommand] = ticketsGameScanner.scan(Some(2014))
       val arsenal = DatePlayedLocator(March(14, 2015) at 3 pm)
       val sunderland = DatePlayedLocator(March(21, 2015) at (17, 30))
       val leicester = DatePlayedLocator(April(4, 2015) at 3 pm)
@@ -71,17 +65,15 @@ class TicketsGameScannerTest extends Specification with StrictLogging with Mocki
             val pathInfo = request.getPathInfo
             val path = if (pathInfo.startsWith("/html")) s"${request.getPathInfo}.html".substring(1) else s"html${request.getPathInfo}.html"
             Option(classOf[ServerContext].getClassLoader.getResourceAsStream(path)) match {
-              case Some(in) => {
+              case Some(in) =>
                 logger.info(s"Loading $path")
                 val htmlResponse = Source.fromInputStream(in).mkString
                 val writer: PrintWriter = response.getWriter
                 writer.println(htmlResponse)
                 writer.close()
-              }
-              case _ => {
+              case _ =>
                 logger.error(s"Cound not find a resource at $path")
                 response.sendError(HttpStatus.NOT_FOUND_404)
-              }
             }
           }
           else {
@@ -91,7 +83,7 @@ class TicketsGameScannerTest extends Specification with StrictLogging with Mocki
       }
       server.setHandler(handler)
       server.start()
-      (server, server.getConnectors()(0).asInstanceOf[ServerConnector].getLocalPort())
+      (server, server.getConnectors()(0).asInstanceOf[ServerConnector].getLocalPort)
     }
 
     override def after: Any = {

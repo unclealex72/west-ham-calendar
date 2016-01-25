@@ -99,5 +99,5 @@ case class Event(
   /**
    * Compare events chronologically
    */
-  def compare(that: Event) = Ordering.by((e: Event) => e.dateTime.getMillis()).compare(this, that)
+  def compare(that: Event) = Ordering.by((e: Event) => e.dateTime.getMillis).compare(this, that)
 }

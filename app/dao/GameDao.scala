@@ -21,6 +21,7 @@
  */
 package dao;
 
+import dates.NowService
 import org.joda.time.DateTime
 import model.Game
 import scala.collection.SortedSet
@@ -31,67 +32,75 @@ import search.GameOrTicketSearchOption
 import search.AttendedSearchOption
 import search.LocationSearchOption
 
+import scala.concurrent.Future
+
 /**
- * The data access object for {@link Game}s.
+  * The data access object for {@link Game}s.
  *
  * @author alex
  */
 trait GameDao {
 
   /**
-   * Persist a game
+   * Update a game
    */
-  def store(game: Game): Game
-  
+  def store(game: Game)(implicit nowService: NowService): Future[Game]
+
   /**
    * Find a game by its ID.
    */
-  def findById(id: Long): Option[Game]
+  def findById(id: Long): Future[Option[Game]]
 
   /**
    * Find a game by the {@link DateTime} it was played.
-   * @param datePlayed The {@link DateTime} to search for.
+    *
+    * @param datePlayed The {@link DateTime} to search for.
    * @return The {@link Game} played at the given {@link DateTime} or null if one could not be found.
    */
-  def findByDatePlayed(datePlayed: DateTime): Option[Game]
+  def findByDatePlayed(datePlayed: DateTime): Future[Option[Game]]
 
   /**
    * Get all the {@link Game}s for a given season.
-   * @param season The season to search for.
+    *
+    * @param season The season to search for.
    * @return All the {@link Game}s during the given season.
    */
-  def getAllForSeason(season: Int): List[Game]
+  def getAllForSeason(season: Int): Future[List[Game]]
 
   /**
    * Find all the seasons known so far.
-   * @return All the known seasons.
+    *
+    * @return All the known seasons.
    */
-  def getAllSeasons: SortedSet[Int]
+  def getAllSeasons: Future[SortedSet[Int]]
 
   /**
    * Find a game by its {@link Competition}, {@link Location}, opponents and season. Together, these are guaranteed to
    * uniquely define a {@link Game}.
-   * @param competition The {@link Competition} to search for.
+    *
+    * @param competition The {@link Competition} to search for.
    * @param location The {@link Location} to search for.
    * @param opponents The opponents to search for.
    * @param season The season to search for.
    * @return The uniquely defined {@link Game} if it exists or null otherwise.
    */
-  def findByBusinessKey(competition: Competition, location: Location, opponents: String, season: Int): Option[Game]
+  def findByBusinessKey(competition: Competition, location: Location, opponents: String, season: Int): Future[Option[Game]]
 
   /**
    * Get the latest known season.
-   * @return The latest known season.
+    *
+    * @return The latest known season.
    */
-  def getLatestSeason: Option[Int]
+  def getLatestSeason: Future[Option[Int]]
 
   /**
    * Get all {@link Game}s for a given season and {@link Location}.
-   * @param season The season to search for.
+    *
+    * @param season The season to search for.
    * @param location The {@link Location} to search for.
    * @return All {@link Game}s with the given season and {@link Location}.
    */
-  def getAllForSeasonAndLocation(season: Int, location: Location): List[Game]
+  def getAllForSeasonAndLocation(season: Int, location: Location): Future[List[Game]]
 
   /**
    * Search for games that match all the search options provided.
@@ -99,10 +108,10 @@ trait GameDao {
   def search(
     attendedSearchOption: AttendedSearchOption, 
     locationSearchOption: LocationSearchOption, 
-    gameOrTicketSearchOption: GameOrTicketSearchOption): List[Game]
+    gameOrTicketSearchOption: GameOrTicketSearchOption): Future[List[Game]]
 
   /**
    * Get all known games.
    */
-  def getAll: List[Game]
+  def getAll: Future[List[Game]]
 }

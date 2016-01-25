@@ -47,6 +47,7 @@ trait CalendarFactory {
    * @param gameOrTicketSearchOption the search option to use for defining whether to return game or ticket information.
    */
   def create(
+    games: List[Game],
     busyMask: Option[Boolean],
     attendedSearchOption: AttendedSearchOption,
     locationSearchOption: LocationSearchOption,

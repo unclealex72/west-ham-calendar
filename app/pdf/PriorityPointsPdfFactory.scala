@@ -8,5 +8,5 @@ import java.io.OutputStream
  */
 trait PriorityPointsPdfFactory {
 
-  def generate(team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit
+  def generate(priorityPointsConfiguration: PriorityPointsConfiguration, team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit
 }

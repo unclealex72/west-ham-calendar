@@ -46,9 +46,9 @@ sealed abstract class GameUpdateCommand(
    *
    * @param game
    *          The game to update.
-   * @return True if the game was updated, false otherwise.
+   * @return The updated game if it was updated or none otherwise.
    */
-  def update(game: Game): Boolean
+  def update(game: Game): Option[Game]
 }
 
 sealed class UpdateType(val position: Int, val description: String)
@@ -93,13 +93,12 @@ sealed abstract class BaseGameUpdateCommand[V](
    */
   val newValue: V) extends GameUpdateCommand(gameLocator) with StrictLogging {
 
-  override def update(game: Game): Boolean = {
-    if (Some(newValue) != currentValue(game)) {
+  override def update(game: Game): Option[Game] = {
+    if (!currentValue(game).contains(newValue)) {
       logger info s"Updating the ${updateType.description} to $newValue for game ${game.gameKey}"
-      setNewValue(game)
-      true
+      Some(setNewValue(game))
     } else {
-      false
+      None
     }
   }
 
@@ -127,7 +126,7 @@ sealed abstract class BaseGameUpdateCommand[V](
    * @param game
    *          The game to alter.
    */
-  protected def setNewValue(game: Game)
+  protected def setNewValue(game: Game): Game
 }
 /**
  * A {@link GameUpdateCommand} that updates a game's date played value.
@@ -144,7 +143,7 @@ case class DatePlayedUpdateCommand(
 
   override def currentValue(game: Game) = game.at
 
-  override def setNewValue(game: Game) = game.at = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(at = Some(newValue))
 }
 
 /**
@@ -161,7 +160,7 @@ case class ResultUpdateCommand(
 
   override def currentValue(game: Game) = game.result
 
-  override def setNewValue(game: Game) = game.result = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(result = Some(newValue))
 }
 
 /**
@@ -176,9 +175,9 @@ case class ResultUpdateCommand(
 case class AttendenceUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: Int) extends BaseGameUpdateCommand[Int](ATTENDENCE, gameLocator, newValue) {
 
-  override def currentValue(game: Game) = game.attendence
+  override def currentValue(game: Game) = game.attendance
 
-  override def setNewValue(game: Game) = game.attendence = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(attendance = Some(newValue))
 
 }
 
@@ -198,7 +197,7 @@ case class MatchReportUpdateCommand(
 
   override def currentValue(game: Game) = game.matchReport
 
-  override def setNewValue(game: Game) = game.matchReport = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(matchReport = Some(newValue))
 }
 
 /**
@@ -217,7 +216,7 @@ case class TelevisionChannelUpdateCommand(
 
   override def currentValue(game: Game) = game.televisionChannel
 
-  override def setNewValue(game: Game) = game.televisionChannel = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(televisionChannel = Some(newValue))
 }
 
 /**
@@ -234,7 +233,7 @@ case class AttendedUpdateCommand(
 
   override def currentValue(game: Game) = game.attended
 
-  override def setNewValue(game: Game) = game.attended = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(attended = Some(newValue))
 }
 
 /**
@@ -259,7 +258,7 @@ case class BondHolderTicketsUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(BONDHOLDER_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.bondholdersAvailable
-  override def setNewValue(game: Game) = game.bondholdersAvailable = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(bondholdersAvailable = Some(newValue))
 }
 
 /**
@@ -277,7 +276,7 @@ case class PriorityPointTicketsUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(PRIORITY_POINT_POST_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.priorityPointAvailable
-  override def setNewValue(game: Game) = game.priorityPointAvailable = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(priorityPointAvailable = Some(newValue))
 }
 
 /**
@@ -295,7 +294,7 @@ case class SeasonTicketsUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(SEASON_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.seasonTicketsAvailable
-  override def setNewValue(game: Game) = game.seasonTicketsAvailable = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(seasonTicketsAvailable = Some(newValue))
 }
 
 /**
@@ -313,7 +312,7 @@ case class AcademyTicketsUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(ACADEMY_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.academyMembersAvailable
-  override def setNewValue(game: Game) = game.academyMembersAvailable = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(academyMembersAvailable = Some(newValue))
 
 }
 
@@ -332,7 +331,7 @@ case class AcademyPostalTicketsUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(ACADEMY_POSTAL_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.academyMembersPostalAvailable
-  override def setNewValue(game: Game) = game.academyMembersPostalAvailable = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(academyMembersPostalAvailable = Some(newValue))
 
 }
 /**
@@ -350,7 +349,7 @@ case class GeneralSaleTicketsUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(GENERAL_SALE_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.generalSaleAvailable
-  override def setNewValue(game: Game) = game.generalSaleAvailable = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(generalSaleAvailable = Some(newValue))
 }
 
 /**
@@ -368,5 +367,5 @@ case class GeneralSalePostalTicketsUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(GENERAL_SALE_POSTAL_TICKETS, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.generalSalePostalAvailable
-  override def setNewValue(game: Game) = game.generalSalePostalAvailable = Some(newValue)
+  override def setNewValue(game: Game) = game.copy(generalSalePostalAvailable = Some(newValue))
 }

@@ -11,5 +11,5 @@ import logging.RemoteStream
  */
 trait GameScanner {
 
-  def scan(implicit remoteStream: RemoteStream): List[GameUpdateCommand]
+  def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): List[GameUpdateCommand]
 }

@@ -21,14 +21,14 @@
  */
 package cal
 
-import dao.{GameDao, Transactional}
-import dates.DateTimeImplicits._
+import dao.GameDao
 import dates.{August, July, September}
 import geo.GeoLocation
 import model.{Competition, Game, GameKey, Location}
 import org.joda.time.{DateTime, Duration}
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
+import org.specs2.specification.core.Fragments
 import search.{AttendedSearchOption => A, GameOrTicketSearchOption => G, LocationSearchOption => L}
 
 /**
@@ -48,34 +48,33 @@ class CalendarFactoryImplTest extends Specification with Mockito {
       (Some(false), A.ATTENDED, false),
       (Some(false), A.UNATTENDED, false),
       (Some(false), A.ANY, false))
-    variations foreach {
+    Fragments.foreach(variations) {
       case (busyMask, attendedSearchOption, expectedResult) =>
-        s"make calendars with ${attendedSearchOption} ${if (expectedResult) "" else "not "}busy when set to ${busyMask}" in {
-          val calendarFactory = new CalendarFactoryImpl(mock[Transactional])
+        s"make calendars with $attendedSearchOption ${if (expectedResult) "" else "not "}busy when set to $busyMask" in {
+          val calendarFactory = new CalendarFactoryImpl
           val actualResult = calendarFactory.busy(busyMask, attendedSearchOption)
-          actualResult must be equalTo (expectedResult)
+          actualResult must be equalTo expectedResult
         }
     }
-    "nothing else" in {
-      1 must be equalTo(1)
-    }
   }
+
   "Generating a calendar" should {
-    val game = Game(GameKey(Competition.FACP, Location.HOME, "Them", 2013))
-    game.bondholdersAvailable = Some(August(1, 2013) at (9, 0))
-    game.priorityPointAvailable = Some(August(2, 2013) at (9, 0))
-    game.seasonTicketsAvailable = Some(August(3, 2013) at (9, 0))
-    game.academyMembersAvailable = Some(August(4, 2013) at (9, 0))
-    game.academyMembersPostalAvailable = Some(August(5, 2013) at (9, 0))
-    game.generalSaleAvailable = Some(August(6, 2013) at (9, 0))
-    game.generalSalePostalAvailable = Some(August(7, 2013) at (9, 0))
-    game.at = Some(September(5, 2013) at (15, 0))
-    game.attendence = Some(100)
-    game.matchReport = Some("report")
-    game.result = Some("4-0")
-    game.televisionChannel = Some("TV")
-    game.dateCreated = July(1, 2013) at (5, 0)
-    game.lastUpdated = July(7, 2013) at (9, 0)
+    val game = Game(id = 0,
+    competition = Competition.FACP, location = Location.HOME, opponents = "Them", season = 2013,
+    bondholdersAvailable = Some(August(1, 2013) at (9, 0)),
+    priorityPointAvailable = Some(August(2, 2013) at (9, 0)),
+    seasonTicketsAvailable = Some(August(3, 2013) at (9, 0)),
+    academyMembersAvailable = Some(August(4, 2013) at (9, 0)),
+    academyMembersPostalAvailable = Some(August(5, 2013) at (9, 0)),
+    generalSaleAvailable = Some(August(6, 2013) at (9, 0)),
+    generalSalePostalAvailable = Some(August(7, 2013) at (9, 0)),
+    at = Some(September(5, 2013) at (15, 0)),
+    attendance = Some(100),
+    matchReport = Some("report"),
+    result = Some("4-0"),
+    televisionChannel = Some("TV"),
+    dateCreated = July(1, 2013) at (5, 0),
+    lastUpdated = July(7, 2013) at (9, 0))
     val expectations = for (a <- A.values; l <- L.values; g <- G.values) yield {
       val expectedGameTypeDescriptor = (a, l) match {
         case (A.ATTENDED, L.HOME) => "all attended home"
@@ -118,26 +117,18 @@ class CalendarFactoryImplTest extends Specification with Mockito {
         lastUpdated = July(7, 2013) at (9, 0))
       (a, l, g, expectedTitle, expectedEvent)
     }
-    expectations foreach {
+    Fragments.foreach(expectations) {
       case (a, l, g, expectedTitle, expectedEvent) =>
         s"generate the correct title and event for search keys $a, $l and $g" in {
-          val gameDao = mock[GameDao]
-          val tx = new Transactional() {
-            def tx[E](block: GameDao => E) = block(gameDao)
-          }
-          gameDao.search(a, l, g) returns List(game)
-          val actualCalendar = new CalendarFactoryImpl(tx).create(None, a, l, g)
+          val actualCalendar = new CalendarFactoryImpl().create(List(game), None, a, l, g)
           actualCalendar.title must be equalTo expectedTitle
           actualCalendar.events must have size 1
           actualCalendar.events.toList must be equalTo List(expectedEvent)
         }
     }
-    "nothing else" in {
-      1 must be equalTo 1
-    }
   }
 
   implicit class InstantImplicits(i: DateTime) {
-    def lasting(hours: Int): Pair[DateTime, Duration] = (i, Duration.standardHours(hours))
+    def lasting(hours: Int): (DateTime, Duration) = (i, Duration.standardHours(hours))
   }
 }

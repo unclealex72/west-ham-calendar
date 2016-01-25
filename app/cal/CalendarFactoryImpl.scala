@@ -24,41 +24,37 @@
 
 package cal
 
-import scala.collection.Traversable
-import model.Game
-import model.Game._
-import dates.DateTimeImplicits._
-import org.joda.time.DateTime
-import org.joda.time.Duration
-import scala.collection.SortedSet
-import geo.GeoLocation
-import search.GameOrTicketSearchOption
-import search.GameOrTicketSearchOption._
-import search.AttendedSearchOption
-import search.LocationSearchOption
 import javax.inject.Inject
-import dao.Transactional
+
+import dates.DateTimeImplicits._
+import geo.GeoLocation
+import model.Game
+import org.joda.time.{DateTime, Duration}
+import search.GameOrTicketSearchOption._
+import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
+
+import scala.collection.SortedSet
 /**
  * The default implementation of the Calendar factory.
  * @author alex
  *
  */
-class CalendarFactoryImpl @Inject() (
-  /**
-   * The transactional object to use for data access
-   */
-  tx: Transactional) extends CalendarFactory {
+class CalendarFactoryImpl @Inject() extends CalendarFactory {
 
   def create(
+    games: List[Game],
     busyMask: Option[Boolean],
     attendedSearchOption: AttendedSearchOption,
     locationSearchOption: LocationSearchOption,
     gameOrTicketSearchOption: GameOrTicketSearchOption): Calendar = {
-    val games = tx(_ search (attendedSearchOption, locationSearchOption, gameOrTicketSearchOption))
     val (dateFactory, duration) = gamePeriodFactory(gameOrTicketSearchOption)
-    val entries = games map convert(dateFactory, busy(busyMask, attendedSearchOption), Duration.standardHours(duration)) flatten
+    val gameToEvent = convert(dateFactory, busy(busyMask, attendedSearchOption), Duration.standardHours(duration))
+    val events = for {
+      game <- games
+      event <- gameToEvent(game)
+    } yield event
     val title = createTitle(attendedSearchOption, locationSearchOption, gameOrTicketSearchOption)
-    Calendar("whufc" + title.replace(' ', '_'), title, SortedSet.empty[Event] ++ entries)
+    Calendar("whufc" + title.replace(' ', '_'), title, SortedSet.empty[Event] ++ events)
   }
 
   /**
@@ -68,7 +64,7 @@ class CalendarFactoryImpl @Inject() (
     busyMask getOrElse (attendedSearchOption == AttendedSearchOption.ATTENDED)
   }
 
-  def gamePeriodFactory(gameOrTicketSearchOption: GameOrTicketSearchOption): Pair[Game => Option[DateTime], Int] = {
+  def gamePeriodFactory(gameOrTicketSearchOption: GameOrTicketSearchOption): (Game => Option[DateTime], Int) = {
     gameOrTicketSearchOption match {
       case BONDHOLDERS => (g => g.bondholdersAvailable, 1)
       case PRIORITY_POINT => (g => g.priorityPointAvailable, 1)
@@ -122,7 +118,7 @@ class CalendarFactoryImpl @Inject() (
         dateTime = date,
         duration = duration,
         result = game.result,
-        attendence = game.attendence,
+        attendence = game.attendance,
         matchReport = game.matchReport,
         televisionChannel = game.televisionChannel,
         busy = busy,

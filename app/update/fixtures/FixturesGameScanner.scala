@@ -25,7 +25,7 @@ import scala.io.Source
  */
 class FixturesGameScanner @Inject() (rootUri: URI, nowService: NowService) extends GameScanner with RemoteLogging {
 
-  override def scan(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
+  override def scan(lastestSeason: Option[Int])(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
     val httpClient = HttpClients.createDefault()
     try {
       val currentYear = nowService.now.getYear

@@ -23,22 +23,20 @@ package controllers
 
 import javax.inject.{Inject, Named}
 
-import com.mohiva.play.silhouette.api.{Environment, Silhouette, Authorization}
-import com.mohiva.play.silhouette.impl.User
-import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
+import com.typesafe.scalalogging.slf4j.StrictLogging
+import dispatch.Future
 import json.JsonResults
 import logging.RemoteStream
 import model.Game
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Concurrent
 import play.api.mvc.Action
-import play.mvc.Controller
+import security.Definitions._
 import services.GameRowFactory
 import update.MainUpdateService
 
-import scala.concurrent.ExecutionContext.Implicits.global
-
-import security.Definitions._
+import scala.concurrent.ExecutionContext
+import scala.util.Failure
 
 /**
  * @author alex
@@ -61,7 +59,7 @@ case class Update @Inject() (
    * The game row factory used to get game row models.
    */
                          gameRowFactory: GameRowFactory,
-                         messagesApi: MessagesApi, env: Env) extends Secure with Secret with TicketForms with JsonResults {
+                         messagesApi: MessagesApi, env: Env)(implicit ec: ExecutionContext) extends Secure with Secret with TicketForms with JsonResults {
 
   implicit val implicitAuthorization = authorization
 
@@ -77,10 +75,15 @@ case class Update @Inject() (
           channel.push(message)
         }
       }
-      scala.concurrent.Future {
-        val gameCount = mainUpdateService.processDatabaseUpdates
-        channel.push(s"There are now ${gameCount} games.\n")
-        channel.eofAndEnd
+      mainUpdateService.processDatabaseUpdates.map { gameCount =>
+        channel.push(s"There are now $gameCount games.\n")
+      }.andThen {
+        case Failure(t) => {
+          logger.error("Updating all games failed.", t)
+          remoteStream.log("Updating all games failed.", Some(t))
+        }
+      }.andThen {
+        case _ => channel.eofAndEnd()
       }
       Ok.chunked(enumerator)
     }
@@ -89,9 +92,12 @@ case class Update @Inject() (
   /**
    * Attend or unattend a game.
    */
-  def attendOrUnattend(gameUpdater: Long => Option[Game], gameId: Long) =
-    SecuredAction(authorization) { implicit request =>
-      json(gameUpdater(gameId).map(gameRowFactory.toRow(true, ticketFormUrlFactory)))
+  def attendOrUnattend(gameUpdater: Long => Future[Option[Game]], gameId: Long) =
+    SecuredAction(authorization).async { implicit request =>
+      gameUpdater(gameId).map {
+        case Some(game) => json(gameRowFactory.toRow(includeAttended = true, ticketFormUrlFactory)(game))
+        case _ => NotFound
+      }
     }
 
   /**

@@ -54,7 +54,7 @@ trait Etag extends StrictLogging {
         action(request)
       } else {
         logger.info(s"Request $request.uri has not been modified.")
-        Future(NotModified)
+        Future.successful(NotModified)
       }
       response.map(_.withHeaders(HeaderNames.ETAG -> quotedETag))
     }

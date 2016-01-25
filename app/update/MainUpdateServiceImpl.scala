@@ -20,18 +20,20 @@
  *
  */
 
-package update;
+package update
 
 import javax.inject.Inject
 
 import com.google.inject.name.Named
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import dao.{GameDao, Transactional}
+import dao.GameDao
 import dates.NowService
 import html.{DatePlayedLocator, GameKeyLocator, GameLocator, GameUpdateCommand}
 import logging.RemoteStream
 import model.Game
 import model.Location.HOME
+
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * The Class MainUpdateServiceImpl.
@@ -42,7 +44,7 @@ class MainUpdateServiceImpl @Inject() (
   /**
    * The {@link GameDao} for getting persisted {@link Game} information.
    */
-  tx: Transactional,
+  gameDao: GameDao,
   /**
    * The {@link GamesScanner} for getting game information.
    */
@@ -57,24 +59,27 @@ class MainUpdateServiceImpl @Inject() (
   /**
    * The {@link LastUpdated} used to notify the application when calendars were last updated.
    */
-  lastUpdated: LastUpdated,
+  lastUpdated: LastUpdated
   /**
    * The {@link NowService} used to get the current date and time.
    */
-  nowService: NowService) extends MainUpdateService with StrictLogging {
+  )(implicit ec: ExecutionContext, nowService: NowService) extends MainUpdateService with StrictLogging {
 
   /**
    * Process all updates required in the database.
    *
    * @throws IOException
    */
-  override def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Int = {
-    val allGames = tx { _ getAll }
-    val newGames = processUpdates("fixture", fixturesGameScanner, allGames)
-    val allAndNewGames = allGames ++ newGames
-    processUpdates("ticket", ticketsGameScanner, allAndNewGames)
-    lastUpdated at nowService.now
-    allAndNewGames.size
+  override def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Future[Int] = {
+    for {
+      allGames <- gameDao.getAll
+      latestSeason <- gameDao.getLatestSeason
+      newGames <- processUpdates("fixture", fixturesGameScanner, latestSeason, allGames)
+      _ <- processUpdates("ticket", ticketsGameScanner, latestSeason, allGames ++ newGames)
+    } yield {
+      lastUpdated at nowService.now
+      (allGames ++ newGames).size
+    }
   }
 
   /**
@@ -89,27 +94,36 @@ class MainUpdateServiceImpl @Inject() (
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def processUpdates(updatesType: String, scanner: GameScanner, allGames: List[Game])(implicit remoteStream: RemoteStream): List[Game] = {
+  def processUpdates(updatesType: String, scanner: GameScanner, latestSeason: Option[Int], allGames: List[Game])(implicit remoteStream: RemoteStream): Future[List[Game]] = {
     logger info s"Scanning for $updatesType changes."
-    val allGameUpdateCommands = scanner.scan(remoteStream)
+    val allGameUpdateCommands = scanner.scan(latestSeason)
     val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
-    updatesByGameLocator.toList flatMap {
-      case (gameLocator, updates) =>
-        val game = findGame(allGames, gameLocator)
-        game match {
-          case Some(game) => {
-            updateGame(game, updates)
-            None
-          }
-          case None => {
-            val newGame = createNewGame(gameLocator)
-            newGame foreach { game => updateGame(game, updates) }
-            newGame
-          }
+    updatesByGameLocator.foldRight(Future.successful(List.empty[Game])){ (gl, fGames) =>
+      val (gameLocator, updates) = gl
+      fGames.flatMap { games =>
+        updateAndStoreGame(allGames, gameLocator, updates).map {
+          case Some(game) => game :: games
+          case _ => games
         }
+      }
     }
   }
 
+  def updateAndStoreGame(allGames: List[Game], gameLocator: GameLocator, updates: List[GameUpdateCommand]): Future[Option[Game]] = {
+    val (isNew, oGame) = findGame(allGames, gameLocator) match {
+      case Some(game) => (false, Some(game))
+      case _ => (true, createNewGame(gameLocator))
+    }
+    val oUpdate = for {
+      game <- oGame
+      updatedGame <- updateGame(game, updates)
+    } yield {
+      gameDao.store(updatedGame).map { persistedGame =>
+        if (isNew) Some(persistedGame) else None
+      }
+    }
+    oUpdate.getOrElse(Future.successful(None))
+  }
   /**
    * Find a game from its game locator.
    */
@@ -117,7 +131,7 @@ class MainUpdateServiceImpl @Inject() (
     def gameFinder: Game => Boolean = { (game: Game) =>
       gameLocator match {
         case GameKeyLocator(gameKey) => game.gameKey == gameKey
-        case DatePlayedLocator(datePlayed) => Some(datePlayed) == game.at
+        case DatePlayedLocator(datePlayed) => game.at.contains(datePlayed)
       }
     }
     allGames find gameFinder
@@ -128,46 +142,54 @@ class MainUpdateServiceImpl @Inject() (
    */
   def createNewGame(gameLocator: GameLocator): Option[Game] = {
     gameLocator match {
-      case GameKeyLocator(gameKey) => {
+      case GameKeyLocator(gameKey) =>
         logger info s"Creating new game $gameKey"
-        Some(Game(gameKey))
-      }
-      case DatePlayedLocator(datePlayed) => {
+        Some(Game.gameKey(gameKey))
+      case DatePlayedLocator(datePlayed) =>
         logger info s"Tickets were found for a non-existent game played at $datePlayed. Ignoring."
         None
-      }
     }
   }
 
   /**
    * Update a game with a list of updates.
    */
-  def updateGame(game: Game, updates: Traversable[GameUpdateCommand]): Unit = {
-    val updateCount = updates.foldLeft(0) { (updateCount, gameUpdateCommand) =>
-      updateCount + (if (gameUpdateCommand update game) 1 else 0)
+  def updateGame(game: Game, updates: Traversable[GameUpdateCommand]): Option[Game] = {
+    case class UpdatedGame(game: Game, updated: Boolean = false) {
+      def update(newGame: Game) = UpdatedGame(newGame, updated = true)
     }
-    if (updateCount == 0) {
+    val updatedGame: UpdatedGame = updates.foldLeft(UpdatedGame(game)) { (updatedGame, gameUpdateCommand) =>
+      gameUpdateCommand.update(updatedGame.game) match {
+        case Some(newGame) => updatedGame.update(newGame)
+        case _ => updatedGame
+      }
+    }
+    if (updatedGame.updated) {
+      Some(updatedGame.game)
+    }
+    else {
       logger info s"Ignoring game ${game.gameKey}"
-    } else {
-      tx { _ store game }
+      None
     }
   }
 
-  def attendGame(gameId: Long): Option[Game] = attendOrUnattendGame(gameId, true)
+  def attendGame(gameId: Long): Future[Option[Game]] = attendOrUnattendGame(gameId, attend = true)
 
-  def unattendGame(gameId: Long): Option[Game] = attendOrUnattendGame(gameId, false)
+  def unattendGame(gameId: Long): Future[Option[Game]] = attendOrUnattendGame(gameId, attend = false)
 
-  def attendOrUnattendGame(gameId: Long, attend: Boolean) =
-    attendOrUnattendGames(_ findById gameId, attend).headOption
+  def attendOrUnattendGame(gameId: Long, attend: Boolean): Future[Option[Game]] =
+    attendOrUnattendGames(gameDao.findById(gameId).map(_.toList), attend).map(_.headOption)
 
-  def attendAllHomeGamesForSeason(season: Int) = attendOrUnattendGames(_ getAllForSeasonAndLocation (season, HOME), true)
+  def attendAllHomeGamesForSeason(season: Int) =
+    attendOrUnattendGames(gameDao.getAllForSeasonAndLocation(season, HOME), attend = true)
 
-  def attendOrUnattendGames(gamesFactory: GameDao => Traversable[Game], attend: Boolean): List[Game] = {
-    tx { gameDao =>
-      gamesFactory(gameDao).foldRight(List.empty[Game]) { (game, games) =>
-        game.attended = Some(attend)
-        gameDao.store(game)
-        game :: games
+  def attendOrUnattendGames(fGames: Future[List[Game]], attend: Boolean): Future[List[Game]] = {
+    fGames.flatMap { games =>
+      games.foldRight(Future.successful(List.empty[Game])) { (game, fGames) =>
+        for {
+          newGame <- gameDao.store(game.copy(attended = Some(attend)))
+          games <- fGames
+        } yield newGame :: games
       }
     }
   }

@@ -26,15 +26,14 @@ import java.net.URI
 import javax.inject.{Inject, Named}
 
 import cal.{CalendarFactory, CalendarWriter, LinkFactory}
-import com.mohiva.play.silhouette.api.Environment
-import com.mohiva.play.silhouette.impl.User
-import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
+import dao.GameDao
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.Action
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
-import update.LastUpdated
 import security.Definitions._
+import update.LastUpdated
 
+import scala.concurrent.ExecutionContext
 /**
  * The controller that handles generating calendars.
   *
@@ -54,11 +53,12 @@ case class Calendar @Inject() (
    * The calendar factory used to generate calendars.
    */
   calendarFactory: CalendarFactory,
+  gameDao: GameDao,
   /**
    * The calendar write used to write calendars.
    */
   calendarWriter: CalendarWriter,
-  messagesApi: MessagesApi, env: Env) extends Secret with Etag {
+  messagesApi: MessagesApi, env: Env)(implicit ec: ExecutionContext) extends Secret with Etag {
 
   def searchSecure(secretPayload: String, attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     Secret(secretPayload) {
@@ -76,15 +76,18 @@ case class Calendar @Inject() (
       LocationSearchOption(locationSearchOption),
       GameOrTicketSearchOption(gameOrTicketSearchOption))
 
-  def calendar(
-    busyMask: Option[Boolean],
-    a: Option[AttendedSearchOption],
-    l: Option[LocationSearchOption],
-    g: Option[GameOrTicketSearchOption]) = {
-    (a, l, g) match {
-      case (Some(a), Some(l), Some(g)) => ETag(calculateETag(busyMask, Some(a), Some(l), Some(g))) {
-        Action { implicit request =>
-          val calendar = calendarFactory.create(busyMask, a, l, g)
+  def calendar(busyMask: Option[Boolean],
+          oa: Option[AttendedSearchOption],
+          ol: Option[LocationSearchOption],
+          og: Option[GameOrTicketSearchOption]) = {
+    val oCalendarAction = for {
+      a <- oa
+      l <- ol
+      g <- og
+    } yield ETag(calculateETag(busyMask, oa, ol, og)) {
+      Action.async { implicit request =>
+        gameDao.search(a, l, g).map { games =>
+          val calendar = calendarFactory.create(games, busyMask, a, l, g)
           val buffer = new StringWriter
           val linkFactory = new LinkFactory {
             override def locationLink(gameId: Long): URI = {
@@ -96,7 +99,9 @@ case class Calendar @Inject() (
           Ok(output).as(calendarWriter.mimeType)
         }
       }
-      case _ => Action { implicit request => NotFound }
+    }
+    oCalendarAction.getOrElse {
+      Action(implicit request => NotFound)
     }
   }
 

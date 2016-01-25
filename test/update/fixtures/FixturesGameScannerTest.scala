@@ -32,8 +32,8 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
 
       val nowService: NowService = NowService(December(25, 2015))
 
-      val fixturesGameScanner = new FixturesGameScanner(new URI(s"http://localhost:${port}"), nowService)
-      val gameCommands = fixturesGameScanner.scan(remoteStream)
+      val fixturesGameScanner = new FixturesGameScanner(new URI(s"http://localhost:$port"), nowService)
+      val gameCommands = fixturesGameScanner.scan(Some(2014))(remoteStream)
       gameCommands must containTheSameElementsAs(Seq[GameUpdateCommand](DatePlayedUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Tottenham Hotspur",2014)), August(16,2014) at (15,0)),
         ResultUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Tottenham Hotspur", 2014)), "0 - 1"),
         MatchReportUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Tottenham Hotspur", 2014)), s"http://localhost:$port/Fixtures/First-Team/Fixture-and-Results/Season-2014-2015/2014-August/West-Ham-United-vs-Tottenham-Hotspur"),

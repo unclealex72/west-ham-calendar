@@ -25,59 +25,47 @@ import dates.Date._
 import dates._
 import model.{Competition, Game, GameKey, Location}
 import org.joda.time.DateTime
-import org.specs2.mutable.Specification
-import org.squeryl.{Session, SessionFactory}
-import org.squeryl.adapters.H2Adapter
-import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
+import org.specs2.concurrent.ExecutionEnv
+import org.specs2.mutable.{BeforeAfter, Specification}
+import org.specs2.specification.Scope
+import play.api.Application
+import play.api.db.slick.DatabaseConfigProvider
+import play.api.test.FakeApplication
+import slick.backend.DatabaseConfig
+import slick.profile.BasicProfile
 
-import scala.collection.SortedSet
-import scala.collection.mutable.{Buffer, Map}
-import dates.DateTimeImplicits._
+import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 /**
  * @author alex
  *
  */
-class SquerylGameDaoTest extends Specification {
+class SlickGameDaoTest extends Specification {
 
-  val DEFAULT_UPDATE_DATE = September(5, 1972) at (9, 12)
-
-  implicit val DEFAULT_NOW_SERVICE = new NowService() {
-    def now = DEFAULT_UPDATE_DATE
-  }
-
-  class IncreasingNowService extends NowService() {
-    var currentTime: DateTime = DEFAULT_UPDATE_DATE
-
-    def now = {
-      val returnValue = currentTime
-      currentTime = currentTime.plusDays(1)
-      returnValue
+  "A minimally stored game" should new db {
+    val game = Game.gameKey(Competition.FACP, Location.HOME, "Opponents", 2013)
+    val persistedGame = await {
+      for {
+        _ <- gameDao.store(game)
+        persistedGame <- gameDao.findByBusinessKey(Competition.FACP, Location.HOME, "Opponents", 2013)
+      } yield persistedGame
+    }
+    "have a non-zero id" in new db {
+      persistedGame.map(_.id) must beSome[Long](be_!=(0))
+    }
+    "have the correct business key" in {
+      persistedGame.map(_.gameKey) must beSome(GameKey(Competition.FACP, Location.HOME, "Opponents", 2013))
+    }
+    "have the correct creation date" in {
+      persistedGame.map(_.dateCreated) must beSome(nowA)
+    }
+    "have the correct update date" in {
+      persistedGame.map(_.lastUpdated) must beSome(nowB)
     }
   }
-  "A minimally stored game" should txn { gameDao =>
-    nowService =>
-      val game = Game(GameKey(Competition.FACP, Location.HOME, "Opponents", 2013))
-      gameDao store game
-      val persistedGame = gameDao findByBusinessKey (Competition.FACP, Location.HOME, "Opponents", 2013)
-      persistedGame map { persistedGame =>
-        "have a non-zero id" in {
-          persistedGame.id must not be equalTo(0)
-        }
-        "have the correct business key" in {
-          persistedGame.gameKey must be equalTo (GameKey(Competition.FACP, Location.HOME, "Opponents", 2013))
-        }
-        "have the correct creation date" in {
-          persistedGame.dateCreated must be equalTo (DEFAULT_UPDATE_DATE)
-        }
-        "have the correct update date" in {
-          persistedGame.lastUpdated must be equalTo (DEFAULT_UPDATE_DATE)
-        }
-      }
-      "be retrievable" in {
-        persistedGame must not be equalTo(None)
-      }
-  }
+
+  /*
 
   "Game keys" should txn { gameDao =>
     nowService =>
@@ -276,35 +264,55 @@ class SquerylGameDaoTest extends Specification {
         1 must be equalTo(1)
       }
   }
+*/
 
-  /**
-   * Wrap tests with database creation and transactions
-   */
-  def txn[B](block: GameDao => NowService => B)(implicit nowService: NowService) = {
-    Class forName "org.h2.Driver"
-    SessionFactory.concreteFactory = Some(() =>
-      Session.create(
-        java.sql.DriverManager.getConnection("jdbc:h2:mem:", "", ""),
-        new H2Adapter))
-    val gameDao = new SquerylGameDao(nowService)
-    gameDao.tx { gameDao =>
-      CalendarSchema.create
-      block(gameDao)(nowService)
+  trait db extends Scope with BeforeAfter {
+
+    val nowA: DateTime = September(5, 1972).at(9, 0)
+    val nowB: DateTime = September(7, 1972).at(9, 0)
+    val nows: Stream[DateTime] = List(nowA, nowB).toStream #::: nows
+
+    implicit var gameDao: GameDao = null
+    implicit var ee: ExecutionEnv = null
+    implicit val nowService: NowService = new NowService {
+      val n = nows.iterator
+      override def now: DateTime = n.next()
     }
+    var dbConfig = {
+
+    }
+    def await[E](f: Future[E]): E = Await.result(f, 1.second)
+    def before = {
+      val app: Application = FakeApplication(
+        additionalConfiguration = Map(
+          "slick.dbs.default.driver" -> "slick.driver.H2Driver$",
+          "slick.dbs.default.db.driver" -> "org.h2.Driver",
+          "slick.dbs.default.db.url" -> "jdbc:h2:mem:",
+          "slick.dbs.default.db.user" -> "",
+          "slick.dbs.default.db.password" -> ""
+        ),
+        withoutPlugins = Seq("evolution"))
+      val dbConfigProvider = new DatabaseConfigProvider {
+        override def get[P <: BasicProfile]: DatabaseConfig[P] = DatabaseConfigProvider.get[P](app)
+      }
+      gameDao = new SlickGameDao(dbConfigProvider)
+    }
+
+    def after: Any = {}
   }
 
   /**
    * A simple implicit class that allows games to be created as "Opponents home date" or "Opponents away date"
    */
   implicit class StringImplicit(opponents: String) {
-    def home(date: Date)(implicit gameDao: GameDao) = on(Location.HOME, date)
-    def home(date: DateTime)(implicit gameDao: GameDao) = on(Location.HOME, date)
-    def away(date: Date)(implicit gameDao: GameDao) = on(Location.AWAY, date)
-    def away(date: DateTime)(implicit gameDao: GameDao) = on(Location.AWAY, date)
-    def on(location: Location, date: DateTime)(implicit gameDao: GameDao): Game = {
-      val game = Game(GameKey(Competition.FACP, location, opponents, date.getYear))
-      game.at = Some(date.withHourOfDay(15).withMinuteOfHour(0).withMillisOfSecond(0))
-      gameDao store game
+    def home(date: Date)(implicit gameDao: GameDao, nowService: NowService) = on(Location.HOME, date)
+    def home(date: DateTime)(implicit gameDao: GameDao, nowService: NowService) = on(Location.HOME, date)
+    def away(date: Date)(implicit gameDao: GameDao, nowService: NowService) = on(Location.AWAY, date)
+    def away(date: DateTime)(implicit gameDao: GameDao, nowService: NowService) = on(Location.AWAY, date)
+    def on(location: Location, date: DateTime)(implicit gameDao: GameDao, nowService: NowService): Future[Game] = {
+      val game = Game.gameKey(Competition.FACP, location, opponents, date.getYear).copy(
+        at = Some(date.withHourOfDay(15).withMinuteOfHour(0).withMillisOfSecond(0)))
+      gameDao.store(game)
     }
   }
 }
