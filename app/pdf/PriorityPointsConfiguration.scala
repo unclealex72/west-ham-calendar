@@ -4,13 +4,21 @@ import argonaut.Argonaut._
 import argonaut._
 import model.PersistableEnumeration
 
+import scala.collection.SortedSet
+
 /**
  * Created by alex on 09/02/15.
  */
 
-case class PriorityPointsConfiguration(clients: List[Client], contactDetails: ContactDetails, creditCard: CreditCard)
-case class Client(name: String, referenceNumber: Int, clientType: Option[ClientType])
+case class PriorityPointsConfiguration(clients: SortedSet[Client], contactDetails: ContactDetails, creditCard: CreditCard, signature: String)
+case class Client(name: String, referenceNumber: Int, clientType: Option[ClientType], ordering: Long)
 
+object Client {
+
+  implicit val clientOrdering: Ordering[Client] = Ordering.by { c =>
+    (c.ordering, c.referenceNumber, c.name, c.clientType.map(_.persistableToken).getOrElse(""))
+  }
+}
 
 case class ContactDetails(address: String, daytimeTelephoneNumber: String, mobilePhoneNumber: String, emailAddress: String)
 case class CreditCard(number: String, expiry: CreditCardDate, securityCode: Int, nameOnCard: String)
@@ -47,12 +55,12 @@ object PriorityPointsConfiguration {
       }
     }
 
-  implicit def clientCodec = casecodec3(Client.apply, Client.unapply)("name", "referenceNumber", "clientType")
+  implicit def clientCodec = casecodec4(Client.apply, Client.unapply)("name", "referenceNumber", "clientType", "ordering")
   implicit def contactDetailsCodec =
     casecodec4(ContactDetails.apply, ContactDetails.unapply)("address", "daytimeTelephoneNumber", "mobilePhoneNumber", "emailAddress")
   implicit def creditCardDateCodec = casecodec2(CreditCardDate.apply, CreditCardDate.unapply)("month", "year")
   implicit def creditCardCodec =
     casecodec4(CreditCard.apply, CreditCard.unapply)("number", "expiry", "securityCode", "nameOnCard")
   implicit def priorityPointsConfigurationCodec =
-    casecodec3(PriorityPointsConfiguration.apply, PriorityPointsConfiguration.unapply)("clients", "contactDetails", "creditCard")
+    casecodec4(PriorityPointsConfiguration.apply, PriorityPointsConfiguration.unapply)("clients", "contactDetails", "creditCard", "signature")
 }

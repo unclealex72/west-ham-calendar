@@ -9,7 +9,9 @@ case class PdfPositioning(team: Point, league: Box, cup: Box, name: Point, ref: 
                            daytimePhone: Point, mobilePhone: Point, emailAddress: Point, clientRef: Point, clientNameOffset: Int,
                            oapOffset: Int, juniorOffset: Int, nextClientOffset: Int,
                            creditCard: RepeatingPoint,
-                           expiryDate: RepeatingPoint, securityCode: RepeatingPoint, nameOnCard: Point, numberOfTickets: Point)
+                           expiryDate: RepeatingPoint, securityCode: RepeatingPoint,
+                           nameOnCard: Point, numberOfTickets: Point,
+                          signaturePosition: Point, signatureHeight: Int)
 
 
 case class Point(x: Int, y: Int) {
@@ -33,9 +35,9 @@ object PdfPositioning {
   implicit def dimensionCodec = casecodec2(Dimension.apply, Dimension.unapply)("width", "height")
   implicit def boxCodec = casecodec2(Box.apply, Box.unapply)("bottomLeft", "size")
   implicit def pdfPositioningCodec =
-    casecodec19(PdfPositioning.apply, PdfPositioning.unapply)("team", "league", "cup", "name", "ref", "address",
+    casecodec21(PdfPositioning.apply, PdfPositioning.unapply)("team", "league", "cup", "name", "ref", "address",
       "daytimePhone", "mobilePhone", "emailAddress", "clientRef", "clientNameOffset",
       "oapOffset", "juniorOffset", "nextClientOffset",
       "creditCard",
-      "expiryDate", "securityCode", "nameOnCard", "numberOfTickets")
+      "expiryDate", "securityCode", "nameOnCard", "numberOfTickets", "signaturePosition", "signatureHeight")
 }

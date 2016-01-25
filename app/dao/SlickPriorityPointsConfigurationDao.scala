@@ -2,11 +2,13 @@ package dao
 
 import javax.inject.Inject
 
+import pdf.Client._
 import pdf._
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.{GetResult => GR}
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.collection.SortedSet
+import scala.concurrent.{ExecutionContext, Future}
 
 
 /**
@@ -23,16 +25,18 @@ class SlickPriorityPointsConfigurationDao @Inject()(val dbConfigProvider: Databa
     *  @param referenceNumber Database column referencenumber SqlType(int4)
     *  @param prioritypointsconfigurationid Database column prioritypointsconfigurationid SqlType(int8)
     *  @param clientType Database column clienttype SqlType(varchar), Length(128,true), Default(None) */
-  case class ClientRow(id: Long, name: String, referenceNumber: Int, prioritypointsconfigurationid: Long, clientType: Option[ClientType] = None)
+  case class ClientRow(id: Long, ordering: Long, name: String, referenceNumber: Int, prioritypointsconfigurationid: Long, clientType: Option[ClientType] = None)
 
   /** Table description of table client. Objects of this class serve as prototypes for rows in queries. */
   class TClient(_tableTag: Tag) extends Table[ClientRow](_tableTag, "client") {
-    def * = (id, name, referenceNumber, priorityPointsConfigurationId, clientType) <> (ClientRow.tupled, ClientRow.unapply)
+    def * = (id, ordering, name, referenceNumber, priorityPointsConfigurationId, clientType) <> (ClientRow.tupled, ClientRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(name), Rep.Some(referenceNumber), Rep.Some(priorityPointsConfigurationId), clientType).shaped.<>({ r=>import r._; _1.map(_=> ClientRow.tupled((_1.get, _2.get, _3.get, _4.get, _5)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    //def ? = (Rep.Some(id), Rep.Some(ordering), Rep.Some(name), Rep.Some(referenceNumber), Rep.Some(priorityPointsConfigurationId), clientType).shaped.<>({ r=>; _1.map(_=> ClientRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(int8), PrimaryKey */
     val id: Rep[Long] = column[Long]("id", O.PrimaryKey)
+    /** Database column id SqlType(int8), PrimaryKey */
+    val ordering: Rep[Long] = column[Long]("ordering")
     /** Database column name SqlType(varchar), Length(128,true) */
     val name: Rep[String] = column[String]("name", O.Length(128,varying=true))
     /** Database column referencenumber SqlType(int4) */
@@ -71,17 +75,18 @@ class SlickPriorityPointsConfigurationDao @Inject()(val dbConfigProvider: Databa
                                              creditCardSecurityCode: Int,
                                              creditCardExpiryMonth: Int,
                                              creditCardExpiryYear: Int,
-                                             nameOnCreditCard: String)
+                                             nameOnCreditCard: String,
+                                             signature: String)
   /** GetResult implicit for fetching PrioritypointsconfigurationRow objects using plain SQL queries */
   implicit def GetResultPrioritypointsconfigurationRow(implicit e0: GR[Long], e1: GR[String], e2: GR[Int]): GR[PriorityPointsConfigurationRow] = GR{
     prs => import prs._
-      PriorityPointsConfigurationRow.tupled((<<[Long], <<[String], <<[String], <<[String], <<[String], <<[String], <<[Int], <<[Int], <<[Int], <<[String]))
+      PriorityPointsConfigurationRow.tupled((<<[Long], <<[String], <<[String], <<[String], <<[String], <<[String], <<[Int], <<[Int], <<[Int], <<[String], <<[String]))
   }
   /** Table description of table prioritypointsconfiguration. Objects of this class serve as prototypes for rows in queries. */
   class TPriorityPointsConfiguration(_tableTag: Tag) extends Table[PriorityPointsConfigurationRow](_tableTag, "prioritypointsconfiguration") {
-    def * = (id, emailAddress, daytimeTelephoneNumber, mobilePhoneNumber, address, creditCardNumber, creditCardSecurityCode, creditCardExpiryMonth, creditCardExpiryYear, nameOnCreditCard) <> (PriorityPointsConfigurationRow.tupled, PriorityPointsConfigurationRow.unapply)
+    def * = (id, emailAddress, daytimeTelephoneNumber, mobilePhoneNumber, address, creditCardNumber, creditCardSecurityCode, creditCardExpiryMonth, creditCardExpiryYear, nameOnCreditCard, signature) <> (PriorityPointsConfigurationRow.tupled, PriorityPointsConfigurationRow.unapply)
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(emailAddress), Rep.Some(daytimeTelephoneNumber), Rep.Some(mobilePhoneNumber), Rep.Some(address), Rep.Some(creditCardNumber), Rep.Some(creditCardSecurityCode), Rep.Some(creditCardExpiryMonth), Rep.Some(creditCardExpiryYear), Rep.Some(nameOnCreditCard)).shaped.<>({ r=>import r._; _1.map(_=> PriorityPointsConfigurationRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(emailAddress), Rep.Some(daytimeTelephoneNumber), Rep.Some(mobilePhoneNumber), Rep.Some(address), Rep.Some(creditCardNumber), Rep.Some(creditCardSecurityCode), Rep.Some(creditCardExpiryMonth), Rep.Some(creditCardExpiryYear), Rep.Some(nameOnCreditCard), Rep.Some(signature)).shaped.<>({ r=>import r._; _1.map(_=> PriorityPointsConfigurationRow.tupled((_1.get, _2.get, _3.get, _4.get, _5.get, _6.get, _7.get, _8.get, _9.get, _10.get, _11.get)))}, (_:Any) =>  throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(int8), PrimaryKey */
     val id: Rep[Long] = column[Long]("id", O.PrimaryKey)
@@ -103,6 +108,7 @@ class SlickPriorityPointsConfigurationDao @Inject()(val dbConfigProvider: Databa
     val creditCardExpiryYear: Rep[Int] = column[Int]("creditcardexpiryyear")
     /** Database column nameoncreditcard SqlType(varchar), Length(128,true) */
     val nameOnCreditCard: Rep[String] = column[String]("nameoncreditcard", O.Length(128,varying=true))
+    val signature: Rep[String] = column[String]("signature", O.Length(128,varying=true))
   }
   /** Collection-like TableQuery object for table Prioritypointsconfiguration */
   lazy val priorityPointsConfigurations = new TableQuery(tag => new TPriorityPointsConfiguration(tag))
@@ -144,13 +150,13 @@ class SlickPriorityPointsConfigurationDao @Inject()(val dbConfigProvider: Databa
       creditCardDate,
       priorityPointsConfigurationRow.creditCardSecurityCode, priorityPointsConfigurationRow.nameOnCreditCard)
 
-    PriorityPointsConfiguration(List(createClient(clientRow)), contactDetails, creditCard)
+    PriorityPointsConfiguration(SortedSet(createClient(clientRow)), contactDetails, creditCard, priorityPointsConfigurationRow.signature)
   }
 
   def addClient(conf: PriorityPointsConfiguration, clientRow: ClientRow) = {
-    conf.copy(clients = createClient(clientRow) :: conf.clients)
+    conf.copy(clients = conf.clients + createClient(clientRow))
   }
   def createClient(clientRow: ClientRow): Client = {
-    Client(clientRow.name, clientRow.referenceNumber, clientRow.clientType)
+    Client(clientRow.name, clientRow.referenceNumber, clientRow.clientType, clientRow.ordering)
   }
 }

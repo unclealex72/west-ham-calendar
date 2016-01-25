@@ -2,6 +2,12 @@
 
 # --- !Ups
 
-alter table "game" alter column id set default nextval('s_game_id');
+alter table "client" ADD "ordering" INT;
+
+update "client" set "ordering" = "id";
+
+alter table "client" ALTER "ordering" SET NOT NULL;
 
 # --- !Downs
+
+alter table "client" drop "ordering";

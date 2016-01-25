@@ -1,13 +1,17 @@
 package pdf
 
-import java.io.OutputStream
+import java.io.{ByteArrayInputStream, OutputStream}
+import java.nio.charset.StandardCharsets
+import java.util.Base64
+import javax.imageio.ImageIO
 import javax.inject.Inject
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream
 import org.apache.pdfbox.pdmodel.font.PDType1Font
-import org.apache.pdfbox.pdmodel.{PDDocument, PDPage}
+import org.apache.pdfbox.pdmodel.graphics.image.{LosslessFactory, PDImageXObject}
+import org.apache.pdfbox.pdmodel.{PDDocument, PDPageContentStream}
 import pdf.ClientType.{Junior, OAP}
+import ContentStream._
 
 /**
  * Created by alex on 08/02/15.
@@ -27,11 +31,11 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning) 
   }
 
   def doGenerate(priorityPointsConfiguration: PriorityPointsConfiguration, team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit = {
-    val url = classOf[PdfBoxPriorityPointsPdfFactory].getResource("prioritypoints.pdf")
-    val document = PDDocument.load(url)
-    val page = document.getDocumentCatalog.getAllPages.get(0).asInstanceOf[PDPage]
-    val contentStream = new PDPageContentStream(document, page, true, true) with ContentStreamExtensions
-    page.getContents.getStream
+    val in = classOf[PdfBoxPriorityPointsPdfFactory].getResourceAsStream("prioritypoints.pdf")
+    val document = PDDocument.load(in)
+    in.close()
+    val page = document.getPage(0)
+    val contentStream = new PDPageContentStream(document, page, true, true)
 
     // Write the team name
     contentStream.write(team.toUpperCase, pdfPositioning.team)
@@ -83,6 +87,22 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning) 
     // Number of clients
     contentStream.write(clients.size, pdfPositioning.numberOfTickets)
 
+    // Add signature
+
+    val imageData = Base64.getDecoder.decode(priorityPointsConfiguration.signature)
+    val bufferedImage = ImageIO.read(new ByteArrayInputStream(imageData))
+    val pdImage = LosslessFactory.createFromImage(document, bufferedImage)
+    val width: Float = pdImage.getWidth
+    val height: Float = pdImage.getHeight
+    val fixedHeight: Float = pdfPositioning.signatureHeight
+
+    contentStream.drawImage(
+      pdImage,
+      pdfPositioning.signaturePosition.x,
+      pdfPositioning.signaturePosition.y,
+      width * (fixedHeight / height),
+      fixedHeight)
+
     // Write the document
     contentStream.close()
     document.save(out)
@@ -91,18 +111,18 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning) 
   }
 }
 
-trait ContentStreamExtensions {
+object ContentStream {
 
-  self: PDPageContentStream =>
+  implicit class ContentStreamExtensions(cs: PDPageContentStream) {
 
   val font = PDType1Font.HELVETICA_BOLD
 
   def write(text: Any, position: Point) = {
-    self.beginText()
-    self.setFont(font, 12)
-    self.moveTextPositionByAmount(position.x, position.y)
-    self.drawString(text.toString)
-    self.endText()
+    cs.beginText()
+    cs.setFont(font, 12)
+    cs.moveTextPositionByAmount(position.x, position.y)
+    cs.drawString(text.toString)
+    cs.endText()
   }
 
   def write(text: Any, position: RepeatingPoint): Unit = {
@@ -113,6 +133,8 @@ trait ContentStreamExtensions {
   }
 
   def strikeOut(box: Box) = {
-    self.fillRect(box.bottomLeft.x, box.bottomLeft.y, box.size.width, box.size.height)
+    cs.fillRect(box.bottomLeft.x, box.bottomLeft.y, box.size.width, box.size.height)
   }
 }
+}
+

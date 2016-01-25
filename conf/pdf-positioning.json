@@ -83,5 +83,10 @@
     },
     "offset" : 22
   },
-  "nextClientOffset" : 22
+  "nextClientOffset" : 22,
+  "signaturePosition" : {
+    "x" : 378,
+    "y" : 152
+  },
+  "signatureHeight" : 37
 }

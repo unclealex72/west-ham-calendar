@@ -8,7 +8,7 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
 libraryDependencies ++= Seq(
     //pdf
-    "org.apache.pdfbox" % "pdfbox" % "1.8.8",
+    "org.apache.pdfbox" % "pdfbox" % "2.0.0-RC3",
     //security
     "com.mohiva" %% "play-silhouette" % "3.0.4",
     "com.mohiva" %% "play-silhouette-testkit" % "3.0.4" % "test",
