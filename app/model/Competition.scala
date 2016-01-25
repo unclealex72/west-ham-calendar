@@ -118,7 +118,7 @@ object Competition extends PersistableEnumeration[Competition] with RemoteLoggin
   case object FRIENDLY extends CupCompetition {
     val persistableToken = "FRIENDLY"
     val name = "Friendly"
-    val tokens = List("Pre-Season Match")
+    val tokens = List("Pre-Season Match", "Betway Cup", "Mark Noble Testimonial")
   }
   FRIENDLY
 
@@ -128,7 +128,7 @@ object Competition extends PersistableEnumeration[Competition] with RemoteLoggin
   case object EUROPA extends CupCompetition {
     val persistableToken = "EUROPA"
     val name = "UEFA Europa League"
-    val tokens = List("UEFA Europa League")
+    val tokens = List("UEFA Europa League", "UEFA Europa League Qualifying")
   }
   EUROPA
 
