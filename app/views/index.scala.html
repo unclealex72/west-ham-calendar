@@ -17,7 +17,7 @@
     <script src='//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.10.0/ui-bootstrap-tpls.min.js'></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/gsap/latest/TweenMax.min.js"></script>
     <script type="text/javascript" src="@routes.Application.constants"></script>
-    @scripts = @{ if (play.Play.isProd()) Seq("calendar.min") else Seq("calendar", "attendance", "navigation", "season", "game") }
+    @scripts = @{ /*if (play.Play.isProd()) Seq("calendar.min") else */Seq("calendar", "attendance", "navigation", "season", "game") }
     @for(script <- scripts) {
     <script type="text/javascript" src='@routes.Assets.at("javascripts/" + script + ".js")'></script>
     }
