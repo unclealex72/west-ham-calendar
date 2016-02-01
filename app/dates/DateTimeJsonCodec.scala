@@ -42,15 +42,14 @@ object DateTimeJsonCodec {
   implicit val DateTimeJsonCodec: CodecJson[DateTime] = CodecJson(
     dt => jString(dt),
     c => c.focus.string match {
-      case Some(str) => {
+      case Some(str) =>
         try {
           ok(formatter.parseDateTime(str))
         }
         catch {
           case e: IllegalArgumentException => fail(e.getMessage, c.history)
         }
-      }
-     case None => fail("Expected a string for a date time.", c.history)
+      case None => fail("Expected a string for a date time.", c.history)
     }
   )
   

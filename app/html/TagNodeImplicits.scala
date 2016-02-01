@@ -22,11 +22,9 @@
 
 package html
 
-import scala.collection.JavaConversions._
+import org.htmlcleaner.{CommentNode, ContentNode, TagNode}
 
-import org.htmlcleaner.CommentNode
-import org.htmlcleaner.ContentNode
-import org.htmlcleaner.TagNode
+import scala.collection.JavaConversions._
 
 /**
  * Implicit methods for getting text from {@link TagNode}s.
@@ -46,13 +44,11 @@ object TagNodeImplicits {
      * @return The text of the {@link TagNode}.
      */
     def text: String = {
-      val textExtractor: PartialFunction[Any, String] = { obj =>
-        obj match {
-          case cn: ContentNode => cn.getContent.toString
-          case cn: CommentNode => cn.getContent.toString
-        }
+      val textExtractor: PartialFunction[Any, String] = {
+        case cn: ContentNode => cn.getContent.toString
+        case cn: CommentNode => cn.getContent.toString
       }
-      val texts = tagNode.getChildren() collect textExtractor
+      val texts = tagNode.getChildren.collect(textExtractor)
       texts.mkString(" ").replace('\u00a0', ' ').replace("&nbsp;", " ")
     }
 

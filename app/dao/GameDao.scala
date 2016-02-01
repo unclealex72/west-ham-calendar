@@ -19,7 +19,7 @@
  * under the License.
  *
  */
-package dao;
+package dao
 
 import dates.NowService
 import org.joda.time.DateTime

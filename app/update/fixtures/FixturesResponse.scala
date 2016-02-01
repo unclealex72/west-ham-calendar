@@ -52,7 +52,7 @@ case class Fixture(
         homePenalties <- isEmptyOrNull(homeShootoutScore)
         awayPenalties <- isEmptyOrNull(awayShootoutScore)
       } yield s" ($homePenalties - $awayPenalties)"
-      val result = score + (penalties.getOrElse(""))
+      val result = score + penalties.getOrElse("")
       ResultUpdateCommand(locator, result)
     }
     val matchReportUpdateCommand = link.map { link =>

@@ -19,9 +19,9 @@
  * under the License.
  *
  */
-package dates;
+package dates
 
-import org.joda.time.DateTime;
+import org.joda.time.DateTime
 
 /**
  * This service contains methods for parsing dates in various formats on the

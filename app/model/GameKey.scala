@@ -54,7 +54,7 @@ case class GameKey(
         gk1 => gk2 => gk1.competition.index compare gk2.competition.index,
         gk1 => gk2 => gk1.opponents compare gk2.opponents,
         gk1 => gk2 => gk1.location.index compare gk2.location.index)
-    orderings.toStream.map(f => f(this)(other)) takeWhile (_ != 0) headOption match {
+    orderings.toStream.map(f => f(this)(other)).takeWhile (_ != 0).headOption match {
       case Some(cmp) => cmp
       case None => 0
     }

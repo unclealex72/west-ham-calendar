@@ -16,10 +16,11 @@
 
 package models
 
-import argonaut._, Argonaut._, DecodeResult._
-import org.joda.time.DateTime
+import argonaut.Argonaut._
+import argonaut._
 import html._
 import logging.{RemoteLogging, RemoteStream}
+import org.joda.time.DateTime
 
 /**
  * The different types of tickets available from the website.
@@ -66,15 +67,15 @@ sealed class AbstractTicketType(
 
 
 case object BondholderTicketType extends AbstractTicketType(
-  "Bondholder", "Bond holder", BondHolderTicketsUpdateCommand.apply _, false, "Bondholders")
+  "Bondholder", "Bond holder", BondHolderTicketsUpdateCommand.apply, false, "Bondholders")
 case object PriorityPointTicketType extends AbstractTicketType(
-  "PriorityPoint", "Priority point", PriorityPointTicketsUpdateCommand.apply _, true, "Priority Point Applications")
+  "PriorityPoint", "Priority point", PriorityPointTicketsUpdateCommand.apply, true, "Priority Point Applications")
 case object SeasonTicketType extends AbstractTicketType(
-  "Season", "Season", SeasonTicketsUpdateCommand.apply _, false, "Season Ticket Holder General Sale", "Season Ticket Holder Additional")
+  "Season", "Season", SeasonTicketsUpdateCommand.apply, false, "Season Ticket Holder General Sale", "Season Ticket Holder Additional")
 case object AcademyTicketType extends AbstractTicketType(
-  "Academy", "Academy member", AcademyTicketsUpdateCommand.apply _, false, "Members")
+  "Academy", "Academy member", AcademyTicketsUpdateCommand.apply, false, "Members")
 case object GeneralSaleTicketType extends AbstractTicketType(
-  "GeneralSale", "General sale", GeneralSaleTicketsUpdateCommand.apply _, false, "General Sale")
+  "GeneralSale", "General sale", GeneralSaleTicketsUpdateCommand.apply, false, "General Sale")
 
 object TicketType extends RemoteLogging {
   type Name = String

@@ -33,7 +33,7 @@ class FixturesGameScanner @Inject() (rootUri: URI, nowService: NowService) exten
       seasonsDownloader.downloadFixtures(currentYear)
     }
     finally {
-      httpClient.close
+      httpClient.close()
     }
   }
 

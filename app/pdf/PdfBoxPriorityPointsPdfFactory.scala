@@ -22,10 +22,9 @@ class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning) 
      doGenerate(priorityPointsConfiguration, team, league, clientFilter, out)
     }
     catch {
-      case e: Exception => {
+      case e: Exception =>
         logger.error("Cannot generate a priority points pdf form.", e)
         throw e
-      }
     }
   }
 

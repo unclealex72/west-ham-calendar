@@ -19,12 +19,9 @@
  * under the License.
  *
  */
-package dates;
-
-import scala.collection.JavaConversions._
+package dates
 
 import org.joda.time.DateTime
-import org.joda.time.DayOfWeekIgnoringChronology
 /**
  * The default implementation of {@link DateService}.
  *

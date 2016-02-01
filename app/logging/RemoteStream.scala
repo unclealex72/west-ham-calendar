@@ -23,7 +23,7 @@ trait RemoteStream {
       val w = new StringWriter
       val pw = new PrintWriter(w)
       t.printStackTrace(pw)
-      pw.println
+      pw.println()
       logToRemote(w.toString)
     }
   }

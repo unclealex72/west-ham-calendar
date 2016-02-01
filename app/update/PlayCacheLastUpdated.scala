@@ -31,7 +31,7 @@ import play.api.Play.current
  */
 class PlayCacheLastUpdated extends LastUpdated {
 
-  val cacheKey = s"${getClass()}.lastUpdated";
+  val cacheKey = s"$getClass.lastUpdated"
   
   def at(lastUpdatedTime: DateTime) = {
     Cache.set(cacheKey, lastUpdatedTime)

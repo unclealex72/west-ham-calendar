@@ -19,9 +19,9 @@
  * under the License.
  *
  */
-package org.joda.time;
+package org.joda.time
 
-import java.util.Locale;
+import java.util.Locale
 
 /**
  * A chronology that ignores changes to the day of the week.

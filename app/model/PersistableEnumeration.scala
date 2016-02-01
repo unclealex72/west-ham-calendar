@@ -27,8 +27,11 @@ package model
 import argonaut.Argonaut._
 import argonaut.{DecodeResult, DecodeJson, EncodeJson}
 
+import scala.language.implicitConversions
+
 /**
  * A base class for enumeration type objects that can be persisted in a database
+ *
  * @author alex
  *
  */

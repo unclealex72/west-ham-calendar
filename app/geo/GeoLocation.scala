@@ -226,12 +226,12 @@ object GeoLocation extends GeoLocationLike {
         case _ => Some(differences.max)
       }
     }
-    val largestDifferences: GeoLocation => Traversable[Pair[GeoLocation, Double]] = { (geoLocation: GeoLocation) =>
+    val largestDifferences: GeoLocation => Traversable[(GeoLocation, Double)] = { (geoLocation: GeoLocation) =>
       largestDifference(geoLocation) map (difference => geoLocation -> difference)
     }
     values.values.flatMap(largestDifferences).toList match {
       case Nil => None
-      case largestDifferences => Some(largestDifferences.maxBy(_._2)._1)
+      case ld => Some(ld.maxBy(_._2)._1)
     }
   }
 

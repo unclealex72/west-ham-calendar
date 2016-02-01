@@ -106,10 +106,10 @@ case class Calendar @Inject() (
   }
 
   def calculateETag(parts: Option[Any]*): String = {
-    val allParts = (lastUpdated when) :: parts.toList
+    val allParts = lastUpdated.when :: parts.toList
     val toStringFactory = { any: Option[Any] => 
       any match {
-        case Some(any) => any.toString
+        case Some(a) => a.toString
         case None => ""
       }
     }

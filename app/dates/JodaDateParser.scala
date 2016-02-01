@@ -54,13 +54,12 @@ class JodaDateParser(dateFormat: String) extends DateParser {
    */
   override def find(str: String): Option[DateTime] = {
     def findInternal(str: String, maxLength: Int): Option[DateTime] = {
-      str length match {
+      str.length match {
         case 0 => None
-        case length => {
-          val lengths = math.min(maxLength, length) to (0, -1) toStream
-          val dateTimes = lengths map (len => parse(str substring (0, len)))
-          dateTimes find (_.isDefined) getOrElse findInternal(str.substring(1), maxLength)
-        }
+        case length =>
+          val lengths = math.min(maxLength, length).to(0, -1).toStream
+          val dateTimes = lengths.map(len => parse(str.substring(0, len)))
+          dateTimes.find(_.isDefined).getOrElse(findInternal(str.substring(1), maxLength))
       }
     }
     findInternal(str, dateTimeFormatter.getParser.estimateParsedLength)

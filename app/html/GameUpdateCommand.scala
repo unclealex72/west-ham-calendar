@@ -19,7 +19,7 @@
  * under the License.
  *
  */
-package html;
+package html
 
 import scala.math.Ordered
 import org.joda.time.DateTime
@@ -104,10 +104,9 @@ sealed abstract class BaseGameUpdateCommand[V](
 
   def compare(other: GameUpdateCommand): Int = {
     other match {
-      case otherBase: BaseGameUpdateCommand[V] => {
+      case otherBase: BaseGameUpdateCommand[V] =>
         val cmp = gameLocator.compare(otherBase.gameLocator)
         if (cmp == 0) updateType.position - otherBase.updateType.position else cmp
-      }
     }
   }
 

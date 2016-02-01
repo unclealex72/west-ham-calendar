@@ -22,7 +22,7 @@ class TicketsGameScanner @Inject() (val rootUri: URI) extends GameScanner with R
 
   override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
     latestSeason match {
-      case Some(ls) => {
+      case Some(ls) =>
         val ticketsUri = new URIBuilder(rootUri).setPath("/Tickets/Match-Tickets").build()
         val ticketsXml = loadPage(ticketsUri)
         val matchRegex = "(?:Home|Away)-Matches".r
@@ -31,11 +31,9 @@ class TicketsGameScanner @Inject() (val rootUri: URI) extends GameScanner with R
           href <- a.attributes.asAttrMap.get("href").toList if matchRegex.findFirstMatchIn(href).isDefined
           updateCommands <- createUpdateCommands(ls, rootUri.resolve(new URI(href)))
         } yield updateCommands
-      }
-      case _ => {
+      case _ =>
         logger info "There are currently no games so tickets will not be searched for."
         List.empty
-      }
     }
   }
 
@@ -44,14 +42,12 @@ class TicketsGameScanner @Inject() (val rootUri: URI) extends GameScanner with R
     val ticketPage = loadPage(uri)
     val ticketPageScanner = TicketPageScanner(ticketPage, latestSeason)(remoteStream)
     ticketPageScanner.findWhen match {
-      case Some(dateTime) => {
+      case Some(dateTime) =>
         logger info s"Found date $dateTime"
         ticketPageScanner.scanTicketDates(dateTime)
-      }
-      case _ => {
+      case _ =>
         logger warn s"Cannot find a date played at page $uri"
         Seq.empty
-      }
     }
   }
 

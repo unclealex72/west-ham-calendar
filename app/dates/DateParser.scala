@@ -20,10 +20,10 @@
  *
  */
 
-package dates;
+package dates
 
-import org.joda.time.DateTime
 import logging.{RemoteLogging, RemoteStream}
+import org.joda.time.DateTime
 
 /**
  * An interface for objects that parse dates from strings or find dates embedded within strings.
@@ -47,10 +47,10 @@ trait DateParser {
   def logFailures: LoggingDateParser = new LoggingDateParser with RemoteLogging {
 
     override def parse(str: String)(implicit remoteStream: RemoteStream): Option[DateTime] =
-      execute(DateParser.this.parse _, str, s"Cannot parse $str as a date")
+      execute(DateParser.this.parse, str, s"Cannot parse $str as a date")
 
     override def find(str: String)(implicit remoteStream: RemoteStream): Option[DateTime] =
-      execute(DateParser.this.find _, str, s"Cannot find a date in $str")
+      execute(DateParser.this.find, str, s"Cannot find a date in $str")
 
     def execute(f: String => Option[DateTime], str: String, failureMessage: String)(implicit remoteStream: RemoteStream): Option[DateTime] = {
       logOnEmpty(f(str), failureMessage)

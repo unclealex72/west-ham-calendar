@@ -20,7 +20,7 @@
  *
  */
 
-package html;
+package html
 
 import org.joda.time.DateTime
 
@@ -74,10 +74,9 @@ sealed abstract class InternalGameLocator[E](
 
   def compare(other: GameLocator): Int = {
     other match {
-      case o: InternalGameLocator[E] => {
+      case o: InternalGameLocator[E] =>
         val cmp = locatorType.id - o.locatorType.id
         if (cmp == 0) ord.compare(locator, o.locator) else cmp
-      }
     }
   }
 }

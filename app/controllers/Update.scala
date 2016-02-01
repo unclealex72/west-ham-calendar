@@ -78,10 +78,9 @@ case class Update @Inject() (
       mainUpdateService.processDatabaseUpdates.map { gameCount =>
         channel.push(s"There are now $gameCount games.\n")
       }.andThen {
-        case Failure(t) => {
+        case Failure(t) =>
           logger.error("Updating all games failed.", t)
           remoteStream.log("Updating all games failed.", Some(t))
-        }
       }.andThen {
         case _ => channel.eofAndEnd()
       }

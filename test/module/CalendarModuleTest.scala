@@ -21,19 +21,33 @@
  */
 package module
 
+import com.tzavellas.sse.guice.ScalaModule
+import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import com.google.inject.Guice
+import play.api.cache.CacheApi
+import play.api.db.slick.DatabaseConfigProvider
+
+import scala.concurrent.ExecutionContext
 
 /**
  * Test that the Guice Calendar Module can be instantiated.
- * @author alex
+  *
+  * @author alex
  *
  */
-class CalendarModuleTest extends Specification {
+class CalendarModuleTest extends Specification with Mockito {
 
     "Application initialisation" should {
       "not error" in {
-        Guice.createInjector(new CalendarModule)    
+        class MockModule extends ScalaModule {
+          override def configure() = {
+            bind[ExecutionContext].toInstance(mock[ExecutionContext])
+            bind[CacheApi].toInstance(mock[CacheApi])
+            bind[DatabaseConfigProvider].toInstance(mock[DatabaseConfigProvider])
+          }
+        }
+        Guice.createInjector(new MockModule, new CalendarModule)
         success
       }
   }

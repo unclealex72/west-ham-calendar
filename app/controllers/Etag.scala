@@ -39,14 +39,12 @@ trait Etag extends StrictLogging {
     Action.async(action.parser) { implicit request =>
       val quotedETag = '"' + calculatedETag + '"'
       val modified = request.headers.get(HeaderNames.IF_NONE_MATCH) match {
-        case None => {
+        case None =>
           logger.info(s"No ${HeaderNames.IF_NONE_MATCH} header was sent for resource $request.uri")
           true
-        }
-        case Some(etag) => {
+        case Some(etag) =>
           logger.info(s"Header ${HeaderNames.IF_NONE_MATCH} for $request.uri has value $etag")
           etag != quotedETag
-        }
       }
       val response =
       if (modified) {

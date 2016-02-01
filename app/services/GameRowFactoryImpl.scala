@@ -83,10 +83,9 @@ class GameRowFactoryImpl extends GameRowFactory {
       AcademyTicketType -> game.academyMembersAvailable,
       GeneralSaleTicketType -> game.generalSaleAvailable)
     ticketsAt.foldLeft(Map.empty[TicketType.Name, TicketingInformation]) {
-      case (tickets, (ticketType, Some(availableAt))) => {
+      case (tickets, (ticketType, Some(availableAt))) =>
         val ticketFormUrl = ticketFormUrlFactory(ticketType)(game)
         tickets + (ticketType.name -> TicketingInformation(availableAt, ticketFormUrl))
-      }
       case (tickets, _) => tickets
     }
   }

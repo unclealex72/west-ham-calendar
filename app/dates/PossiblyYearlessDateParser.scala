@@ -55,8 +55,8 @@ class PossiblyYearlessDateParser(
     str match {
       case YEAR_STRIPPING_REGEX(preYear, year, postYear) =>
         Array(DoesNotNeedYear(preYear + year + postYear), DoesNeedYear(preYear + postYear))
-      case str if str.contains("y") => Array(DoesNotNeedYear(str))
-      case str => Array(DoesNeedYear(str))
+      case s if s.contains("y") => Array(DoesNotNeedYear(s))
+      case s => Array(DoesNeedYear(s))
     }
   }
 

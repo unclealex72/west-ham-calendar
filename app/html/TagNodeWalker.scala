@@ -20,32 +20,35 @@
  *
  */
 
-package html;
+package html
 
-import org.htmlcleaner.HtmlNode
-import org.htmlcleaner.TagNode
-import org.htmlcleaner.TagNodeVisitor;
-import scala.collection.mutable.Buffer
+import org.htmlcleaner.{HtmlNode, TagNode, TagNodeVisitor}
+
+import scala.collection.mutable
 
 /**
  * A class to walk {@link TagNode}s. Basically, class wraps a {@link TagNodeVisitor} but only visits
  * {@link TagNode}s and always walks the entire tree.
- * @author alex
+  *
+  * @author alex
  *
  */
 object TagNodeWalker {
 
   /**
    * Walk a tag node.
-   * @param f A function that transforms a tag node into a list of results.
+    *
+    * @param f A function that transforms a tag node into a list of results.
    * @param tagNode the node to walk.
    */
   def walk[E](f: TagNode => Traversable[E])(tagNode: TagNode): List[E] = {
-    val buffer = Buffer.empty[E]
+    val buffer = mutable.Buffer.empty[E]
     val visitor = new TagNodeVisitor() {
       def visit(parentNode: TagNode, htmlNode: HtmlNode) = {
-        if (htmlNode.isInstanceOf[TagNode]) {
-          buffer ++= f(htmlNode.asInstanceOf[TagNode])
+        htmlNode match {
+          case tagNode: TagNode =>
+            buffer ++= f(tagNode)
+          case _ =>
         }
         true
       }

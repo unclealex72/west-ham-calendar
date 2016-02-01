@@ -25,47 +25,20 @@
 package cal
 
 import java.io.Writer
-import play.api.mvc.Request
+import java.net.URI
+import javax.inject.Inject
 
-import scala.math.BigDecimal._
-import org.joda.time.{ DateTime => JodaDateTime }
+import dates.NowService
 import model.Location._
 import net.fortuna.ical4j.data.CalendarOutputter
-import net.fortuna.ical4j.model.{ Calendar => ICalendar }
-import net.fortuna.ical4j.model.{ DateTime => IDateTime }
-import net.fortuna.ical4j.model.TimeZone
-import net.fortuna.ical4j.model.TimeZoneRegistryFactory
 import net.fortuna.ical4j.model.component.VEvent
-import net.fortuna.ical4j.model.property.CalScale
-import net.fortuna.ical4j.model.property.ProdId
-import net.fortuna.ical4j.model.property.Version
-import net.fortuna.ical4j.model.property.DtStart
-import net.fortuna.ical4j.model.property.DtEnd
-import net.fortuna.ical4j.model.property.Summary
-import net.fortuna.ical4j.model.property.Url
-import java.net.URI
-import scala.collection.JavaConversions._
-import net.fortuna.ical4j.model.Property
-import net.fortuna.ical4j.model.property.Description
-import net.fortuna.ical4j.util.UidGenerator
-import net.fortuna.ical4j.model.component.VTimeZone
-import net.fortuna.ical4j.model.property.Uid
-import net.fortuna.ical4j.model.property.Location
-import net.fortuna.ical4j.model.property.BusyType._
-import net.fortuna.ical4j.model.property.Transp._
 import net.fortuna.ical4j.model.property.Status._
-import net.fortuna.ical4j.model.property.Geo
-import net.fortuna.ical4j.model.property.Attach
-import net.fortuna.ical4j.model.property.DtStamp
-import javax.inject.Inject
-import dates.NowService
-import net.fortuna.ical4j.model.property.Created
-import net.fortuna.ical4j.model.property.LastModified
-import net.fortuna.ical4j.model.property.Sequence
-import net.fortuna.ical4j.model.property.Status
-import net.fortuna.ical4j.model.property.Method
-import net.fortuna.ical4j.model.property.XProperty
-import net.fortuna.ical4j.model.PropertyList
+import net.fortuna.ical4j.model.property.Transp._
+import net.fortuna.ical4j.model.property.{Attach, CalScale, Created, Description, DtEnd, DtStamp, DtStart, LastModified, Location, Method, ProdId, Sequence, Summary, Uid, Version, XProperty}
+import net.fortuna.ical4j.model.{Calendar => ICalendar, DateTime => IDateTime, Property, PropertyList}
+import org.joda.time.{DateTime => JodaDateTime}
+
+import scala.language.implicitConversions
 
 /*
  * A calendar writer that creates iCal calendars that are compatible with at least Google and Mozilla Thunderbird
@@ -94,9 +67,9 @@ class IcalCalendarWriter @Inject() (
       new XProperty("X-WR-CALNAME", calendar.title),
       new XProperty("X-WR-CALDESC", calendar.title),
       new XProperty("X-WR-TIMEZONE", "Europe/London"),
-      CalScale.GREGORIAN) foreach (ical.getProperties().add)
-    calendar.events map (toVEvent(linkFactory)) foreach (ical.getComponents().add)
-    outputter output (ical, writer)
+      CalScale.GREGORIAN) foreach ical.getProperties().add
+    calendar.events.map(toVEvent(linkFactory)).foreach(ical.getComponents().add)
+    outputter.output(ical, writer)
   }
 
   /**
@@ -137,14 +110,14 @@ class IcalCalendarWriter @Inject() (
    * Create a DESCRIPTION property
    */
   def DESCRIPTION: Event => Option[Property] = { event =>
-    val descriptionLine: Pair[String, Option[Any]] => Option[String] = { parts =>
-      parts._2 map (value => s"${parts._1}: $value")
+    val descriptionLine: ((String, Option[Any])) => Option[String] = { parts =>
+      parts._2.map(value => s"${parts._1}: $value")
     }
     val descriptions = Seq(
       "Result" -> event.result,
       "Attendence" -> event.attendence,
       "Match Report" -> event.matchReport) map descriptionLine
-    if (descriptions isEmpty) None else Some(new Description(descriptions.flatten mkString "\n"))
+    if (descriptions.isEmpty) None else Some(new Description(descriptions.flatten.mkString("\n")))
   }
 
   /**
@@ -176,7 +149,7 @@ class IcalCalendarWriter @Inject() (
    * Create a SUMMARY property
    */
   def SUMMARY: Event => Property = { event =>
-    val swapOnAway: Pair[String, String] => Pair[String, String] = { p =>
+    val swapOnAway: ((String, String)) => (String, String) = { p =>
       event.location match {
         case HOME => p
         case AWAY => p.swap

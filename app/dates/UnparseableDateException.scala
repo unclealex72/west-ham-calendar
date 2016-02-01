@@ -19,7 +19,7 @@
  * under the License.
  *
  */
-package dates;
+package dates
 
 /**
  * An exception that is thrown for date strings that are not parseable.

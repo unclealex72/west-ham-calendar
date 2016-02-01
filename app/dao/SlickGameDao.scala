@@ -169,14 +169,12 @@ class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implic
       (q, so) => so match {
         case AttendedSearchOption.ATTENDED => q.filter(_.attended === true)
         case AttendedSearchOption.UNATTENDED => q.filter(_.attended === false)
-        case LocationSearchOption.HOME => {
+        case LocationSearchOption.HOME =>
           val home: Location = Location.HOME
           q.filter(_.location === home)
-        }
-        case LocationSearchOption.AWAY => {
+        case LocationSearchOption.AWAY =>
           val away: Location = Location.AWAY
           q.filter(_.location === away)
-        }
         case GameOrTicketSearchOption.BONDHOLDERS => q.filter(_.bondholders.isDefined)
         case GameOrTicketSearchOption.PRIORITY_POINT => q.filter(_.prioritypoint.isDefined)
         case GameOrTicketSearchOption.SEASON => q.filter(_.seasontickets.isDefined)

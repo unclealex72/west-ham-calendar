@@ -19,18 +19,17 @@
  * under the License.
  *
  */
-package html;
+package html
 
-import scala.collection.mutable.Buffer
+import org.htmlcleaner.{HtmlNode, TagNode, TagNodeVisitor}
 
-import org.htmlcleaner.HtmlNode
-import org.htmlcleaner.TagNode
-import org.htmlcleaner.TagNodeVisitor
+import scala.collection.mutable
 
 /**
  * A class to walk and filter {@link TagNode}s. Basically, class wraps a {@link TagNodeVisitor} but only visits
  * {@link TagNode}s and always walks the entire tree.
- * @author alex
+  *
+  * @author alex
  *
  */
 class TagNodeFilter(
@@ -41,23 +40,25 @@ class TagNodeFilter(
 
   /**
    * Walk an entire {@link TagNode} tree.
-   * @param tagNode The {@link TagNode} to walk.
+    *
+    * @param tagNode The {@link TagNode} to walk.
    * @return A list of all child {@link TagNodes} that adhere to i_{@link Predicate}.
    */
   def list(tagNode: TagNode): List[TagNode] = {
-    val tagNodes: Buffer[TagNode] = Buffer()
+    val tagNodes: mutable.Buffer[TagNode] = mutable.Buffer()
     val visitor = new TagNodeVisitor() {
       def visit(parentNode: TagNode, htmlNode: HtmlNode) = {
-        if (htmlNode.isInstanceOf[TagNode]) {
-          val tagNode = htmlNode.asInstanceOf[TagNode];
-          if (p(tagNode)) {
-            tagNodes += tagNode
-          }
+        htmlNode match {
+          case tagNode: TagNode =>
+            if (p(tagNode)) {
+              tagNodes += tagNode
+            }
+          case _ =>
         }
         true
       }
-    };
-    tagNode.traverse(visitor);
-    return tagNodes.toList
+    }
+    tagNode.traverse(visitor)
+    tagNodes.toList
   }
 }
