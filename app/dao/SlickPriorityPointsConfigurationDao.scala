@@ -14,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by alex on 19/01/16.
   */
-class SlickPriorityPointsConfigurationDao @Inject()(val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) extends PriorityPointsConfigurationDao with Slick {
+class SlickPriorityPointsConfigurationDao @Inject()(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: ExecutionContext) extends PriorityPointsConfigurationDao with Slick {
 
   import dbConfig.driver.api._
 

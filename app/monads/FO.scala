@@ -5,6 +5,7 @@ import scalaz._
 import scalaz.syntax.monad._
 
 /**
+  * Monad compositions for Futures and Options.
   * Created by alex on 21/01/16.
   */
 object FO {

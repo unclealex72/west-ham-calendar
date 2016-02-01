@@ -38,7 +38,7 @@ libraryDependencies ++= Seq(
     "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
     "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
     // test
-    "com.h2database" % "h2" % "1.3.171" % "test",
+    "org.hsqldb" % "hsqldb" % "2.3.3" % "test",
     "org.specs2" %% "specs2-core" % "3.7-scalaz-7.1.6" % "test",
     "org.specs2" %% "specs2-mock" % "3.7-scalaz-7.1.6" % "test",
     "org.specs2" %% "specs2-junit" % "3.7-scalaz-7.1.6" % "test",

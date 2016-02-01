@@ -115,3 +115,34 @@ trait GameDao {
    */
   def getAll: Future[List[Game]]
 }
+
+/**
+  * A trait that allows GameDAOs to delegate to another.
+  */
+trait DelegatingGameDao extends GameDao {
+
+  /**
+    * The GameDao to delegate to.
+    */
+  val gameDao: GameDao
+
+  def store(game: Game)(implicit nowService: NowService): Future[Game] = gameDao.store(game)
+  def findById(id: Long): Future[Option[Game]] = gameDao.findById(id)
+  def findByDatePlayed(datePlayed: DateTime): Future[Option[Game]] = gameDao.findByDatePlayed(datePlayed)
+  def getAllForSeason(season: Int): Future[List[Game]] = gameDao.getAllForSeason(season)
+  def getAllSeasons: Future[SortedSet[Int]] = gameDao.getAllSeasons
+  def findByBusinessKey(
+              competition: Competition,
+              location: Location,
+              opponents: String,
+              season: Int): Future[Option[Game]] = gameDao.findByBusinessKey(competition, location, opponents, season)
+  def getLatestSeason: Future[Option[Int]] = gameDao.getLatestSeason
+  def getAllForSeasonAndLocation(season: Int, location: Location): Future[List[Game]] =
+    gameDao.getAllForSeasonAndLocation(season, location)
+  def search(
+              attendedSearchOption: AttendedSearchOption,
+              locationSearchOption: LocationSearchOption,
+              gameOrTicketSearchOption: GameOrTicketSearchOption): Future[List[Game]] =
+    gameDao.search(attendedSearchOption, locationSearchOption, gameOrTicketSearchOption)
+  def getAll: Future[List[Game]] = gameDao.getAll
+}

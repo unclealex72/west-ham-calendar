@@ -1,13 +1,11 @@
 package dao
 
-import java.sql.Timestamp
 import javax.inject.Inject
 
-import dates.{NowService, JodaDateTime}
+import dates.NowService
 import model.{Competition, Game, Location}
 import org.joda.time.DateTime
-import play.api.db.slick.DatabaseConfigProvider
-import search.{SearchOption, GameOrTicketSearchOption, LocationSearchOption, AttendedSearchOption}
+import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption, SearchOption}
 
 import scala.collection.SortedSet
 import scala.concurrent.{ExecutionContext, Future}
@@ -16,9 +14,12 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by alex on 19/01/16.
   */
-class SlickGameDao @Inject() (val dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) extends GameDao with Slick {
+class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implicit ec: ExecutionContext) extends GameDao with Slick {
 
   import dbConfig.driver.api._
+
+  val create = games.schema.create
+  val drop = games.schema.drop
 
   /** Table description of table game. Objects of this class serve as prototypes for rows in queries. */
   class TGame(_tableTag: Tag) extends Table[Game](_tableTag, "game") {

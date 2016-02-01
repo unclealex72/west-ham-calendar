@@ -57,6 +57,7 @@ class CalendarModule extends ScalaModule {
 
   override def configure() {
     // Persistence
+    bind[DatabaseConfigFactory].to[PlayDatabaseConfigFactory]
     bind[NowService].to[SystemNowService]
     bind[GameDao].to[SlickGameDao]
 

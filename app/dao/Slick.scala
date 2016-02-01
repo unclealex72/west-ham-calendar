@@ -7,6 +7,7 @@ import model.{Competition, Location}
 import org.joda.time.DateTime
 import pdf.ClientType
 import play.api.db.slick.DatabaseConfigProvider
+import slick.backend.DatabaseConfig
 import slick.driver.JdbcProfile
 
 /**
@@ -15,9 +16,9 @@ import slick.driver.JdbcProfile
   */
 trait Slick {
 
-  val dbConfigProvider: DatabaseConfigProvider
+  val dbConfigFactory: DatabaseConfigFactory
 
-  val dbConfig = dbConfigProvider.get[JdbcProfile]
+  val dbConfig: DatabaseConfig[JdbcProfile] = dbConfigFactory.apply
 
   import dbConfig.driver.api._
 
