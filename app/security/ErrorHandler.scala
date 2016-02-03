@@ -1,6 +1,6 @@
 package security
 
-import javax.inject.Inject
+
 
 import com.mohiva.play.silhouette.api.SecuredErrorHandler
 import play.api.http.DefaultHttpErrorHandler
@@ -15,7 +15,7 @@ import scala.concurrent.Future
 /**
  * A secured error handler.
  */
-class ErrorHandler @Inject() (
+class ErrorHandler(
   env: play.api.Environment,
   config: Configuration,
   sourceMapper: OptionalSourceMapper,

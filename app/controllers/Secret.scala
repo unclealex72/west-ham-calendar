@@ -36,11 +36,11 @@ trait Secret extends Controller {
   /**
    * The secret part of the path.
    */
-  val secret: String
+  val secret: SecretToken
 
   def Secret[A](secretPayload: String)(action: Action[A]): Action[A] =
     Action.async(action.parser) { request =>
-      if (secret == secretPayload) {
+      if (secret.token == secretPayload) {
         action(request)
       } else {
         Future(NotFound)

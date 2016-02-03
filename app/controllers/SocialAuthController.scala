@@ -1,6 +1,6 @@
 package controllers
 
-import javax.inject.Inject
+
 
 import com.mohiva.play.silhouette.api._
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
@@ -9,6 +9,7 @@ import com.mohiva.play.silhouette.impl.providers._
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.Action
+import scaldi.{Injector, Injectable}
 import security.Definitions._
 import security.models.services.UserService
 
@@ -23,13 +24,13 @@ import scala.concurrent.Future
  * @param authInfoRepository The auth info service implementation.
  * @param socialProviderRegistry The social provider registry.
  */
-class SocialAuthController @Inject()(
-  val messagesApi: MessagesApi,
-  val env: Env,
-  userService: UserService,
-  authInfoRepository: AuthInfoRepository,
-  socialProviderRegistry: SocialProviderRegistry)
-  extends Sil with Logger {
+class SocialAuthController(implicit injector: Injector) extends Sil with Logger with Injectable {
+
+  val messagesApi: MessagesApi = inject[MessagesApi]
+  val env: Env = inject[Env]
+  val userService: UserService = inject[UserService]
+  val authInfoRepository: AuthInfoRepository = inject[AuthInfoRepository]
+  val socialProviderRegistry: SocialProviderRegistry = inject[SocialProviderRegistry]
 
   /**
    * Authenticates a user against a social provider.

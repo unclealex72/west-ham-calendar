@@ -25,7 +25,7 @@ class TicketsGameScannerTest extends Specification with StrictLogging with Mocki
 
   "The tickets game scanner" should {
     "find all the known tickets" in new ServerContext {
-      val ticketsGameScanner = new TicketsGameScanner(new URI(s"http://localhost:$port"))
+      val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"))
       val gameUpdateCommands: List[GameUpdateCommand] = ticketsGameScanner.scan(Some(2014))
       val arsenal = DatePlayedLocator(March(14, 2015) at 3 pm)
       val sunderland = DatePlayedLocator(March(21, 2015) at (17, 30))

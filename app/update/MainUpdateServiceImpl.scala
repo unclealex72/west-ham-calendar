@@ -22,9 +22,6 @@
 
 package update
 
-import javax.inject.Inject
-
-import com.google.inject.name.Named
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dao.GameDao
 import dates.NowService
@@ -32,6 +29,8 @@ import html.{DatePlayedLocator, GameKeyLocator, GameLocator, GameUpdateCommand}
 import logging.RemoteStream
 import model.Game
 import model.Location.HOME
+import update.fixtures.FixturesGameScanner
+import update.tickets.TicketsGameScanner
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -40,7 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
  *
  * @author alex
  */
-class MainUpdateServiceImpl @Inject() (
+class MainUpdateServiceImpl(
   /**
    * The {@link GameDao} for getting persisted {@link Game} information.
    */
@@ -48,13 +47,11 @@ class MainUpdateServiceImpl @Inject() (
   /**
    * The {@link GamesScanner} for getting game information.
    */
-  @Named("fixturesGameScanner")
-  fixturesGameScanner: GameScanner,
+  fixturesGameScanner: FixturesGameScanner,
   /**
    * The {@link GamesScanner} for getting game information.
    */
-  @Named("ticketsGameScanner")
-  ticketsGameScanner: GameScanner,
+  ticketsGameScanner: TicketsGameScanner,
 
   /**
    * The {@link LastUpdated} used to notify the application when calendars were last updated.

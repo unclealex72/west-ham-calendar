@@ -55,7 +55,7 @@ class SearchOptionTest extends Specification {
     "general" -> GameOrTicketSearchOption.GENERAL_SALE,
     "generalpostal" -> GameOrTicketSearchOption.GENERAL_SALE_POSTAL)
 
-  def checkSearchOptions[E <: SearchOption](description: String, obj: SearchOptionLike[E], expectedResults: Pair[String, E]*) = {
+  def checkSearchOptions[E <: SearchOption](description: String, obj: SearchOptionLike[E], expectedResults: (String, E)*) = {
     description should {
       "have the correct number of options" in {
         obj.values must have size(expectedResults.size)

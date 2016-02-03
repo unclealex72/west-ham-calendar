@@ -31,6 +31,7 @@ import model.Game
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Concurrent
 import play.api.mvc.Action
+import scaldi.{Injector, Injectable}
 import security.Definitions._
 import services.GameRowFactory
 import update.MainUpdateService
@@ -42,26 +43,15 @@ import scala.util.Failure
  * @author alex
  *
  */
-case class Update @Inject() (
-                         /**
-   * The secret used to protect the update path.
-   */
-                         @Named("secret") val secret: String,
-                         /**
-   * The authorization object used to check a user is authorised.
-   */
-                         val authorization: Auth,
-                         /**
-   * The main update service used to scrape the West Ham site and update game information.
-   */
-                         mainUpdateService: MainUpdateService,
-                         /**
-   * The game row factory used to get game row models.
-   */
-                         gameRowFactory: GameRowFactory,
-                         messagesApi: MessagesApi, env: Env)(implicit ec: ExecutionContext) extends Secure with Secret with TicketForms with JsonResults {
+class Update(implicit injector: Injector) extends Secure with Secret with TicketForms with JsonResults with Injectable {
 
-  implicit val implicitAuthorization = authorization
+  val secret: SecretToken = inject[SecretToken]
+  implicit val authorization: Auth = inject[Auth]
+  val mainUpdateService: MainUpdateService = inject[MainUpdateService]
+  val gameRowFactory: GameRowFactory = inject[GameRowFactory]
+  val messagesApi: MessagesApi = inject[MessagesApi]
+  val env: Env = inject[Env]
+  implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   /**
    * Update all games in the database from the web.

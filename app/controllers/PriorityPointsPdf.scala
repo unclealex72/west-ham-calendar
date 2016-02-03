@@ -1,12 +1,13 @@
 package controllers
 
-import javax.inject.Inject
+
 
 import dao.{PriorityPointsConfigurationDao, GameDao}
 import monads.FO
 import pdf.{Client, PriorityPointsPdfFactory}
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Enumerator
+import scaldi.{Injectable, Injector}
 import security.Definitions._
 
 import scala.concurrent.ExecutionContext
@@ -15,21 +16,15 @@ import Scalaz._
 /**
  * Created by alex on 12/02/15.
  */
-case class PriorityPointsPdf @Inject() (
-                                    /**
-                                     * The authorization object used to check a user is authorised.
-                                     */
-                                    val authorization: Auth,
-                                    /**
-                                     * The transactional object used to get games and seasons.
-                                     */
-                                    gameDao: GameDao,
-                                    /**
-                                     * The game row factory used to get game row models.
-                                     */
-                                    priorityPointsPdfFactory: PriorityPointsPdfFactory,
-                                    priorityPointsConfigurationDao: PriorityPointsConfigurationDao,
-                                    messagesApi: MessagesApi, env: Env)(implicit ec: ExecutionContext) extends Secure {
+case class PriorityPointsPdf(implicit injector: Injector) extends Secure with Injectable {
+
+  val authorization: Auth = inject[Auth]
+  val gameDao: GameDao = inject[GameDao]
+  val priorityPointsPdfFactory: PriorityPointsPdfFactory = inject[PriorityPointsPdfFactory]
+  val priorityPointsConfigurationDao: PriorityPointsConfigurationDao = inject[PriorityPointsConfigurationDao]
+  val messagesApi: MessagesApi = inject[MessagesApi]
+  val env: Env = inject[Env]
+  implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   def priorityPoints(gameId: Long) = SecuredAction(authorization).async { implicit request =>
     val pp = for {

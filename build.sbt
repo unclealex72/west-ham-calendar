@@ -24,9 +24,9 @@ libraryDependencies ++= Seq(
     "org.joda" % "joda-convert" % "1.3.1",
     "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.2",
     "net.ceedubs" %% "ficus" % "1.1.2",
-    "javax.inject" % "javax.inject" % "1",
-    "com.tzavellas" % "sse-guice" % "0.7.1",
     "org.scalaz" %% "scalaz-core" % "7.1.6",
+    // Dependency injection
+    "org.scaldi" %% "scaldi-play" % "0.5.13",
     "com.typesafe.play" %% "play-slick" % "1.1.1",
     "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
     "com.typesafe.slick" %% "slick-codegen" % "3.1.1",

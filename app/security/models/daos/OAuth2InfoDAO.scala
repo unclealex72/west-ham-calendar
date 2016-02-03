@@ -1,6 +1,6 @@
 package security.models.daos
 
-import javax.inject.Inject
+
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.daos.DelegableAuthInfoDAO
@@ -13,7 +13,7 @@ import scala.concurrent.{ExecutionContext, Future}
  *
  * Note: Not thread safe, demo only.
  */
-class OAuth2InfoDAO @Inject() (credentialsStorage: CredentialsStorage)(implicit ec: ExecutionContext) extends DelegableAuthInfoDAO[OAuth2Info] {
+class OAuth2InfoDAO(credentialsStorage: CredentialsStorage)(implicit ec: ExecutionContext) extends DelegableAuthInfoDAO[OAuth2Info] {
 
   implicit val loginInfoKeySerialiser: LoginInfo => String = loginInfo => s"oauth2LoginInfo:${loginInfo.providerID}:${loginInfo.providerKey}"
 

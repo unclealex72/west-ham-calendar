@@ -25,14 +25,13 @@ import com.typesafe.config.ConfigFactory
 import dates.Date._
 import dates._
 import model.{Competition, Game, GameKey, Location}
-import monads.FL
 import org.joda.time.DateTime
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.execute.{AsResult, Result}
 import org.specs2.mutable.Specification
 import org.specs2.specification.ForEach
 import org.specs2.specification.core.Fragments
-import search.{GameOrTicketSearchOption, AttendedSearchOption, LocationSearchOption}
+import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
 import slick.backend.DatabaseConfig
 import slick.driver.JdbcProfile
 

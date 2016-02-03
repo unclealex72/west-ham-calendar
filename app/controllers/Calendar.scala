@@ -29,6 +29,7 @@ import cal.{CalendarFactory, CalendarWriter, LinkFactory}
 import dao.GameDao
 import play.api.i18n.MessagesApi
 import play.api.mvc.Action
+import scaldi.{Injector, Injectable}
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
 import security.Definitions._
 import update.LastUpdated
@@ -40,25 +41,16 @@ import scala.concurrent.ExecutionContext
   * @author alex
  *
  */
-case class Calendar @Inject() (
-  /**
-   * The secret used to protect the update path.
-   */
-  @Named("secret") val secret: String,
-  /**
-   * The last update service to get when the calendars were last updated.
-   */
-  lastUpdated: LastUpdated,
-  /**
-   * The calendar factory used to generate calendars.
-   */
-  calendarFactory: CalendarFactory,
-  gameDao: GameDao,
-  /**
-   * The calendar write used to write calendars.
-   */
-  calendarWriter: CalendarWriter,
-  messagesApi: MessagesApi, env: Env)(implicit ec: ExecutionContext) extends Secret with Etag {
+class Calendar(implicit injector: Injector) extends Secret with Etag with Injectable {
+
+  val secret: SecretToken = inject[SecretToken]
+  val lastUpdated: LastUpdated = inject[LastUpdated]
+  val calendarFactory: CalendarFactory = inject[CalendarFactory]
+  val gameDao: GameDao = inject[GameDao]
+  val calendarWriter: CalendarWriter = inject[CalendarWriter]
+  val messagesApi: MessagesApi = inject[MessagesApi]
+  val env:Env = inject[Env]
+  implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   def searchSecure(secretPayload: String, attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     Secret(secretPayload) {

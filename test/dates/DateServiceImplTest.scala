@@ -142,7 +142,7 @@ class DateServiceImplTest extends Specification {
    */
   def parseAndFind(
                     date: String,
-                    parsingRules: Triple[Boolean, Date, Seq[String]],
+                    parsingRules: (Boolean, Date, Seq[String]),
                     expectedDateTime: Option[DateTime]) = {
     val (yearDeterminingDateIsLaterThanTheDate, yearDeterminingDate, possiblyYearlessDateFormats) = parsingRules
     s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedDateTime" in {

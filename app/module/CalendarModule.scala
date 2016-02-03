@@ -26,20 +26,22 @@ import java.net.URI
 import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
 import com.google.inject.Provides
 import com.typesafe.config.ConfigFactory
-import com.tzavellas.sse.guice.ScalaModule
+import controllers.SecretToken
 import dao._
 import dates.{DateService, DateServiceImpl, NowService, SystemNowService}
 import json.ConfigurationReader
-import location.{AsyncHttpClient, DispatchAsyncHttpClient, LocationService, LocationServiceImpl}
+import location._
 import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsPdfFactory}
+import play.api.Configuration
 import play.api.cache.CacheApi
+import scaldi.Module
 import security.Authorised
 import security.Definitions.Auth
 import security.models.daos.{CredentialsStorage, PlayCacheCredentialsStorage}
 import services.{GameRowFactory, GameRowFactoryImpl}
 import update._
-import update.fixtures.FixturesGameScanner
-import update.tickets.TicketsGameScanner
+import update.fixtures.{FixturesGameScanner, FixturesGameScannerImpl}
+import update.tickets.{TicketsGameScanner, TicketsGameScannerImpl}
 
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
@@ -48,55 +50,52 @@ import scala.concurrent.duration._
  * @author alex
  *
  */
-class CalendarModule extends ScalaModule {
+class CalendarModule extends Module {
 
   /**
    * The configuration object supplied with this application.
    */
-  val config = ConfigFactory.load()
+  val config = ConfigFactory.load
 
-  override def configure() {
     // Persistence
-    bind[DatabaseConfigFactory].to[PlayDatabaseConfigFactory]
-    bind[NowService].to[SystemNowService]
-    bind[GameDao].to[SlickGameDao]
+    bind[DatabaseConfigFactory] to injected[PlayDatabaseConfigFactory]
+    bind[NowService] to new SystemNowService()
+    bind[GameDao] to injected[SlickGameDao]
 
     // Dates
-    bind[DateService].to[DateServiceImpl]
-    bind[LastUpdated].to[PlayCacheLastUpdated]
-    
+    bind[DateService] to injected[DateServiceImpl]
+    bind[LastUpdated] to injected[PlayCacheLastUpdated]
+
     // Game harvesting and update services
-    bind[URI].toInstance(new URI("http://www.whufc.com"))
-    bind[GameScanner].annotatedWithName("fixturesGameScanner").to[FixturesGameScanner]
-    bind[GameScanner].annotatedWithName("ticketsGameScanner").to[TicketsGameScanner]
-    bind[MainUpdateService].to[MainUpdateServiceImpl]
+    bind[URI] to new URI("http://www.whufc.com")
+    bind[FixturesGameScanner] to injected[FixturesGameScannerImpl]
+    bind[TicketsGameScanner] to injected[TicketsGameScannerImpl]
+    bind[MainUpdateService] to injected[MainUpdateServiceImpl]
 
     // Calendars
-    bind[CalendarFactory].to[CalendarFactoryImpl]
-    bind[CalendarWriter].to[IcalCalendarWriter]
+    bind[CalendarFactory] to injected[CalendarFactoryImpl]
+    bind[CalendarWriter] to injected[IcalCalendarWriter]
 
     // Game Locations
-    bind[LocationService].to[LocationServiceImpl]
-    bind[AsyncHttpClient].to[DispatchAsyncHttpClient]
-    bind[String].annotatedWithName("locationClientKey").toInstance("AIzaSyCnaYyFjEYYaKIQ6ZQ64Tx-xkKP2kArRzE")
+    bind[LocationService] to injected[LocationServiceImpl]
+    bind[AsyncHttpClient] to injected[DispatchAsyncHttpClient]
+    bind[LocationClientKey] to LocationClientKey("AIzaSyCnaYyFjEYYaKIQ6ZQ64Tx-xkKP2kArRzE")
 
     //MVC
-    bind[GameRowFactory].to[GameRowFactoryImpl]
-    bind[String].annotatedWithName("secret").toInstance(config.getString("secret"))
+    bind[GameRowFactory] to injected[GameRowFactoryImpl]
+    bind[SecretToken] to SecretToken(config.getString("secret"))
 
     // PDF
-    bind[PriorityPointsPdfFactory].to[PdfBoxPriorityPointsPdfFactory]
-    bind[PdfPositioning].toInstance(ConfigurationReader[PdfPositioning]("pdf-positioning.json"))
-    bind[PriorityPointsConfigurationDao].to[SlickPriorityPointsConfigurationDao]
+    bind[PriorityPointsPdfFactory] to injected[PdfBoxPriorityPointsPdfFactory]
+    bind[PdfPositioning] to ConfigurationReader[PdfPositioning]("pdf-positioning.json")
+    bind[PriorityPointsConfigurationDao] to injected[SlickPriorityPointsConfigurationDao]
 
     // Security
 
-    val validUsers = ((path: String) => if (config.hasPath(path)) config.getString(path) else "")("valid-users.users")
-    bind[Auth].toInstance(Authorised(validUsers.split(",").map(_.trim())))
+  bind[Auth].to {
+    Authorised(config.getString("valid-users.users").split(",").map(_.trim()))
   }
 
-  @Provides
-  def provideCredentialsStorage(cacheApi: CacheApi)(implicit ec: ExecutionContext): CredentialsStorage = {
-    new PlayCacheCredentialsStorage(cacheApi, 15.minutes)
-  }
+  bind[CredentialsStorage] toProvider new PlayCacheCredentialsStorage(inject[CacheApi], 15.minutes)(inject[ExecutionContext])
+
 }

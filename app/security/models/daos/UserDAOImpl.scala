@@ -1,7 +1,7 @@
 package security.models.daos
 
 import java.util.UUID
-import javax.inject.Inject
+
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import security.models.User
@@ -11,7 +11,7 @@ import scala.concurrent.ExecutionContext
 /**
  * Give access to the user object.
  */
-class UserDAOImpl @Inject() (credentialsStorage: CredentialsStorage)(implicit ec: ExecutionContext) extends UserDAO {
+class UserDAOImpl(credentialsStorage: CredentialsStorage)(implicit ec: ExecutionContext) extends UserDAO {
 
   implicit val loginInfoKeySerialiser: LoginInfo => String = loginInfo => s"userLoginInfo:${loginInfo.providerID}:${loginInfo.providerKey}"
   implicit val uuidKeySerialiser: UUID => String = uuid => s"uuid:$uuid"

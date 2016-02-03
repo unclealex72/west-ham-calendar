@@ -18,7 +18,7 @@ import scala.concurrent._
 class LocationServiceImpl @Inject() (
                                       val asyncHttpClient: AsyncHttpClient,
                                       val gameDao: GameDao,
-                                      @Named("locationClientKey") val locationClientKey: String)(implicit ec: ExecutionContext) extends LocationService {
+                                      val locationClientKey: LocationClientKey)(implicit ec: ExecutionContext) extends LocationService {
 
   override def location(gameId: Long): Future[Option[URL]] = {
     val urlT = for {
@@ -33,7 +33,7 @@ class LocationServiceImpl @Inject() (
     val futureOptionalBody = asyncHttpClient.get(
       "maps.googleapis.com",
       Seq("maps", "api", "place", "details", "json"),
-      Map("placeid" -> geoLocation.placeId, "key" -> locationClientKey))
+      Map("placeid" -> geoLocation.placeId, "key" -> locationClientKey.value))
     val urlT = for {
       body <- FO <~ futureOptionalBody
       json <- FO <~ Parse.parseOption(body)

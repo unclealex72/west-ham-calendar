@@ -1,33 +1,24 @@
 package controllers
 
-import javax.inject.Inject
-
 import dao.GameDao
 import json.JsonResults
 import models.Globals
 import play.api.i18n.MessagesApi
 import play.api.mvc._
+import scaldi.{Injectable, Injector}
 import security.Definitions._
 import services.GameRowFactory
 
 import scala.concurrent.ExecutionContext
 
-case class Application @Inject() (
-                              /**
-   * The authorization object to check for authorised users.
-   */
-                              authorization: Auth,
-                              /**
-   * The transactional object used to get games and seasons.
-   */
-                              gameDao: GameDao,
-                              /**
-   * The game row factory used to get game row models.
-   */
-                              gameRowFactory: GameRowFactory,
-                              messagesApi: MessagesApi, env: Env)(implicit ec: ExecutionContext) extends Secure with TicketForms with JsonResults {
+class Application(implicit injector: Injector) extends Secure with TicketForms with JsonResults with Injectable {
 
-  implicit val implicitAuthorization = authorization
+  implicit val authorization: Auth = inject[Auth]
+  val gameDao: GameDao = inject[GameDao]
+  val gameRowFactory: GameRowFactory = inject[GameRowFactory]
+  val messagesApi: MessagesApi = inject[MessagesApi]
+  val env: Env = inject[Env]
+  implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   /**
    * Redirect to the  homepage.

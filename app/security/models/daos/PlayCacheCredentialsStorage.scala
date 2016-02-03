@@ -1,6 +1,6 @@
 package security.models.daos
 
-import javax.inject.Inject
+
 
 import play.api.cache.CacheApi
 
@@ -10,7 +10,7 @@ import scala.concurrent.duration.Duration
 /**
   * Created by alex on 19/01/16.
   */
-class PlayCacheCredentialsStorage @Inject() (cache: CacheApi, duration: Duration)(implicit ec: ExecutionContext) extends CredentialsStorage {
+class PlayCacheCredentialsStorage(cache: CacheApi, duration: Duration)(implicit ec: ExecutionContext) extends CredentialsStorage {
 
   override def get[A, B](key: A)(implicit keySerialiser: (A) => String): Future[Option[B]] = Future.successful {
     cache.get(keySerialiser(key))

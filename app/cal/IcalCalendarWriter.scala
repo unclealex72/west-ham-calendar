@@ -26,7 +26,7 @@ package cal
 
 import java.io.Writer
 import java.net.URI
-import javax.inject.Inject
+
 
 import dates.NowService
 import model.Location._
@@ -45,7 +45,7 @@ import scala.language.implicitConversions
  * @author alex
  *
  */
-class IcalCalendarWriter @Inject() (
+class IcalCalendarWriter(
   /**
    * The service used to get the curent time for DTSTAMP properties.
    */

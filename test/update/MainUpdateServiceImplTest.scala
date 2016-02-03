@@ -34,6 +34,8 @@ import org.joda.time.DateTime
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
+import update.fixtures.FixturesGameScanner
+import update.tickets.TicketsGameScanner
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
@@ -272,8 +274,8 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
     implicit val nowService = NowService(now)
     val gameDao = mock[GameDao]
     val lastUpdated = mock[LastUpdated]
-    val ticketsGameScanner = mock[GameScanner]
-    val fixturesGameScanner = mock[GameScanner]
+    val ticketsGameScanner = mock[TicketsGameScanner]
+    val fixturesGameScanner = mock[FixturesGameScanner]
     val mainUpdateService = new MainUpdateServiceImpl(gameDao, fixturesGameScanner, ticketsGameScanner, lastUpdated)
   }
 }
