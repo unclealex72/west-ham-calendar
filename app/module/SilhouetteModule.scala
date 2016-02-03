@@ -35,25 +35,25 @@ import scala.concurrent.ExecutionContext
   */
 class SilhouetteModule extends Module {
 
-  bind[UserService] to injected [UserServiceImpl]
-  bind[UserDAO] to injected [UserDAOImpl]
-  bind[DelegableAuthInfoDAO[OAuth2Info]] to injected [OAuth2InfoDAO]
-  bind[CacheLayer] to injected [PlayCacheLayer]
+  bind[UserService] toNonLazy injected [UserServiceImpl]
+  bind[UserDAO] toNonLazy injected [UserDAOImpl]
+  bind[DelegableAuthInfoDAO[OAuth2Info]] toNonLazy injected [OAuth2InfoDAO]
+  bind[CacheLayer] toNonLazy injected [PlayCacheLayer]
 
-  bind[IDGenerator] to new SecureRandomIDGenerator()
-  bind[PasswordHasher] to new BCryptPasswordHasher
-  bind[FingerprintGenerator] to new DefaultFingerprintGenerator(false)
-  bind[EventBus] to EventBus()
-  bind[Clock] to Clock()
+  bind[IDGenerator] toNonLazy new SecureRandomIDGenerator()
+  bind[PasswordHasher] toNonLazy new BCryptPasswordHasher
+  bind[FingerprintGenerator] toNonLazy new DefaultFingerprintGenerator(false)
+  bind[EventBus] toNonLazy EventBus()
+  bind[Clock] toNonLazy Clock()
 
-  bind[HTTPLayer] to new PlayHTTPLayer(inject[WSClient])
-  bind[Env] to Environment[UserType, AuthenticatorType](
+  bind[HTTPLayer] toNonLazy new PlayHTTPLayer(inject[WSClient])
+  bind[Env] toNonLazy Environment[UserType, AuthenticatorType](
     inject[UserService],
     inject[AuthenticatorService[AuthenticatorType]],
     Seq(),
     inject[EventBus])
 
-  bind[SocialProviderRegistry] to SocialProviderRegistry(Seq(
+  bind[SocialProviderRegistry] toNonLazy SocialProviderRegistry(Seq(
     inject[FacebookProvider],
     inject[GoogleProvider],
     inject[VKProvider],
@@ -63,56 +63,56 @@ class SilhouetteModule extends Module {
     inject[YahooProvider]
   ))
 
-  bind[AuthenticatorService[AuthenticatorType]] to {
+  bind[AuthenticatorService[AuthenticatorType]] toNonLazy {
     val config = inject[Configuration].underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
     new CookieAuthenticatorService(config, None, inject[FingerprintGenerator], inject[IDGenerator], inject[Clock])
   }
 
-  bind[AuthInfoRepository] to new DelegableAuthInfoRepository(inject[DelegableAuthInfoDAO[OAuth2Info]])(inject[ExecutionContext])
+  bind[AuthInfoRepository] toNonLazy new DelegableAuthInfoRepository(inject[DelegableAuthInfoDAO[OAuth2Info]])(inject[ExecutionContext])
 
-  bind[AvatarService] to injected[GravatarService]
+  bind[AvatarService] toNonLazy injected[GravatarService]
 
-  bind[OAuth1TokenSecretProvider] to {
+  bind[OAuth1TokenSecretProvider] toNonLazy {
     val settings = inject[Configuration].underlying.as[CookieSecretSettings]("silhouette.oauth1TokenSecretProvider")
     new CookieSecretProvider(settings, inject[Clock])
   }
 
-  bind[OAuth2StateProvider] to {
+  bind[OAuth2StateProvider] toNonLazy {
     val settings = inject[Configuration].underlying.as[CookieStateSettings]("silhouette.oauth2StateProvider")
     new CookieStateProvider(settings, inject[IDGenerator], inject[Clock])
   }
 
-  bind[CredentialsProvider] to {
+  bind[CredentialsProvider] toNonLazy {
     val passwordHasher = inject[PasswordHasher]
     new CredentialsProvider(inject[AuthInfoRepository], passwordHasher, Seq(passwordHasher))
   }
 
-  bind[FacebookProvider] to
+  bind[FacebookProvider] toNonLazy
     new FacebookProvider(
       inject[HTTPLayer], inject[OAuth2StateProvider], inject[Configuration].underlying.as[OAuth2Settings]("silhouette.facebook"))
 
-  bind[GoogleProvider] to
+  bind[GoogleProvider] toNonLazy
     new GoogleProvider(
       inject[HTTPLayer], inject[OAuth2StateProvider], inject[Configuration].underlying.as[OAuth2Settings]("silhouette.google"))
 
-  bind[VKProvider] to
+  bind[VKProvider] toNonLazy
     new VKProvider(
       inject[HTTPLayer], inject[OAuth2StateProvider], inject[Configuration].underlying.as[OAuth2Settings]("silhouette.vk"))
 
-  bind[ClefProvider] to
+  bind[ClefProvider] toNonLazy
     new ClefProvider(inject[HTTPLayer], new DummyStateProvider, inject[Configuration].underlying.as[OAuth2Settings]("silhouette.clef"))
 
-  bind[TwitterProvider] to {
+  bind[TwitterProvider] toNonLazy {
     val settings = inject[Configuration].underlying.as[OAuth1Settings]("silhouette.twitter")
     new TwitterProvider(inject[HTTPLayer], new PlayOAuth1Service(settings), inject[OAuth1TokenSecretProvider], settings)
   }
 
-  bind[XingProvider] to {
+  bind[XingProvider] toNonLazy {
     val settings = inject[Configuration].underlying.as[OAuth1Settings]("silhouette.xing")
     new XingProvider(inject[HTTPLayer], new PlayOAuth1Service(settings), inject[OAuth1TokenSecretProvider], settings)
   }
 
-  bind[YahooProvider] to {
+  bind[YahooProvider] toNonLazy {
     val settings = inject[Configuration].underlying.as[OpenIDSettings]("silhouette.yahoo")
     new YahooProvider(inject[HTTPLayer], new PlayOpenIDService(inject[OpenIdClient], settings), settings)
   }

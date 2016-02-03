@@ -58,44 +58,44 @@ class CalendarModule extends Module {
   val config = ConfigFactory.load
 
     // Persistence
-    bind[DatabaseConfigFactory] to injected[PlayDatabaseConfigFactory]
-    bind[NowService] to new SystemNowService()
-    bind[GameDao] to injected[SlickGameDao]
+    bind[DatabaseConfigFactory] toNonLazy injected[PlayDatabaseConfigFactory]
+    bind[NowService] toNonLazy new SystemNowService()
+    bind[GameDao] toNonLazy injected[SlickGameDao]
 
     // Dates
-    bind[DateService] to injected[DateServiceImpl]
-    bind[LastUpdated] to injected[PlayCacheLastUpdated]
+    bind[DateService] toNonLazy injected[DateServiceImpl]
+    bind[LastUpdated] toNonLazy injected[PlayCacheLastUpdated]
 
     // Game harvesting and update services
-    bind[URI] to new URI("http://www.whufc.com")
-    bind[FixturesGameScanner] to injected[FixturesGameScannerImpl]
-    bind[TicketsGameScanner] to injected[TicketsGameScannerImpl]
-    bind[MainUpdateService] to injected[MainUpdateServiceImpl]
+    bind[URI] toNonLazy new URI("http://www.whufc.com")
+    bind[FixturesGameScanner] toNonLazy injected[FixturesGameScannerImpl]
+    bind[TicketsGameScanner] toNonLazy injected[TicketsGameScannerImpl]
+    bind[MainUpdateService] toNonLazy injected[MainUpdateServiceImpl]
 
     // Calendars
-    bind[CalendarFactory] to injected[CalendarFactoryImpl]
-    bind[CalendarWriter] to injected[IcalCalendarWriter]
+    bind[CalendarFactory] toNonLazy injected[CalendarFactoryImpl]
+    bind[CalendarWriter] toNonLazy injected[IcalCalendarWriter]
 
     // Game Locations
-    bind[LocationService] to injected[LocationServiceImpl]
-    bind[AsyncHttpClient] to injected[DispatchAsyncHttpClient]
-    bind[LocationClientKey] to LocationClientKey("AIzaSyCnaYyFjEYYaKIQ6ZQ64Tx-xkKP2kArRzE")
+    bind[LocationService] toNonLazy injected[LocationServiceImpl]
+    bind[AsyncHttpClient] toNonLazy injected[DispatchAsyncHttpClient]
+    bind[LocationClientKey] toNonLazy LocationClientKey("AIzaSyCnaYyFjEYYaKIQ6ZQ64Tx-xkKP2kArRzE")
 
     //MVC
-    bind[GameRowFactory] to injected[GameRowFactoryImpl]
-    bind[SecretToken] to SecretToken(config.getString("secret"))
+    bind[GameRowFactory] toNonLazy injected[GameRowFactoryImpl]
+    bind[SecretToken] toNonLazy SecretToken(config.getString("secret"))
 
     // PDF
-    bind[PriorityPointsPdfFactory] to injected[PdfBoxPriorityPointsPdfFactory]
-    bind[PdfPositioning] to ConfigurationReader[PdfPositioning]("pdf-positioning.json")
-    bind[PriorityPointsConfigurationDao] to injected[SlickPriorityPointsConfigurationDao]
+    bind[PriorityPointsPdfFactory] toNonLazy injected[PdfBoxPriorityPointsPdfFactory]
+    bind[PdfPositioning] toNonLazy ConfigurationReader[PdfPositioning]("pdf-positioning.json")
+    bind[PriorityPointsConfigurationDao] toNonLazy injected[SlickPriorityPointsConfigurationDao]
 
     // Security
 
-  bind[Auth].to {
+  bind[Auth] toNonLazy {
     Authorised(config.getString("valid-users.users").split(",").map(_.trim()))
   }
 
-  bind[CredentialsStorage] toProvider new PlayCacheCredentialsStorage(inject[CacheApi], 15.minutes)(inject[ExecutionContext])
+  bind[CredentialsStorage] toNonLazy new PlayCacheCredentialsStorage(inject[CacheApi], 15.minutes)(inject[ExecutionContext])
 
 }
