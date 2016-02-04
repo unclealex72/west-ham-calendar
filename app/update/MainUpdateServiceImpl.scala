@@ -93,14 +93,15 @@ class MainUpdateServiceImpl(
    */
   def processUpdates(updatesType: String, scanner: GameScanner, latestSeason: Option[Int], allGames: List[Game])(implicit remoteStream: RemoteStream): Future[List[Game]] = {
     logger info s"Scanning for $updatesType changes."
-    val allGameUpdateCommands = scanner.scan(latestSeason)
-    val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
-    updatesByGameLocator.foldRight(Future.successful(List.empty[Game])){ (gl, fGames) =>
-      val (gameLocator, updates) = gl
-      fGames.flatMap { games =>
-        updateAndStoreGame(allGames, gameLocator, updates).map {
-          case Some(game) => game :: games
-          case _ => games
+    scanner.scan(latestSeason).flatMap { allGameUpdateCommands =>
+      val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
+      updatesByGameLocator.foldRight(Future.successful(List.empty[Game])) { (gl, fGames) =>
+        val (gameLocator, updates) = gl
+        fGames.flatMap { games =>
+          updateAndStoreGame(allGames, gameLocator, updates).map {
+            case Some(game) => game :: games
+            case _ => games
+          }
         }
       }
     }

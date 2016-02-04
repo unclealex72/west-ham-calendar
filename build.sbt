@@ -14,8 +14,6 @@ libraryDependencies ++= Seq(
     "com.mohiva" %% "play-silhouette-testkit" % "3.0.4" % "test",
     // JSON
     "io.argonaut" %% "argonaut" % "6.1",
-    "org.apache.httpcomponents" % "httpclient" % "4.4",
-    "org.apache.httpcomponents" % "httpcore" % "4.4",
     //backend libraries
     "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
     "org.mozilla" % "rhino" % "1.7R3",
@@ -32,6 +30,7 @@ libraryDependencies ++= Seq(
     "com.typesafe.slick" %% "slick-codegen" % "3.1.1",
     cache,
     filters,
+    ws,
     "org.mnode.ical4j" % "ical4j" % "1.0.4",
     "org.squeryl" %% "squeryl" % "0.9.5-7",
     "org.postgresql" % "postgresql" % "9.4.1207",

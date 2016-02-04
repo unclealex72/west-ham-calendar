@@ -2,66 +2,59 @@ package update.tickets
 
 import java.net.URI
 
-
-import dao.GameDao
 import dates.PossiblyYearlessDateParser
 import html._
 import logging.{RemoteLogging, RemoteStream}
 import models._
-import org.apache.http.client.utils.URIBuilder
-import org.htmlcleaner.{HtmlCleaner, SimpleXmlSerializer}
+import monads.FL
 import org.joda.time.DateTime
-import update.GameScanner
+import play.api.libs.ws.WSClient
+import update.WsClientImplicits._
 
-import scala.xml.{Elem, Node, XML}
+import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.{Elem, Node}
+import scalaz.Scalaz._
 
 /**
  * Created by alex on 28/03/15.
  */
-class TicketsGameScannerImpl(val rootUri: URI) extends TicketsGameScanner with RemoteLogging {
+class TicketsGameScannerImpl(val rootUri: URI, ws: WSClient)(implicit ec: ExecutionContext) extends TicketsGameScanner with RemoteLogging {
 
-  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
+  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[List[GameUpdateCommand]] = {
     latestSeason match {
       case Some(ls) =>
-        val ticketsUri = new URIBuilder(rootUri).setPath("/Tickets/Match-Tickets").build()
-        val ticketsXml = loadPage(ticketsUri)
         val matchRegex = "(?:Home|Away)-Matches".r
-        for {
-          a <- (ticketsXml \\ "a").toList
-          href <- a.attributes.asAttrMap.get("href").toList if matchRegex.findFirstMatchIn(href).isDefined
-          updateCommands <- createUpdateCommands(ls, rootUri.resolve(new URI(href)))
+        val ticketsUri = rootUri.resolve("/Tickets/Match-Tickets")
+        val updateCommandsT = for {
+          ticketsXml <- FL <~ ws.url(ticketsUri).get().map { response => List(response.cleanXml) }
+          a <- FL <~ (ticketsXml \\ "a").toList
+          href <- FL <~ a.attributes.asAttrMap.get("href").toList if matchRegex.findFirstMatchIn(href).isDefined
+          updateCommands <- FL <~ createUpdateCommands(ls, rootUri.resolve(new URI(href)))
         } yield updateCommands
+        updateCommandsT.run
       case _ =>
         logger info "There are currently no games so tickets will not be searched for."
-        List.empty
+        Future.successful(List.empty)
     }
   }
 
-  def createUpdateCommands(latestSeason: Int, uri: URI)(implicit remoteStream: RemoteStream): Seq[GameUpdateCommand] = {
+  def createUpdateCommands(latestSeason: Int, uri: URI)(implicit remoteStream: RemoteStream): Future[List[GameUpdateCommand]] = {
     logger info s"Found tickets page $uri"
-    val ticketPage = loadPage(uri)
-    val ticketPageScanner = TicketPageScanner(ticketPage, latestSeason)(remoteStream)
-    ticketPageScanner.findWhen match {
-      case Some(dateTime) =>
-        logger info s"Found date $dateTime"
-        ticketPageScanner.scanTicketDates(dateTime)
-      case _ =>
-        logger warn s"Cannot find a date played at page $uri"
-        Seq.empty
+    ws.url(uri).get().map { response =>
+      val ticketPage = response.cleanXml
+      val ticketPageScanner = TicketPageScanner(ticketPage, latestSeason)(remoteStream)
+      ticketPageScanner.findWhen match {
+        case Some(dateTime) =>
+          logger info s"Found date $dateTime"
+          ticketPageScanner.scanTicketDates(dateTime).toList
+        case _ =>
+          logger warn s"Cannot find a date played at page $uri"
+          List.empty
+      }
     }
   }
 
   case class TicketPageScanner(pageXml: Elem, latestSeason: Int)(implicit remoteStream: RemoteStream) {
-
-    object NodeImplicits {
-      implicit class NodeHasAttribute(node: Node) {
-        def hasAttr(name: String, value: String): Boolean = node.attributes.asAttrMap.get(name).contains(value)
-        def hasClass(value: String) = hasAttr("class", value)
-        def trimmed: String = node.text.trim
-      }
-    }
-
-    import NodeImplicits._
 
     // look for <div class='matchDate'>Saturday 4 April 15:00</div>
     def findWhen: Option[DateTime] = {
@@ -71,6 +64,8 @@ class TicketsGameScannerImpl(val rootUri: URI) extends TicketsGameScanner with R
       } yield dateTime
       dateTimes.headOption
     }
+
+    import NodeImplicits._
 
     def scanTicketDates(dateTime: DateTime): Seq[GameUpdateCommand] = {
       val ticketDateParser = PossiblyYearlessDateParser.forSeason(latestSeason)("d MMMM", "dd MMMM").logFailures
@@ -87,12 +82,16 @@ class TicketsGameScannerImpl(val rootUri: URI) extends TicketsGameScanner with R
         ticketType.toTicketsUpdateCommand(gameLocator, ticketSellingDate.withHourOfDay(9))
       }
     }
-  }
 
-  def loadPage(uri: URI): Elem = {
-    val cleaner = new HtmlCleaner()
-    val rootNode = cleaner.clean(uri.toURL)
-    val page = new SimpleXmlSerializer(cleaner.getProperties).getAsString(rootNode)
-    XML.loadString(page)
+    object NodeImplicits {
+
+      implicit class NodeHasAttribute(node: Node) {
+        def hasClass(value: String) = hasAttr("class", value)
+
+        def hasAttr(name: String, value: String): Boolean = node.attributes.asAttrMap.get(name).contains(value)
+
+        def trimmed: String = node.text.trim
+      }
+    }
   }
 }

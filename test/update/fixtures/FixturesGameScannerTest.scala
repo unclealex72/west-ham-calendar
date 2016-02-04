@@ -5,6 +5,7 @@ import java.net.URI
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import argonaut._
+import com.ning.http.client.AsyncHttpClientConfig
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dates._
 import html._
@@ -15,8 +16,10 @@ import model.Location.{AWAY, HOME}
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
+import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import org.specs2.specification._
+import play.api.libs.ws.ning.NingWSClient
 import update.fixtures.FixturesRequest._
 
 import scala.io.Source
@@ -31,8 +34,9 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
     "find all the known games" in new ServerContext {
 
       val nowService: NowService = NowService(December(25, 2015))
-
-      val fixturesGameScanner = new FixturesGameScannerImpl(new URI(s"http://localhost:$port"), nowService)
+      implicit val ee: ExecutionEnv = ExecutionEnv.fromGlobalExecutionContext
+      val wsClient = new NingWSClient(new AsyncHttpClientConfig.Builder().build())
+      val fixturesGameScanner = new FixturesGameScannerImpl(new URI(s"http://localhost:$port"), nowService, wsClient)
       val gameCommands = fixturesGameScanner.scan(Some(2014))(remoteStream)
       gameCommands must containTheSameElementsAs(Seq[GameUpdateCommand](DatePlayedUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Tottenham Hotspur",2014)), August(16,2014) at (15,0)),
         ResultUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Tottenham Hotspur", 2014)), "0 - 1"),
@@ -153,7 +157,7 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
         MatchReportUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Everton", 2014)), s"http://localhost:$port/Fixtures/First-Team/Fixture-and-Results/Season-2014-2015/2015-May/West-Ham-United-vs-Everton"),
         DatePlayedUpdateCommand(GameKeyLocator(GameKey(PREM,AWAY,"Newcastle United",2014)),May(24,2015) at (15,0)),
         MatchReportUpdateCommand(GameKeyLocator(GameKey(PREM,AWAY,"Newcastle United", 2014)), s"http://localhost:$port/Fixtures/First-Team/Fixture-and-Results/Season-2014-2015/2015-May/Newcastle-United-vs-West-Ham-United")
-      ))
+      )).await
     }
   }
 

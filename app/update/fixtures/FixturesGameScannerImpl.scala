@@ -2,73 +2,55 @@ package update.fixtures
 
 import java.net.URI
 
-
-import argonaut.Argonaut._
 import argonaut._
-import update.fixtures.FixturesRequest._
-import update.fixtures.FixturesResponse._
-import org.apache.http.client.HttpClient
-import org.apache.http.client.entity.EntityBuilder
-import org.apache.http.client.methods.HttpPost
-import org.apache.http.client.utils.URIBuilder
-import org.apache.http.impl.client.HttpClients
-import org.apache.http.util.EntityUtils
 import dates.NowService
 import html.GameUpdateCommand
 import logging.{RemoteLogging, RemoteStream}
-import update.GameScanner
+import play.api.libs.ws.WSClient
+import update.WsClientImplicits._
+import update.fixtures.FixturesRequest._
+import update.fixtures.FixturesResponse._
 
-import scala.io.Source
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * Created by alex on 08/03/15.
  */
-class FixturesGameScannerImpl(rootUri: URI, nowService: NowService) extends FixturesGameScanner with RemoteLogging {
+class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient)(implicit ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging {
 
-  override def scan(lastestSeason: Option[Int])(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
-    val httpClient = HttpClients.createDefault()
-    try {
-      val currentYear = nowService.now.getYear
-      val seasonsDownloader = SeasonsDownloader(currentYear, httpClient)(remoteStream)
-      seasonsDownloader.downloadFixtures(currentYear)
-    }
-    finally {
-      httpClient.close()
-    }
+  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[List[GameUpdateCommand]] = {
+    val currentYear = nowService.now.getYear
+    val seasonsDownloader = SeasonsDownloader(currentYear)(remoteStream)
+    seasonsDownloader.downloadFixtures(currentYear)
   }
 
-  case class SeasonsDownloader(val currentYear: Int, val httpClient: HttpClient)(implicit val remoteStream: RemoteStream) {
+  case class SeasonsDownloader(val currentYear: Int)(implicit val remoteStream: RemoteStream) {
 
-    def downloadFixtures(yearToSearch: Int): List[GameUpdateCommand] = {
-      val uri = new URIBuilder(rootUri).setPath("/API/Fixture/Fixtures-and-Result-Listing-API.aspx").addParameter("t", Math.random.toString).build
-      val post = new HttpPost(uri)
-      post.setHeader("Content-Type", "application/x-www-form-encoded")
+    def downloadFixtures(yearToSearch: Int): Future[List[GameUpdateCommand]] = {
       val fixturesRequest = FixturesRequest(yearToSearch)
-      val requestEntity = EntityBuilder.create().setText(fixturesRequest.asJson.nospaces).build
-      post.setEntity(requestEntity)
-      val httpResponse = httpClient.execute(post)
-      val responseEntity = httpResponse.getEntity
-      try {
-        val responseText = Source.fromInputStream(responseEntity.getContent).getLines().mkString("\n")
-        def fail(str: String): List[GameUpdateCommand] = {
+      val fResponse = ws.url(rootUri.resolve("/API/Fixture/Fixtures-and-Result-Listing-API.aspx")).
+        withQueryString("t" -> Math.random.toString).
+        withHeaders("Content-Type" -> "application/x-www-form-encoded").
+        postJ(fixturesRequest)
+      fResponse.flatMap { response =>
+        def fail(str: String): Future[List[GameUpdateCommand]] = {
           logger error str
-          List.empty
+          Future.successful(List.empty)
         }
-        def success(fixturesResponse: FixturesResponse): List[GameUpdateCommand] = {
+        def success(fixturesResponse: FixturesResponse): Future[List[GameUpdateCommand]] = {
           val gameUpdateCommands = fixturesResponse.fixtures.flatMap(_.toGameUpdateCommands(rootUri, yearToSearch))
           if (gameUpdateCommands.isEmpty && currentYear == yearToSearch) {
             downloadFixtures(yearToSearch - 1)
           } else if (gameUpdateCommands.isEmpty) {
-            gameUpdateCommands
+            Future.successful(gameUpdateCommands)
           }
           else {
-            gameUpdateCommands ::: downloadFixtures(yearToSearch - 1)
+            downloadFixtures(yearToSearch - 1).map {
+              gameUpdateCommands ::: _
+            }
           }
         }
-        Parse.decodeValidation[FixturesResponse](responseText).fold(fail, success)
-      }
-      finally {
-        EntityUtils.consume(responseEntity)
+        Parse.decodeValidation[FixturesResponse](response.body).fold(fail, success)
       }
     }
   }
