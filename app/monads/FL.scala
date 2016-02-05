@@ -8,7 +8,7 @@ import scalaz.syntax.monad._
   * Monad compositions for Futures and Options.
   * Created by alex on 21/01/16.
   */
-object FL {
+trait FL {
 
   type Result[A] = ListT[Future, A]
 
@@ -18,4 +18,9 @@ object FL {
 
   def <~[A](v: A)(implicit ev: Applicative[Result]): Result[A] = v.point[Result]
 
+}
+
+object FL extends FL {
+
+  def apply[A](b: Result[A]): Future[List[A]] = b.run
 }

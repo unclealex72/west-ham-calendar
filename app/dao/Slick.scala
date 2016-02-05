@@ -27,18 +27,9 @@ trait Slick {
     { ts => JodaDateTime(ts) }
   )
 
-  implicit val competitionColumnType = MappedColumnType.base[Competition, String](
-    { comp => Competition.serialise(comp) },
-    { token => Competition.deserialise(token) }
-  )
+  implicit val competitionColumnType = MappedColumnType.base[Competition, String](_.entryName, Competition.withName)
 
-  implicit val locationColumnType = MappedColumnType.base[Location, String](
-    { loc => Location.serialise(loc) },
-    { token => Location.deserialise(token) }
-  )
+  implicit val locationColumnType = MappedColumnType.base[Location, String](_.entryName, Location.withName)
 
-  implicit val clientTypeColumnType = MappedColumnType.base[ClientType, String](
-    { ct => ClientType.serialise(ct) },
-    { token => ClientType.deserialise(token) }
-  )
+  implicit val clientTypeColumnType = MappedColumnType.base[ClientType, String](_.entryName, ClientType.withName)
 }

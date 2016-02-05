@@ -15,6 +15,7 @@ libraryDependencies ++= Seq(
     // JSON
     "io.argonaut" %% "argonaut" % "6.1",
     //backend libraries
+    "com.beachape" %% "enumeratum" % "1.3.6",
     "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
     "org.mozilla" % "rhino" % "1.7R3",
     "javax.transaction" % "jta" % "1.1",

@@ -209,31 +209,33 @@ class SlickGameDaoTest extends Specification with DatabaseContext {
 
   "Searching for games" should {
     val nonPersistedGames: List[Game] = {
-      val gameGenerators: List[(LocationSearchOption, AttendedSearchOption, GameOrTicketSearchOption)] = for {
-        location <- List(LocationSearchOption.HOME, LocationSearchOption.AWAY)
-        attended <- List(AttendedSearchOption.ATTENDED, AttendedSearchOption.UNATTENDED)
+      def locationFactory(lso: LocationSearchOption): Option[Location] = lso match {
+        case LocationSearchOption.HOME => Some(Location.HOME)
+        case LocationSearchOption.AWAY => Some(Location.AWAY)
+        case _ => None
+      }
+      def gameAttendedFactory(aso: AttendedSearchOption): Option[Boolean] = aso match {
+        case AttendedSearchOption.ATTENDED => Some(true)
+        case AttendedSearchOption.UNATTENDED => Some(false)
+        case _ => None
+      }
+      val gameGenerators: List[(LocationSearchOption, AttendedSearchOption, Location, Boolean, GameOrTicketSearchOption)] = for {
+        lso <- List(LocationSearchOption.HOME, LocationSearchOption.AWAY)
+        aso <- List(AttendedSearchOption.ATTENDED, AttendedSearchOption.UNATTENDED)
+        location <- locationFactory(lso).toList
+        attended <- gameAttendedFactory(aso).toList
         ticket <- GameOrTicketSearchOption.values
-      } yield (location, attended, ticket)
-      gameGenerators.zipWithIndex.flatMap { case ((lso, aso, gtso), idx) =>
+      } yield (lso, aso, location, attended, ticket)
+      gameGenerators.zipWithIndex.flatMap { case ((lso, aso, location, gameAttended, gtso), idx) =>
         val opponents = f"Opponents $idx%02d"
-        val location: Location = lso match {
-          case LocationSearchOption.HOME => Location.HOME
-          case LocationSearchOption.AWAY => Location.AWAY
-        }
-        val gameAttended = Some {
-          aso match {
-            case AttendedSearchOption.ATTENDED => true
-            case AttendedSearchOption.UNATTENDED => false
-          }
-        }
         val date = September(1, 2013).plusDays(idx)
         val game = Game.gameKey(
           Competition.FACP,
           location,
           opponents,
           date.getYear).copy(
-            attended = gameAttended,
-            at = Some(date.withHourOfDay(15).withMinuteOfHour(0).withMillisOfSecond(0)))
+          attended = Some(gameAttended),
+          at = Some(date.withHourOfDay(15).withMinuteOfHour(0).withMillisOfSecond(0)))
         val tickets: Option[DateTime] = Some((August(1, 2013) at(9, 0)).plusDays(idx))
         gtso match {
           case GameOrTicketSearchOption.BONDHOLDERS => Some(game.copy(bondholdersAvailable = tickets))
@@ -254,7 +256,7 @@ class SlickGameDaoTest extends Specification with DatabaseContext {
     } yield (lso, aso, gtso)
     Fragments.foreach(allSearchOptions) { searchOptions =>
       val (lso, aso, gtso) = searchOptions
-      s"return the correct results for $searchOptions " in { db : Db =>
+      s"return the correct results for $searchOptions " in { db: Db =>
         implicit val (gameDao, ee): (GameDao, ExecutionEnv) = (db.gameDao, db.ee)
         val locationPredicateFactory = (g: Game) => lso match {
           case LocationSearchOption.HOME => g.location == Location.HOME
@@ -290,92 +292,8 @@ class SlickGameDaoTest extends Specification with DatabaseContext {
         actualGames must containTheSameElementsAs(Await.result(expectedGames, 5.seconds)).await
       }
     }
-    /*
-      Fragments.foreach(generators) { searchOptions =>
-        "x" in {
-          val (lso, aso, gtso) = searchOptions
-          1 must be equalTo(1)
-        }
-      }
-    }
-    */
   }
-    /*
-  "Searching for games" should {
-      // Generate a game for each possible search option
-      val generators: List[(LocationSearchOption, AttendedSearchOption, GameOrTicketSearchOption)] = for {
-        location <- List(LocationSearchOption.HOME, LocationSearchOption.AWAY)
-        attended <- List(AttendedSearchOption.ATTENDED, AttendedSearchOption.UNATTENDED)
-        ticket <- GameOrTicketSearchOption.values
-      } yield (location, attended, ticket)
-      generators.zipWithIndex
-        val game = location match {
-          case LocationSearchOption.HOME => opponents home (September(1, 2013).plusDays(index))
-          case LocationSearchOption.AWAY => opponents away (September(1, 2013).plusDays(index))
-        }
-        game.attended = attended match {
-          case AttendedSearchOption.ATTENDED => Some(true)
-          case AttendedSearchOption.UNATTENDED => Some(false)
-        }
-        val tickets: Option[DateTime] = Some((August(1, 2013) at (9, 0)).plusDays(index))
-        ticket match {
-          case GameOrTicketSearchOption.BONDHOLDERS => game.bondholdersAvailable = tickets
-          case GameOrTicketSearchOption.PRIORITY_POINT => game.priorityPointAvailable = tickets
-          case GameOrTicketSearchOption.SEASON => game.seasonTicketsAvailable = tickets
-          case GameOrTicketSearchOption.ACADEMY => game.academyMembersAvailable = tickets
-          case GameOrTicketSearchOption.ACADEMY_POSTAL => game.academyMembersPostalAvailable = tickets
-          case GameOrTicketSearchOption.GENERAL_SALE => game.generalSaleAvailable = tickets
-          case GameOrTicketSearchOption.GENERAL_SALE_POSTAL => game.generalSalePostalAvailable = tickets
-          case GameOrTicketSearchOption.GAME =>
-        }
-        allGames += gameDao store game
-        index = index + 1
-      }
-      // Create predicates for each possible search option
-      val locationPredicateFactory = (lso: LocationSearchOption) => (g: Game) => lso match {
-        case LocationSearchOption.HOME => g.location == Location.HOME
-        case LocationSearchOption.AWAY => g.location == Location.AWAY
-        case LocationSearchOption.ANY => true
-      }
-
-      val attendedPredicateFactory = (aso: AttendedSearchOption) => (g: Game) => aso match {
-        case AttendedSearchOption.ATTENDED => g.attended == Some(true)
-        case AttendedSearchOption.UNATTENDED => g.attended == Some(false)
-        case AttendedSearchOption.ANY => true
-      }
-      val gameOrTicketPredicateFactory = (gtso: GameOrTicketSearchOption) => (g: Game) => gtso match {
-        case GameOrTicketSearchOption.BONDHOLDERS => g.bondholdersAvailable.isDefined
-        case GameOrTicketSearchOption.PRIORITY_POINT => g.priorityPointAvailable.isDefined
-        case GameOrTicketSearchOption.SEASON => g.seasonTicketsAvailable.isDefined
-        case GameOrTicketSearchOption.ACADEMY => g.academyMembersAvailable.isDefined
-        case GameOrTicketSearchOption.ACADEMY_POSTAL => g.academyMembersPostalAvailable.isDefined
-        case GameOrTicketSearchOption.GENERAL_SALE => g.generalSaleAvailable.isDefined
-        case GameOrTicketSearchOption.GENERAL_SALE_POSTAL => g.generalSalePostalAvailable.isDefined
-        case GameOrTicketSearchOption.GAME => true
-      }
-      // Search for each possible option
-      val expectedSearchesByPredicates =
-        Map.empty[Tuple3[LocationSearchOption, AttendedSearchOption, GameOrTicketSearchOption], List[Game]]
-      val actualSearchesByPredicates =
-        Map.empty[Tuple3[LocationSearchOption, AttendedSearchOption, GameOrTicketSearchOption], List[Game]]
-      for (lso <- LocationSearchOption.values; aso <- AttendedSearchOption.values; gtso <- GameOrTicketSearchOption.values) {
-        val key = (lso, aso, gtso)
-        actualSearchesByPredicates += key -> gameDao.search(aso, lso, gtso)
-        val searchPredicate = (g: Game) =>
-          locationPredicateFactory(lso)(g) && attendedPredicateFactory(aso)(g) && gameOrTicketPredicateFactory(gtso)(g)
-        expectedSearchesByPredicates += key -> allGames.filter(searchPredicate).toList
-      }
-      Fragments.foreach(expectedSearchesByPredicates) { case (key, expectedSearchResults) =>
-        val size = expectedSearchResults.size
-        s"return ${size} result${if (size == 1) "" else "s"} for search key $key" in { db: Db =>
-          actualSearchesByPredicates.get(key) must be equalTo (Some(expectedSearchResults))
-        }
-      }
-      "nothing else" in {
-        1 must be equalTo(1)
-      }
-  }
-*/
+  
   val nowA: DateTime = September(5, 1972).at(9, 0)
   val nowB: DateTime = September(7, 1972).at(9, 0)
   val nows: Stream[DateTime] = List(nowA, nowB).toStream #::: nows

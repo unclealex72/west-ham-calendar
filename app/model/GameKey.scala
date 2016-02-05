@@ -45,18 +45,11 @@ case class GameKey(
   /**
    * The game's season.
    */
-  val season: Int) extends Ordered[GameKey] {
+  val season: Int)
 
-  def compare(other: GameKey) = {
-    val orderings: Seq[GameKey => GameKey => Int] =
-      Seq(
-        gk1 => gk2 => gk1.season compare gk2.season,
-        gk1 => gk2 => gk1.competition.index compare gk2.competition.index,
-        gk1 => gk2 => gk1.opponents compare gk2.opponents,
-        gk1 => gk2 => gk1.location.index compare gk2.location.index)
-    orderings.toStream.map(f => f(this)(other)).takeWhile (_ != 0).headOption match {
-      case Some(cmp) => cmp
-      case None => 0
-    }
+object GameKey {
+
+  implicit val gameKeyOrdering: Ordering[GameKey] = Ordering.by { gk =>
+    (gk.season, Competition.indexOf(gk.competition), gk.opponents, Location.indexOf(gk.location))
   }
 }

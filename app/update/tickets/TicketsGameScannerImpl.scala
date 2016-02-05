@@ -25,13 +25,14 @@ class TicketsGameScannerImpl(val rootUri: URI, ws: WSClient)(implicit ec: Execut
       case Some(ls) =>
         val matchRegex = "(?:Home|Away)-Matches".r
         val ticketsUri = rootUri.resolve("/Tickets/Match-Tickets")
-        val updateCommandsT = for {
-          ticketsXml <- FL <~ ws.url(ticketsUri).get().map { response => List(response.cleanXml) }
-          a <- FL <~ (ticketsXml \\ "a").toList
-          href <- FL <~ a.attributes.asAttrMap.get("href").toList if matchRegex.findFirstMatchIn(href).isDefined
-          updateCommands <- FL <~ createUpdateCommands(ls, rootUri.resolve(new URI(href)))
-        } yield updateCommands
-        updateCommandsT.run
+        FL {
+          for {
+            ticketsXml <- FL <~ ws.url(ticketsUri).get().map { response => List(response.cleanXml) }
+            a <- FL <~ (ticketsXml \\ "a").toList
+            href <- FL <~ a.attributes.asAttrMap.get("href").toList if matchRegex.findFirstMatchIn(href).isDefined
+            updateCommands <- FL <~ createUpdateCommands(ls, rootUri.resolve(new URI(href)))
+          } yield updateCommands
+        }
       case _ =>
         logger info "There are currently no games so tickets will not be searched for."
         Future.successful(List.empty)
@@ -56,6 +57,8 @@ class TicketsGameScannerImpl(val rootUri: URI, ws: WSClient)(implicit ec: Execut
 
   case class TicketPageScanner(pageXml: Elem, latestSeason: Int)(implicit remoteStream: RemoteStream) {
 
+    import NodeImplicits._
+
     // look for <div class='matchDate'>Saturday 4 April 15:00</div>
     def findWhen: Option[DateTime] = {
       val dateTimes = for {
@@ -64,8 +67,6 @@ class TicketsGameScannerImpl(val rootUri: URI, ws: WSClient)(implicit ec: Execut
       } yield dateTime
       dateTimes.headOption
     }
-
-    import NodeImplicits._
 
     def scanTicketDates(dateTime: DateTime): Seq[GameUpdateCommand] = {
       val ticketDateParser = PossiblyYearlessDateParser.forSeason(latestSeason)("d MMMM", "dd MMMM").logFailures

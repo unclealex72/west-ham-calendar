@@ -21,6 +21,9 @@
  */
 package model
 
+import enumeratum.EnumEntry.Uppercase
+import enumeratum._
+
 /**
  * The location of where a game is played, either home or away. Note that this
  * decided by who is the designated home team for a game.
@@ -28,26 +31,14 @@ package model
  * @author alex
  *
  */
-sealed trait Location extends Location.Value {
-  val isHome: Boolean
+sealed abstract class Location(val isHome: Boolean) extends EnumEntry with Uppercase {
   val isAway = !isHome
 }
-object Location extends PersistableEnumeration[Location] {
-  /**
-   * Home
-   */
-  case object HOME extends Location {
-    val persistableToken = "HOME"
-    val isHome = true
-  }
-  HOME
 
-  /**
-   * Away
-   */
-  case object AWAY extends Location {
-    val persistableToken = "AWAY"
-    val isHome = false
-  }
-  AWAY
+object Location extends Enum[Location] {
+
+  val values = findValues
+
+  case object HOME extends Location(true)
+  case object AWAY extends Location(false)
 }

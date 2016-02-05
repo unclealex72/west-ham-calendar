@@ -21,7 +21,10 @@
  */
 package model
 
+import com.fasterxml.jackson.databind.util.EnumValues
 import logging.{RemoteLogging, RemoteStream}
+
+import enumeratum._
 
 /**
  * The different competitions that West Ham have taken part in.
@@ -29,7 +32,7 @@ import logging.{RemoteLogging, RemoteStream}
  * @author alex
  *
  */
-sealed trait Competition extends Competition.Value {
+sealed trait Competition extends EnumEntry {
   /**
    * The English name of this competition.
    */
@@ -37,7 +40,7 @@ sealed trait Competition extends Competition.Value {
   /**
    * The tokens that are used within the West Ham website to identify this competition.
    */
-  val tokens: List[String]
+  val tokens: Seq[String]
 
   /**
    * A flag that determines whether this competition is a primary English league competition or not.
@@ -61,7 +64,12 @@ sealed trait CupCompetition extends Competition {
   override def isLeague = false
 }
 
-object Competition extends PersistableEnumeration[Competition] with RemoteLogging {
+sealed abstract class AbstractCompetition(val name: String, val tokens: String*)
+
+object Competition extends Enum[Competition] with RemoteLogging {
+
+  val values = findValues
+
   /**
    * The FA Premiership.
    */

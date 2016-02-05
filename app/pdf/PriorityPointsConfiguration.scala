@@ -2,7 +2,10 @@ package pdf
 
 import argonaut.Argonaut._
 import argonaut._
-import model.PersistableEnumeration
+import com.fasterxml.jackson.databind.util.EnumValues
+import enumeratum.EnumEntry.Uppercase
+import enumeratum._
+
 
 import scala.collection.SortedSet
 
@@ -15,27 +18,21 @@ case class Client(name: String, referenceNumber: Int, clientType: Option[ClientT
 
 object Client {
 
-  implicit val clientOrdering: Ordering[Client] = Ordering.by { c =>
-    (c.ordering, c.referenceNumber, c.name, c.clientType.map(_.persistableToken).getOrElse(""))
-  }
+  implicit val clientOrdering: Ordering[Client] = Ordering.by { _.ordering }
 }
 
 case class ContactDetails(address: String, daytimeTelephoneNumber: String, mobilePhoneNumber: String, emailAddress: String)
 case class CreditCard(number: String, expiry: CreditCardDate, securityCode: Int, nameOnCard: String)
 case class CreditCardDate(month: Int, year: Int)
 
-sealed trait ClientType extends ClientType.Value
+sealed trait ClientType extends EnumEntry with Uppercase
 
-object ClientType extends PersistableEnumeration[ClientType] {
-  case object OAP extends ClientType {
-    val persistableToken = "OAP"
-  }
-  OAP
+object ClientType extends Enum[ClientType] {
 
-  case object Junior extends ClientType {
-    val persistableToken = "JUNIOR"
-  }
-  Junior
+  val values = findValues
+
+  case object OAP extends ClientType
+  case object Junior extends ClientType
 }
 
 object PriorityPointsConfiguration {
