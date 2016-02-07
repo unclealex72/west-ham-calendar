@@ -21,4 +21,4 @@ bin
 .scalastyle
 
 # Secure files that should not be uploaded to github
-conf/secure
+play/conf/secure

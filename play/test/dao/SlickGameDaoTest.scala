@@ -293,7 +293,7 @@ class SlickGameDaoTest extends Specification with DatabaseContext {
       }
     }
   }
-  
+
   val nowA: DateTime = September(5, 1972).at(9, 0)
   val nowB: DateTime = September(7, 1972).at(9, 0)
   val nows: Stream[DateTime] = List(nowA, nowB).toStream #::: nows
