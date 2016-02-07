@@ -35,7 +35,7 @@ import search.{AttendedSearchOption => A, GameOrTicketSearchOption => G, Locatio
  * @author alex
  *
  */
-class CalendarFactoryImplTest extends Specification with Mockito {
+class CalendarFactoryImplSpec extends Specification with Mockito {
 
   "The busy mask" should {
     val variations = List(

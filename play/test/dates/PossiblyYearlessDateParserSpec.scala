@@ -30,7 +30,7 @@ import org.specs2.mutable.Specification
  *
  * @author alex
  */
-class PossiblyYearlessDateParserTest extends Specification {
+class PossiblyYearlessDateParserSpec extends Specification {
 
   "An optional year at the start" should {
     "[yyyy ]MM dd, HH:mm" mustProduce (DoesNotNeedYear("yyyy MM dd, HH:mm"), DoesNeedYear("MM dd, HH:mm"))
@@ -54,14 +54,14 @@ class PossiblyYearlessDateParserTest extends Specification {
    * Test nowhere.
    */
   "An explicitly required year" should {
-    "MM dd yyyy, HH:mm" mustProduce (DoesNotNeedYear("MM dd yyyy, HH:mm"))
+    "MM dd yyyy, HH:mm" mustProduce DoesNotNeedYear("MM dd yyyy, HH:mm")
   }
 
   /**
    * Test no year.
    */
   "An explicitly not required year" should {
-    "MM dd, HH:mm" mustProduce (new DoesNeedYear("MM dd, HH:mm"))
+    "MM dd, HH:mm" mustProduce DoesNeedYear("MM dd, HH:mm")
   }
 
   implicit class DateFormatImplicits(dateFormat: String) {

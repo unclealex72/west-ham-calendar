@@ -43,7 +43,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
  * @author alex
  *
  */
-class SlickGameDaoTest extends Specification with DatabaseContext {
+class SlickGameDaoSpec extends Specification with DatabaseContext {
 
   sequential
 

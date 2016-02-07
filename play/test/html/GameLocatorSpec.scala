@@ -20,7 +20,7 @@
  *
  */
 
-package html;
+package html
 
 import dates.May
 import model.{Competition, GameKey, Location}
@@ -33,17 +33,17 @@ import org.specs2.mutable.Specification
  * @author alex
  *
  */
-class GameLocatorTest extends Specification {
+class GameLocatorSpec extends Specification {
 
   "The two different types of game locators" should {
     val gameKeyLocator: GameLocator =
       new GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012))
     val datePlayedLocator: GameLocator = new DatePlayedLocator(new DateTime())
     "order GameKeyLocators before DatePlayedLocators" in {
-      gameKeyLocator must be lessThan datePlayedLocator
+      gameKeyLocator must be_<(datePlayedLocator)
     }
     "order DatePlayedLocators after GameKeyLocators" in {
-      datePlayedLocator must be greaterThan gameKeyLocator
+      datePlayedLocator must be_>(gameKeyLocator)
     }
   }
 
@@ -51,13 +51,13 @@ class GameLocatorTest extends Specification {
     val lowerDatePlayedLocator: GameLocator = DatePlayedLocator(May(1, 2000) at (9, 30))
     val higherDatePlayedLocator: GameLocator = DatePlayedLocator(May(3, 2000) at (9, 30))
     "be greater than when the date is greater than" in {
-      higherDatePlayedLocator must be greaterThan (lowerDatePlayedLocator)
+      higherDatePlayedLocator must be_>(lowerDatePlayedLocator)
     }
     "be less than when the date is less than" in {
-      lowerDatePlayedLocator must be lessThan (higherDatePlayedLocator)
+      lowerDatePlayedLocator must be_<(higherDatePlayedLocator)
     }
     "be equal when the dates are equal" in {
-      higherDatePlayedLocator.compare(higherDatePlayedLocator) must be equalTo (0)
+      higherDatePlayedLocator.compare(higherDatePlayedLocator) must be_===(0)
     }
   }
 
@@ -65,13 +65,13 @@ class GameLocatorTest extends Specification {
     val lowerGameKeyLocator: GameLocator = GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2011))
     val higherGameKeyLocator: GameLocator = GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012))
     "be greater than when the game key is greater than" in {
-      higherGameKeyLocator must be greaterThan (lowerGameKeyLocator)
+      higherGameKeyLocator must be_>(lowerGameKeyLocator)
     }
     "be less than when the game key is less than" in {
-      lowerGameKeyLocator must be lessThan (higherGameKeyLocator)
+      lowerGameKeyLocator must be_<(higherGameKeyLocator)
     }
     "be equal when the game keys are equal" in {
-      higherGameKeyLocator.compare(higherGameKeyLocator) must be equalTo (0)
+      higherGameKeyLocator.compare(higherGameKeyLocator) must be_===(0)
     }
   }
 }

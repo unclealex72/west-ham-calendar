@@ -68,118 +68,119 @@ import GeoLocation.WIGAN_ATHLETIC
 import GeoLocation.WOLVERHAMPTON_WANDERERS
 import GeoLocation.WEST_BROMWICH_ALBION
 import GeoLocation.QUEENS_PARK_RANGERS
+import org.specs2.specification.core.Fragment
 
 /**
  * @author alex
  *
  */
-class GeoLocationTest extends Specification {
+class GeoLocationSpec extends Specification {
 
   // Hand picked tests
   "West Ham" should {
     "be at the Boleyn Ground" in {
-      GeoLocation("West Ham") must be equalTo (Some(WEST_HAM))
+      GeoLocation("West Ham") must beSome(WEST_HAM)
     }
   }
 
   "West Ham United" should {
     "be at the Boleyn Ground" in {
-      GeoLocation("West Ham United") must be equalTo (Some(WEST_HAM))
+      GeoLocation("West Ham United") must beSome(WEST_HAM)
     }
   }
 
   "West Ham Utd" should {
     "be at the Boleyn Ground" in {
-      GeoLocation("West Ham Utd") must be equalTo (Some(WEST_HAM))
+      GeoLocation("West Ham Utd") must beSome(WEST_HAM)
     }
   }
 
   "Southampton United" should {
     "be at St. Mary's" in {
-      GeoLocation("Southampton United") must be equalTo (Some(SOUTHAMPTON))
+      GeoLocation("Southampton United") must beSome(SOUTHAMPTON)
     }
   }
 
   "Southend" should {
     "be at Roots Hall" in {
-      GeoLocation("Southend") must be equalTo (Some(SOUTHEND_UNITED))
+      GeoLocation("Southend") must beSome(SOUTHEND_UNITED)
     }
   }
 
   "Wolves" should {
     "be at Molyneux" in {
-      GeoLocation("Wolves") must be equalTo (Some(WOLVERHAMPTON_WANDERERS))
+      GeoLocation("Wolves") must beSome(WOLVERHAMPTON_WANDERERS)
     }
   }
 
   "WBA" should {
     "be at The Hawthorns" in {
-      GeoLocation("WBA") must be equalTo (Some(WEST_BROMWICH_ALBION))
+      GeoLocation("WBA") must beSome(WEST_BROMWICH_ALBION)
     }
   }
 
   "West Brom" should {
     "be at The Hawthorns" in {
-      GeoLocation("West Brom") must be equalTo (Some(WEST_BROMWICH_ALBION))
+      GeoLocation("West Brom") must beSome(WEST_BROMWICH_ALBION)
     }
   }
 
   "QPR" should {
     "be at Loftus Road" in {
-      GeoLocation("QPR") must be equalTo (Some(QUEENS_PARK_RANGERS))
+      GeoLocation("QPR") must beSome(QUEENS_PARK_RANGERS)
     }
   }
 
   // Tests garnered from teams from the West Ham pages
 
   val teams = List(
-    ("Aldershot Town" -> ALDERSHOT_TOWN),
-    ("Arsenal" -> ARSENAL),
-    ("Aston Villa" -> ASTON_VILLA),
-    ("Barnsley" -> BARNSLEY),
-    ("Birmingham" -> BIRMINGHAM_CITY),
-    ("Blackburn" -> BLACKBURN_ROVERS),
-    ("Blackpool" -> BLACKPOOL),
-    ("Bolton" -> BOLTON_WANDERERS),
-    ("Brighton" -> BRIGHTON_AND_HOVE_ALBION),
-    ("Bristol City" -> BRISTOL_CITY),
-    ("Bristol Rovers" -> BRISTOL_ROVERS),
-    ("Burnley" -> BURNLEY),
-    ("Cardiff City" -> CARDIFF_CITY),
-    ("Chelsea" -> CHELSEA),
-    ("Coventry City" -> COVENTRY_CITY),
-    ("Crystal Palace" -> CRYSTAL_PALACE),
-    ("Derby County" -> DERBY_COUNTY),
-    ("Doncaster" -> DONCASTER_ROVERS),
-    ("Everton" -> EVERTON),
-    ("Fulham" -> FULHAM),
-    ("Hull City" -> HULL_CITY),
-    ("Ipswich Town" -> IPSWICH_TOWN),
-    ("Leeds United" -> LEEDS_UNITED),
-    ("Leicester City" -> LEICESTER_CITY),
-    ("Liverpool" -> LIVERPOOL),
-    ("Man Utd" -> MANCHESTER_UNITED),
-    ("Manchester City" -> MANCHESTER_CITY),
-    ("Middlesbrough" -> MIDDLESBROUGH),
-    ("Millwall" -> MILLWALL),
-    ("Newcastle" -> NEWCASTLE_UNITED),
-    ("Nottm Forest" -> NOTTINGHAM_FOREST),
-    ("Peterborough" -> PETERBOROUGH_UNITED),
-    ("Plymouth" -> PLYMOUTH_ARGYLE),
-    ("Portsmouth" -> PORTSMOUTH),
-    ("Reading" -> READING),
-    ("Sheffield Wed" -> SHEFFIELD_WEDNESDAY),
-    ("Southampton" -> SOUTHAMPTON),
-    ("Sunderland" -> SUNDERLAND),
-    ("Tottenham" -> TOTTENHAM_HOTSPUR),
-    ("Watford" -> WATFORD),
-    ("Wigan Athletic" -> WIGAN_ATHLETIC))
+    "Aldershot Town" -> ALDERSHOT_TOWN,
+    "Arsenal" -> ARSENAL,
+    "Aston Villa" -> ASTON_VILLA,
+    "Barnsley" -> BARNSLEY,
+    "Birmingham" -> BIRMINGHAM_CITY,
+    "Blackburn" -> BLACKBURN_ROVERS,
+    "Blackpool" -> BLACKPOOL,
+    "Bolton" -> BOLTON_WANDERERS,
+    "Brighton" -> BRIGHTON_AND_HOVE_ALBION,
+    "Bristol City" -> BRISTOL_CITY,
+    "Bristol Rovers" -> BRISTOL_ROVERS,
+    "Burnley" -> BURNLEY,
+    "Cardiff City" -> CARDIFF_CITY,
+    "Chelsea" -> CHELSEA,
+    "Coventry City" -> COVENTRY_CITY,
+    "Crystal Palace" -> CRYSTAL_PALACE,
+    "Derby County" -> DERBY_COUNTY,
+    "Doncaster" -> DONCASTER_ROVERS,
+    "Everton" -> EVERTON,
+    "Fulham" -> FULHAM,
+    "Hull City" -> HULL_CITY,
+    "Ipswich Town" -> IPSWICH_TOWN,
+    "Leeds United" -> LEEDS_UNITED,
+    "Leicester City" -> LEICESTER_CITY,
+    "Liverpool" -> LIVERPOOL,
+    "Man Utd" -> MANCHESTER_UNITED,
+    "Manchester City" -> MANCHESTER_CITY,
+    "Middlesbrough" -> MIDDLESBROUGH,
+    "Millwall" -> MILLWALL,
+    "Newcastle" -> NEWCASTLE_UNITED,
+    "Nottm Forest" -> NOTTINGHAM_FOREST,
+    "Peterborough" -> PETERBOROUGH_UNITED,
+    "Plymouth" -> PLYMOUTH_ARGYLE,
+    "Portsmouth" -> PORTSMOUTH,
+    "Reading" -> READING,
+    "Sheffield Wed" -> SHEFFIELD_WEDNESDAY,
+    "Southampton" -> SOUTHAMPTON,
+    "Sunderland" -> SUNDERLAND,
+    "Tottenham" -> TOTTENHAM_HOTSPUR,
+    "Watford" -> WATFORD,
+    "Wigan Athletic" -> WIGAN_ATHLETIC)
 
-  teams foreach {
+  Fragment.foreach(teams) {
     case (team, expectedGeoLocation) =>
       s"Harvested team $team" should {
         s"be at ${expectedGeoLocation.name}" in {
-          GeoLocation(team) should be equalTo (Some(expectedGeoLocation))
+          GeoLocation(team) must beSome(expectedGeoLocation)
         }
       }
   }

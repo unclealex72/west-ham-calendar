@@ -22,28 +22,20 @@
 
 package html;
 
-import java.lang.annotation.ElementType
-import java.lang.annotation.Retention
-import java.lang.annotation.RetentionPolicy
-import java.lang.annotation.Target
-import dates.{September, Date}
+import dates.Date._
+import dates.{Date, September}
+import model.{Competition, Game, Location}
 import org.joda.time.DateTime
-import org.joda.time.DateTimeZone
-import model.Game
-import model.GameKey
-import model.Competition
-import model.Location
 import org.specs2.mutable.Specification
-import Date._
+
 import scala.reflect.ClassTag
-import dates.DateTimeImplicits._
 
 /**
- * The Class GameUpdateCommandTest.
+ * The Class GameUpdateCommandSpec.
  *
  * @author alex
  */
-class GameUpdateCommandTest extends Specification {
+class GameUpdateCommandSpec extends Specification {
 
   val DEFAULT_COMPETITION: Competition = Competition.FACP
   val DEFAULT_LOCATION: Location = Location.HOME

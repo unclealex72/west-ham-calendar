@@ -37,7 +37,7 @@ import scala.collection.SortedSet
  * @author alex
  *
  */
-class IcalCalendarWriterTest extends Specification {
+class IcalCalendarWriterSpec extends Specification {
 
   "Tottingham at home" should {
     "be outputted correctly" in {

@@ -31,44 +31,44 @@ import org.specs2.mutable.Specification
  *
  * @author alex
  */
-class DateServiceImplTest extends Specification {
+class DateServiceImplSpec extends Specification {
 
   "A day in a month before the current date but meant to be later than it" should {
     "be interpreted as a date in the next year" in {
-      January(6) after December(25, 2012) must be equalTo (January(6, 2013))
+      January(6) after December(25, 2012) must be_===(January(6, 2013))
     }
   }
 
   "A day in a month after the current date and meant to be later than it" should {
     "be interpreted as a date in the same year" in {
-      March(6) after February(25, 2013) must be equalTo (March(6, 2013))
+      March(6) after February(25, 2013) must be_===(March(6, 2013))
     }
   }
 
   "A day in a month before the current date and meant to be earlier than it" should {
     "be interpreted as a date in the same year" in {
-      June(6) before September(5, 2012) must be equalTo (June(6, 2012))
+      June(6) before September(5, 2012) must be_===(June(6, 2012))
     }
   }
 
   "A day in a month after the current date and meant to be earlier than it" should {
     "be interpreted as a date in the previous year" in {
-      December(25) before January(6, 2012) must be equalTo (December(25, 2011))
+      December(25) before January(6, 2012) must be_===(December(25, 2011))
     }
   }
 
   "A date format with an explicit year" should {
-    parseAndFind("05/09/1972 9:12", Before(October(10, 2012)) parsedBy ("dd/MM[/yyyy] HH:mm"),
+    parseAndFind("05/09/1972 9:12", Before(October(10, 2012)) parsedBy "dd/MM[/yyyy] HH:mm",
       Some(September(5, 1972) at (9, 12)))
   }
 
   "A date format that possibly requires a year to be added" should {
-    parseAndFind("05/09 9:12", Before(October(10, 2012)) parsedBy ("dd/MM[/yyyy] HH:mm"),
+    parseAndFind("05/09 9:12", Before(October(10, 2012)) parsedBy "dd/MM[/yyyy] HH:mm",
       Some(September(5, 2012) at (9, 12)))
   }
 
   "A date format that definitely requires a year to be added" should {
-    parseAndFind("05/09 9:12", Before(October(10, 2012)) parsedBy ("dd/MM HH:mm"),
+    parseAndFind("05/09 9:12", Before(October(10, 2012)) parsedBy "dd/MM HH:mm",
       Some(September(5, 2012) at (9, 12)))
   }
 
@@ -78,12 +78,12 @@ class DateServiceImplTest extends Specification {
   }
 
   "A date format requiring the day of a week but without a year" should {
-    parseAndFind("9am Thu 26 Jan", Before(February(18, 2012)) parsedBy ("ha EEE dd MMM"),
+    parseAndFind("9am Thu 26 Jan", Before(February(18, 2012)) parsedBy "ha EEE dd MMM",
       Some(January(26, 2012) at (9, 0)))
   }
 
   "An invalid date format" should {
-    parseAndFind("05:09 9:12", Before(October(10, 2012)) parsedBy ("dd/MM[/yyyy] HH:mm"), None)
+    parseAndFind("05:09 9:12", Before(October(10, 2012)) parsedBy "dd/MM[/yyyy] HH:mm", None)
   }
 
   "Checking for whether a day is during the working week or not" should {
@@ -98,11 +98,11 @@ class DateServiceImplTest extends Specification {
     List(Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday) foreach { dayOfWeek =>
       val day = September(dayOfWeek.day, 1972)
       s"${dayOfWeek.name} $day must ${if (dayOfWeek.isWeekday) "" else "not "}be a weekday" in {
-        (day.toDateTime isWeekday) must be equalTo (dayOfWeek.isWeekday)
+        day.toDateTime.isWeekday must be_===(dayOfWeek.isWeekday)
       }
     }
     "nothing else" in {
-      1 must be equalTo(1)
+      1 must be_===(1)
     }
   }
 
@@ -115,14 +115,14 @@ class DateServiceImplTest extends Specification {
       September(10, 1972) at (15, 0),
       September(10, 1972) at (12, 0),
       September(10, 1972) at (15, 30),
-      September(10, 1972) at (19, 45)) zip (List(true, false, false, false, false, false, false, false)) foreach {
+      September(10, 1972) at (19, 45)) zip List(true, false, false, false, false, false, false, false) foreach {
         case (day, isSaturday3pm) =>
           s"$day must ${if (isSaturday3pm) "" else "not "}be Saturday 3pm" in {
-            (day.toDateTime isThreeOClockOnASaturday) must be equalTo (isSaturday3pm)
+            day.toDateTime.isThreeOClockOnASaturday must be_===(isSaturday3pm)
           }
       }
     "nothing else" in {
-      1 must be equalTo(1)
+      1 must be_===(1)
     }
   }
 
@@ -145,31 +145,31 @@ class DateServiceImplTest extends Specification {
                     parsingRules: (Boolean, Date, Seq[String]),
                     expectedDateTime: Option[DateTime]) = {
     val (yearDeterminingDateIsLaterThanTheDate, yearDeterminingDate, possiblyYearlessDateFormats) = parsingRules
-    s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedDateTime" in {
+    s"The date string '$date' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedDateTime" in {
       val actualDateTime =
         new DateServiceImpl().parsePossiblyYearlessDate(
           date,
           yearDeterminingDate,
           yearDeterminingDateIsLaterThanTheDate,
           possiblyYearlessDateFormats: _*)
-      actualDateTime must be equalTo (expectedDateTime)
+      actualDateTime must be_===(expectedDateTime)
     }
     1 to 3 flatMap { paddingSize =>
       val padding = (1 to paddingSize).map(_ => "x").mkString
       List(date, padding + date, date + padding, padding + date + padding)
     } foreach { date =>
-      s"The date string '${date}' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedDateTime" in {
+      s"The date string '$date' using formats ${possiblyYearlessDateFormats.mkString(", ")} must parse to $expectedDateTime" in {
         val actualDateTime =
           new DateServiceImpl().findPossiblyYearlessDate(
             date,
             yearDeterminingDate,
             yearDeterminingDateIsLaterThanTheDate,
             possiblyYearlessDateFormats: _*)
-        actualDateTime must be equalTo (expectedDateTime)
+        actualDateTime must be_===(expectedDateTime)
       }
     }
     "nothing else" in {
-      1 must be equalTo(1)
+      1 must be_===(1)
     }
   }
 
@@ -184,8 +184,8 @@ class DateServiceImplTest extends Specification {
   case class After(date: Date) extends BeforeOrAfter(date, false)
 
   implicit class BeforeAndAfterImplicits(monthAndDay: MonthAndDay) {
-    def after(date: Date) = alter(date, false)
-    def before(date: Date) = alter(date, true)
+    def after(date: Date) = alter(date, yearDeterminingDateIsLaterThanTheDate = false)
+    def before(date: Date) = alter(date, yearDeterminingDateIsLaterThanTheDate = true)
 
     def alter(yearDeterminingDate: Date, yearDeterminingDateIsLaterThanTheDate: Boolean) = {
       val newDateTime = YearSettingDateParserFactory.setYear(

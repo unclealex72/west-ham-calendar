@@ -30,7 +30,7 @@ class LocationServiceImplSpec extends Specification with Mockito {
       gameDao.findById(555l) returns Future.successful(Some(game))
       val locationService = new LocationServiceImpl(asyncHttpClient, gameDao, LocationClientKey("client"))
       val geoFuture = locationService.location(555l)
-      geoFuture must beEqualTo(Some(new URL("http://myurl"))).await
+      geoFuture must beSome(new URL("http://myurl")).await
     }
   }
 }
