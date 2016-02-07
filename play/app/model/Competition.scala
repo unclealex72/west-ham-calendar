@@ -21,10 +21,8 @@
  */
 package model
 
-import com.fasterxml.jackson.databind.util.EnumValues
-import logging.{RemoteLogging, RemoteStream}
-
 import enumeratum._
+import logging.{RemoteLogging, RemoteStream}
 
 /**
  * The different competitions that West Ham have taken part in.
@@ -49,22 +47,17 @@ sealed trait Competition extends EnumEntry {
 
 }
 
+sealed abstract class AbstractCompetition(val name: String, val isLeague: Boolean, val tokens: String*) extends Competition
+
 /**
  * League based competitions.
  */
-sealed trait LeagueCompetition extends Competition {
-  override def isLeague = true
-}
+sealed abstract class LeagueCompetition(override val name: String, override val tokens: String*) extends AbstractCompetition(name, true, tokens: _*)
 
 /**
  * Cup based competitions.
  */
-sealed trait CupCompetition extends Competition {
-
-  override def isLeague = false
-}
-
-sealed abstract class AbstractCompetition(val name: String, val tokens: String*)
+sealed abstract class CupCompetition(override val name: String, override val tokens: String*) extends AbstractCompetition(name, false, tokens: _*)
 
 object Competition extends Enum[Competition] with RemoteLogging {
 
@@ -73,72 +66,37 @@ object Competition extends Enum[Competition] with RemoteLogging {
   /**
    * The FA Premiership.
    */
-  case object PREM extends LeagueCompetition {
-    val persistableToken = "PREM"
-    val name = "Premiership"
-    val tokens = List("Barclays Premier League")
-  }
-  PREM
+  case object PREM extends LeagueCompetition("Premiership", "Barclays Premier League")
 
   /**
    * The League Cup.
    */
-  case object LGCP extends CupCompetition {
-    val persistableToken = "LGCP"
-    val name = "League Cup"
-    val tokens = List("English Capital One Cup")
-  }
-  LGCP
+  case object LGCP extends CupCompetition("League Cup", "English Capital One Cup")
 
   /**
    * The FA Cup.
    */
-  case object FACP extends CupCompetition {
-    val persistableToken = "FACP"
-    val name = "FA Cup"
-    val tokens = List("English FA Cup")
-  }
-  FACP
+  case object FACP extends CupCompetition("FA Cup", "English FA Cup")
 
   /**
    * The Championship.
    */
-  case object FLC extends LeagueCompetition {
-    val persistableToken = "FLC"
-    val name = "Championship"
-    val tokens = List("FLC", "FLD1")
-  }
-  FLC
+  case object FLC extends LeagueCompetition("Championship", "FLC", "FLD1")
 
   /**
    * The Championship play-offs.
    */
-  case object FLCPO extends CupCompetition {
-    val persistableToken = "FLCPO"
-    val name = "Play-Offs"
-    val tokens = List("FLD1 P/O", "FLC P/O")
-  }
-  FLCPO
+  case object FLCPO extends CupCompetition("Play-Offs", "FLD1 P/O", "FLC P/O")
 
   /**
    * Friendly matches.
    */
-  case object FRIENDLY extends CupCompetition {
-    val persistableToken = "FRIENDLY"
-    val name = "Friendly"
-    val tokens = List("Pre-Season Match", "Betway Cup", "Mark Noble Testimonial")
-  }
-  FRIENDLY
+  case object FRIENDLY extends CupCompetition("Friendly", "Pre-Season Match", "Betway Cup", "Mark Noble Testimonial")
 
   /**
    * The EUROPA League.
    */
-  case object EUROPA extends CupCompetition {
-    val persistableToken = "EUROPA"
-    val name = "UEFA Europa League"
-    val tokens = List("UEFA Europa League", "UEFA Europa League Qualifying")
-  }
-  EUROPA
+  case object EUROPA extends CupCompetition("UEFA Europa League", "UEFA Europa League", "UEFA Europa League Qualifying")
 
   def apply(token: String)(implicit remoteStream: RemoteStream): Option[Competition] = {
     logOnEmpty(values.find(_.tokens contains token), s"$token is not a valid competition token.")
