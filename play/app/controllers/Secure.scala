@@ -13,8 +13,8 @@ trait Secure extends Sil {
   case class EmailAndUsername(email: String, name: String)
 
   def emailAndUsername(implicit request: Request[_ <: AnyContent]): Option[EmailAndUsername] = request match {
-    case securedRequest: SecuredRequest[UserType] => toEmailAndUsername(securedRequest.identity)
-    case userAwareRequest: UserAwareRequest[UserType] => userAwareRequest.identity.flatMap(toEmailAndUsername)
+    case securedRequest: SecuredRequest[_] => toEmailAndUsername(securedRequest.identity)
+    case userAwareRequest: UserAwareRequest[_] => userAwareRequest.identity.flatMap(toEmailAndUsername)
     case _ => None
   }
 
