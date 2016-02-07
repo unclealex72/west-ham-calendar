@@ -68,8 +68,9 @@ case class Game(
                  priorityPointAvailable: Option[DateTime] = None,
                  seasonTicketsAvailable: Option[DateTime] = None,
                  generalSaleAvailable: Option[DateTime] = None,
-                 academyMembersPostalAvailable: Option[DateTime] = None,
-                 generalSalePostalAvailable: Option[DateTime] = None,
+                 homeTeamImageLink: Option[String] = None,
+                 awayTeamImageLink: Option[String] = None,
+                 competitionImageLink: Option[String] = None,
                  dateCreated: DateTime,
                  lastUpdated: DateTime) {
 

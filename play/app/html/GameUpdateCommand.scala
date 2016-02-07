@@ -21,11 +21,15 @@
  */
 package html
 
+import enumeratum.EnumEntry
+
 import scala.math.Ordered
 import org.joda.time.DateTime
 import model.Game
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import dates.DateTimeImplicits._
+import enumeratum._
+
+import scala.reflect.ClassTag
 
 /**
  * A class used to encapsulate a possible update to a game as directed by an.
@@ -38,7 +42,7 @@ sealed abstract class GameUpdateCommand(
   /**
    * The locator to use to locate the game.
    */
-  val gameLocator: GameLocator) extends Ordered[GameUpdateCommand] {
+  val gameLocator: GameLocator) {
 
   /**
    * Update a game. No check is made to see if the correct game is being
@@ -51,33 +55,44 @@ sealed abstract class GameUpdateCommand(
   def update(game: Game): Option[Game]
 }
 
-sealed class UpdateType(val position: Int, val description: String)
-// The type for date played updates.
-case object DATE_PLAYED extends UpdateType(0, "date played")
-// The type for result updates.
-case object RESULT extends UpdateType(1, "result")
-// The type for attendence updates.
-case object ATTENDENCE extends UpdateType(2, "attendence")
-// The type for match report updates.
-case object MATCH_REPORT extends UpdateType(3, "match report")
-// The type for television channel updates.
-case object TELEVISION_CHANNEL extends UpdateType(4, "television channel")
-// The type for attendence updates.
-case object ATTENDED extends UpdateType(5, "attendance flag")
-// The type for changing the Bondholder ticket selling dates.
-case object BONDHOLDER_TICKETS extends UpdateType(6, "bondholder ticket selling date")
-// The type for changing the priority point ticket selling dates.
-case object PRIORITY_POINT_POST_TICKETS extends UpdateType(7, "priority ticket selling date")
-// The type for changing the season ticket holder ticket selling dates.
-case object SEASON_TICKETS extends UpdateType(8, "season ticket selling date")
-// The type for changing the Academy members' ticket selling dates.
-case object ACADEMY_TICKETS extends UpdateType(9, "academy ticket selling date")
-// The type for changing the general sale ticket selling dates.
-case object ACADEMY_POSTAL_TICKETS extends UpdateType(10, "academy ticket postal selling date")
-// The type for changing the general sale ticket selling dates.
-case object GENERAL_SALE_TICKETS extends UpdateType(11, "general sale ticket selling date")
-// The type for changing the general sale ticket selling dates.
-case object GENERAL_SALE_POSTAL_TICKETS extends UpdateType(12, "general sale postal ticket selling date")
+sealed abstract class UpdateType(val description: String) extends EnumEntry
+object UpdateType extends Enum[UpdateType] {
+
+  val values = findValues
+
+  // The type for date played updates.
+  case object DATE_PLAYED extends UpdateType("date played")
+  // The type for result updates.
+  case object RESULT extends UpdateType("result")
+  // The type for attendence updates.
+  case object ATTENDENCE extends UpdateType("attendence")
+  // The type for match report updates.
+  case object MATCH_REPORT extends UpdateType("match report")
+  // The type for television channel updates.
+  case object TELEVISION_CHANNEL extends UpdateType("television channel")
+  // The type for attendence updates.
+  case object ATTENDED extends UpdateType("attendance flag")
+  // The type for home team image updates.
+  case object HOME_TEAM_IMAGE_LINK extends UpdateType("home team image")
+  // The type for away team image updates.
+  case object AWAY_TEAM_IMAGE_LINK extends UpdateType("away team image")
+  // The type for competition image updates.
+  case object COMPETITION_IMAGE_LINK extends UpdateType("competition image")
+  // The type for changing the Bondholder ticket selling dates.
+  case object BONDHOLDER_TICKETS extends UpdateType("bondholder ticket selling date")
+  // The type for changing the priority point ticket selling dates.
+  case object PRIORITY_POINT_POST_TICKETS extends UpdateType("priority ticket selling date")
+  // The type for changing the season ticket holder ticket selling dates.
+  case object SEASON_TICKETS extends UpdateType("season ticket selling date")
+  // The type for changing the Academy members' ticket selling dates.
+  case object ACADEMY_TICKETS extends UpdateType("academy ticket selling date")
+  // The type for changing the general sale ticket selling dates.
+  case object GENERAL_SALE_TICKETS extends UpdateType("general sale ticket selling date")
+
+  implicit val ordering: Ordering[UpdateType] = Ordering.by(values.indexOf)
+}
+
+import UpdateType._
 
 sealed abstract class BaseGameUpdateCommand[V](
   /**
@@ -102,14 +117,6 @@ sealed abstract class BaseGameUpdateCommand[V](
     }
   }
 
-  def compare(other: GameUpdateCommand): Int = {
-    other match {
-      case otherBase: BaseGameUpdateCommand[V] =>
-        val cmp = gameLocator.compare(otherBase.gameLocator)
-        if (cmp == 0) updateType.position - otherBase.updateType.position else cmp
-    }
-  }
-
   /**
    * Gets the current value.
    *
@@ -127,6 +134,16 @@ sealed abstract class BaseGameUpdateCommand[V](
    */
   protected def setNewValue(game: Game): Game
 }
+
+object GameUpdateCommandImplicits {
+
+  def ordering[E <: ClassTag[E]](implicit ord: Ordering[E]): Ordering[GameUpdateCommand] = Ordering.by { (guc: GameUpdateCommand) =>
+    guc match {
+      case uc : BaseGameUpdateCommand[_] => (uc.gameLocator, uc.updateType)
+    }
+  }
+}
+
 /**
  * A {@link GameUpdateCommand} that updates a game's date played value.
  *
@@ -177,6 +194,60 @@ case class AttendenceUpdateCommand(
   override def currentValue(game: Game) = game.attendance
 
   override def setNewValue(game: Game) = game.copy(attendance = Some(newValue))
+
+}
+
+/**
+  * Create a {@link GameUpdateCommand} that updates a game's home team image link value.
+  *
+  * @param gameLocator
+  *          The locator to use to locate the game.
+  * @param newValue
+  *          The new home team image url.
+  */
+case class HomeTeamImageLinkCommand(
+                                    override val gameLocator: GameLocator,
+                                    override val newValue: String) extends BaseGameUpdateCommand[String](HOME_TEAM_IMAGE_LINK, gameLocator, newValue) {
+
+  override def currentValue(game: Game) = game.homeTeamImageLink
+
+  override def setNewValue(game: Game) = game.copy(homeTeamImageLink = Some(newValue))
+
+}
+
+/**
+  * Create a {@link GameUpdateCommand} that updates a game's away team image link value.
+  *
+  * @param gameLocator
+  *          The locator to use to locate the game.
+  * @param newValue
+  *          The new away team image url.
+  */
+case class AwayTeamImageLinkCommand(
+                                     override val gameLocator: GameLocator,
+                                     override val newValue: String) extends BaseGameUpdateCommand[String](AWAY_TEAM_IMAGE_LINK, gameLocator, newValue) {
+
+  override def currentValue(game: Game) = game.awayTeamImageLink
+
+  override def setNewValue(game: Game) = game.copy(awayTeamImageLink = Some(newValue))
+
+}
+
+/**
+  * Create a {@link GameUpdateCommand} that updates a game's away team image link value.
+  *
+  * @param gameLocator
+  *          The locator to use to locate the game.
+  * @param newValue
+  *          The new away team image url.
+  */
+case class CompetitionImageLinkCommand(
+                                     override val gameLocator: GameLocator,
+                                     override val newValue: String) extends BaseGameUpdateCommand[String](COMPETITION_IMAGE_LINK, gameLocator, newValue) {
+
+  override def currentValue(game: Game) = game.competitionImageLink
+
+  override def setNewValue(game: Game) = game.copy(competitionImageLink = Some(newValue))
 
 }
 
@@ -316,24 +387,6 @@ case class AcademyTicketsUpdateCommand(
 }
 
 /**
- * Create a {@link GameUpdateCommand} that updates a game's academy tickets postal
- * availability date.
- *
- * @param gameLocator
- *          The locator to use to locate the game.
- * @param newValue
- *          The new date for academy ticket availabilty.
- * @return A {@link GameUpdateCommand} that updates a game's academy ticket
- *         availability date.
- */
-case class AcademyPostalTicketsUpdateCommand(
-  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(ACADEMY_POSTAL_TICKETS, gameLocator, newValue) {
-
-  override def currentValue(game: Game) = game.academyMembersPostalAvailable
-  override def setNewValue(game: Game) = game.copy(academyMembersPostalAvailable = Some(newValue))
-
-}
-/**
  * Create a {@link GameUpdateCommand} that updates a game's general sale
  * tickets availability date.
  *
@@ -349,22 +402,4 @@ case class GeneralSaleTicketsUpdateCommand(
 
   override def currentValue(game: Game) = game.generalSaleAvailable
   override def setNewValue(game: Game) = game.copy(generalSaleAvailable = Some(newValue))
-}
-
-/**
- * Create a {@link GameUpdateCommand} that updates a game's general sale postal
- * tickets availability date.
- *
- * @param gameLocator
- *          The locator to use to locate the game.
- * @param newValue
- *          The new date for general sale ticket availabilty.
- * @return A {@link GameUpdateCommand} that updates a game's general sale
- *         ticket availability date.
- */
-case class GeneralSalePostalTicketsUpdateCommand(
-  override val gameLocator: GameLocator, override val newValue: DateTime) extends TicketsUpdateCommand(GENERAL_SALE_POSTAL_TICKETS, gameLocator, newValue) {
-
-  override def currentValue(game: Game) = game.generalSalePostalAvailable
-  override def setNewValue(game: Game) = game.copy(generalSalePostalAvailable = Some(newValue))
 }

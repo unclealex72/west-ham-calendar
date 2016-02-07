@@ -26,6 +26,9 @@ case class Fixture(
   awayTeamScore: String,
   homeShootoutScore: String,
   awayShootoutScore: String,
+  homeTeamLogo: String,
+  awayTeamLogo: String,
+  competitionLogo: String,
   link: Option[String],
   home: Boolean) {
 
@@ -59,7 +62,28 @@ case class Fixture(
       val fullLink = rootUrl.resolve(link)
       MatchReportUpdateCommand(locator, fullLink.toString)
     }
-    List(datePlayedUpdateCommand, resultUpdateCommand, matchReportUpdateCommand).flatten
+    val uriCleaners: Seq[String => String] = Seq(
+      _.replace("~", ""),
+      _.replace(" ", "%20"),
+      str => {
+        val queryParams = str.indexOf('?')
+        if (queryParams < 0) str else str.substring(0, queryParams)
+      }
+    )
+    val logoUpdateCommands: Seq[Option[GameUpdateCommand]] = Seq(
+      homeTeamLogo -> HomeTeamImageLinkCommand.curried(locator),
+      awayTeamLogo -> AwayTeamImageLinkCommand.curried(locator),
+      competitionLogo -> CompetitionImageLinkCommand.curried(locator)).map {
+      case (value, gameUpdater) =>
+        for {
+          logo <- isEmptyOrNull(value)
+        } yield {
+          val sanitised = uriCleaners.foldLeft(logo)((str, f) => f(str))
+          val absoluteUrl = rootUrl.resolve(sanitised).toASCIIString
+          gameUpdater(absoluteUrl)
+        }
+    }
+    (List(datePlayedUpdateCommand, resultUpdateCommand, matchReportUpdateCommand) ++ logoUpdateCommands).flatten
   }
 }
 
@@ -69,7 +93,8 @@ object FixturesResponse {
   import Argonaut._
 
   implicit def FixturesResponseDecoder: DecodeJson[FixturesResponse] = jdecode1L(FixturesResponse.apply)("resultList")
-  implicit def FixtureDecoder: DecodeJson[Fixture] = jdecode11L(Fixture.apply)(
+  implicit def FixtureDecoder: DecodeJson[Fixture] = jdecode14L(Fixture.apply)(
     "MatchDate", "CompetitionName", "HomeTeamName", "AwayTeamName", "VenueName",
-    "HomeTeamScore", "AwayTeamScore", "HomeShootOutScore", "AwayShootOutScore", "MatchCenterPath", "IsHomeSide")
+    "HomeTeamScore", "AwayTeamScore", "HomeShootOutScore", "AwayShootOutScore",
+    "HomeTeamLogo", "AwayTeamLogo", "CompetitionLogo", "MatchCenterPath", "IsHomeSide")
 }

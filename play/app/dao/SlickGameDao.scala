@@ -40,8 +40,9 @@ class SlickGameDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: Exec
       prioritypoint,
       seasontickets,
       generalsale,
-      academymemberspostal,
-      generalsalepostal,
+      hometeamimageurl,
+      awayteamimageurl,
+      competitionimageurl,
       datecreated,
       lastupdated) <> (Game.tupled, Game.unapply)
 
@@ -82,10 +83,9 @@ class SlickGameDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: Exec
     /** Database column lastupdated SqlType(timestamp) */
     val lastupdated: Rep[DateTime] = column[DateTime]("lastupdated")
     /** Database column academymemberspostal SqlType(timestamp), Default(None) */
-    val academymemberspostal: Rep[Option[DateTime]] = column[Option[DateTime]]("academymemberspostal", O.Default(None))
-    /** Database column generalsalepostal SqlType(timestamp), Default(None) */
-    val generalsalepostal: Rep[Option[DateTime]] = column[Option[DateTime]]("generalsalepostal", O.Default(None))
-
+    val hometeamimageurl: Rep[Option[String]] = column[Option[String]]("hometeamimageurl", O.Default(None))
+    val awayteamimageurl: Rep[Option[String]] = column[Option[String]]("awayteamimageurl", O.Default(None))
+    val competitionimageurl: Rep[Option[String]] = column[Option[String]]("competitionimageurl", O.Default(None))
     /** Uniqueness Index over (competition,location,opponents,season) (database name idxgameKeyComposite) */
     val index1 = index("idxgameKeyComposite", (competition, location, opponents, season), unique=true)
   }
@@ -179,9 +179,7 @@ class SlickGameDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: Exec
         case GameOrTicketSearchOption.PRIORITY_POINT => q.filter(_.prioritypoint.isDefined)
         case GameOrTicketSearchOption.SEASON => q.filter(_.seasontickets.isDefined)
         case GameOrTicketSearchOption.ACADEMY => q.filter(_.academymembers.isDefined)
-        case GameOrTicketSearchOption.ACADEMY_POSTAL => q.filter(_.academymemberspostal.isDefined)
         case GameOrTicketSearchOption.GENERAL_SALE => q.filter(_.generalsale.isDefined)
-        case GameOrTicketSearchOption.GENERAL_SALE_POSTAL => q.filter(_.generalsalepostal.isDefined)
         case _ => q
       }
     }.sortBy(_.at).result

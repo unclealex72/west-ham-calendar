@@ -70,9 +70,7 @@ class CalendarFactoryImpl extends CalendarFactory {
       case PRIORITY_POINT => (g => g.priorityPointAvailable, 1)
       case SEASON => (g => g.seasonTicketsAvailable, 1)
       case ACADEMY => (g => g.academyMembersAvailable, 1)
-      case ACADEMY_POSTAL => (g => g.academyMembersPostalAvailable, 1)
       case GENERAL_SALE => (g => g.generalSaleAvailable, 1)
-      case GENERAL_SALE_POSTAL => (g => g.generalSalePostalAvailable, 1)
       case GAME => (g => g.at, 2)
     }
   }
@@ -85,9 +83,7 @@ class CalendarFactoryImpl extends CalendarFactory {
       case PRIORITY_POINT => "Priority point ticket selling"
       case SEASON => "Season ticket selling"
       case ACADEMY => "Academy member ticket selling"
-      case ACADEMY_POSTAL => "Academy member (postal) ticket selling"
       case GENERAL_SALE => "General sale ticket selling"
-      case GENERAL_SALE_POSTAL => "General sale (postal) ticket selling"
       case GAME => "Game"
     }
     val attendedType = attendedSearchOption match {

@@ -242,9 +242,7 @@ class SlickGameDaoTest extends Specification with DatabaseContext {
           case GameOrTicketSearchOption.PRIORITY_POINT => Some(game.copy(priorityPointAvailable = tickets))
           case GameOrTicketSearchOption.SEASON => Some(game.copy(seasonTicketsAvailable = tickets))
           case GameOrTicketSearchOption.ACADEMY => Some(game.copy(academyMembersAvailable = tickets))
-          case GameOrTicketSearchOption.ACADEMY_POSTAL => Some(game.copy(academyMembersPostalAvailable = tickets))
           case GameOrTicketSearchOption.GENERAL_SALE => Some(game.copy(generalSaleAvailable = tickets))
-          case GameOrTicketSearchOption.GENERAL_SALE_POSTAL => Some(game.copy(generalSalePostalAvailable = tickets))
           case GameOrTicketSearchOption.GAME => None
         }
       }
@@ -273,9 +271,7 @@ class SlickGameDaoTest extends Specification with DatabaseContext {
           case GameOrTicketSearchOption.PRIORITY_POINT => g.priorityPointAvailable.isDefined
           case GameOrTicketSearchOption.SEASON => g.seasonTicketsAvailable.isDefined
           case GameOrTicketSearchOption.ACADEMY => g.academyMembersAvailable.isDefined
-          case GameOrTicketSearchOption.ACADEMY_POSTAL => g.academyMembersPostalAvailable.isDefined
           case GameOrTicketSearchOption.GENERAL_SALE => g.generalSaleAvailable.isDefined
-          case GameOrTicketSearchOption.GENERAL_SALE_POSTAL => g.generalSalePostalAvailable.isDefined
           case GameOrTicketSearchOption.GAME => true
         }
         val futureGames = nonPersistedGames.foldRight(Future.successful(List.empty[Game])) { (game, fGames) =>

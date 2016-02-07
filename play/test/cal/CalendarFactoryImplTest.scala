@@ -65,9 +65,7 @@ class CalendarFactoryImplTest extends Specification with Mockito {
     priorityPointAvailable = Some(August(2, 2013) at (9, 0)),
     seasonTicketsAvailable = Some(August(3, 2013) at (9, 0)),
     academyMembersAvailable = Some(August(4, 2013) at (9, 0)),
-    academyMembersPostalAvailable = Some(August(5, 2013) at (9, 0)),
     generalSaleAvailable = Some(August(6, 2013) at (9, 0)),
-    generalSalePostalAvailable = Some(August(7, 2013) at (9, 0)),
     at = Some(September(5, 2013) at (15, 0)),
     attendance = Some(100),
     matchReport = Some("report"),
@@ -92,9 +90,7 @@ class CalendarFactoryImplTest extends Specification with Mockito {
         case (G.PRIORITY_POINT) => ("Priority point ticket selling", August(2, 2013) at (9, 0) lasting 1)
         case (G.SEASON) => ("Season ticket selling", August(3, 2013) at (9, 0) lasting 1)
         case (G.ACADEMY) => ("Academy member ticket selling", August(4, 2013) at (9, 0) lasting 1)
-        case (G.ACADEMY_POSTAL) => ("Academy member (postal) ticket selling", August(5, 2013) at (9, 0) lasting 1)
         case (G.GENERAL_SALE) => ("General sale ticket selling", August(6, 2013) at (9, 0) lasting 1)
-        case (G.GENERAL_SALE_POSTAL) => ("General sale (postal) ticket selling", August(7, 2013) at (9, 0) lasting 1)
         case (G.GAME) => ("Game", September(5, 2013) at (15, 0) lasting 2)
       }
       val expectedTitle = s"$expectedEventTypeDescriptor times for $expectedGameTypeDescriptor games"

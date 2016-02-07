@@ -27,6 +27,10 @@ import org.joda.time.DateTime
 import model.GameKey
 import dates.DateTimeImplicits._
 
+import enumeratum._
+
+import scala.reflect.ClassTag
+
 /**
  * The base class for both types of game locator.
  *
@@ -48,50 +52,50 @@ import dates.DateTimeImplicits._
  *
  *
  */
-sealed abstract class GameLocator extends Ordered[GameLocator]
+sealed trait GameLocator extends Ordered[GameLocator]
 
-/**
- * An enumeration to allow different types of game locators to be explicitly ordered.
- */
-object LocatorType extends Enumeration {
-  type LocatorType = Value
-  val /**
-     * The locator for finding by primary key.
-     */ PRIMARY_KEY, /**
-     * The locator for finding by date time played.
-     */ DATETIME_PLAYED = Value
+sealed trait LocatorType extends EnumEntry
+object LocatorType extends Enum[LocatorType] {
+
+  val values = findValues
+
+  object PRIMARY_KEY extends LocatorType
+  object DATETIME_PLAYED extends LocatorType
+
+  implicit val ordering: Ordering[LocatorType] = Ordering.by(values.indexOf)
 }
 
-sealed abstract class InternalGameLocator[E](
-  /**
+sealed abstract class AbstractGameLocator[E](
+                                              /**
    * The unique type of the locator.
    */
-  private val locatorType: LocatorType.Value,
+  val locatorType: LocatorType,
   /**
    * The object used to locate a game.
    */
-  private val locator: E)(implicit ord: Ordering[E]) extends GameLocator {
+  val locator: E)(implicit ord: Ordering[E]) extends GameLocator {
 
-  def compare(other: GameLocator): Int = {
-    other match {
-      case o: InternalGameLocator[E] =>
-        val cmp = locatorType.id - o.locatorType.id
-        if (cmp == 0) ord.compare(locator, o.locator) else cmp
+  private def ordering: Ordering[AbstractGameLocator[E]] = Ordering.by { agl => (agl.locatorType, agl.locator) }
+  override def compare(that: GameLocator): Int = {
+    that match {
+      case tht: AbstractGameLocator[E] => ordering.compare(this, tht)
     }
   }
 }
 
 /**
  * A {@link GameLocator} that locates games using a {@link GameKey}.
+ *
  * @author alex
  *
  */
-case class GameKeyLocator(val gameKey: GameKey) extends InternalGameLocator[GameKey](LocatorType.PRIMARY_KEY, gameKey)
+case class GameKeyLocator(val gameKey: GameKey) extends AbstractGameLocator[GameKey](LocatorType.PRIMARY_KEY, gameKey)
 
 /**
  * A {@link GameLocator} that locates games using the date they were played.
+ *
  * @author alex
  *
  */
-case class DatePlayedLocator(val datePlayed: DateTime) extends InternalGameLocator[DateTime](
+case class DatePlayedLocator(val datePlayed: DateTime) extends AbstractGameLocator[DateTime](
   LocatorType.DATETIME_PLAYED, datePlayed)

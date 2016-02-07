@@ -86,7 +86,5 @@ object GameOrTicketSearchOption extends SearchOptionLike[GameOrTicketSearchOptio
   case object PRIORITY_POINT extends GameOrTicketSearchOption("prioritypoint"); PRIORITY_POINT
   case object SEASON extends GameOrTicketSearchOption("season"); SEASON
   case object ACADEMY extends GameOrTicketSearchOption("academy"); ACADEMY
-  case object ACADEMY_POSTAL extends GameOrTicketSearchOption("academypostal"); ACADEMY_POSTAL
   case object GENERAL_SALE extends GameOrTicketSearchOption("general"); GENERAL_SALE
-  case object GENERAL_SALE_POSTAL extends GameOrTicketSearchOption("generalpostal"); GENERAL_SALE_POSTAL
 }

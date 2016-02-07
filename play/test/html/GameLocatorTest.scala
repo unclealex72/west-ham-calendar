@@ -22,14 +22,11 @@
 
 package html;
 
-import dates.{May, Instant}
+import dates.May
+import model.{Competition, GameKey, Location}
 import org.joda.time.DateTime
 import org.specs2.mutable.Specification
 
-import Instant.asDateTime
-import model.Competition
-import model.GameKey
-import model.Location
 /**
  * Test that game locator comparators are well behaved.
  *
@@ -43,10 +40,10 @@ class GameLocatorTest extends Specification {
       new GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012))
     val datePlayedLocator: GameLocator = new DatePlayedLocator(new DateTime())
     "order GameKeyLocators before DatePlayedLocators" in {
-      gameKeyLocator must be lessThan (datePlayedLocator)
+      gameKeyLocator must be lessThan datePlayedLocator
     }
     "order DatePlayedLocators after GameKeyLocators" in {
-      datePlayedLocator must be greaterThan (gameKeyLocator)
+      datePlayedLocator must be greaterThan gameKeyLocator
     }
   }
 
