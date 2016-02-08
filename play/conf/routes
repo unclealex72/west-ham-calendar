@@ -3,34 +3,36 @@
 # ~~~~
 
 # Home page
-GET     /                           @controllers.Application.index
+GET     /                           controllers.Application.index
+
+GET     /proto.html                 controllers.Application.proto
 
 # Dynamic Javascript
-GET     /constants.js                @controllers.Application.constants
+GET     /constants.js               controllers.Application.constants
 
 # Json
 
-GET     /:season/games              @controllers.Application.games(season: Int)
-GET     /game/:gameId                   @controllers.Application.game(gameId: Long)
+GET     /:season/games              controllers.Application.games(season: Int)
+GET     /game/:gameId               controllers.Application.game(gameId: Long)
 # Game attendence
 
-PUT     /attend/:gameId              @controllers.Update.attend(gameId: Long)
-PUT     /unattend/:gameId            @controllers.Update.unattend(gameId: Long)
+PUT     /attend/:gameId             controllers.Update.attend(gameId: Long)
+PUT     /unattend/:gameId           controllers.Update.unattend(gameId: Long)
 
 # Updates
-POST     /:secretPayload/update                @controllers.Update.update(secretPayload)
+POST     /:secretPayload/update                controllers.Update.update(secretPayload)
 
 # Calendars
-GET     /calendars/:secretPayload/:attended/:location/:ty/calendar.ics   @controllers.Calendar.searchSecure(secretPayload, attended, location, ty)
-GET     /calendars/$mask<(free|busy)>/:location/:ty/calendar.ics   @controllers.Calendar.search(mask, location, ty)
+GET     /calendars/:secretPayload/:attended/:location/:ty/calendar.ics   controllers.Calendar.searchSecure(secretPayload, attended, location, ty)
+GET     /calendars/$mask<(free|busy)>/:location/:ty/calendar.ics   controllers.Calendar.search(mask, location, ty)
 
 # Priority points form
 
-GET     /prioritypoints/:gameId     @controllers.PriorityPointsPdf.priorityPoints(gameId: Long)
+GET     /prioritypoints/:gameId     controllers.PriorityPointsPdf.priorityPoints(gameId: Long)
 
 # Game location
 
-GET     /location/:gameId.html           @controllers.Location.location(gameId: Long)
+GET     /location/:gameId.html           controllers.Location.location(gameId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
@@ -44,5 +46,5 @@ GET	/favicon.ico		    controllers.Assets.at(path="/public", file="favicon.ico")
 
 # Providers entry points
 
-GET         /authenticate/:provider          @controllers.SocialAuthController.authenticate(provider)
-GET         /logout                          @controllers.SocialAuthController.signOut
+GET         /authenticate/:provider          controllers.SocialAuthController.authenticate(provider)
+GET         /logout                          controllers.SocialAuthController.signOut

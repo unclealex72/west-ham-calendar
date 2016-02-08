@@ -50,6 +50,8 @@ lazy val play = (project in file("play")).settings(
       "org.postgresql" % "postgresql" % "9.4.1207",
       "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
       "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
+      // webjars
+      "org.webjars.bower" % "bootstrap" % "3.3.6",
       // test
       "org.hsqldb" % "hsqldb" % "2.3.3" % "test",
       "org.specs2" %% "specs2-core" % "3.7-scalaz-7.1.6" % "test",

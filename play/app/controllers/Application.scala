@@ -27,6 +27,10 @@ class Application(implicit injector: Injector) extends Secure with TicketForms w
     Ok(views.html.index())
   }
 
+  def proto = Action {
+    Ok(views.html.proto())
+  }
+
   /**
    * Get the global information required: all seasons, all ticket types and the email of the logged in user if present.
    */
