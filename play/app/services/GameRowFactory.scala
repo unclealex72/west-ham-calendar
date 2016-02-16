@@ -21,21 +21,23 @@
  */
 package services
 
-import models.{Links, TicketType, GameRow}
+import models._
 import model.Game
 
 /**
  * A trait for classes that can transform a Game into a Game row.
- * @author alex
+  *
+  * @author alex
  *
  */
 trait GameRowFactory {
 
   /**
    * Convert a game into a game row.
-   * @param includeAttended True if the attended flag should be included, false otherwise.
+    *
+    * @param includeAttended True if the attended flag should be included, false otherwise.
    */
   def toRow(includeAttended: Boolean,
-            gameRowLinksFactory: Game => Links,
-            ticketsLinkFactory: Game => TicketType => Links): Game => GameRow
+            gameRowLinksFactory: Game => Links[GameRowRel],
+            ticketsLinkFactory: Game => TicketType => Links[TicketingInformationRel]): Game => GameRow
 }

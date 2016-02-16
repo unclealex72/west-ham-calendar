@@ -27,12 +27,12 @@ class GameRowSpec extends Specification {
       PriorityPointTicketType ->
         TicketingInformation(
           at = new Date(1452070800000l),
-          links = Links().withLink("form", "http://localhost:9000/prioritypoints/728")),
+          links = Links[TicketingInformationRel]().withLink(TicketingInformationRel.Form, "http://localhost:9000/prioritypoints/728")),
       AcademyTicketType ->
-      TicketingInformation(at = new Date(1452502800000l), links = Links())
+      TicketingInformation(at = new Date(1452502800000l), links = Links[TicketingInformationRel]())
     ),
     attended = Some(true),
-    links = Links().withSelf("http://localhost:9000/game/728")
+    links = Links.withSelf("http://localhost:9000/game/728")
   )
 
   val serialisedGame =
@@ -45,7 +45,7 @@ class GameRowSpec extends Specification {
       |  "competition": "PREM",
       |  "location": "AWAY",
       |  "tickets": {
-      |    "PriorityPoint": {
+      |    "prioritypoint": {
       |      "at": "2016-01-06T09:00:00Z",
       |      "links": [
       |        {
@@ -54,7 +54,7 @@ class GameRowSpec extends Specification {
       |        }
       |      ]
       |    },
-      |    "Academy": {
+      |    "academy": {
       |      "at": "2016-01-11T09:00:00Z",
       |      "links": []
       |    }

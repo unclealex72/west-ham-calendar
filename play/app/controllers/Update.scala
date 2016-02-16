@@ -86,8 +86,7 @@ class Update(implicit injector: Injector) extends Secure with Secret with LinkFa
     SecuredAction(authorization).async { implicit request =>
       gameUpdater(gameId).map {
         case Some(game) => json {
-          val gameRow: GameRow = gameRowFactory.toRow(includeAttended = true, gameRowLinksFactory, ticketLinksFactory)(game)
-          write(gameRow)
+          gameRowFactory.toRow(includeAttended = true, gameRowLinksFactory, ticketLinksFactory)(game)
         }
         case _ => NotFound
       }

@@ -33,7 +33,7 @@ lazy val play = (project in file("play")).settings(
       "joda-time" % "joda-time" % "2.2",
       "org.joda" % "joda-convert" % "1.3.1",
       "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.2",
-      "net.ceedubs" %% "ficus" % "1.1.2",
+      "com.iheart" %% "ficus" % "1.2.2",
       "org.scalaz" %% "scalaz-core" % "7.2.0",
       // Dependency injection
       "org.scaldi" %% "scaldi-play" % "0.5.13",

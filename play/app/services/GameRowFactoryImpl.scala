@@ -47,7 +47,7 @@ class GameRowFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends Gam
     }
   }
 
-  def toRow(includeAttended: Boolean, gameLinksFactory: Game => Links, ticketLinksFactory: Game => TicketType => Links): Game => GameRow = { game =>
+  def toRow(includeAttended: Boolean, gameLinksFactory: Game => Links[GameRowRel], ticketLinksFactory: Game => TicketType => Links[TicketingInformationRel]): Game => GameRow = { game =>
     game.at match {
       case Some(gameAt) =>
         GameRow(
@@ -67,7 +67,7 @@ class GameRowFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends Gam
     }
   }
 
-  def ticketFactory(game: Game, ticketLinksFactory: Game => TicketType => Links): Map[TicketType, TicketingInformation] = {
+  def ticketFactory(game: Game, ticketLinksFactory: Game => TicketType => Links[TicketingInformationRel]): Map[TicketType, TicketingInformation] = {
     implicit val dt = (date : Date) => new DateTime(date)
     val ticketsAt: Map[TicketType, Option[DateTime]] = Map(
       BondholderTicketType -> game.bondholdersAvailable,

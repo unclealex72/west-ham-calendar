@@ -2,7 +2,7 @@ package controllers
 
 import model.Game
 import models.TicketType.PriorityPointTicketType
-import models.{Links, TicketType}
+import models._
 import play.api.mvc.{AnyContent, Request}
 
 /**
@@ -10,22 +10,22 @@ import play.api.mvc.{AnyContent, Request}
  */
 trait LinkFactories extends Secure {
 
-  def ticketLinksFactory(implicit request: Request[_ <: AnyContent]): Game => TicketType => Links = game => ticketType => {
-    secureLinks(game, Links()) { links =>
+  def ticketLinksFactory(implicit request: Request[_ <: AnyContent]): Game => TicketType => Links[TicketingInformationRel] = game => ticketType => {
+    secureLinks(game, Links[TicketingInformationRel]()) { links =>
       ticketType match {
         case PriorityPointTicketType =>
           val url = controllers.routes.PriorityPointsPdf.priorityPoints(game.id).absoluteURL()
-          links.withLink("form", url)
+          links.withLink(TicketingInformationRel.Form, url)
         case _ => links
       }
     }
   }
 
-  def gameRowLinksFactory(implicit request: Request[_ <: AnyContent]): Game => Links = game => {
+  def gameRowLinksFactory(implicit request: Request[_ <: AnyContent]): Game => Links[GameRowRel] = game => {
     Links().withSelf(controllers.routes.Application.game(game.id).absoluteURL())
   }
 
-  def secureLinks(game: Game, links: Links)(f: Links => Links)(implicit request: Request[_ <: AnyContent]): Links = {
-    f(links) //emailAndUsername.foldLeft(links) { (newLinks, _) => f(newLinks) }
+  def secureLinks[R <: Rel](game: Game, links: Links[R])(f: Links[R] => Links[R])(implicit request: Request[_ <: AnyContent]): Links[R] = {
+    emailAndUsername.foldLeft(links) { (newLinks, _) => f(newLinks) }
   }
 }

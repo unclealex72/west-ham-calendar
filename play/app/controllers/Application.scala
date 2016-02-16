@@ -2,18 +2,16 @@ package controllers
 
 import dao.GameDao
 import json.JsonResults
-import model.Game
+import models.GameRow._
 import models.Globals
-import monads.FO
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import scaldi.{Injectable, Injector}
 import security.Definitions._
 import services.GameRowFactory
 import upickle.default._
-import models.GameRow._
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.ExecutionContext
 
 class Application(implicit injector: Injector) extends Secure with LinkFactories with JsonResults with Injectable {
 
@@ -28,10 +26,6 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
    * Redirect to the  homepage.
    */
   def index = Action {
-    Ok(views.html.index())
-  }
-
-  def proto = Action {
     Ok(views.html.proto())
   }
 
@@ -53,7 +47,7 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
     val includeAttended = request.identity.isDefined
     gameDao.getAllForSeason(season).map { games =>
       json {
-        write(Map("games" -> games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory, ticketLinksFactory))))
+        Map("games" -> games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory, ticketLinksFactory)))
       }
     }
   }
@@ -63,9 +57,13 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
       case Some(game) =>
         val includeAttended = request.identity.isDefined
         json {
-            write(gameRowFactory.toRow(includeAttended, gameRowLinksFactory, ticketLinksFactory)(game), 2)
+            gameRowFactory.toRow(includeAttended, gameRowLinksFactory, ticketLinksFactory)(game)
         }
       case _ => NotFound
     }
   }
+
+  def entry() = play.mvc.Results.TODO
+
+  def seasons() = play.mvc.Results.TODO
 }

@@ -24,7 +24,7 @@ package json
 
 import play.api.http.HeaderNames._
 import play.api.mvc.Results
-
+import upickle.default._
 
 /**
  * @author alex
@@ -32,8 +32,11 @@ import play.api.mvc.Results
  */
 trait JsonResults extends Results {
 
-  def json(str: String) =
-    Ok(str).withHeaders(
-        CONTENT_TYPE -> "application/json", CACHE_CONTROL -> "max-age=0, no-cache, must-revalidate")
+  def json[T: Writer](t: T) =
+    Ok(write(t)).withHeaders(
+      CONTENT_TYPE -> "application/json",
+      CACHE_CONTROL -> "max-age=0, no-store, no-cache, must-revalidate",
+      PRAGMA -> "no-cache",
+      EXPIRES -> "0")
 
 }

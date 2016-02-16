@@ -54,7 +54,7 @@ sealed abstract class AbstractTicketType(
                                    val default: Boolean, firstToken: String, extraTokens: String*) extends TicketType {
 
   val tokens = Seq(firstToken) ++ extraTokens
-  override def entryName: String = name
+  override def entryName: String = name.toLowerCase
 
 }
 

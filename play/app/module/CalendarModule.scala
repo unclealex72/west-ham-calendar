@@ -24,7 +24,7 @@ package module
 import java.net.URI
 
 import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
-import com.typesafe.config.{ConfigBeanFactory, ConfigFactory}
+import com.typesafe.config.ConfigFactory
 import controllers.SecretToken
 import dao._
 import dates.geo.{GeoLocationFactory, GeoLocationFactoryImpl}
@@ -40,10 +40,10 @@ import services.{GameRowFactory, GameRowFactoryImpl}
 import update._
 import update.fixtures.{FixturesGameScanner, FixturesGameScannerImpl}
 import update.tickets.{TicketsGameScanner, TicketsGameScannerImpl}
-
+import net.ceedubs.ficus.Ficus._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
-
+import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 /**
  * @author alex
  *
@@ -86,7 +86,7 @@ class CalendarModule extends Module {
 
     // PDF
     bind[PriorityPointsPdfFactory] toNonLazy injected[PdfBoxPriorityPointsPdfFactory]
-    bind[PdfPositioning] toNonLazy ConfigBeanFactory.create[PdfPositioning](config.getConfig("pdf"), classOf[PdfPositioning])
+    bind[PdfPositioning] toNonLazy config.as[PdfPositioning]("pdf")
     bind[PriorityPointsConfigurationDao] toNonLazy injected[SlickPriorityPointsConfigurationDao]
 
     // Security

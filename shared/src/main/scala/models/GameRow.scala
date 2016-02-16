@@ -56,9 +56,21 @@ case class GameRow(
   matchReport: Option[String],
   tickets: Map[TicketType, TicketingInformation],
   attended: Option[Boolean],
-  links: Links)
+  links: Links[GameRowRel])
 
-case class TicketingInformation(at: Date, links: Links)
+sealed trait GameRowRel extends Rel
+object GameRowRel extends RelEnum[GameRowRel] {
+  val values = findValues
+}
+
+case class TicketingInformation(at: Date, links: Links[TicketingInformationRel])
+
+sealed trait TicketingInformationRel extends Rel
+object TicketingInformationRel extends RelEnum[TicketingInformationRel] {
+  val values = findValues
+
+  object Form extends Rel_("form") with TicketingInformationRel
+}
 
 object GameRow extends JsonCodecs {
 
@@ -71,7 +83,7 @@ object GameRow extends JsonCodecs {
     value.jsObj { fields =>
       for {
         at <- fields.mandatory("at", "Cannot find an at field for ticketing information.")(_.jsDate).right
-        links <- fields.mandatory("links", "Cannot fina a links field for ticketing information")(Links.jsonToLinks).right
+        links <- fields.mandatory("links", "Cannot fina a links field for ticketing information")(Links.jsonToLinks(TicketingInformationRel)).right
       } yield {
         TicketingInformation(at, links)
       }
@@ -130,7 +142,7 @@ object GameRow extends JsonCodecs {
         matchReport <- fields.optional("matchReport")(_.jsStr).right
         attended <- fields.optional("attended")(_.jsBool).right
         tickets <- fields.mandatory("tickets", "Cannot find a tickets field for a game")(jsonToTicketingInformationMap).right
-        links <- fields.mandatory("links", "Cannot find a links field for a game.")(Links.jsonToLinks).right
+        links <- fields.mandatory("links", "Cannot find a links field for a game.")(Links.jsonToLinks(GameRowRel)).right
       } yield {
         GameRow(
           id,
