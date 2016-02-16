@@ -53,7 +53,7 @@ trait DateParser {
       execute(DateParser.this.find, str, s"Cannot find a date in $str")
 
     def execute(f: String => Option[DateTime], str: String, failureMessage: String)(implicit remoteStream: RemoteStream): Option[DateTime] = {
-      logOnEmpty(f(str), failureMessage)
+      logOnEmpty(f(str).toRight(failureMessage))
     }
   }
 }

@@ -3,7 +3,8 @@ package dao
 
 
 import dates.NowService
-import model.{Competition, Game, Location}
+import model.Game
+import models.{Location, Competition}
 import org.joda.time.DateTime
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption, SearchOption}
 

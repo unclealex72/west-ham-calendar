@@ -25,9 +25,11 @@ import java.io.StringWriter
 import java.net.URI
 
 import dates.{June, NowService, October, September}
-import geo.GeoLocation._
-import model.Competition._
-import model.Location._
+import models.{GeoLocation, Location, Competition}
+import GeoLocation._
+import models.{Location, Competition}
+import Competition._
+import Location._
 import org.joda.time.Duration
 import org.specs2.mutable.Specification
 

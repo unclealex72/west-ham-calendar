@@ -5,6 +5,7 @@ import java.net.URI
 import dates.PossiblyYearlessDateParser
 import html._
 import logging.{RemoteLogging, RemoteStream}
+import models.TicketType._
 import models._
 import monads.FL
 import org.joda.time.DateTime
@@ -76,11 +77,18 @@ class TicketsGameScannerImpl(val rootUri: URI, ws: WSClient)(implicit ec: Execut
         tr <- table \\ "tr"
         ticketTypeTd <- (tr \\ "td").toSeq if ticketTypeTd.hasClass("left")
         ticketSellingDateTd <- (tr \\ "td").toSeq if ticketSellingDateTd.hasClass("right")
-        ticketType <- logOnEmpty(TicketType(ticketTypeTd.trimmed), s"${ticketTypeTd.text} is not a valid ticket type")
+        ticketType <- logOnEmpty(TicketType(ticketTypeTd.trimmed))
         ticketSellingDate <- ticketDateParser.find(ticketSellingDateTd.trimmed)
       } yield {
         logger info s"Found ticket type $ticketType on sale on ${ticketSellingDateTd.text}"
-        ticketType.toTicketsUpdateCommand(gameLocator, ticketSellingDate.withHourOfDay(9))
+        val updateCommandFactory: (GameLocator, DateTime) => GameUpdateCommand = ticketType match {
+          case BondholderTicketType => BondHolderTicketsUpdateCommand.apply
+          case PriorityPointTicketType => PriorityPointTicketsUpdateCommand.apply
+          case SeasonTicketType => SeasonTicketsUpdateCommand.apply
+          case AcademyTicketType => AcademyTicketsUpdateCommand.apply
+          case GeneralSaleTicketType => GeneralSaleTicketsUpdateCommand.apply
+        }
+        updateCommandFactory(gameLocator, ticketSellingDate.withHourOfDay(9))
       }
     }
 

@@ -9,10 +9,12 @@ trait RemoteLogging {
 
   protected lazy val logger: RemoteLogger = new RemoteLogger(_logger)
 
-  def logOnEmpty[E](o: Option[E], msg: String)(implicit remoteStream: RemoteStream): Option[E] = {
-    if (o.isEmpty) {
-      logger warn msg
+  def logOnEmpty[E](ev: Either[String, E])(implicit remoteStream: RemoteStream): Option[E] = {
+    ev match {
+      case Left(msg) =>
+        logger warn msg
+        None
+      case Right(v) => Some(v)
     }
-    o
   }
 }

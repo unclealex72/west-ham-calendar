@@ -27,8 +27,9 @@ package cal
 
 
 import dates.DateTimeImplicits._
-import geo.GeoLocation
+import dates.geo.GeoLocationFactory
 import model.Game
+import models.GeoLocation
 import org.joda.time.{DateTime, Duration}
 import search.GameOrTicketSearchOption._
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
@@ -36,10 +37,11 @@ import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOpt
 import scala.collection.SortedSet
 /**
  * The default implementation of the Calendar factory.
+ *
  * @author alex
  *
  */
-class CalendarFactoryImpl extends CalendarFactory {
+class CalendarFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends CalendarFactory {
 
   def create(
     games: List[Game],
@@ -109,7 +111,7 @@ class CalendarFactoryImpl extends CalendarFactory {
         gameId = game.id,
         competition = game.competition,
         location = game.location,
-        geoLocation = GeoLocation(game),
+        geoLocation = geoLocationFactory.forGame(game),
         opponents = game.opponents,
         dateTime = date,
         duration = duration,

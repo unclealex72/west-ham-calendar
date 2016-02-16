@@ -27,24 +27,26 @@ case class PriorityPointsPdf(implicit injector: Injector) extends Secure with In
   implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   def priorityPoints(gameId: Long) = SecuredAction(authorization).async { implicit request =>
-    val pp = for {
-      priorityPointsConfiguration <- FO <~ priorityPointsConfigurationDao.get
-      game <- FO <~ gameDao.findById(gameId)
-    } yield {
-      val optionalClientNames = request.queryString.map(kv => (kv._1.toLowerCase, kv._2)).get("name")
-      val clientFilter: Client => Boolean = optionalClientNames match {
-        case Some(clientNames) => client => clientNames.exists { clientName =>
-          client.name.toLowerCase.startsWith(clientName.toLowerCase)
+    val pp = FO {
+      for {
+        priorityPointsConfiguration <- FO <~ priorityPointsConfigurationDao.get
+        game <- FO <~ gameDao.findById(gameId)
+      } yield {
+        val optionalClientNames = request.queryString.map(kv => (kv._1.toLowerCase, kv._2)).get("name")
+        val clientFilter: Client => Boolean = optionalClientNames match {
+          case Some(clientNames) => client => clientNames.exists { clientName =>
+            client.name.toLowerCase.startsWith(clientName.toLowerCase)
+          }
+          case None => _ => true
         }
-        case None => _ => true
+        Ok.chunked {
+          Enumerator.outputStream {
+            out =>
+              priorityPointsPdfFactory.generate(priorityPointsConfiguration, game.opponents, game.competition.isLeague, clientFilter, out)
+          }}.
+          as("application/pdf")
       }
-      Ok.chunked {
-        Enumerator.outputStream {
-          out =>
-            priorityPointsPdfFactory.generate(priorityPointsConfiguration, game.opponents, game.competition.isLeague, clientFilter, out)
-        }}.
-        as("application/pdf")
     }
-    pp.getOrElse(NotFound)
+    pp.map { _.getOrElse(NotFound) }
   }
 }

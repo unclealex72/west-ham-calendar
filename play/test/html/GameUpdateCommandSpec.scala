@@ -24,7 +24,8 @@ package html;
 
 import dates.Date._
 import dates.{Date, September}
-import model.{Competition, Game, Location}
+import model.Game
+import models.{Location, Competition}
 import org.joda.time.DateTime
 import org.specs2.mutable.Specification
 

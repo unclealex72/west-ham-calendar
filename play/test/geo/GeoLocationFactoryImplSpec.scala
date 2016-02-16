@@ -21,6 +21,8 @@
  */
 package geo
 
+import dates.geo.{GeoLocationFactoryImpl, GeoLocationFactory}
+import models.GeoLocation
 import org.specs2.mutable.Specification
 import GeoLocation.ALDERSHOT_TOWN
 import GeoLocation.ARSENAL
@@ -74,60 +76,62 @@ import org.specs2.specification.core.Fragment
  * @author alex
  *
  */
-class GeoLocationSpec extends Specification {
+class GeoLocationFactoryImplSpec extends Specification {
+
+  val geoLocationFactory: GeoLocationFactory = new GeoLocationFactoryImpl
 
   // Hand picked tests
   "West Ham" should {
     "be at the Boleyn Ground" in {
-      GeoLocation("West Ham") must beSome(WEST_HAM)
+      geoLocationFactory.forTeam("West Ham") must beSome(WEST_HAM)
     }
   }
 
   "West Ham United" should {
     "be at the Boleyn Ground" in {
-      GeoLocation("West Ham United") must beSome(WEST_HAM)
+      geoLocationFactory.forTeam("West Ham United") must beSome(WEST_HAM)
     }
   }
 
   "West Ham Utd" should {
     "be at the Boleyn Ground" in {
-      GeoLocation("West Ham Utd") must beSome(WEST_HAM)
+      geoLocationFactory.forTeam("West Ham Utd") must beSome(WEST_HAM)
     }
   }
 
   "Southampton United" should {
     "be at St. Mary's" in {
-      GeoLocation("Southampton United") must beSome(SOUTHAMPTON)
+      geoLocationFactory.forTeam("Southampton United") must beSome(SOUTHAMPTON)
     }
   }
 
   "Southend" should {
     "be at Roots Hall" in {
-      GeoLocation("Southend") must beSome(SOUTHEND_UNITED)
+      geoLocationFactory.forTeam("Southend") must beSome(SOUTHEND_UNITED)
     }
   }
 
   "Wolves" should {
     "be at Molyneux" in {
-      GeoLocation("Wolves") must beSome(WOLVERHAMPTON_WANDERERS)
+      geoLocationFactory.forTeam("Wolves") must beSome(WOLVERHAMPTON_WANDERERS)
     }
   }
 
   "WBA" should {
     "be at The Hawthorns" in {
-      GeoLocation("WBA") must beSome(WEST_BROMWICH_ALBION)
+      geoLocationFactory.forTeam("WBA") must beSome(WEST_BROMWICH_ALBION)
     }
   }
 
   "West Brom" should {
     "be at The Hawthorns" in {
-      GeoLocation("West Brom") must beSome(WEST_BROMWICH_ALBION)
+      geoLocationFactory.forTeam("West Brom") must beSome(WEST_BROMWICH_ALBION)
     }
   }
 
   "QPR" should {
     "be at Loftus Road" in {
-      GeoLocation("QPR") must beSome(QUEENS_PARK_RANGERS)
+      geoLocationFactory.forTeam("QPR") must beSome(QUEENS_PARK_RANGERS)
     }
   }
 
@@ -180,7 +184,7 @@ class GeoLocationSpec extends Specification {
     case (team, expectedGeoLocation) =>
       s"Harvested team $team" should {
         s"be at ${expectedGeoLocation.name}" in {
-          GeoLocation(team) must beSome(expectedGeoLocation)
+          geoLocationFactory.forTeam(team) must beSome(expectedGeoLocation)
         }
       }
   }

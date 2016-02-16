@@ -24,15 +24,16 @@ package json
 
 import play.api.http.HeaderNames._
 import play.api.mvc.Results
-import argonaut._, Argonaut._
+
+
 /**
  * @author alex
  *
  */
 trait JsonResults extends Results {
 
-  def json[A](a: A)(implicit encoder: EncodeJson[A]) = 
-    Ok(encoder.encode(a).nospaces).withHeaders(
+  def json(str: String) =
+    Ok(str).withHeaders(
         CONTENT_TYPE -> "application/json", CACHE_CONTROL -> "max-age=0, no-cache, must-revalidate")
 
 }

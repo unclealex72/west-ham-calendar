@@ -2,16 +2,20 @@ package controllers
 
 import dao.GameDao
 import json.JsonResults
+import model.Game
 import models.Globals
+import monads.FO
 import play.api.i18n.MessagesApi
 import play.api.mvc._
 import scaldi.{Injectable, Injector}
 import security.Definitions._
 import services.GameRowFactory
+import upickle.default._
+import models.GameRow._
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 
-class Application(implicit injector: Injector) extends Secure with TicketForms with JsonResults with Injectable {
+class Application(implicit injector: Injector) extends Secure with LinkFactories with JsonResults with Injectable {
 
   implicit val authorization: Auth = inject[Auth]
   val gameDao: GameDao = inject[GameDao]
@@ -49,17 +53,19 @@ class Application(implicit injector: Injector) extends Secure with TicketForms w
     val includeAttended = request.identity.isDefined
     gameDao.getAllForSeason(season).map { games =>
       json {
-        Map("games" -> games.map(gameRowFactory.toRow(includeAttended, ticketFormUrlFactory)))
+        write(Map("games" -> games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory, ticketLinksFactory))))
       }
     }
   }
 
   def game(id: Long) = UserAwareAction.async { implicit request =>
-    val includeAttended = request.identity.isDefined
-    gameDao.findById(id).map { game =>
-      json {
-          game.map(gameRowFactory.toRow(includeAttended, ticketFormUrlFactory(request)))
-      }
+    gameDao.findById(id).map {
+      case Some(game) =>
+        val includeAttended = request.identity.isDefined
+        json {
+            write(gameRowFactory.toRow(includeAttended, gameRowLinksFactory, ticketLinksFactory)(game), 2)
+        }
+      case _ => NotFound
     }
   }
 }

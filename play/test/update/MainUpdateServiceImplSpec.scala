@@ -27,8 +27,9 @@ import dao.GameDao
 import dates.{Instant, NowService, September}
 import html.{AttendenceUpdateCommand, DatePlayedLocator, DatePlayedUpdateCommand, GameKeyLocator, GameUpdateCommand, SeasonTicketsUpdateCommand}
 import logging.SimpleRemoteStream
-import model.Competition._
-import model.Location._
+import models.{Location, Competition}
+import Competition._
+import Location._
 import model.{Game, GameKey}
 import org.joda.time.DateTime
 import org.specs2.concurrent.ExecutionEnv

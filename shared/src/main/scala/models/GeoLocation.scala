@@ -19,13 +19,10 @@
  * under the License.
  *
  */
-package geo
+package models
 
-import argonaut.Argonaut._
-import argonaut._
-import com.rockymadden.stringmetric.similarity.JaroWinklerMetric
 import enumeratum._
-import model.{Game, Location}
+import json.JsonEnum
 
 sealed abstract class GeoLocation(
   /**
@@ -46,7 +43,7 @@ sealed abstract class GeoLocation(
    */
   val alternativeNames: String*) extends EnumEntry
 
-object GeoLocation extends Enum[GeoLocation] {
+object GeoLocation extends JsonEnum[GeoLocation] {
 
   val values = findValues
   
@@ -190,46 +187,4 @@ object GeoLocation extends Enum[GeoLocation] {
   case object WYCOMBE_WANDERERS extends GeoLocation("Wycombe Wanderers", "Adams Park", "ChIJi1k781CKdkgR3Ii21vnJNs8")
   case object YEOVIL_TOWN extends GeoLocation("Yeovil Town", "Huish Park", "ChIJIVEfefJqckgR3xhdhIehZZc")
   case object YORK_CITY extends GeoLocation("York City", "Bootham Crescent", "ChIJ15UZdwoxeUgRLFcqfriUEWU")
-
-  def lookFor(team: String): Option[GeoLocation] = {
-    val lowerCaseTeam = team.toLowerCase
-    val largestDifference = { (geolocation: GeoLocation) =>
-      val differences = geolocation.team :: geolocation.alternativeNames.toList flatMap {
-        (teamName: String) => JaroWinklerMetric.compare(lowerCaseTeam, teamName.toLowerCase)
-      }
-      differences match {
-        case Nil => None
-        case _ => Some(differences.max)
-      }
-    }
-    val largestDifferences: GeoLocation => Traversable[(GeoLocation, Double)] = { (geoLocation: GeoLocation) =>
-      largestDifference(geoLocation) map (difference => geoLocation -> difference)
-    }
-    values.flatMap(largestDifferences).toList match {
-      case Nil => None
-      case ld => Some(ld.maxBy(_._2)._1)
-    }
-  }
-
-  /**
-   * Get a geographic location from a team.
-   */
-  def apply(team: String): Option[GeoLocation] = {
-    val lc = team.toLowerCase
-    lowerCaseNamesToValuesMap.get(lc).orElse(lookFor(lc))
-  }
-
-  /**
-   * Get a geographic location for a game.
-   */
-  def apply(game: Game): Option[GeoLocation] = game.location match {
-    case Location.HOME => Some(WEST_HAM)
-    case Location.AWAY => apply(game.opponents)
-  }
-
-  /**
-   * Json Serialisation
-   */
-  implicit val GeoLocationCodecJson: EncodeJson[GeoLocation] =
-    jencode2L((geo: GeoLocation) => (geo.name, geo.placeId))("name", "placeId")
 }

@@ -4,15 +4,14 @@ import java.io.PrintWriter
 import java.net.URI
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import argonaut._
 import com.ning.http.client.AsyncHttpClientConfig
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dates._
 import html._
 import logging.SimpleRemoteStream
-import model.Competition.{FACP, LGCP, PREM}
 import model.GameKey
-import model.Location.{AWAY, HOME}
+import models.Competition.{FACP, LGCP, PREM}
+import models.Location.{AWAY, HOME}
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
@@ -20,7 +19,7 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.mutable.Specification
 import org.specs2.specification._
 import play.api.libs.ws.ning.NingWSClient
-import update.fixtures.FixturesRequest._
+import upickle.default._
 
 import scala.io.Source
 
@@ -299,27 +298,19 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
         override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Unit = {
           if ("POST" == request.getMethod) {
             val body = Source.fromInputStream(request.getInputStream).mkString
-            Parse.decodeOption[FixturesRequest](body) match {
-              case Some(fixturesRequest) => {
-                val season = fixturesRequest.season
-                val path = s"html${request.getPathInfo}.${season}.json"
-                Option(classOf[ServerContext].getClassLoader.getResourceAsStream(path)) match {
-                  case Some(in) => {
-                    logger.info(s"Loading $path")
-                    val jsonResponse = Source.fromInputStream(in).mkString
-                    val writer: PrintWriter = response.getWriter
-                    writer.println(jsonResponse)
-                    writer.close()
-                  }
-                  case _ => {
-                    logger.error(s"Cound not find a resource at $path")
-                    response.sendError(HttpStatus.NOT_FOUND_404)
-                  }
-                }
-
-              }
+            val fixturesRequest = read[FixturesRequest](body)
+            val season = fixturesRequest.season
+            val path = s"html${request.getPathInfo}.$season.json"
+            Option(classOf[ServerContext].getClassLoader.getResourceAsStream(path)) match {
+              case Some(in) =>
+                logger.info(s"Loading $path")
+                val jsonResponse = Source.fromInputStream(in).mkString
+                val writer: PrintWriter = response.getWriter
+                writer.println(jsonResponse)
+                writer.close()
               case _ => {
-                response.sendError(HttpStatus.BAD_REQUEST_400)
+                logger.error(s"Cound not find a resource at $path")
+                response.sendError(HttpStatus.NOT_FOUND_404)
               }
             }
           }
@@ -330,7 +321,7 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
       }
       server.setHandler(handler)
       server.start()
-      (server, server.getConnectors()(0).asInstanceOf[ServerConnector].getLocalPort())
+      (server, server.getConnectors()(0).asInstanceOf[ServerConnector].getLocalPort)
     }
 
     override def after: Any = {

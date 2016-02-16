@@ -2,7 +2,7 @@ package cal
 
 import java.net.URI
 
-import model.Location
+import models.Location
 
 /**
  * A trait that can create links to this server.
@@ -12,6 +12,7 @@ trait LinkFactory {
 
   /**
    * Create a link to the location page for a game.
+ *
    * @param gameId
    * @return
    */

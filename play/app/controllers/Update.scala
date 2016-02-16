@@ -21,13 +21,11 @@
  */
 package controllers
 
-import javax.inject.{Inject, Named}
-
-import com.typesafe.scalalogging.slf4j.StrictLogging
 import dispatch.Future
 import json.JsonResults
 import logging.RemoteStream
 import model.Game
+import models.GameRow
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Concurrent
 import play.api.mvc.Action
@@ -38,12 +36,15 @@ import update.MainUpdateService
 
 import scala.concurrent.ExecutionContext
 import scala.util.Failure
+import upickle.default._
+import models.GameRow._
+
 
 /**
  * @author alex
  *
  */
-class Update(implicit injector: Injector) extends Secure with Secret with TicketForms with JsonResults with Injectable {
+class Update(implicit injector: Injector) extends Secure with Secret with LinkFactories with JsonResults with Injectable {
 
   val secret: SecretToken = inject[SecretToken]
   implicit val authorization: Auth = inject[Auth]
@@ -84,7 +85,10 @@ class Update(implicit injector: Injector) extends Secure with Secret with Ticket
   def attendOrUnattend(gameUpdater: Long => Future[Option[Game]], gameId: Long) =
     SecuredAction(authorization).async { implicit request =>
       gameUpdater(gameId).map {
-        case Some(game) => json(gameRowFactory.toRow(includeAttended = true, ticketFormUrlFactory)(game))
+        case Some(game) => json {
+          val gameRow: GameRow = gameRowFactory.toRow(includeAttended = true, gameRowLinksFactory, ticketLinksFactory)(game)
+          write(gameRow)
+        }
         case _ => NotFound
       }
     }

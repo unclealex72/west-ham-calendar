@@ -16,8 +16,6 @@
 
 package models
 
-import argonaut._, Argonaut._, DecodeResult._
-
 /**
  * A class that encapsulates the global information sent to the client.
  */
@@ -31,14 +29,4 @@ case class Globals(
    */
   username: Option[String]) {
 
-}
-
-object Globals {
-
-  /**
-   * Json Serialisation
-   */
-  implicit val GlobalsEncodeJson: EncodeJson[Globals] =
-    jencode3L((gl: Globals) => (gl.seasons, gl.username, TicketType.ticketTypes))(
-      "seasons", "username", "ticketTypes")
 }

@@ -22,6 +22,8 @@
 
 package model
 
+import models.{Location, Competition}
+
 /**
  * A class that encapsulates the immutable information that uniquely identifies
  * a game.

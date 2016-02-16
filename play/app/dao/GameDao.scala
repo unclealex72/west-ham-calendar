@@ -22,11 +22,10 @@
 package dao
 
 import dates.NowService
+import models.{Location, Competition}
 import org.joda.time.DateTime
 import model.Game
 import scala.collection.SortedSet
-import model.Competition
-import model.Location
 import search.SearchOption
 import search.GameOrTicketSearchOption
 import search.AttendedSearchOption

@@ -29,12 +29,13 @@ import java.net.URI
 
 
 import dates.NowService
-import model.Location._
+import models.Location
+import Location._
 import net.fortuna.ical4j.data.CalendarOutputter
 import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property.Status._
 import net.fortuna.ical4j.model.property.Transp._
-import net.fortuna.ical4j.model.property.{Attach, CalScale, Created, Description, DtEnd, DtStamp, DtStart, LastModified, Location, Method, ProdId, Sequence, Summary, Uid, Version, XProperty}
+import net.fortuna.ical4j.model.property.{Attach, CalScale, Created, Description, DtEnd, DtStamp, DtStart, LastModified, Location => ILocation, Method, ProdId, Sequence, Summary, Uid, Version, XProperty}
 import net.fortuna.ical4j.model.{Calendar => ICalendar, DateTime => IDateTime, Property, PropertyList}
 import org.joda.time.{DateTime => JodaDateTime}
 
@@ -128,7 +129,7 @@ class IcalCalendarWriter(
   /**
    * Create a LOCATION property
    */
-  def LOCATION: Event => Option[Property] = event => event.geoLocation map { gl => new Location(gl.name) }
+  def LOCATION: Event => Option[Property] = event => event.geoLocation map { gl => new ILocation(gl.name) }
 
   /**
    * Create a SEQUENCE property

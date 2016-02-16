@@ -3,7 +3,7 @@ package dao
 import java.sql.Timestamp
 
 import dates.JodaDateTime
-import model.{Competition, Location}
+import models.{Location, Competition}
 import org.joda.time.DateTime
 import pdf.ClientType
 import play.api.db.slick.DatabaseConfigProvider

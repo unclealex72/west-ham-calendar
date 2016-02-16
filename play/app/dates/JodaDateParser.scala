@@ -24,13 +24,9 @@
 
 package dates
 
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.DateTime
+import dates.JodaDateTime._
+import org.joda.time.{DateTime, DayOfWeekIgnoringChronology}
 import org.joda.time.format.DateTimeFormat
-import org.joda.time.DayOfWeekIgnoringChronology
-import org.joda.time.DateTimeZone
-import org.joda.time.chrono.ISOChronology
-import JodaDateTime._
 /**
  * A date parser that uses Joda Time to parse dates.
  * @author alex

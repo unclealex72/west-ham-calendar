@@ -28,7 +28,8 @@ import dates.NowService
 import html.{DatePlayedLocator, GameKeyLocator, GameLocator, GameUpdateCommand}
 import logging.RemoteStream
 import model.Game
-import model.Location.HOME
+import models.Location
+import Location.HOME
 import update.fixtures.FixturesGameScanner
 import update.tickets.TicketsGameScanner
 

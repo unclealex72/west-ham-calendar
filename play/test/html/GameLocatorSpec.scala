@@ -23,7 +23,8 @@
 package html
 
 import dates.May
-import model.{Competition, GameKey, Location}
+import model.GameKey
+import models.{Location, Competition}
 import org.joda.time.DateTime
 import org.specs2.mutable.Specification
 

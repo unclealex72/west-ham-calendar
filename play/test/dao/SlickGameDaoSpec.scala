@@ -24,7 +24,8 @@ package dao
 import com.typesafe.config.ConfigFactory
 import dates.Date._
 import dates._
-import model.{Competition, Game, GameKey, Location}
+import model.{Game, GameKey}
+import models.{Location, Competition}
 import org.joda.time.DateTime
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.execute.{AsResult, Result}

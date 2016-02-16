@@ -21,25 +21,21 @@
  */
 package services
 
-import models._
-import model.Game
-import org.joda.time.DateTime
-import models.GameTimeType._
-import dates.DateTimeImplicits._
-import geo.GeoLocation
-import geo.GeoLocation._
-import model.Location._
 import java.util.Date
+
+import dates.DateTimeImplicits._
+import dates.geo.GeoLocationFactory
+import model.Game
+import models.GameTimeType._
 import models.TicketType._
-import models.GameTimeType
-import models.GameRow
-import scala.Some
+import models._
+import org.joda.time.DateTime
 
 /**
  * @author alex
  *
  */
-class GameRowFactoryImpl extends GameRowFactory {
+class GameRowFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends GameRowFactory {
 
   def timeTypeOf(dateTime: DateTime): GameTimeType = {
     if (dateTime.isThreeOClockOnASaturday) {
@@ -51,30 +47,27 @@ class GameRowFactoryImpl extends GameRowFactory {
     }
   }
 
-  def toRow(includeAttended: Boolean, ticketFormUrlFactory: TicketType => Game => Option[String]): Game => GameRow = { game =>
+  def toRow(includeAttended: Boolean, gameLinksFactory: Game => Links, ticketLinksFactory: Game => TicketType => Links): Game => GameRow = { game =>
     game.at match {
       case Some(gameAt) =>
         GameRow(
           id = game.id,
           at = gameAt,
-          gameTimeType = timeTypeOf(gameAt),
           season = game.season,
           opponents = game.opponents,
           competition = game.competition,
           location = game.location,
-          geoLocation = game.location match {
-            case HOME => Some(WEST_HAM)
-            case AWAY => GeoLocation(game.opponents)
-          },
+          geoLocation = geoLocationFactory.forGame(game),
           result = game.result,
           matchReport = game.matchReport,
-          tickets = ticketFactory(game, ticketFormUrlFactory),
-          attended = if (includeAttended) game.attended orElse Some(false) else None)
+          tickets = ticketFactory(game, ticketLinksFactory),
+          attended = if (includeAttended) game.attended orElse Some(false) else None,
+          links = gameLinksFactory(game))
       case None => throw new IllegalStateException(s"Game $game did not have it's date played attribute set.")
     }
   }
 
-  def ticketFactory(game: Game, ticketFormUrlFactory: TicketType => Game=> Option[String]): Map[TicketType.Name, TicketingInformation] = {
+  def ticketFactory(game: Game, ticketLinksFactory: Game => TicketType => Links): Map[TicketType, TicketingInformation] = {
     implicit val dt = (date : Date) => new DateTime(date)
     val ticketsAt: Map[TicketType, Option[DateTime]] = Map(
       BondholderTicketType -> game.bondholdersAvailable,
@@ -82,10 +75,10 @@ class GameRowFactoryImpl extends GameRowFactory {
       SeasonTicketType -> game.seasonTicketsAvailable,
       AcademyTicketType -> game.academyMembersAvailable,
       GeneralSaleTicketType -> game.generalSaleAvailable)
-    ticketsAt.foldLeft(Map.empty[TicketType.Name, TicketingInformation]) {
+    ticketsAt.foldLeft(Map.empty[TicketType, TicketingInformation]) {
       case (tickets, (ticketType, Some(availableAt))) =>
-        val ticketFormUrl = ticketFormUrlFactory(ticketType)(game)
-        tickets + (ticketType.name -> TicketingInformation(availableAt, ticketFormUrl))
+        val ticketFormUrl = ticketLinksFactory(game)(ticketType)
+        tickets + (ticketType -> TicketingInformation(availableAt, ticketFormUrl))
       case (tickets, _) => tickets
     }
   }

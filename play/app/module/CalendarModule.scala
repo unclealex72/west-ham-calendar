@@ -24,15 +24,13 @@ package module
 import java.net.URI
 
 import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
-import com.google.inject.Provides
-import com.typesafe.config.ConfigFactory
+import com.typesafe.config.{ConfigBeanFactory, ConfigFactory}
 import controllers.SecretToken
 import dao._
+import dates.geo.{GeoLocationFactory, GeoLocationFactoryImpl}
 import dates.{DateService, DateServiceImpl, NowService, SystemNowService}
-import json.ConfigurationReader
 import location._
 import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsPdfFactory}
-import play.api.Configuration
 import play.api.cache.CacheApi
 import scaldi.Module
 import security.Authorised
@@ -62,6 +60,7 @@ class CalendarModule extends Module {
     bind[NowService] toNonLazy new SystemNowService()
     bind[GameDao] toNonLazy injected[SlickGameDao]
 
+    bind[GeoLocationFactory] toNonLazy injected[GeoLocationFactoryImpl]
     // Dates
     bind[DateService] toNonLazy injected[DateServiceImpl]
     bind[LastUpdated] toNonLazy injected[PlayCacheLastUpdated]
@@ -87,7 +86,7 @@ class CalendarModule extends Module {
 
     // PDF
     bind[PriorityPointsPdfFactory] toNonLazy injected[PdfBoxPriorityPointsPdfFactory]
-    bind[PdfPositioning] toNonLazy ConfigurationReader[PdfPositioning]("pdf-positioning.json")
+    bind[PdfPositioning] toNonLazy ConfigBeanFactory.create[PdfPositioning](config.getConfig("pdf"), classOf[PdfPositioning])
     bind[PriorityPointsConfigurationDao] toNonLazy injected[SlickPriorityPointsConfigurationDao]
 
     // Security

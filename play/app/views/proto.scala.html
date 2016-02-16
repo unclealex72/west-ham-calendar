@@ -1,3 +1,5 @@
+@import play.api.Play
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -147,5 +149,8 @@
         <script src="@routes.Assets.at("lib/jquery/dist/jquery.js")"></script>
             <!-- Include all compiled plugins (below), or include individual files as needed -->
         <script src="@routes.Assets.at("lib/bootstrap/dist/js/bootstrap.js")"></script>
+
+        @playscalajs.html.scripts("js", "/assets")
+
     </body>
 </html>

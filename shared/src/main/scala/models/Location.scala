@@ -19,10 +19,11 @@
  * under the License.
  *
  */
-package model
+package models
 
 import enumeratum.EnumEntry.Uppercase
 import enumeratum._
+import json.JsonEnum
 
 /**
  * The location of where a game is played, either home or away. Note that this
@@ -35,7 +36,7 @@ sealed abstract class Location(val isHome: Boolean) extends EnumEntry with Upper
   val isAway = !isHome
 }
 
-object Location extends Enum[Location] {
+object Location extends JsonEnum[Location] {
 
   val values = findValues
 

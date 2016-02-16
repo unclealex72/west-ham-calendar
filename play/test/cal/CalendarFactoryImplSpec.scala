@@ -22,9 +22,10 @@
 package cal
 
 import dao.GameDao
+import dates.geo.GeoLocationFactoryImpl
 import dates.{August, July, September}
-import geo.GeoLocation
-import model.{Competition, Game, GameKey, Location}
+import model.{Game, GameKey}
+import models.{GeoLocation, Location, Competition}
 import org.joda.time.{DateTime, Duration}
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
@@ -51,7 +52,7 @@ class CalendarFactoryImplSpec extends Specification with Mockito {
     Fragments.foreach(variations) {
       case (busyMask, attendedSearchOption, expectedResult) =>
         s"make calendars with $attendedSearchOption ${if (expectedResult) "" else "not "}busy when set to $busyMask" in {
-          val calendarFactory = new CalendarFactoryImpl
+          val calendarFactory = new CalendarFactoryImpl(new GeoLocationFactoryImpl)
           val actualResult = calendarFactory.busy(busyMask, attendedSearchOption)
           actualResult must be equalTo expectedResult
         }
@@ -116,7 +117,7 @@ class CalendarFactoryImplSpec extends Specification with Mockito {
     Fragments.foreach(expectations) {
       case (a, l, g, expectedTitle, expectedEvent) =>
         s"generate the correct title and event for search keys $a, $l and $g" in {
-          val actualCalendar = new CalendarFactoryImpl().create(List(game), None, a, l, g)
+          val actualCalendar = new CalendarFactoryImpl(new GeoLocationFactoryImpl).create(List(game), None, a, l, g)
           actualCalendar.title must be equalTo expectedTitle
           actualCalendar.events must have size 1
           actualCalendar.events.toList must be equalTo List(expectedEvent)

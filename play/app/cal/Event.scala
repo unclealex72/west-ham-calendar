@@ -24,14 +24,13 @@
 
 package cal
 
+import models.{GeoLocation, Location, Competition}
 import org.joda.time.DateTime
-import model.Competition
-import model.Location
 import org.joda.time.Duration
-import geo.GeoLocation
 /**
  * A representation of a game (or event) in a calendar. This is not tied to any implementation.
- * @author alex
+  *
+  * @author alex
  *
  */
 case class Event(

@@ -21,7 +21,7 @@
  */
 package services
 
-import models.{TicketType, GameRow}
+import models.{Links, TicketType, GameRow}
 import model.Game
 
 /**
@@ -35,5 +35,7 @@ trait GameRowFactory {
    * Convert a game into a game row.
    * @param includeAttended True if the attended flag should be included, false otherwise.
    */
-  def toRow(includeAttended: Boolean, ticketFormUrlFactory: TicketType => Game => Option[String]): Game => GameRow
+  def toRow(includeAttended: Boolean,
+            gameRowLinksFactory: Game => Links,
+            ticketsLinkFactory: Game => TicketType => Links): Game => GameRow
 }

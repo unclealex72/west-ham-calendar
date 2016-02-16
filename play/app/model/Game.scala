@@ -22,6 +22,7 @@
 package model
 
 import dates.NowService
+import models.{Location, Competition}
 import org.joda.time.DateTime
 
 import scala.language.implicitConversions

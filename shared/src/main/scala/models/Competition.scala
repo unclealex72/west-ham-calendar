@@ -19,10 +19,10 @@
  * under the License.
  *
  */
-package model
+package models
 
 import enumeratum._
-import logging.{RemoteLogging, RemoteStream}
+import json.JsonEnum
 
 /**
  * The different competitions that West Ham have taken part in.
@@ -59,7 +59,7 @@ sealed abstract class LeagueCompetition(override val name: String, override val 
  */
 sealed abstract class CupCompetition(override val name: String, override val tokens: String*) extends AbstractCompetition(name, false, tokens: _*)
 
-object Competition extends Enum[Competition] with RemoteLogging {
+object Competition extends JsonEnum[Competition] {
 
   val values = findValues
 
@@ -98,8 +98,8 @@ object Competition extends Enum[Competition] with RemoteLogging {
    */
   case object EUROPA extends CupCompetition("UEFA Europa League", "UEFA Europa League", "UEFA Europa League Qualifying")
 
-  def apply(token: String)(implicit remoteStream: RemoteStream): Option[Competition] = {
-    logOnEmpty(values.find(_.tokens contains token), s"$token is not a valid competition token.")
+  def apply(token: String): Either[String, Competition] = {
+    values.find(_.tokens.contains(token)).toRight(s"$token is not a valid competition token.")
   }
 
 }

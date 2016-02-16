@@ -21,13 +21,14 @@
  */
 package dates
 
-import org.joda.time.DateTimeZone
-import org.joda.time.chrono.ISOChronology
-import org.joda.time.{DateTime => JDateTime}
 import java.util.Date
+
+import org.joda.time.chrono.ISOChronology
+import org.joda.time.{DateTime => JDateTime, DateTimeZone}
 /**
  * A companion object for Joda DateTime that ensures all created dates have the correct time zone and chronology.
- * @author alex
+  *
+  * @author alex
  *
  */
 object JodaDateTime {
@@ -45,10 +46,10 @@ object JodaDateTime {
   /**
    * Create a new date time with the correct chronology.
    */
-  def apply(m: Long) = new JDateTime(m).withChronology(DEFAULT_CHRONOLOGY)
+  def apply(m: Long): JDateTime = new JDateTime(m).withChronology(DEFAULT_CHRONOLOGY)
 
   /**
    * Create a new date time with the correct chronology.
    */
-  def apply(d: Date) = new JDateTime(d).withChronology(DEFAULT_CHRONOLOGY)
+  def apply(d: Date): JDateTime = new JDateTime(d).withChronology(DEFAULT_CHRONOLOGY)
 }
