@@ -61,6 +61,10 @@ case class GameRow(
 sealed trait GameRowRel extends Rel
 object GameRowRel extends RelEnum[GameRowRel] {
   val values = findValues
+
+  object ATTEND extends Rel_("attend") with GameRowRel
+  object UNATTEND extends Rel_("unattend") with GameRowRel
+  object LOCATION extends Rel_("location") with GameRowRel
 }
 
 case class TicketingInformation(at: Date, links: Links[TicketingInformationRel])
@@ -69,7 +73,7 @@ sealed trait TicketingInformationRel extends Rel
 object TicketingInformationRel extends RelEnum[TicketingInformationRel] {
   val values = findValues
 
-  object Form extends Rel_("form") with TicketingInformationRel
+  object FORM extends Rel_("form") with TicketingInformationRel
 }
 
 object GameRow extends JsonCodecs {

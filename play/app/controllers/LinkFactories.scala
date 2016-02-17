@@ -1,6 +1,7 @@
 package controllers
 
 import model.Game
+import models.GameRowRel._
 import models.TicketType.PriorityPointTicketType
 import models._
 import play.api.mvc.{AnyContent, Request}
@@ -15,14 +16,18 @@ trait LinkFactories extends Secure {
       ticketType match {
         case PriorityPointTicketType =>
           val url = controllers.routes.PriorityPointsPdf.priorityPoints(game.id).absoluteURL()
-          links.withLink(TicketingInformationRel.Form, url)
+          links.withLink(TicketingInformationRel.FORM, url)
         case _ => links
       }
     }
   }
 
   def gameRowLinksFactory(implicit request: Request[_ <: AnyContent]): Game => Links[GameRowRel] = game => {
-    Links().withSelf(controllers.routes.Application.game(game.id).absoluteURL())
+    Links
+        .withSelf[GameRowRel](controllers.routes.Application.game(game.id).absoluteURL())
+        .withLink(ATTEND, controllers.routes.Update.attend(game.id).absoluteURL())
+        .withLink(UNATTEND, controllers.routes.Update.unattend(game.id).absoluteURL())
+        .withLink(GameRowRel.LOCATION, controllers.routes.Location.location(game.id).absoluteURL())
   }
 
   def secureLinks[R <: Rel](game: Game, links: Links[R])(f: Links[R] => Links[R])(implicit request: Request[_ <: AnyContent]): Links[R] = {

@@ -23,8 +23,10 @@
 package json
 
 import play.api.http.HeaderNames._
-import play.api.mvc.Results
+import play.api.mvc.{Result, Results}
 import upickle.default._
+
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * @author alex
@@ -32,11 +34,27 @@ import upickle.default._
  */
 trait JsonResults extends Results {
 
-  def json[T: Writer](t: T) =
-    Ok(write(t)).withHeaders(
+  self: {val ec: ExecutionContext} =>
+
+  private implicit lazy val _JsonResults_ec = ec
+
+  def json[A: Writer](a: A): Result = {
+    Ok(write(a, 2)).withHeaders(
       CONTENT_TYPE -> "application/json",
       CACHE_CONTROL -> "max-age=0, no-store, no-cache, must-revalidate",
       PRAGMA -> "no-cache",
       EXPIRES -> "0")
+  }
 
+  def jsonFOO[A, B: Writer](fa: Future[Option[A]])(f: A => Option[B]): Future[Result] = fa.map { a =>
+    a.flatMap(f) match {
+      case Some(b) => json(b)
+      case _ => NotFound
+    }
+  }
+
+  def jsonFO[A, B: Writer](fa: Future[Option[A]])(f: A => B): Future[Result] = jsonFOO(fa)(a => Some(f(a)))
+
+  def jsonF[A, B: Writer](fa: Future[A])(f: A => B): Future[Result] = jsonFO(fa.map(Some(_)))(f)
 }
+

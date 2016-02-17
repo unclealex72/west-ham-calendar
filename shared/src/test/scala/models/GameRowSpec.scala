@@ -27,7 +27,7 @@ class GameRowSpec extends Specification {
       PriorityPointTicketType ->
         TicketingInformation(
           at = new Date(1452070800000l),
-          links = Links[TicketingInformationRel]().withLink(TicketingInformationRel.Form, "http://localhost:9000/prioritypoints/728")),
+          links = Links[TicketingInformationRel]().withLink(TicketingInformationRel.FORM, "http://localhost:9000/prioritypoints/728")),
       AcademyTicketType ->
       TicketingInformation(at = new Date(1452502800000l), links = Links[TicketingInformationRel]())
     ),

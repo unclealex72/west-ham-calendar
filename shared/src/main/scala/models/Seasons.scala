@@ -20,6 +20,8 @@ case class Season(season: Int, links: Links[SeasonRel])
 sealed trait SeasonRel extends Rel
 object SeasonRel extends RelEnum[SeasonRel] {
   val values = findValues
+
+  object GAMES extends Rel_("games") with SeasonRel
 }
 
 object Seasons extends JsonCodecs {

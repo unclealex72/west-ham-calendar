@@ -22,13 +22,12 @@ case class Links[R <: Rel](private val links: Map[R, String] = Map.empty[R, Stri
 }
 
 trait Rel extends EnumEntry {
-
   val rel: String
 
   final override val entryName = rel
 }
 
-abstract class Rel_(val rel: String) extends EnumEntry
+abstract class Rel_(val rel: String) extends Rel
 
 trait RelEnum[R <: Rel] extends Enum[R] with (String => Option[R]) {
 
