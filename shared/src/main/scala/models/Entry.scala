@@ -1,9 +1,10 @@
 package models
 
-import json.JsonCodecs
+import json.JsonConverters
 import upickle.Js
 import Links._
-
+import scalaz._
+import Scalaz._
 /**
   * Created by alex on 16/02/16.
   */
@@ -18,24 +19,14 @@ object EntryRel extends RelEnum[EntryRel] {
   object LOGOUT extends Rel_("logout") with EntryRel
 }
 
-object Entry extends JsonCodecs {
+object Entry extends JsonConverters[Entry] {
 
-  private def entryToJson(entry: Entry): Js.Value = {
+  def serialise(entry: Entry): Js.Value = {
     Js.Obj(entry.user.map(u => "user" -> Js.Str(u)).toSeq :+ "links" -> linksToJson(entry.links) :_*)
   }
 
-  implicit val entry2Writer: upickle.default.Writer[Entry] = upickle.default.Writer[Entry] { case entry =>
-    entryToJson(entry)
-  }
-
-  private def jsonToEntry(value: Js.Value): Either[String, Entry] = value.jsObj { fields =>
-    for {
-      user <- fields.optional("user")(_.jsStr).right
-      links <- fields.optionalDefault("links")(jsonToLinks(EntryRel))(Links[EntryRel]()).right
-    } yield Entry(user, links)
-  }
-
-  implicit val entry2Reader: upickle.default.Reader[Either[String, Entry]] = upickle.default.Reader[Either[String, Entry]] { case value =>
-    jsonToEntry(value)
+  def deserialise(value: Js.Value): ValidationNel[String, Entry] = value.jsObj { fields =>
+    (fields.optional("user")(_.jsStr) |@|
+      fields.optionalDefault("links")(jsonToLinks(EntryRel))(Links[EntryRel]()))(Entry.apply)
   }
 }

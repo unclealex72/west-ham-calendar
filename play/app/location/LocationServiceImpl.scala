@@ -7,20 +7,22 @@ import dates.geo.GeoLocationFactory
 import models.GeoLocation
 import monads.FO
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
+import play.api.libs.ws.{WSResponse, WSClient}
 
 import scala.concurrent._
 import scalaz.Scalaz._
 import scalaz._
+import update.WsClientImplicits._
 
 /**
  * The default implementation of LocationService.
  * Created by alex on 12/04/15.
  */
 class LocationServiceImpl(
-                                      val asyncHttpClient: AsyncHttpClient,
-                                      val gameDao: GameDao,
-                                      val geoLocationFactory: GeoLocationFactory,
-                                      val locationClientKey: LocationClientKey)(implicit ec: ExecutionContext) extends LocationService {
+                           val wsClient: WSClient,
+                           val gameDao: GameDao,
+                           val geoLocationFactory: GeoLocationFactory,
+                           val locationClientKey: LocationClientKey)(implicit ec: ExecutionContext) extends LocationService {
 
   override def location(gameId: Long): Future[Option[URL]] = {
     val urlT = for {
@@ -32,10 +34,9 @@ class LocationServiceImpl(
   }
 
   def generateUrl(geoLocation: GeoLocation): Future[Option[URL]] = {
-    val futureOptionalBody = asyncHttpClient.get(
-      "maps.googleapis.com",
-      Seq("maps", "api", "place", "details", "json"),
-      Map("placeid" -> geoLocation.placeId, "key" -> locationClientKey.value))
+    val fResponse: Future[WSResponse] =
+      wsClient.url("https://maps.googleapis.com/maps/api/place/details/json").withQueryString(
+        "placeid" -> geoLocation.placeId, "key" -> locationClientKey.value).get()
     val obj: JsValue => Option[JsObject] = {
       case jsObject: JsObject => Some(jsObject)
       case _ => None
@@ -47,8 +48,8 @@ class LocationServiceImpl(
 
     FO {
       for {
-        body <- FO <~ futureOptionalBody
-        json <- FO <~ obj(Json.parse(body))
+        response <- FO <~ fResponse.map(Some(_))
+        json <- FO <~ obj(Json.parse(response.body))
         resultField <- FO <~ json.value("result")
         resultObj <- FO <~ obj(resultField)
         locationField <- FO <~ resultObj.value("url")

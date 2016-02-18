@@ -3,6 +3,8 @@ package models
 import enumeratum.{Enum, EnumEntry}
 import json.JsonCodecs
 import upickle.Js
+import scalaz._
+import Scalaz._
 
 /**
   * Type safe links object
@@ -19,12 +21,16 @@ case class Links[R <: Rel](private val links: Map[R, String] = Map.empty[R, Stri
   def self: Option[String] = _self
 
   def apply(rel: R): Option[String] = links.get(rel)
+
+  def required(rel: R): String = apply(rel).get
 }
 
 trait Rel extends EnumEntry {
   val rel: String
 
   final override val entryName = rel
+
+  final override def toString = rel
 }
 
 abstract class Rel_(val rel: String) extends Rel
@@ -43,22 +49,21 @@ object Links extends JsonCodecs {
   def withLinks[R <: Rel](moreLinks: Map[R, String]) = Links[R]().withLinks(moreLinks)
 
   def linksToJson[R <: Rel](links: Links[R]): Js.Value = {
-    val allLinks = links.links.toSeq.map(rh => (rh._1.rel, rh._2)) ++ links.self.map(("self", _))
+    val allLinks = links.links.toSeq.map(rh => rh._1.rel -> rh._2) ++ links.self.map("self" -> _)
     val jsonLinks = allLinks.map { case (rel, href) =>
       Js.Obj(Map("rel" -> rel, "href" -> href).mapValues(Js.Str).toSeq :_*)
     }
     Js.Arr(jsonLinks :_*)
   }
 
-  private def jsonToLink(value: Js.Value): Either[String, (String, String)] = value.jsObj { fields =>
-    for {
-      rel <- fields.mandatory("rel", "Cannot find a rel property for links")(_.jsStr).right
-      href <- fields.mandatory("href", "Cannot find a href property for links")(_.jsStr).right
-    } yield (rel, href)
+  private def jsonToLink(value: Js.Value): ValidationNel[String, (String, String)] = value.jsObj { fields =>
+    (fields.mandatory("rel", "Cannot find a rel property for links")(_.jsStr) |@|
+      fields.mandatory("href", "Cannot find a href property for links")(_.jsStr)).tupled
   }
 
-  def jsonToLinks[R <: Rel](f: String => Option[R])(value: Js.Value): Either[String, Links[R]] = {
-    value.jsArr(jsonToLink).right.map { links =>
+  def jsonToLinks[R <: Rel](f: String => Option[R])(value: Js.Value): ValidationNel[String, Links[R]] = {
+    val singleLinks: \/[NonEmptyList[String], Seq[(String, String)]] = value.jsArr(jsonToLink).disjunction
+    singleLinks.map { links =>
       links.foldLeft(new Links[R]()) { (existingLinks, newLink) =>
         val (rel, href) = newLink
         if ("self" == rel) {
@@ -68,6 +73,6 @@ object Links extends JsonCodecs {
           existingLinks.withLinks(f(rel).map(r => (r, href)).toMap)
         }
       }
-    }
+    }.validation
   }
 }

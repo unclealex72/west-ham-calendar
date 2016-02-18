@@ -47,9 +47,10 @@ lazy val play = (project in file("play")).settings(
       "org.mnode.ical4j" % "ical4j" % "1.0.4",
       "org.postgresql" % "postgresql" % "9.4.1207",
       "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
-      "net.databinder.dispatch" %% "dispatch-core" % "0.11.2",
       // webjars
       "org.webjars.bower" % "bootstrap" % "3.3.6",
+      "org.webjars" % "jquery" % "2.1.3",
+      "org.webjars" % "angularjs" % "1.3.13",
       // test
       "org.hsqldb" % "hsqldb" % "2.3.3" % "test",
       "org.specs2" %% "specs2-core" % "3.7" % "test",
@@ -65,11 +66,10 @@ lazy val js = (project in file("js")).settings(
   persistLauncher := true,
   persistLauncher in Test := false,
   libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.8.1",
-    "com.lihaoyi" %%% "scalatags" % "0.5.2",
-    "com.lihaoyi" %%% "scalarx" % "0.2.8",
-    "be.doeraene" %%% "scalajs-jquery" % "0.8.0",
-    "com.lihaoyi" %%% "upickle" % "0.3.8"
+    "com.greencatsoft" %%% "scalajs-angular" % "0.6",
+    "com.lihaoyi" %%% "upickle" % "0.3.8",
+    "com.github.japgolly.fork.scalaz" %%% "scalaz-core" % "7.2.0",
+    "com.github.japgolly.fork.scalaz" %%% "scalaz-scalacheck-binding" % "7.2.0"
   )
 ).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
   dependsOn(sharedJs)
@@ -80,6 +80,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
     libraryDependencies ++= Seq(
       "com.beachape" %% "enumeratum" % "1.3.6",
       "com.lihaoyi" %% "upickle" % "0.3.8",
+      "org.scalaz" %% "scalaz-core" % "7.2.0",
       "org.specs2" %% "specs2-core" % "3.7" % "test",
       "org.specs2" %% "specs2-mock" % "3.7" % "test",
       "org.specs2" %% "specs2-junit" % "3.7" % "test"

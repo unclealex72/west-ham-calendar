@@ -22,12 +22,18 @@ trait LinkFactories extends Secure {
     }
   }
 
-  def gameRowLinksFactory(implicit request: Request[_ <: AnyContent]): Game => Links[GameRowRel] = game => {
-    Links
+  def gameRowLinksFactory(includeUpdates: Boolean)(implicit request: Request[_ <: AnyContent]): Game => Links[GameRowRel] = game => {
+    val links = Links
         .withSelf[GameRowRel](controllers.routes.Application.game(game.id).absoluteURL())
+        .withLink(GameRowRel.LOCATION, controllers.routes.Location.location(game.id).absoluteURL())
+    if (includeUpdates) {
+      links
         .withLink(ATTEND, controllers.routes.Update.attend(game.id).absoluteURL())
         .withLink(UNATTEND, controllers.routes.Update.unattend(game.id).absoluteURL())
-        .withLink(GameRowRel.LOCATION, controllers.routes.Location.location(game.id).absoluteURL())
+    }
+    else {
+      links
+    }
   }
 
   def secureLinks[R <: Rel](game: Game, links: Links[R])(f: Links[R] => Links[R])(implicit request: Request[_ <: AnyContent]): Links[R] = {

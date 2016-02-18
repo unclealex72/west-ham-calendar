@@ -4,6 +4,7 @@
 
 # Home page
 GET     /                                      controllers.Application.index
+GET     /proto.html                            controllers.Application.proto
 
 # Json
 

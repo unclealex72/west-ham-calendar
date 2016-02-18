@@ -15,6 +15,8 @@ import upickle.default._
 import FixturesRequest._
 import FixturesResponse._
 import scala.concurrent.{ExecutionContext, Future}
+import scalaz._
+import Scalaz._
 
 /**
  * Created by alex on 08/03/15.
@@ -36,8 +38,8 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
         withHeaders("Content-Type" -> "application/x-www-form-encoded").
         post(write(fixturesRequest))
       fResponse.flatMap { response =>
-        def fail(str: String): Future[List[GameUpdateCommand]] = {
-          logger error str
+        def fail(strs: NonEmptyList[String]): Future[List[GameUpdateCommand]] = {
+          strs.toList.foreach(str => logger.error(str))
           Future.successful(List.empty)
         }
         def success(fixturesResponse: FixturesResponse): Future[List[GameUpdateCommand]] = {
@@ -53,7 +55,7 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
             }
           }
         }
-        read[Either[String, FixturesResponse]](response.body).fold(fail, success)
+        read[ValidationNel[String, FixturesResponse]](response.body).fold(fail, success)
       }
     }
   }

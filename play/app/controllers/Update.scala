@@ -21,23 +21,20 @@
  */
 package controllers
 
-import dispatch.Future
 import json.JsonResults
 import logging.RemoteStream
 import model.Game
-import models.GameRow
+import models.GameRow._
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Concurrent
 import play.api.mvc.Action
-import scaldi.{Injector, Injectable}
+import scaldi.{Injectable, Injector}
 import security.Definitions._
 import services.GameRowFactory
 import update.MainUpdateService
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Future, ExecutionContext}
 import scala.util.Failure
-import upickle.default._
-import models.GameRow._
 
 
 /**
@@ -86,7 +83,7 @@ class Update(implicit injector: Injector) extends Secure with Secret with LinkFa
     SecuredAction(authorization).async { implicit request =>
       gameUpdater(gameId).map {
         case Some(game) => json {
-          gameRowFactory.toRow(includeAttended = true, gameRowLinksFactory, ticketLinksFactory)(game)
+          gameRowFactory.toRow(includeAttended = true, gameRowLinksFactory(includeUpdates = true), ticketLinksFactory)(game)
         }
         case _ => NotFound
       }

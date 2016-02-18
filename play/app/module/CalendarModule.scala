@@ -77,7 +77,6 @@ class CalendarModule extends Module {
 
     // Game Locations
     bind[LocationService] toNonLazy injected[LocationServiceImpl]
-    bind[AsyncHttpClient] toNonLazy injected[DispatchAsyncHttpClient]
     bind[LocationClientKey] toNonLazy LocationClientKey("AIzaSyCnaYyFjEYYaKIQ6ZQ64Tx-xkKP2kArRzE")
 
     //MVC

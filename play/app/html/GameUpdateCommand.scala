@@ -21,15 +21,10 @@
  */
 package html
 
-import enumeratum.EnumEntry
-
-import scala.math.Ordered
-import org.joda.time.DateTime
-import model.Game
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import enumeratum._
-
-import scala.reflect.ClassTag
+import enumeratum.{EnumEntry, _}
+import model.Game
+import org.joda.time.DateTime
 
 /**
  * A class used to encapsulate a possible update to a game as directed by an.
@@ -92,7 +87,7 @@ object UpdateType extends Enum[UpdateType] {
   implicit val ordering: Ordering[UpdateType] = Ordering.by(values.indexOf)
 }
 
-import UpdateType._
+import html.UpdateType._
 
 sealed abstract class BaseGameUpdateCommand[V](
   /**
@@ -133,15 +128,6 @@ sealed abstract class BaseGameUpdateCommand[V](
    *          The game to alter.
    */
   protected def setNewValue(game: Game): Game
-}
-
-object GameUpdateCommandImplicits {
-
-  def ordering[E <: ClassTag[E]](implicit ord: Ordering[E]): Ordering[GameUpdateCommand] = Ordering.by { (guc: GameUpdateCommand) =>
-    guc match {
-      case uc : BaseGameUpdateCommand[_] => (uc.gameLocator, uc.updateType)
-    }
-  }
 }
 
 /**

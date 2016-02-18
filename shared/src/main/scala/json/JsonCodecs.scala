@@ -1,15 +1,14 @@
 package json
 
-import java.text.{ParseException, SimpleDateFormat, DateFormat}
+import java.text.{DateFormat, ParseException, SimpleDateFormat}
 import java.util.{Date, Locale}
 
 import upickle.Js
-
-import scala.language.implicitConversions
+import scalaz._
+import Scalaz._
 
 /**
-  * Helper methods for deserialising JSON and returning Eithers and Options
-  * Created by alex on 14/02/16.
+  * Created by alex on 17/02/16.
   */
 trait JsonCodecs {
 
@@ -23,83 +22,92 @@ trait JsonCodecs {
 
   case class Fields(fields: Map[String, Js.Value]) {
 
-    def mandatory[E](name: String, errorOnMissing: String)(f: Js.Value => Either[String, E]): Either[String, E] = {
-      for {
-        field <- fields.get(name).toRight(errorOnMissing).right
-        value <- f(field).right
-      }
-      yield value
+    def mandatory[E](name: String, errorOnMissing: String)(f: Js.Value => ValidationNel[String, E]): ValidationNel[String, E] = {
+      val disjunction = for {
+        field <- fields.get(name).toRightDisjunction(NonEmptyList(errorOnMissing))
+        value <- f(field).disjunction
+      } yield value
+      disjunction.validation
     }
 
-    def optional[E](name: String)(f: Js.Value => Either[String, E]): Either[String, Option[E]] = {
-      fields.get(name).map(f).map { e =>
+    def optional[E](name: String)(f: Js.Value => ValidationNel[String, E]): ValidationNel[String, Option[E]] = {
+      val onSome = fields.get(name).map(f).map { e =>
         e match {
-          case Right(value) => Right(Some(value))
-          case Left(msg) => Left(msg)
+          case Success(value) => {
+            val success: Option[E] = Some(value)
+            success.successNel[String]
+          }
+          case Failure(msg) => msg.failure[Option[E]]
         }
-      }.getOrElse(Right(None))
+      }
+      onSome.getOrElse {
+        val none: Option[E] = None
+        none.successNel[String]
+      }
     }
 
-    def optionalDefault[E](name: String)(f: Js.Value => Either[String, E])(default: => E): Either[String, E] = {
+    def optionalDefault[E](name: String)(f: Js.Value => ValidationNel[String, E])(default: => E): ValidationNel[String, E] = {
       optional(name)(f) match {
-        case Right(ov) => Right(ov.getOrElse(default))
-        case Left(msg) => Left(msg)
+        case Success(ov) => ov.getOrElse(default).successNel[String]
+        case Failure(msg) => msg.failure[E]
       }
     }
   }
 
   implicit class ValueImplicits(value: Js.Value) {
 
-    def jsObj[T](f: Fields => Either[String, T]): Either[String, T] = {
+    def jsObj[T](f: Fields => ValidationNel[String, T]): ValidationNel[String, T] = {
       value match {
         case obj: Js.Obj => f(Fields(obj.value.toMap))
-        case _ => Left("Did not find a JSON object when one was required.")
+        case _ => "Did not find a JSON object when one was required.".failureNel[T]
       }
     }
 
-    def jsStr[T](f: String => Either[String, T]): Either[String, T] = {
+    def jsStr[T](f: String => ValidationNel[String, T]): ValidationNel[String, T] = {
       value match {
         case str: Js.Str => f(str.value)
-        case _ => Left("Did not find a JSON string when one was required.")
+        case _ => "Did not find a JSON string when one was required.".failureNel[T]
       }
     }
 
-    def jsStr: Either[String, String] = jsStr(str => Right[String, String](str))
+    def jsStr: ValidationNel[String, String] = jsStr(str => str.successNel[String])
 
-    def jsDate: Either[String, Date] = jsStr { str =>
+    def jsDate: ValidationNel[String, Date] = jsStr { str =>
       try {
-        Right(df().parse(str))
+        df().parse(str).successNel[String]
       }
       catch {
-        case _: ParseException => Left(s"Cannot parse date $str")
+        case _: ParseException => s"Cannot parse date $str".failureNel[Date]
       }
     }
 
-    def jsBool: Either[String, Boolean] = {
+    def jsBool: ValidationNel[String, Boolean] = {
       value match {
-        case Js.False => Right(false)
-        case Js.True => Right(true)
-        case _ => Left("Did not find a JSON boolean when one was required.")
+        case Js.False => false.successNel
+        case Js.True => true.successNel
+        case _ => "Did not find a JSON boolean when one was required.".failureNel
       }
     }
 
-    def jsArr[E](f: Js.Value => Either[String, E]): Either[String, Seq[E]] = value match {
+    def jsArr[E](f: Js.Value => ValidationNel[String, E]): ValidationNel[String, Seq[E]] = value match {
       case arr: Js.Arr  =>
-        val empty: Either[String, Seq[E]] = Right(Seq.empty)
+        val empty: ValidationNel[String, Seq[E]] = Seq.empty.successNel[String]
         arr.value.foldLeft(empty) { (result, jsValue) =>
-          for {
-            values <- result.right
-            value <- f(jsValue).right
+          val newResult = for {
+            values <- result.disjunction
+            value <- f(jsValue).disjunction
           } yield values :+ value
+          newResult.validation
         }
-      case _ => Left("Did not find a JSON array when one was required.")
+      case _ => "Did not find a JSON array when one was required.".failureNel
     }
 
-    def jsNum: Either[String, Long] = {
+    def jsNum: ValidationNel[String, Long] = {
       value match {
-        case num: Js.Num => Right(num.value.toLong)
-        case _ => Left(s"Did not find a JSON number when one was required.")
+        case num: Js.Num => num.value.toLong.successNel
+        case _ => "Did not find a JSON number when one was required.".failureNel
       }
     }
   }
+
 }

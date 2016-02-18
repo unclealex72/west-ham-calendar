@@ -33,29 +33,42 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
     Ok(views.html.index())
   }
 
+  /**
+    * Redirect to the  homepage.
+    */
+  def proto = Action {
+    Ok(views.html.proto())
+  }
+
   def games(season: Int) = UserAwareAction.async { implicit request =>
     jsonF(gameDao.getAllForSeason(season)) { games =>
       val includeAttended = request.identity.isDefined
-      Map("games" -> games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory, ticketLinksFactory)))
+      Map("games" -> games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory)))
     }
   }
 
   def game(id: Long) = UserAwareAction.async { implicit request =>
     jsonFO(gameDao.findById(id)) { game =>
       val includeAttended = request.identity.isDefined
-      gameRowFactory.toRow(includeAttended, gameRowLinksFactory, ticketLinksFactory)(game)
+      gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory)(game)
 
     }
   }
 
   def entry() = UserAwareAction { implicit request =>
     json[Entry] {
+      val fullName: Option[String] = request.identity.flatMap(_.fullName)
+      val (authRel, authLink): (EntryRel, String) = if (fullName.isDefined) {
+        (LOGOUT, routes.SocialAuthController.signOut().absoluteURL())
+      }
+      else {
+        (LOGIN, routes.SocialAuthController.authenticate("google").absoluteURL())
+      }
       val links = Links.
         withLink(SEASONS.asInstanceOf[EntryRel], routes.Application.seasons().absoluteURL()).
-        withLink(LOGIN, routes.SocialAuthController.authenticate("google").absoluteURL()).
-        withLink(LOGOUT, routes.SocialAuthController.signOut().absoluteURL()).
-        withSelf(routes.Application.entry().absoluteURL())
-      Entry(request.identity.flatMap(_.fullName), links)
+        withSelf(routes.Application.entry().absoluteURL()).
+        withLink(authRel, authLink)
+      Entry(fullName, links)
     }
   }
 

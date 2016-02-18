@@ -1,9 +1,11 @@
 package models
 
-import json.JsonCodecs
+import json.JsonConverters
 import upickle.Js
 import Links._
 
+import scalaz._
+import Scalaz._
 /**
   * Javascript for Seasons
   * Created by alex on 16/02/16.
@@ -24,35 +26,25 @@ object SeasonRel extends RelEnum[SeasonRel] {
   object GAMES extends Rel_("games") with SeasonRel
 }
 
-object Seasons extends JsonCodecs {
+object Seasons extends JsonConverters[Seasons] {
 
   private def seasonToJson(season: Season): Js.Value = Js.Obj(
     "season" -> Js.Num(season.season),
     "links" -> linksToJson(season.links)
   )
 
-  private def seasonsToJson(seasons: Seasons): Js.Value = Js.Obj("seasons" -> Js.Arr(seasons.seasons.map(seasonToJson) :_*))
+  def serialise(seasons: Seasons): Js.Value = Js.Obj("seasons" -> Js.Arr(seasons.seasons.map(seasonToJson) :_*))
 
-  implicit val seasonsWriter: upickle.default.Writer[Seasons] = upickle.default.Writer[Seasons] { case value =>
-    seasonsToJson(value)
+  private def jsonToSeason(value: Js.Value): ValidationNel[String, Season] = value.jsObj { fields =>
+    val season = fields.mandatory("season", "Cannot find a season property for a Season")(_.jsNum).map(_.toInt)
+    val links = fields.optionalDefault("links")(jsonToLinks(SeasonRel))(Links[SeasonRel]())
+    (season |@| links)(Season.apply)
   }
 
-  private def jsonToSeason(value: Js.Value): Either[String, Season] = value.jsObj { fields =>
-    for {
-      season <- fields.mandatory("season", "Cannot find a season property for a Season")(_.jsNum).right
-      links <- fields.optionalDefault("links")(jsonToLinks(SeasonRel))(Links[SeasonRel]()).right
-    } yield Season(season.toInt, links)
+  def deserialise(value: Js.Value): ValidationNel[String, Seasons] = value.jsObj { fields =>
+    val seasons = fields.mandatory("seasons", "Cannot find a seasons property for a Seasons")(_.jsArr(jsonToSeason))
+    val links = fields.optionalDefault("links")(jsonToLinks(SeasonsRel))(Links[SeasonsRel]())
+    (seasons |@| links)(Seasons.apply)
   }
 
-  private def jsonToSeasons(value: Js.Value): Either[String, Seasons] = value.jsObj { fields =>
-    for {
-      seasons <- fields.mandatory("seasons", "Cannot find a seasons property for a Seasons")(_.jsArr(jsonToSeason)).right
-      links <- fields.optionalDefault("links")(jsonToLinks(SeasonsRel))(Links[SeasonsRel]()).right
-    } yield Seasons(seasons, links)
-  }
-
-  implicit val seasonsReader: upickle.default.Reader[Either[String, Seasons]] =
-    upickle.default.Reader[Either[String, Seasons]] { case value =>
-    jsonToSeasons(value)
-  }
 }

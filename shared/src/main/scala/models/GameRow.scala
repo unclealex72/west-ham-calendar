@@ -24,10 +24,12 @@ package models
 import java.text.{DateFormat, SimpleDateFormat}
 import java.util.{Date, Locale}
 
-import json.JsonCodecs
+import json.JsonConverters
 import upickle.Js.Value
 import upickle.{Js, default}
 
+import scalaz._
+import Scalaz._
 /**
  * @author alex
  *
@@ -76,42 +78,34 @@ object TicketingInformationRel extends RelEnum[TicketingInformationRel] {
   object FORM extends Rel_("form") with TicketingInformationRel
 }
 
-object GameRow extends JsonCodecs {
+object GameRow extends JsonConverters[GameRow] {
 
   private def ticketingInformationToJson(ti: TicketingInformation): Js.Value = {
     val fields: Seq[(String, Js.Value)] = Seq("at" -> dateToJson(ti.at), "links" -> Links.linksToJson(ti.links))
     Js.Obj(fields :_*)
   }
 
-  private def jsonToTicketingInformation(value: Js.Value): Either[String, TicketingInformation] = {
+  private def jsonToTicketingInformation(value: Js.Value): ValidationNel[String, TicketingInformation] = {
     value.jsObj { fields =>
-      for {
-        at <- fields.mandatory("at", "Cannot find an at field for ticketing information.")(_.jsDate).right
-        links <- fields.mandatory("links", "Cannot fina a links field for ticketing information")(Links.jsonToLinks(TicketingInformationRel)).right
-      } yield {
-        TicketingInformation(at, links)
+      (fields.mandatory("at", "Cannot find an at field for ticketing information.")(_.jsDate) |@|
+        fields.mandatory("links", "Cannot fina a links field for ticketing information")(Links.jsonToLinks(TicketingInformationRel))
+        )(TicketingInformation.apply)
+    }
+  }
+
+  private def jsonToTicketingInformationMap(value: Js.Value): ValidationNel[String, Map[TicketType, TicketingInformation]] = {
+    value.jsObj { fields =>
+      val ticketingInformations = fields.fields.map { case (tt, ti) =>
+        (TicketType.jsonToEnum(Js.Str(tt)) |@| jsonToTicketingInformation(ti)).tupled
+      }
+      val empty = Map.empty[TicketType, TicketingInformation].successNel[String]
+      ticketingInformations.foldLeft(empty) { (result, vttti) =>
+        (result |@| vttti)(_ + _)
       }
     }
   }
 
-  private def jsonToTicketingInformationMap(value: Js.Value): Either[String, Map[TicketType, TicketingInformation]] = {
-    value.jsObj { fields =>
-      val empty: Either[String, Map[TicketType, TicketingInformation]] = Right(Map.empty)
-      fields.fields.foldLeft(empty) { (result, ttti) =>
-        result match {
-          case Right(existingTtTi) =>
-            for {
-              tt <- TicketType.jsonToEnum(Js.Str(ttti._1)).right
-              ti <- jsonToTicketingInformation(ttti._2).right
-            } yield {
-              existingTtTi + (tt -> ti)
-            }
-          case Left(msg) => Left(msg)
-        }
-      }
-    }
-  }
-  private def gameRowToJson(gr: GameRow): Js.Value = {
+  def serialise(gr: GameRow): Js.Value = {
     val tickets = gr.tickets.map { case (tt, ti) =>
       (tt.entryName, ticketingInformationToJson(ti))
     }
@@ -132,44 +126,26 @@ object GameRow extends JsonCodecs {
     Js.Obj(fields :_*)
   }
 
-  private def jsonToGameRow(value: Js.Value): Either[String, GameRow] = value.jsObj {
+  def deserialise(value: Js.Value): ValidationNel[String, GameRow] = value.jsObj {
     fields =>
-      for {
-        id <- fields.mandatory("id", "Cannot find an id field for a game.")(_.jsNum).right
-        at <- fields.mandatory("at", "Cannot find an at field for a game.")(_.jsDate).right
-        season <- fields.mandatory("season", "Cannot find a season field for a game.")(_.jsNum).right
-        opponents <- fields.mandatory("opponents", "Cannot find an opponents field for a game.")(_.jsStr).right
-        location <- fields.mandatory("location", "Cannot find a location field for a game.")(Location.jsonToEnum).right
-        competition <- fields.mandatory("competition", "Cannot find a competition field for a game.")(Competition.jsonToEnum).right
-        geoLocation <- fields.optional("geoLocation")(GeoLocation.jsonToEnum).right
-        result <- fields.optional("result")(_.jsStr).right
-        matchReport <- fields.optional("matchReport")(_.jsStr).right
-        attended <- fields.optional("attended")(_.jsBool).right
-        tickets <- fields.mandatory("tickets", "Cannot find a tickets field for a game")(jsonToTicketingInformationMap).right
-        links <- fields.mandatory("links", "Cannot find a links field for a game.")(Links.jsonToLinks(GameRowRel)).right
-      } yield {
-        GameRow(
-          id,
-          at,
-          season.toInt,
-          opponents,
-          competition,
-          location,
-          geoLocation,
-          result,
-          matchReport,
-          tickets,
-          attended,
-          links)
+      val id = fields.mandatory("id", "Cannot find an id field for a game.")(_.jsNum)
+      val at = fields.mandatory("at", "Cannot find an at field for a game.")(_.jsDate)
+      val season = fields.mandatory("season", "Cannot find a season field for a game.")(_.jsNum).map(_.toInt)
+      val opponents = fields.mandatory("opponents", "Cannot find an opponents field for a game.")(_.jsStr)
+      val competition = fields.mandatory("competition", "Cannot find a competition field for a game.")(Competition.jsonToEnum)
+      val location = fields.mandatory("location", "Cannot find a location field for a game.")(Location.jsonToEnum)
+      val geoLocation = fields.optional("geoLocation")(GeoLocation.jsonToEnum)
+      val result = fields.optional("result")(_.jsStr)
+      val matchReport = fields.optional("matchReport")(_.jsStr)
+      val tickets = fields.mandatory("tickets", "Cannot find a tickets field for a game")(jsonToTicketingInformationMap)
+      val attended = fields.optional("attended")(_.jsBool)
+      val links = fields.mandatory("links", "Cannot find a links field for a game.")(Links.jsonToLinks(GameRowRel))
+
+      // Split the validation into two as Scalaz' applicative builders aren't big enough.
+      val left = (id |@| at |@| season |@| opponents |@| competition |@| location).tupled
+      val right = (geoLocation |@| result |@| matchReport |@| tickets |@| attended |@| links).tupled
+      (left |@| right)((_, _)).map { case (l, r) =>
+          GameRow(l._1, l._2, l._3, l._4, l._5, l._6, r._1, r._2, r._3, r._4, r._5, r._6)
       }
   }
-
-  // JSON Support
-  implicit val gameRow2Writer: default.Writer[GameRow] = upickle.default.Writer[GameRow](gameRowToJson)
-
-  implicit val gameRow2Reader: default.Reader[Either[String, GameRow]] =
-    upickle.default.Reader[Either[String, GameRow]] {
-      case value => jsonToGameRow(value)
-    }
-
 }
