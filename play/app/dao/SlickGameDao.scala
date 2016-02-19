@@ -1,16 +1,13 @@
 package dao
 
-
-
 import dates.NowService
 import model.Game
-import models.{Location, Competition}
+import models.{GameResult, Competition, Location}
 import org.joda.time.DateTime
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption, SearchOption}
 
 import scala.collection.SortedSet
 import scala.concurrent.{ExecutionContext, Future}
-
 
 /**
   * Created by alex on 19/01/16.
@@ -56,7 +53,7 @@ class SlickGameDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: Exec
     /** Database column attended SqlType(bool), Default(None) */
     val attended: Rep[Option[Boolean]] = column[Option[Boolean]]("attended", O.Default(None))
     /** Database column result SqlType(varchar), Length(128,true), Default(None) */
-    val result: Rep[Option[String]] = column[Option[String]]("result", O.Length(128,varying=true), O.Default(None))
+    val result: Rep[Option[GameResult]] = column[Option[GameResult]]("result", O.Length(128,varying=true), O.Default(None))
     /** Database column competition SqlType(varchar), Length(128,true) */
     val competition: Rep[Competition] = column[Competition]("competition", O.Length(128,varying=true))
     /** Database column season SqlType(int4) */

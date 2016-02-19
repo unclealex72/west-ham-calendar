@@ -24,6 +24,7 @@ package html
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import enumeratum.{EnumEntry, _}
 import model.Game
+import models.GameResult
 import org.joda.time.DateTime
 
 /**
@@ -158,7 +159,7 @@ case class DatePlayedUpdateCommand(
  * @return A {@link GameUpdateCommand} that updates a game's result value.
  */
 case class ResultUpdateCommand(
-  override val gameLocator: GameLocator, override val newValue: String) extends BaseGameUpdateCommand[String](RESULT, gameLocator, newValue) {
+  override val gameLocator: GameLocator, override val newValue: GameResult) extends BaseGameUpdateCommand[GameResult](RESULT, gameLocator, newValue) {
 
   override def currentValue(game: Game) = game.result
 

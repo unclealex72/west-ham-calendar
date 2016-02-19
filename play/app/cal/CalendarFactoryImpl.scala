@@ -115,7 +115,7 @@ class CalendarFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends Ca
         opponents = game.opponents,
         dateTime = date,
         duration = duration,
-        result = game.result,
+        result = game.result.map(_.format),
         attendence = game.attendance,
         matchReport = game.matchReport,
         televisionChannel = game.televisionChannel,

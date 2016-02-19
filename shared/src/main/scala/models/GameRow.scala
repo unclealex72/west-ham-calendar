@@ -21,15 +21,13 @@
  */
 package models
 
-import java.text.{DateFormat, SimpleDateFormat}
-import java.util.{Date, Locale}
+import java.util.Date
 
 import json.JsonConverters
-import upickle.Js.Value
-import upickle.{Js, default}
+import upickle.Js
 
+import scalaz.Scalaz._
 import scalaz._
-import Scalaz._
 /**
  * @author alex
  *
@@ -54,7 +52,7 @@ case class GameRow(
   competition: Competition,
   location: Location,
   geoLocation: Option[GeoLocation],
-  result: Option[String],
+  result: Option[GameResult],
   matchReport: Option[String],
   tickets: Map[TicketType, TicketingInformation],
   attended: Option[Boolean],
@@ -120,7 +118,7 @@ object GameRow extends JsonConverters[GameRow] {
       "links" -> Links.linksToJson(gr.links)
     ) ++
       gr.geoLocation.map(geoLocation => "geoLocation" -> GeoLocation.enumToJson(geoLocation)) ++
-      gr.result.map(result => "result" -> Js.Str(result)) ++
+      gr.result.map(result => "result" -> GameResult.serialise(result)) ++
       gr.matchReport.map(matchReport => "matchReport" -> Js.Str(matchReport)) ++
       gr.attended.map(attended => "attended" -> (if (attended) Js.True else Js.False))
     Js.Obj(fields :_*)
@@ -135,7 +133,7 @@ object GameRow extends JsonConverters[GameRow] {
       val competition = fields.mandatory("competition", "Cannot find a competition field for a game.")(Competition.jsonToEnum)
       val location = fields.mandatory("location", "Cannot find a location field for a game.")(Location.jsonToEnum)
       val geoLocation = fields.optional("geoLocation")(GeoLocation.jsonToEnum)
-      val result = fields.optional("result")(_.jsStr)
+      val result = fields.optional("result")(GameResult.deserialise)
       val matchReport = fields.optional("matchReport")(_.jsStr)
       val tickets = fields.mandatory("tickets", "Cannot find a tickets field for a game")(jsonToTicketingInformationMap)
       val attended = fields.optional("attended")(_.jsBool)

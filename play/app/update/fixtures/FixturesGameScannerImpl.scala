@@ -6,7 +6,7 @@ import dates.{PossiblyYearlessDateParser, NowService}
 import html._
 import logging.{RemoteLogging, RemoteStream}
 import model.GameKey
-import models.{Location, Competition}
+import models.{GameResult, Score, Location, Competition}
 import models.Location.{AWAY, HOME}
 import org.joda.time.DateTime
 import play.api.libs.ws.WSClient
@@ -73,17 +73,20 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
   def toGameCommands(fixture: Fixture, rootUrl: URI, opponents: String, location: Location, competition: Competition, matchDate: DateTime, season: Int)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
     val locator: GameLocator = GameKeyLocator(GameKey(competition, location, opponents, season))
     val datePlayedUpdateCommand = Some(DatePlayedUpdateCommand(locator, matchDate))
-    val isEmptyOrNull: String => Option[String] = str => Option(str).filterNot(_.isEmpty)
+    def isNeitherEmptyNorNull(str: String): Option[String] = Option(str.trim).filterNot(_.isEmpty)
+    def isDigits(str: String): Option[Int] = isNeitherEmptyNorNull(str).filter { s =>
+      s.matches("""\d+""")
+    }.map(_.toInt)
     val resultUpdateCommand = for {
-      homeScore <- isEmptyOrNull(fixture.homeTeamScore)
-      awayScore <- isEmptyOrNull(fixture.awayTeamScore)
+      homeScore <- isDigits(fixture.homeTeamScore)
+      awayScore <- isDigits(fixture.awayTeamScore)
     } yield {
-      val score = s"$homeScore - $awayScore"
+      val score = Score(homeScore.toInt, awayScore.toInt)
       val penalties = for {
-        homePenalties <- isEmptyOrNull(fixture.homeShootoutScore)
-        awayPenalties <- isEmptyOrNull(fixture.awayShootoutScore)
-      } yield s" ($homePenalties - $awayPenalties)"
-      val result = score + penalties.getOrElse("")
+        homePenalties <- isDigits(fixture.homeShootoutScore)
+        awayPenalties <- isDigits(fixture.awayShootoutScore)
+      } yield Score(homePenalties, awayPenalties)
+      val result = GameResult(score, penalties)
       ResultUpdateCommand(locator, result)
     }
     val matchReportUpdateCommand = fixture.link.map { link =>
@@ -104,7 +107,7 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
       fixture.competitionLogo -> CompetitionImageLinkCommand.curried(locator)).map {
       case (value, gameUpdater) =>
         for {
-          logo <- isEmptyOrNull(value)
+          logo <- isNeitherEmptyNorNull(value)
         } yield {
           val sanitised = uriCleaners.foldLeft(logo)((str, f) => f(str))
           val absoluteUrl = rootUrl.resolve(sanitised).toASCIIString

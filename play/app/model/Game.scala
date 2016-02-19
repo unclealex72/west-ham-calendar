@@ -22,7 +22,7 @@
 package model
 
 import dates.NowService
-import models.{Location, Competition}
+import models.{GameResult, Location, Competition}
 import org.joda.time.DateTime
 
 import scala.language.implicitConversions
@@ -60,7 +60,7 @@ case class Game(
                  competition: Competition,
                  at: Option[DateTime] = None,
                  attended: Option[Boolean] = None,
-                 result: Option[String] = None,
+                 result: Option[GameResult] = None,
                  attendance: Option[Int] = None,
                  matchReport: Option[String] = None,
                  televisionChannel: Option[String] = None,

@@ -25,7 +25,7 @@ package html;
 import dates.Date._
 import dates.{Date, September}
 import model.Game
-import models.{Location, Competition}
+import models.{GameResult, Score, Location, Competition}
 import org.joda.time.DateTime
 import org.specs2.mutable.Specification
 
@@ -49,7 +49,7 @@ class GameUpdateCommandSpec extends Specification {
   val DEFAULT_ACADEMY_TICKETS_AVAILABLE = September(5, 1976)
   val DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE = September(5, 1977)
   val DEFAULT_UPDATE_DATE = September(5, 2013) at (9, 12)
-  val DEFAULT_RESULT = "1-0"
+  val DEFAULT_RESULT = GameResult(Score(1, 0))
   val DEFAULT_ATTENDANCE = 100000
   val DEFAULT_MATCH_REPORT = "Good"
   val DEFAULT_TELEVISION_CHANNEL = "BBC"
@@ -68,12 +68,13 @@ class GameUpdateCommandSpec extends Specification {
   }
 
   "Updating the result" should {
+    val newResult: GameResult = DEFAULT_RESULT.copy(shootoutScore = Some(Score(2, 0)))
     testGameUpdateCommand(
-      gameLocator => (result: String) => ResultUpdateCommand(gameLocator, result),
+      gameLocator => (result: GameResult) => ResultUpdateCommand(gameLocator, result),
       _.result,
       DEFAULT_RESULT,
-      "1" + DEFAULT_RESULT,
-      _.copy(result = Some("1" + DEFAULT_RESULT)))
+      newResult,
+      _.copy(result = Some(newResult)))
   }
 
   "Updating the attendence" should {

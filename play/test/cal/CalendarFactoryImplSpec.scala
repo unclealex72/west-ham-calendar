@@ -25,7 +25,7 @@ import dao.GameDao
 import dates.geo.GeoLocationFactoryImpl
 import dates.{August, July, September}
 import model.{Game, GameKey}
-import models.{GeoLocation, Location, Competition}
+import models._
 import org.joda.time.{DateTime, Duration}
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
@@ -70,7 +70,7 @@ class CalendarFactoryImplSpec extends Specification with Mockito {
     at = Some(September(5, 2013) at (15, 0)),
     attendance = Some(100),
     matchReport = Some("report"),
-    result = Some("4-0"),
+    result = Some(GameResult(Score(4, 0))),
     televisionChannel = Some("TV"),
     dateCreated = July(1, 2013) at (5, 0),
     lastUpdated = July(7, 2013) at (9, 0))

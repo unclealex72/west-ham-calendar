@@ -4,9 +4,8 @@ import java.util.Date
 
 import models.GameRow._
 import models.TicketType.{AcademyTicketType, PriorityPointTicketType}
-import upickle.default._
-
 import org.specs2.mutable.Specification
+import upickle.default._
 
 /**
   * Created by alex on 15/02/16.
@@ -21,7 +20,7 @@ class GameRowSpec extends Specification {
     competition = Competition.PREM,
     location = Location.AWAY,
     geoLocation = Some(GeoLocation.SOUTHAMPTON),
-    result = Some("1 - 0"),
+    result = Some(GameResult(Score(1,0), Some(Score(2, 3)))),
     matchReport = Some("http://www.whufc.com/Fixtures/First-Team/Fixture-and-Results/Season-2015-2016/2016-February/Southampton-vs-West-Ham-United"),
     tickets = Map[TicketType, TicketingInformation](
       PriorityPointTicketType ->
@@ -66,7 +65,16 @@ class GameRowSpec extends Specification {
       |    }
       |  ],
       |  "geoLocation": "SOUTHAMPTON",
-      |  "result": "1 - 0",
+      |  "result": {
+      |    "score": {
+      |      "home": 1,
+      |      "away": 0
+      |    },
+      |    "shootoutScore": {
+      |      "home": 2,
+      |      "away": 3
+      |    }
+      |  },
       |  "matchReport": "http://www.whufc.com/Fixtures/First-Team/Fixture-and-Results/Season-2015-2016/2016-February/Southampton-vs-West-Ham-United",
       |  "attended": true
       |}
