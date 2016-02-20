@@ -9,7 +9,7 @@ import play.api.mvc.{AnyContent, Request}
 /**
  * Created by alex on 13/02/15.
  */
-trait LinkFactories extends Secure {
+trait LinkFactories extends Secure with FutureResults {
 
   def ticketLinksFactory(implicit request: Request[_ <: AnyContent]): Game => TicketType => Links[TicketingInformationRel] = game => ticketType => {
     secureLinks(game, Links[TicketingInformationRel]()) { links =>
@@ -26,6 +26,7 @@ trait LinkFactories extends Secure {
     val links = Links
         .withSelf[GameRowRel](controllers.routes.Application.game(game.id).absoluteURL())
         .withLink(GameRowRel.LOCATION, controllers.routes.Location.location(game.id).absoluteURL())
+      .withLink(GameRowRel.MATCH_REPORT, controllers.routes.Application.matchReport(game.id).absoluteURL())
     if (includeUpdates) {
       links
         .withLink(ATTEND, controllers.routes.Update.attend(game.id).absoluteURL())

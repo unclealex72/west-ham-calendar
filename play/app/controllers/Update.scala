@@ -21,7 +21,6 @@
  */
 package controllers
 
-import json.JsonResults
 import logging.RemoteStream
 import model.Game
 import models.GameRow._

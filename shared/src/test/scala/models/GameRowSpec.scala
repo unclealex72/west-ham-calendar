@@ -19,9 +19,7 @@ class GameRowSpec extends Specification {
     opponents = "Southampton",
     competition = Competition.PREM,
     location = Location.AWAY,
-    geoLocation = Some(GeoLocation.SOUTHAMPTON),
     result = Some(GameResult(Score(1,0), Some(Score(2, 3)))),
-    matchReport = Some("http://www.whufc.com/Fixtures/First-Team/Fixture-and-Results/Season-2015-2016/2016-February/Southampton-vs-West-Ham-United"),
     tickets = Map[TicketType, TicketingInformation](
       PriorityPointTicketType ->
         TicketingInformation(

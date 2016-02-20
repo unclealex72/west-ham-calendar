@@ -33,7 +33,7 @@ GET     /games/:gameId/prioritypoints.pdf      controllers.PriorityPointsPdf.pri
 # Game location
 
 GET     /games/:gameId/location.html           controllers.Location.location(gameId: Long)
-
+GET     /games/:gameId/matchreport.html        controllers.Application.matchReport(gameId: Long)
 
 # Calendars
 GET     /calendars/:secretPayload/:attended/:location/:ty/calendar.ics   controllers.Calendar.searchSecure(secretPayload, attended, location, ty)

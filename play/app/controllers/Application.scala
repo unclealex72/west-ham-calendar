@@ -1,7 +1,6 @@
 package controllers
 
 import dao.GameDao
-import json.JsonResults
 import models.EntryRel.{LOGOUT, LOGIN, SEASONS}
 import models.GameRow._
 import models.SeasonRel.GAMES
@@ -48,10 +47,15 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
   }
 
   def game(id: Long) = UserAwareAction.async { implicit request =>
-    jsonFO(gameDao.findById(id)) { game =>
+    jsonFo(gameDao.findById(id)) { game =>
       val includeAttended = request.identity.isDefined
       gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory)(game)
+    }
+  }
 
+  def matchReport(gameId: Long) = Action.async {
+    FutureResult.foo(gameDao.findById(gameId)) { game =>
+      game.matchReport.map { matchReport => TemporaryRedirect(matchReport) }
     }
   }
 

@@ -20,7 +20,7 @@
  *
  */
 
-package json
+package controllers
 
 import play.api.http.HeaderNames._
 import play.api.mvc.{Result, Results}
@@ -32,29 +32,21 @@ import scala.concurrent.{ExecutionContext, Future}
  * @author alex
  *
  */
-trait JsonResults extends Results {
+trait JsonResults extends FutureResults {
 
-  self: {val ec: ExecutionContext} =>
-
-  private implicit lazy val _JsonResults_ec = ec
-
-  def json[A: Writer](a: A): Result = {
-    Ok(write(a, 2)).withHeaders(
+  def json[B: Writer](b: B): Result = {
+    Ok(write(b, 2)).withHeaders(
       CONTENT_TYPE -> "application/json",
       CACHE_CONTROL -> "max-age=0, no-store, no-cache, must-revalidate",
       PRAGMA -> "no-cache",
       EXPIRES -> "0")
   }
 
-  def jsonFOO[A, B: Writer](fa: Future[Option[A]])(f: A => Option[B]): Future[Result] = fa.map { a =>
-    a.flatMap(f) match {
-      case Some(b) => json(b)
-      case _ => NotFound
-    }
-  }
+  def jsonFoo[A, B: Writer](fa: Future[Option[A]])(f: A => Option[B]): Future[Result] =
+    resultFooBuilder[A, B](json)(fa)(f)
 
-  def jsonFO[A, B: Writer](fa: Future[Option[A]])(f: A => B): Future[Result] = jsonFOO(fa)(a => Some(f(a)))
+  def jsonFo[A, B: Writer](fa: Future[Option[A]])(f: A => B): Future[Result] = resultFoBuilder[A, B](json)(fa)(f)
 
-  def jsonF[A, B: Writer](fa: Future[A])(f: A => B): Future[Result] = jsonFO(fa.map(Some(_)))(f)
+  def jsonF[A, B: Writer](fa: Future[A])(f: A => B): Future[Result] = resultFBuilder[A, B](json)(fa)(f)
 }
 

@@ -57,9 +57,7 @@ class GameRowFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends Gam
           opponents = game.opponents,
           competition = game.competition,
           location = game.location,
-          geoLocation = geoLocationFactory.forGame(game),
           result = game.result,
-          matchReport = game.matchReport,
           tickets = ticketFactory(game, ticketLinksFactory),
           attended = if (includeAttended) game.attended orElse Some(false) else None,
           links = gameLinksFactory(game))

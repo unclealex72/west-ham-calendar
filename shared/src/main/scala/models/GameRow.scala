@@ -51,9 +51,7 @@ case class GameRow(
   opponents: String,
   competition: Competition,
   location: Location,
-  geoLocation: Option[GeoLocation],
   result: Option[GameResult],
-  matchReport: Option[String],
   tickets: Map[TicketType, TicketingInformation],
   attended: Option[Boolean],
   links: Links[GameRowRel])
@@ -65,6 +63,7 @@ object GameRowRel extends RelEnum[GameRowRel] {
   object ATTEND extends Rel_("attend") with GameRowRel
   object UNATTEND extends Rel_("unattend") with GameRowRel
   object LOCATION extends Rel_("location") with GameRowRel
+  object MATCH_REPORT extends Rel_("match_report") with GameRowRel
 }
 
 case class TicketingInformation(at: Date, links: Links[TicketingInformationRel])
@@ -117,9 +116,7 @@ object GameRow extends JsonConverters[GameRow] {
       "tickets" -> Js.Obj(tickets.toSeq :_*),
       "links" -> Links.linksToJson(gr.links)
     ) ++
-      gr.geoLocation.map(geoLocation => "geoLocation" -> GeoLocation.enumToJson(geoLocation)) ++
       gr.result.map(result => "result" -> GameResult.serialise(result)) ++
-      gr.matchReport.map(matchReport => "matchReport" -> Js.Str(matchReport)) ++
       gr.attended.map(attended => "attended" -> (if (attended) Js.True else Js.False))
     Js.Obj(fields :_*)
   }
@@ -132,18 +129,16 @@ object GameRow extends JsonConverters[GameRow] {
       val opponents = fields.mandatory("opponents", "Cannot find an opponents field for a game.")(_.jsStr)
       val competition = fields.mandatory("competition", "Cannot find a competition field for a game.")(Competition.jsonToEnum)
       val location = fields.mandatory("location", "Cannot find a location field for a game.")(Location.jsonToEnum)
-      val geoLocation = fields.optional("geoLocation")(GeoLocation.jsonToEnum)
       val result = fields.optional("result")(GameResult.deserialise)
-      val matchReport = fields.optional("matchReport")(_.jsStr)
       val tickets = fields.mandatory("tickets", "Cannot find a tickets field for a game")(jsonToTicketingInformationMap)
       val attended = fields.optional("attended")(_.jsBool)
       val links = fields.mandatory("links", "Cannot find a links field for a game.")(Links.jsonToLinks(GameRowRel))
 
       // Split the validation into two as Scalaz' applicative builders aren't big enough.
-      val left = (id |@| at |@| season |@| opponents |@| competition |@| location).tupled
-      val right = (geoLocation |@| result |@| matchReport |@| tickets |@| attended |@| links).tupled
+      val left = (id |@| at |@| season |@| opponents |@| competition).tupled
+      val right = (location |@| result |@| tickets |@| attended |@| links).tupled
       (left |@| right)((_, _)).map { case (l, r) =>
-          GameRow(l._1, l._2, l._3, l._4, l._5, l._6, r._1, r._2, r._3, r._4, r._5, r._6)
+          GameRow(l._1, l._2, l._3, l._4, l._5, r._1, r._2, r._3, r._4, r._5)
       }
   }
 }
