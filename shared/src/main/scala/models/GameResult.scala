@@ -30,14 +30,14 @@ object GameResult extends JsonConverters[GameResult] {
     }.getOrElse(GameResult(Score(0, 0)))
   }
 
-  private def deserialiseScore(value: Js.Value): ValidationNel[String, Score] = value.jsObj { fields =>
-    val home = fields.mandatory("home", "Cannot find a home property for a Score")(_.jsNum).map(_.toInt)
-    val away = fields.mandatory("away", "Cannot find an away property for a Score")(_.jsNum).map(_.toInt)
+  private def deserialiseScore(value: Js.Value): ValidationNel[String, Score] = value.jsObj("Score") { fields =>
+    val home = fields.mandatory("home")(_.jsInt)
+    val away = fields.mandatory("away")(_.jsInt)
     (home |@| away)(Score.apply)
   }
 
-  override def deserialise(value: Js.Value): ValidationNel[String, GameResult] = value.jsObj { fields =>
-    val score = fields.mandatory("score", "Cannot find a score property for a GameResult")(deserialiseScore)
+  override def deserialise(value: Js.Value): ValidationNel[String, GameResult] = value.jsObj("GameResult") { fields =>
+    val score = fields.mandatory("score")(deserialiseScore)
     val shootoutScore = fields.optional("shootoutScore")(deserialiseScore)
     (score |@| shootoutScore)(GameResult.apply)
   }

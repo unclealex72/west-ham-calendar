@@ -25,7 +25,7 @@ object Entry extends JsonConverters[Entry] {
     Js.Obj(entry.user.map(u => "user" -> Js.Str(u)).toSeq :+ "links" -> linksToJson(entry.links) :_*)
   }
 
-  def deserialise(value: Js.Value): ValidationNel[String, Entry] = value.jsObj { fields =>
+  def deserialise(value: Js.Value): ValidationNel[String, Entry] = value.jsObj("Entry") { fields =>
     (fields.optional("user")(_.jsStr) |@|
       fields.optionalDefault("links")(jsonToLinks(EntryRel))(Links[EntryRel]()))(Entry.apply)
   }

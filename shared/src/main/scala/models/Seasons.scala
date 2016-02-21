@@ -4,13 +4,15 @@ import json.JsonConverters
 import upickle.Js
 import Links._
 
+import scala.collection.SortedSet
 import scalaz._
 import Scalaz._
+import scala.math.{Ordering => SOrdering}
 /**
   * Javascript for Seasons
   * Created by alex on 16/02/16.
   */
-case class Seasons(seasons: Seq[Season], links: Links[SeasonsRel])
+case class Seasons(seasons: SortedSet[Season], links: Links[SeasonsRel])
 
 sealed trait SeasonsRel extends Rel
 object SeasonsRel extends RelEnum[SeasonsRel] {
@@ -19,11 +21,15 @@ object SeasonsRel extends RelEnum[SeasonsRel] {
 
 case class Season(season: Int, links: Links[SeasonRel])
 
+object Season {
+  implicit val ordering: SOrdering[Season] = SOrdering.by(s => s.season)
+}
+
 sealed trait SeasonRel extends Rel
 object SeasonRel extends RelEnum[SeasonRel] {
   val values = findValues
 
-  object GAMES extends Rel_("games") with SeasonRel
+  object MONTHS extends Rel_("months") with SeasonRel
 }
 
 object Seasons extends JsonConverters[Seasons] {
@@ -33,18 +39,19 @@ object Seasons extends JsonConverters[Seasons] {
     "links" -> linksToJson(season.links)
   )
 
-  def serialise(seasons: Seasons): Js.Value = Js.Obj("seasons" -> Js.Arr(seasons.seasons.map(seasonToJson) :_*))
+  def serialise(seasons: Seasons): Js.Value = Js.Obj("seasons" -> jsSorted(seasonToJson)(seasons.seasons))
 
-  private def jsonToSeason(value: Js.Value): ValidationNel[String, Season] = value.jsObj { fields =>
-    val season = fields.mandatory("season", "Cannot find a season property for a Season")(_.jsNum).map(_.toInt)
+  private def jsonToSeason(value: Js.Value): ValidationNel[String, Season] = value.jsObj("Season") { fields =>
+    val season = fields.mandatory("season")(_.jsInt)
     val links = fields.optionalDefault("links")(jsonToLinks(SeasonRel))(Links[SeasonRel]())
     (season |@| links)(Season.apply)
   }
 
-  def deserialise(value: Js.Value): ValidationNel[String, Seasons] = value.jsObj { fields =>
-    val seasons = fields.mandatory("seasons", "Cannot find a seasons property for a Seasons")(_.jsArr(jsonToSeason))
+  def deserialise(value: Js.Value): ValidationNel[String, Seasons] = value.jsObj("Seasons") { fields =>
+    val seasons = fields.mandatory("seasons")(_.jsSorted(jsonToSeason))
     val links = fields.optionalDefault("links")(jsonToLinks(SeasonsRel))(Links[SeasonsRel]())
     (seasons |@| links)(Seasons.apply)
   }
 
+  implicit def unwrap(s: Seasons): SortedSet[Season] = s.seasons
 }

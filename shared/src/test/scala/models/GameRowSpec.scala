@@ -2,6 +2,7 @@ package models
 
 import java.util.Date
 
+import dates.SharedDate
 import models.GameRow._
 import models.TicketType.{AcademyTicketType, PriorityPointTicketType}
 import org.specs2.mutable.Specification
@@ -14,7 +15,7 @@ class GameRowSpec extends Specification {
 
   val deserialisedGame: GameRow = GameRow(
     id = 728,
-    at = new Date(1454779800000l),
+    at = SharedDate(2016, 2, 6, 17, 30, 0, 0, 0),
     season = 2015,
     opponents = "Southampton",
     competition = Competition.PREM,
@@ -23,10 +24,10 @@ class GameRowSpec extends Specification {
     tickets = Map[TicketType, TicketingInformation](
       PriorityPointTicketType ->
         TicketingInformation(
-          at = new Date(1452070800000l),
+          at = SharedDate(2016, 2, 6, 9, 0, 0, 0, 0),
           links = Links[TicketingInformationRel]().withLink(TicketingInformationRel.FORM, "http://localhost:9000/prioritypoints/728")),
       AcademyTicketType ->
-      TicketingInformation(at = new Date(1452502800000l), links = Links[TicketingInformationRel]())
+      TicketingInformation(at = SharedDate(2016, 2, 11, 9, 0, 0, 0, 0), links = Links[TicketingInformationRel]())
     ),
     attended = Some(true),
     links = Links.withSelf("http://localhost:9000/game/728")

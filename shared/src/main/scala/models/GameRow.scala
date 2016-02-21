@@ -23,11 +23,14 @@ package models
 
 import java.util.Date
 
+import dates.SharedDate
 import json.JsonConverters
 import upickle.Js
 
 import scalaz.Scalaz._
 import scalaz._
+import scala.math.{Ordering => SOrdering}
+
 /**
  * @author alex
  *
@@ -46,7 +49,7 @@ object GameTimeType extends Enumeration {
  */
 case class GameRow(
   id: Long,
-  at: Date,
+  at: SharedDate,
   season: Int,
   opponents: String,
   competition: Competition,
@@ -64,9 +67,13 @@ object GameRowRel extends RelEnum[GameRowRel] {
   object UNATTEND extends Rel_("unattend") with GameRowRel
   object LOCATION extends Rel_("location") with GameRowRel
   object MATCH_REPORT extends Rel_("match_report") with GameRowRel
+  object HOME_LOGO extends Rel_("home_logo") with GameRowRel
+  object AWAY_LOGO extends Rel_("away_logo") with GameRowRel
+  object COMPETITION_LOGO extends Rel_("competition_logo") with GameRowRel
+
 }
 
-case class TicketingInformation(at: Date, links: Links[TicketingInformationRel])
+case class TicketingInformation(at: SharedDate, links: Links[TicketingInformationRel])
 
 sealed trait TicketingInformationRel extends Rel
 object TicketingInformationRel extends RelEnum[TicketingInformationRel] {
@@ -83,15 +90,15 @@ object GameRow extends JsonConverters[GameRow] {
   }
 
   private def jsonToTicketingInformation(value: Js.Value): ValidationNel[String, TicketingInformation] = {
-    value.jsObj { fields =>
-      (fields.mandatory("at", "Cannot find an at field for ticketing information.")(_.jsDate) |@|
-        fields.mandatory("links", "Cannot fina a links field for ticketing information")(Links.jsonToLinks(TicketingInformationRel))
+    value.jsObj("TicketingInformation") { fields =>
+      (fields.mandatory("at")(_.jsDate) |@|
+        fields.mandatory("links")(Links.jsonToLinks(TicketingInformationRel))
         )(TicketingInformation.apply)
     }
   }
 
   private def jsonToTicketingInformationMap(value: Js.Value): ValidationNel[String, Map[TicketType, TicketingInformation]] = {
-    value.jsObj { fields =>
+    value.jsObj("TicketingInformationMap") { fields =>
       val ticketingInformations = fields.fields.map { case (tt, ti) =>
         (TicketType.jsonToEnum(Js.Str(tt)) |@| jsonToTicketingInformation(ti)).tupled
       }
@@ -121,18 +128,18 @@ object GameRow extends JsonConverters[GameRow] {
     Js.Obj(fields :_*)
   }
 
-  def deserialise(value: Js.Value): ValidationNel[String, GameRow] = value.jsObj {
+  def deserialise(value: Js.Value): ValidationNel[String, GameRow] = value.jsObj("GameRow") {
     fields =>
-      val id = fields.mandatory("id", "Cannot find an id field for a game.")(_.jsNum)
-      val at = fields.mandatory("at", "Cannot find an at field for a game.")(_.jsDate)
-      val season = fields.mandatory("season", "Cannot find a season field for a game.")(_.jsNum).map(_.toInt)
-      val opponents = fields.mandatory("opponents", "Cannot find an opponents field for a game.")(_.jsStr)
-      val competition = fields.mandatory("competition", "Cannot find a competition field for a game.")(Competition.jsonToEnum)
-      val location = fields.mandatory("location", "Cannot find a location field for a game.")(Location.jsonToEnum)
+      val id = fields.mandatory("id")(_.jsLong)
+      val at = fields.mandatory("at")(_.jsDate)
+      val season = fields.mandatory("season")(_.jsInt)
+      val opponents = fields.mandatory("opponents")(_.jsStr)
+      val competition = fields.mandatory("competition")(Competition.jsonToEnum)
+      val location = fields.mandatory("location")(Location.jsonToEnum)
       val result = fields.optional("result")(GameResult.deserialise)
-      val tickets = fields.mandatory("tickets", "Cannot find a tickets field for a game")(jsonToTicketingInformationMap)
+      val tickets = fields.mandatory("tickets")(jsonToTicketingInformationMap)
       val attended = fields.optional("attended")(_.jsBool)
-      val links = fields.mandatory("links", "Cannot find a links field for a game.")(Links.jsonToLinks(GameRowRel))
+      val links = fields.mandatory("links")(Links.jsonToLinks(GameRowRel))
 
       // Split the validation into two as Scalaz' applicative builders aren't big enough.
       val left = (id |@| at |@| season |@| opponents |@| competition).tupled
@@ -141,4 +148,6 @@ object GameRow extends JsonConverters[GameRow] {
           GameRow(l._1, l._2, l._3, l._4, l._5, r._1, r._2, r._3, r._4, r._5)
       }
   }
+
+  implicit val ordering: SOrdering[GameRow] = SOrdering.by(gr => gr.at)
 }

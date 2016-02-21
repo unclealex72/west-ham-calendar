@@ -41,8 +41,14 @@ object DateTimeImplicits {
    */
   implicit val ord = Ordering.by((dt: DateTime) => dt.getMillis)
 
-  implicit val asJavaDate: DateTime => Date = dt => new Date(dt.getMillis)
-  implicit val asOptionalJavaDate: Option[DateTime] => Option[Date] = odt => odt map asJavaDate
+  implicit val asSharedDate: DateTime => SharedDate = dt => {
+    val offset = dt.getChronology.getZone.getOffset(dt) / 60000l
+    SharedDate(
+      dt.getYear, dt.getMonthOfYear, dt.getDayOfMonth, dt.getHourOfDay,
+      dt.getMinuteOfHour, dt.getSecondOfMinute, (offset / 60).toInt, Math.abs(offset % 60).toInt)
+  }
+
+  implicit val asOptionalSharedDate: Option[DateTime] => Option[SharedDate] = odt => odt.map(asSharedDate)
 
   implicit val convertFromJdbc: Timestamp => DateTime = t => JodaDateTime(t)
   implicit val convertToJdbc: DateTime => Timestamp = t => new Timestamp(t.getMillis)

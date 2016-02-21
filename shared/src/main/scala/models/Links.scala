@@ -16,6 +16,8 @@ case class Links[R <: Rel](private val links: Map[R, String] = Map.empty[R, Stri
 
   def withLink(rel: R, href: String) = Links(links + (rel -> href), _self)
 
+  def withLink(rel: R, ohref: Option[String]) = withLinks(ohref.map(rel -> _).toMap)
+
   def withLinks(moreLinks: Map[R, String]) = Links(links ++ moreLinks, _self)
 
   def self: Option[String] = _self
@@ -48,17 +50,17 @@ object Links extends JsonCodecs {
 
   def withLinks[R <: Rel](moreLinks: Map[R, String]) = Links[R]().withLinks(moreLinks)
 
+  def linkToJson(relhref: (String, String)): Js.Value =
+    Js.Obj(Map("rel" -> relhref._1, "href" -> relhref._2).mapValues(Js.Str).toSeq :_*)
+
   def linksToJson[R <: Rel](links: Links[R]): Js.Value = {
     val allLinks = links.links.toSeq.map(rh => rh._1.rel -> rh._2) ++ links.self.map("self" -> _)
-    val jsonLinks = allLinks.map { case (rel, href) =>
-      Js.Obj(Map("rel" -> rel, "href" -> href).mapValues(Js.Str).toSeq :_*)
-    }
-    Js.Arr(jsonLinks :_*)
+    jsArr(linkToJson)(allLinks)
   }
 
-  private def jsonToLink(value: Js.Value): ValidationNel[String, (String, String)] = value.jsObj { fields =>
-    (fields.mandatory("rel", "Cannot find a rel property for links")(_.jsStr) |@|
-      fields.mandatory("href", "Cannot find a href property for links")(_.jsStr)).tupled
+  private def jsonToLink(value: Js.Value): ValidationNel[String, (String, String)] = value.jsObj("Links") { fields =>
+    (fields.mandatory("rel")(_.jsStr) |@|
+      fields.mandatory("href")(_.jsStr)).tupled
   }
 
   def jsonToLinks[R <: Rel](f: String => Option[R])(value: Js.Value): ValidationNel[String, Links[R]] = {

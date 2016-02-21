@@ -15,7 +15,7 @@ GET     /entry                                 controllers.Application.entry
 # Seasons
 
 GET     /seasons                               controllers.Application.seasons
-GET     /seasons/:season/games                 controllers.Application.games(season: Int)
+GET     /seasons/:season/months                controllers.Application.months(season: Int)
 GET     /games/:gameId                         controllers.Application.game(gameId: Long)
 
 # Game attendence
@@ -33,7 +33,6 @@ GET     /games/:gameId/prioritypoints.pdf      controllers.PriorityPointsPdf.pri
 # Game location
 
 GET     /games/:gameId/location.html           controllers.Location.location(gameId: Long)
-GET     /games/:gameId/matchreport.html        controllers.Application.matchReport(gameId: Long)
 
 # Calendars
 GET     /calendars/:secretPayload/:attended/:location/:ty/calendar.ics   controllers.Calendar.searchSecure(secretPayload, attended, location, ty)

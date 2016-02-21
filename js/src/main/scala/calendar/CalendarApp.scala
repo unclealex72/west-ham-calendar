@@ -13,10 +13,10 @@ import scala.scalajs.js.annotation.JSExport
 object CalendarApp extends JSApp {
 
   override def main() {
-    val module = Angular.module("hammers-calendar")
+    val module = Angular.module("hammersCalendar")
 
     module
-      .controller[CalendarCtrl]
+      .controller[CalendarController]
       .factory[AjaxServiceFactory]
   }
 }

@@ -3,7 +3,7 @@ package controllers
 import dao.GameDao
 import models.EntryRel.{LOGOUT, LOGIN, SEASONS}
 import models.GameRow._
-import models.SeasonRel.GAMES
+import models.SeasonRel.MONTHS
 import models._
 import play.api.i18n.MessagesApi
 import play.api.mvc._
@@ -14,6 +14,7 @@ import upickle.default._
 import models.Entry._
 import models.Seasons._
 
+import scala.collection.SortedSet
 import scala.concurrent.ExecutionContext
 
 class Application(implicit injector: Injector) extends Secure with LinkFactories with JsonResults with Injectable {
@@ -39,10 +40,18 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
     Ok(views.html.proto())
   }
 
-  def games(season: Int) = UserAwareAction.async { implicit request =>
+  def months(season: Int) = UserAwareAction.async { implicit request =>
     jsonF(gameDao.getAllForSeason(season)) { games =>
       val includeAttended = request.identity.isDefined
-      Map("games" -> games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory)))
+      val gamesByMonth = games.groupBy { game =>
+        game.at.map { dt => (dt.getMonthOfYear, dt.getYear) }
+      }.toSeq.flatMap(monthGame => monthGame._1.map(monthYear => (monthYear._1, monthYear._2, monthGame._2)))
+      val months = gamesByMonth.map { mygs =>
+        val (month, year, games) = mygs
+        val gameRows = games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory))
+        Month(month, year, SortedSet.empty[GameRow] ++ gameRows)
+      }
+      Months(SortedSet.empty[Month] ++ months)
     }
   }
 
@@ -50,12 +59,6 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
     jsonFo(gameDao.findById(id)) { game =>
       val includeAttended = request.identity.isDefined
       gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory)(game)
-    }
-  }
-
-  def matchReport(gameId: Long) = Action.async {
-    FutureResult.foo(gameDao.findById(gameId)) { game =>
-      game.matchReport.map { matchReport => TemporaryRedirect(matchReport) }
     }
   }
 
@@ -78,9 +81,9 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
 
   def seasons() = UserAwareAction.async { implicit request =>
     jsonF(gameDao.getAllSeasons) { years =>
-      val seasons = years.toSeq.map { year =>
-        val seasonLinks = Links.withLink(GAMES.asInstanceOf[SeasonRel], routes.Application.games(year).absoluteURL())
-        Season(year, seasonLinks)
+      val seasons = years.foldLeft(SortedSet.empty[Season]) { (seasons, year) =>
+        val seasonLinks = Links.withLink(MONTHS.asInstanceOf[SeasonRel], routes.Application.months(year).absoluteURL())
+        seasons + Season(year, seasonLinks)
       }
       Seasons(seasons, Links.withSelf(routes.Application.seasons().absoluteURL()))
     }

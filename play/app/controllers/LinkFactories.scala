@@ -24,9 +24,12 @@ trait LinkFactories extends Secure with FutureResults {
 
   def gameRowLinksFactory(includeUpdates: Boolean)(implicit request: Request[_ <: AnyContent]): Game => Links[GameRowRel] = game => {
     val links = Links
-        .withSelf[GameRowRel](controllers.routes.Application.game(game.id).absoluteURL())
-        .withLink(GameRowRel.LOCATION, controllers.routes.Location.location(game.id).absoluteURL())
-      .withLink(GameRowRel.MATCH_REPORT, controllers.routes.Application.matchReport(game.id).absoluteURL())
+      .withSelf[GameRowRel](controllers.routes.Application.game(game.id).absoluteURL())
+      .withLink(GameRowRel.LOCATION, controllers.routes.Location.location(game.id).absoluteURL())
+      .withLink(GameRowRel.MATCH_REPORT, game.matchReport)
+      .withLink(GameRowRel.HOME_LOGO, game.homeTeamImageLink)
+      .withLink(GameRowRel.AWAY_LOGO, game.awayTeamImageLink)
+      .withLink(GameRowRel.COMPETITION_LOGO, game.competitionImageLink)
     if (includeUpdates) {
       links
         .withLink(ATTEND, controllers.routes.Update.attend(game.id).absoluteURL())
