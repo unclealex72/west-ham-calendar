@@ -68,25 +68,31 @@
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                     <h1 class="page-header">{{season}}/{{season + 1}}</h1>
                     <div ng-repeat="month in months">
-                        <h2 class="sub-header">{{month.date$1 | date:'MMMM'}}</h2>
-                        <div class="row" ng-repeat="game in month.games$1">
-                            <div class="col-xs-2">{{game.datePlayed$1}}</div>
+                        <h2 class="sub-header">{{month.date | date:'MMMM'}}</h2>
+                        <div class="row" ng-repeat="game in month.games">
+                            <div class="col-xs-2">{{game.datePlayed | customDate:'EEE dth, h:mm!a'}}</div>
                             <div class="competion-icon col-xs-2">
-                                <img ng-show="game.competitionLogo$1" class="competition" ng-src="{{game.competitionLogo$1}}" title="{{game.competition$1}}">
-                                <span ng-hide="game.competitionLogo$1">{{game.competition$1}}</span>
+                                <img ng-show="game.competitionLogo" class="competition" ng-src="{{game.competitionLogo}}" title="{{game.competition}}">
+                                <span ng-hide="game.competitionLogo">{{game.competition}}</span>
                             </div>
                             <div class="info details col-md-6 col-sm-6 col-xs-6">
-                                <span ng-hide="game.homeTeam$1">West Ham United</span>
-                                <span ng-show="game.homeTeam$1">{{game.homeTeam$1}}</span>
-                                <img class="homeTeam" ng-src="{{game.homeTeamLogo$1}}">
-                                <span class="home"><span class="westHam">{{game.homeScore$1}}</span></span>
+                                <span ng-hide="game.homeTeam">West Ham United</span>
+                                <span ng-show="game.homeTeam">{{game.homeTeam}}</span>
+                                <img class="homeTeam" ng-src="{{game.homeTeamLogo}}">
+                                <span class="home"><span class="westHam">{{game.homeScore}}</span></span>
                                 <span class="hyphen">-</span>
-                                <span class="away">{{game.awayScore$1}}</span>
-                                <img class="awayTeam" ng-src="{{game.awayTeamLogo$1}}">
-                                <span ng-hide="game.awayTeam$1">West Ham United</span>
-                                <span ng-show="game.awayTeam$1">{{game.awayTeam$1}}</span>
+                                <span class="away">{{game.awayScore}}</span>
+                                <img class="awayTeam" ng-src="{{game.awayTeamLogo}}">
+                                <span ng-hide="game.awayTeam">West Ham United</span>
+                                <span ng-show="game.awayTeam">{{game.awayTeam}}</span>
                             </div>
-                            <div class="col-xs-2">
+                            <div class="col-xs-1">
+                                <div ng-show="{{game.showAttended}}">
+                                    <a ng-show="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">Yes</a>
+                                    <a ng-hide="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">No</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-1">
                             Tickets
                             </div>
                         </div>

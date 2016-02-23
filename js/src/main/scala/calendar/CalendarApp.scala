@@ -18,5 +18,7 @@ object CalendarApp extends JSApp {
     module
       .controller[CalendarController]
       .factory[AjaxServiceFactory]
+      .factory[AttendanceServiceFactory]
+      .filter[CustomDateFilter]
   }
 }

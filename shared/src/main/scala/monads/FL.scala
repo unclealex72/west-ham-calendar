@@ -3,7 +3,6 @@ package monads
 import scala.concurrent.{ExecutionContext, Future}
 import scalaz._
 import scalaz.syntax.monad._
-
 /**
   * Monad compositions for Futures and Options.
   * Created by alex on 21/01/16.
@@ -33,4 +32,7 @@ trait FL {
 object FL extends FL {
 
   def apply[A](b: Result[A]): Future[List[A]] = b.run
+
+  def unit[A](b: Result[A])(implicit ec: ExecutionContext): Future[Unit] = b.run.map(_ => ())
+
 }
