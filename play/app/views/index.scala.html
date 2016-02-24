@@ -37,7 +37,7 @@
                         </li>
                     </ul>
                     <form class="navbar-form navbar-right">
-                        <input type="text" class="form-control" placeholder="Search...">
+                        <input type="text" class="form-control" placeholder="Search..." ng-model="search" ng-trim="true">
                     </form>
                 </div>
             </div>
@@ -67,9 +67,9 @@
                 </div>
                 <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
                     <h1 class="page-header">{{season}}/{{season + 1}}</h1>
-                    <div ng-repeat="month in months">
+                    <div ng-repeat="month in months | opponents:search">
                         <h2 class="sub-header">{{month.date | date:'MMMM'}}</h2>
-                        <div class="row" ng-repeat="game in month.games">
+                        <div class="row" ng-repeat="game in month.games | opponents:search">
                             <div class="col-xs-2">{{game.datePlayed | customDate:'EEE dth, h:mm!a'}}</div>
                             <div class="competion-icon col-xs-2">
                                 <img ng-show="game.competitionLogo" class="competition" ng-src="{{game.competitionLogo}}" title="{{game.competition}}">

@@ -20,5 +20,6 @@ object CalendarApp extends JSApp {
       .factory[AjaxServiceFactory]
       .factory[AttendanceServiceFactory]
       .filter[CustomDateFilter]
+      .filter[OpponentsFilter]
   }
 }

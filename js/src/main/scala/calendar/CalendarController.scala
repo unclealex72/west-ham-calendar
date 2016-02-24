@@ -66,9 +66,17 @@ trait CalendarScope extends Scope {
 }
 
 @ScalaJSDefined
+trait HasOpponents extends js.Object {
+  def hasOpponents(prefix: String): Boolean
+}
+
+@ScalaJSDefined
 class MonthView(
   var date: js.Date,
-  var games: js.Array[GameView]) extends js.Object
+  var games: js.Array[GameView]) extends js.Object with HasOpponents {
+
+  def hasOpponents(prefix: String): Boolean = games.exists(_.hasOpponents(prefix))
+}
 object MonthView {
   def apply(month: Month): MonthView = {
     val date = new js.Date(month.year - 1900, month.month - 1, 1)
@@ -83,6 +91,7 @@ class GameView(
                 var datePlayed: js.Date,
                 var competition: String,
                 var competitionLogo: js.UndefOr[String],
+                var opponents: String,
                 var homeTeam: js.UndefOr[String],
                 var homeScore: js.UndefOr[Int],
                 var homeTeamLogo: js.UndefOr[String],
@@ -91,7 +100,10 @@ class GameView(
                 var awayTeamLogo: js.UndefOr[String],
                 var attended: Boolean,
                 var showAttended: Boolean,
-                var attendedUrl: js.UndefOr[String]) extends js.Object
+                var attendedUrl: js.UndefOr[String]) extends js.Object with HasOpponents {
+
+  def hasOpponents(prefix: String): Boolean = opponents.toLowerCase.startsWith(prefix.toLowerCase)
+}
 object GameView {
   def apply(gameRow: GameRow, idx: Int): GameView = {
     val attendedUrl = gameRow.links(ATTEND).orElse(gameRow.links(UNATTEND))
@@ -100,6 +112,7 @@ object GameView {
       new js.Date(js.Date.parse(gameRow.at.toString)),
       gameRow.competition.name,
       gameRow.links(COMPETITION_LOGO).orUndefined,
+      gameRow.opponents,
       Some(gameRow.opponents).filter(_ => gameRow.location.isAway).orUndefined,
       gameRow.result.map(_.score.home).orUndefined,
       gameRow.links(HOME_LOGO).orUndefined,
