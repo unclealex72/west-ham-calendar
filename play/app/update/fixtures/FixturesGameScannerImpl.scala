@@ -67,7 +67,10 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
       competition <- logOnEmpty(Competition.apply(fixture.competitionName)).toList
       matchDate <- PossiblyYearlessDateParser.forSeason(season)("d MMMM HH:mm", "dd MMMM HH:mm").logFailures.find(fixture.matchDate).toList
       gameUpdateCommand <- toGameCommands(fixture, rootUrl, opponents, location, competition, matchDate, season)
-    } yield gameUpdateCommand
+    } yield {
+      logger.info(s"Found update $gameUpdateCommand")
+      gameUpdateCommand
+    }
   }
 
   def toGameCommands(fixture: Fixture, rootUrl: URI, opponents: String, location: Location, competition: Competition, matchDate: DateTime, season: Int)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {

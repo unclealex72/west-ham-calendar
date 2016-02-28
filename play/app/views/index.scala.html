@@ -10,38 +10,61 @@
             <!-- Bootstrap -->
         <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet">
 
-        <![endif]-->
     </head>
     <body ng-controller="CalendarController">
-        <nav class="navbar navbar-inverse navbar-fixed-top">
+        <!-- Fixed navbar -->
+        <header class="navbar navbar-default navbar-fixed-top navbar-inner">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-3" ng-click="isCollapsed = !isCollapsed">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">Calendar</a>
+                    <a class="navbar-brand visible-xs" href="#">Hammers Calendar</a>
                 </div>
-                <div id="navbar" class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#">Dashboard</a></li>
-                        <li><a href="#">Settings</a></li>
-                        <li><a href="#">Profile</a></li>
-                        <li>
-                            <a ng-href="{{authenticationLink}}">
-                                <span ng-show="user">Logout {{user}}</span>
-                                <span ng-hide="user">Login</span>
-                            </a>
+                <nav class="hidden-xs">
+                    <ul class="nav navbar-nav">
+                        <a href="#top" role="button" class="navbar-brand">
+                            Hammers Calendar
+                        </a>
+                        <li class="dropdown" uib-dropdown>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                            uib-dropdown-toggle aria-haspopup="true" aria-expanded="false">
+                                {{season}} <span class="caret"></span></a>
+                            <ul class="dropdown-menu" uib-dropdown-menu>
+                                <li ng-repeat="newSeason in seasons | orderBy:'-'">
+                                    <a href="#" ng-click="controller.changeSeason(newSeason)">{{newSeason}}</a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown" uib-dropdown>
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                            uib-dropdown-toggle aria-haspopup="true" aria-expanded="false">
+                                {{ticketType.label}} <span class="caret"></span></a>
+                            <ul class="dropdown-menu" uib-dropdown-menu>
+                                <li ng-repeat="newTicketType in ticketTypes | orderBy:'ordering'">
+                                    <a href="#" ng-click="controller.changeTicketType(newTicketType.key)">{{newTicketType.label}}</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
-                    <form class="navbar-form navbar-right">
-                        <input type="text" class="form-control" placeholder="Search..." ng-model="search" ng-trim="true">
-                    </form>
-                </div>
+                    <!--ul class="nav navbar-nav navbar-right">
+                        <li><a href="../navbar/">Default</a></li>
+                        <li><a href="../navbar-static-top/">Static top</a></li>
+                        <li class="active"><a href="./">Fixed top <span class="sr-only">(current)</span></a></li>
+                    </ul-->
+                </nav>
+                <nav class="visible-xs" uib-collapse="!isCollapsed">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li>
+                        <li><a href="#directives_small" ng-click="isCollapsed = !isCollapsed">Directives</a></li>
+                    </ul>
+                </nav>
             </div>
-        </nav>
+        </header>
+        <div class="header-placeholder"></div>
 
         <div class="container-fluid">
             <div class="row">
@@ -73,7 +96,10 @@
                                 </div>
                             </div>
                             <div class="col-xs-1">
-                            Tickets
+                                <span ng-show="{{game.ticketsDate}}">
+                                    {{game.ticketsDate | customDate:"dth MMM"}}
+                                    <a ng-show="{{game.ticketsUrl}}" target="_blank" href="{{game.ticketsUrl | jsonDecode}}">PDF</a>
+                                </span>
                             </div>
                         </div>
 
@@ -84,7 +110,9 @@
 
         <script src="@routes.Assets.at("lib/jquery/jquery.js")"></script>
         <script src="@routes.Assets.at("lib/angularjs/angular.js")"></script>
-        <script src="@routes.Assets.at("lib/bootstrap/dist/js/bootstrap.js")"></script>
+        <script src="@routes.Assets.at("lib/angularjs/angular-animate.js")"></script>
+        <script src="@routes.Assets.at("lib/angularjs/angular-route.js")"></script>
+        <script src="@routes.Assets.at("lib/angular-ui-bootstrap/ui-bootstrap.js")"></script>
 
         @playscalajs.html.scripts("js", "/assets")
 

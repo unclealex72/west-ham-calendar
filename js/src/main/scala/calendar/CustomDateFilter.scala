@@ -8,13 +8,14 @@ import scala.scalajs.js
   * Created by alex on 21/02/16.
   */
 @injectable("customDate")
-class CustomDateFilter(filterService: FilterService) extends Filter[js.Date] {
+class CustomDateFilter(filterService: FilterService) extends Filter[js.UndefOr[js.Date]] {
 
-  override def filter(date: js.Date): String = null
+  override def filter(oDate: js.UndefOr[js.Date]): String = filter(oDate, Seq.empty)
 
-  override def filter(date: js.Date, args: Seq[Any]): String = {
+  override def filter(oDate: js.UndefOr[js.Date], args: Seq[Any]): String = {
     val oFormat = args.headOption.filter(_.isInstanceOf[String]).map(_.asInstanceOf[String])
     val filteredResult = for {
+      date <- oDate.toOption
       format <- oFormat
     } yield {
       val day = date.getDate()

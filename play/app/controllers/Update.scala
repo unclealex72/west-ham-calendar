@@ -21,8 +21,12 @@
  */
 package controllers
 
+import dao.GameDao
+import dates.NowService
 import logging.RemoteStream
 import model.Game
+import models.Competition
+import models.Competition.FRIENDLY
 import models.GameRow._
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Concurrent
@@ -45,9 +49,11 @@ class Update(implicit injector: Injector) extends Secure with Secret with LinkFa
   val secret: SecretToken = inject[SecretToken]
   implicit val authorization: Auth = inject[Auth]
   val mainUpdateService: MainUpdateService = inject[MainUpdateService]
+  val gameDao: GameDao = inject[GameDao]
   val gameRowFactory: GameRowFactory = inject[GameRowFactory]
   val messagesApi: MessagesApi = inject[MessagesApi]
   val env: Env = inject[Env]
+  implicit val nowService: NowService = inject[NowService]
   implicit val ec: ExecutionContext = inject[ExecutionContext]
 
   /**
@@ -98,4 +104,54 @@ class Update(implicit injector: Injector) extends Secure with Secret with LinkFa
    */
   def unattend(gameId: Long) = attendOrUnattend(mainUpdateService.unattendGame, gameId)
 
+  def updateLogos(secretPayload: String) = Secret(secretPayload) {
+    def findLogos(games: List[Game]): (Map[Option[String], String], Map[Competition, String]) = {
+      val empty: (Map[Option[String], String], Map[Competition, String]) = (Map.empty, Map.empty)
+      games.foldLeft(empty) { (result, game) =>
+        val (logosByTeam, logosByCompetition) = result
+        val newCompetitionLogo = game.competitionImageLink.map { competitionLogo =>
+          game.competition -> competitionLogo
+        }.filterNot(_ => game.competition == FRIENDLY)
+        val newAwayLogo = game.awayTeamImageLink.map { awayTeamLogo =>
+          val awayTeam = if (game.location.isHome) Some(game.opponents) else None
+          awayTeam -> awayTeamLogo
+        }
+        val newHomeLogo = game.homeTeamImageLink.map { homeTeamLogo =>
+          val homeTeam = if (game.location.isAway) Some(game.opponents) else None
+          homeTeam -> homeTeamLogo
+        }
+        (logosByTeam ++ newAwayLogo ++ newHomeLogo, logosByCompetition ++ newCompetitionLogo)
+      }
+    }
+    Action.async { implicit request =>
+      gameDao.getAll.flatMap { games =>
+        val (teamLogos, competitionLogos) = findLogos(games)
+        val updatedGames = games.flatMap { game =>
+          def logo(original: Option[String], newLogo: Option[String]): Option[String] = (original, newLogo) match {
+            case (None, Some(logo)) => Some(logo)
+            case _ => None
+          }
+          val newCompetitionLogo = logo(game.competitionImageLink, competitionLogos.get(game.competition))
+          val teams: (Option[String], Option[String]) = (None, Some(game.opponents))
+          val (homeTeam, awayTeam) = if (game.location.isHome) teams else teams.swap
+          val newHomeLogo = logo(game.homeTeamImageLink, teamLogos.get(homeTeam))
+          val newAwayLogo = logo(game.awayTeamImageLink, teamLogos.get(awayTeam))
+          if (newCompetitionLogo.isDefined || newHomeLogo.isDefined || newAwayLogo.isDefined) {
+            Some(game.copy(
+              competitionImageLink = newCompetitionLogo.orElse(game.competitionImageLink),
+              homeTeamImageLink = newHomeLogo.orElse(game.homeTeamImageLink),
+              awayTeamImageLink = newAwayLogo.orElse(game.awayTeamImageLink)
+            ))
+          }
+          else {
+            None
+          }
+        }
+        val updates = updatedGames.foldLeft(Future.successful[Any](0)) { (result, game) =>
+          result.flatMap { _ => gameDao.store(game) }
+        }
+        updates.map { _ => Ok }
+      }
+    }
+  }
 }

@@ -13,7 +13,7 @@ import scala.scalajs.js.annotation.JSExport
 object CalendarApp extends JSApp {
 
   override def main() {
-    val module = Angular.module("hammersCalendar")
+    val module = Angular.module("hammersCalendar", Seq("ui.bootstrap", "ngAnimate"))
 
     module
       .controller[CalendarController]
@@ -21,5 +21,6 @@ object CalendarApp extends JSApp {
       .factory[AttendanceServiceFactory]
       .filter[CustomDateFilter]
       .filter[OpponentsFilter]
+      .filter[JsonDecodeFilter]
   }
 }

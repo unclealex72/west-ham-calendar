@@ -25,6 +25,7 @@ PUT     /games/:gameId/unattend                controllers.Update.unattend(gameI
 
 # Updates
 POST     /:secretPayload/update                controllers.Update.update(secretPayload)
+POST     /:secretPayload/updateLogos           controllers.Update.updateLogos(secretPayload)
 
 # Priority points form
 

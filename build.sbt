@@ -51,6 +51,7 @@ lazy val play = (project in file("play")).settings(
       "org.webjars.bower" % "bootstrap" % "3.3.6",
       "org.webjars" % "jquery" % "2.1.3",
       "org.webjars" % "angularjs" % "1.3.13",
+      "org.webjars" % "angular-ui-bootstrap" % "1.1.1-1",
       // test
       "org.hsqldb" % "hsqldb" % "2.3.3" % "test",
       "org.specs2" %% "specs2-core" % "3.7" % "test",
