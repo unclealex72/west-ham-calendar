@@ -7,7 +7,7 @@ import Scalaz._
 /**
  * Created by alex on 08/03/15.
  */
-case class FixturesResponse(fixtures: Seq[Fixture])
+case class FixturesResponse(fixtures: Seq[Fixture], isSuccess: Boolean)
 
 case class Fixture(
   matchDate: String,
@@ -52,7 +52,9 @@ object FixturesResponse extends JsonConverters[FixturesResponse] {
   }
 
   def deserialise(value: Js.Value): ValidationNel[String, FixturesResponse] = value.jsObj("FixturesResponse") { fields =>
-    fields.mandatory("resultList")(_.jsArr(jsonToFixture)).map(FixturesResponse(_))
+    val fixtures = fields.mandatory("resultList")(_.jsArr(jsonToFixture))
+    val isSuccess = fields.optionalDefault("isSuccess")(_.jsBool)(false)
+    (fixtures |@| isSuccess)(FixturesResponse(_, _))
   }
 
   def serialise(fixturesResponse: FixturesResponse): Js.Value = { Js.Null }

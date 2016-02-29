@@ -4,7 +4,7 @@ import java.net.URI
 
 import dates.{PossiblyYearlessDateParser, NowService}
 import html._
-import logging.{RemoteLogging, RemoteStream}
+import logging.{Fatal, RemoteLogging, RemoteStream}
 import model.GameKey
 import models.{GameResult, Score, Location, Competition}
 import models.Location.{AWAY, HOME}
@@ -21,7 +21,7 @@ import Scalaz._
 /**
  * Created by alex on 08/03/15.
  */
-class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient)(implicit ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging {
+class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient, fatal: Fatal)(implicit ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging {
 
   override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[List[GameUpdateCommand]] = {
     val currentYear = nowService.now.getYear
@@ -33,13 +33,14 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
 
     def downloadFixtures(yearToSearch: Int): Future[List[GameUpdateCommand]] = {
       val fixturesRequest = FixturesRequest(yearToSearch)
-      val fResponse = ws.url(rootUri.resolve("/API/Fixture/Fixtures-and-Result-Listing-API.aspx")).
+      val fixturesUri: URI = rootUri.resolve("/API/Fixture/Fixtures-and-Result-Listing-API.aspx")
+      val fResponse = ws.url(fixturesUri).
         withQueryString("t" -> Math.random.toString).
         withHeaders("Content-Type" -> "application/x-www-form-encoded").
         post(write(fixturesRequest))
       fResponse.flatMap { response =>
         def fail(strs: NonEmptyList[String]): Future[List[GameUpdateCommand]] = {
-          strs.toList.foreach(str => logger.error(str))
+          fatal.fail(strs.toList)
           Future.successful(List.empty)
         }
         def success(fixturesResponse: FixturesResponse): Future[List[GameUpdateCommand]] = {
@@ -55,7 +56,21 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
             }
           }
         }
-        read[ValidationNel[String, FixturesResponse]](response.body).fold(fail, success)
+        val responseStatus = response.status
+        val bodyDisjunction: \/[NonEmptyList[String], String] = if (responseStatus < 400) {
+          response.body.right
+        }
+        else {
+          NonEmptyList(s"Received $responseStatus ${response.statusText} from $fixturesUri").left
+        }
+        val fixturesDisjunction: \/[NonEmptyList[String], FixturesResponse] = for {
+          body <- bodyDisjunction
+          fixturesResponse <- read[\/[NonEmptyList[String], FixturesResponse]](body)
+        } yield fixturesResponse
+        fixturesDisjunction.ensure(NonEmptyList("Received a failed fixtures response from the server")) { fixturesResponse =>
+          // Allow the first year to fail as it could be the season for the latest year has yet to start.
+          fixturesResponse.isSuccess || currentYear == yearToSearch
+        }.fold(fail, success)
       }
     }
   }

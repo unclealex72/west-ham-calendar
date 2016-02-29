@@ -142,7 +142,9 @@ class GameView(
                 var showAttended: Boolean,
                 var attendedUrl: js.UndefOr[String],
                 var ticketsDate: js.UndefOr[js.Date],
-                var ticketsUrl: js.UndefOr[String]) extends js.Object with HasOpponents {
+                var ticketsUrl: js.UndefOr[String],
+                var matchReport: js.UndefOr[String],
+                var locationUrl: js.UndefOr[String]) extends js.Object with HasOpponents {
 
   def hasOpponents(prefix: String): Boolean = opponents.toLowerCase.startsWith(prefix.toLowerCase)
 }
@@ -169,6 +171,8 @@ object GameView {
         attendedUrl.isDefined,
         attendedUrl.orUndefined,
         ticketingInfo.map(_._1).map(sharedDateToJsDate).orUndefined,
-        ticketingInfo.flatMap(_._2).map(JSON.stringify(_)).orUndefined)
+        ticketingInfo.flatMap(_._2).map(JSON.stringify(_)).orUndefined,
+        gameRow.links(MATCH_REPORT).map(JSON.stringify(_)).orUndefined,
+        gameRow.links(LOCATION).map(JSON.stringify(_)).orUndefined)
   }
 }
