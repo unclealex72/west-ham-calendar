@@ -33,13 +33,6 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
     Ok(views.html.index())
   }
 
-  /**
-    * Redirect to the  homepage.
-    */
-  def proto = Action {
-    Ok(views.html.proto())
-  }
-
   def months(season: Int) = UserAwareAction.async { implicit request =>
     jsonF(gameDao.getAllForSeason(season)) { games =>
       val includeAttended = request.identity.isDefined
