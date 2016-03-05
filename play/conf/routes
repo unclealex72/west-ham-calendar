@@ -38,15 +38,16 @@ GET     /games/:gameId/location.html           controllers.Location.location(gam
 GET     /calendars/:secretPayload/:attended/:location/:ty/calendar.ics   controllers.Calendar.searchSecure(secretPayload, attended, location, ty)
 GET     /calendars/$mask<(free|busy)>/:location/:ty/calendar.ics   controllers.Calendar.search(mask, location, ty)
 
+# Errors
+
+GET     /fail   controllers.Errors.quickFail
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # FavIcon
 
 GET	/favicon.ico		    controllers.Assets.at(path="/public", file="favicon.ico")
-
-# Secure Social
-# Login page
 
 # Providers entry points
 

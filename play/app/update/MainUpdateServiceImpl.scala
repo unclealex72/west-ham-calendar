@@ -22,6 +22,8 @@
 
 package update
 
+import java.io.IOException
+
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dao.GameDao
 import dates.NowService
@@ -30,10 +32,13 @@ import logging.RemoteStream
 import model.Game
 import models.Location
 import Location.HOME
+import monads.FE
 import update.fixtures.FixturesGameScanner
 import update.tickets.TicketsGameScanner
 
 import scala.concurrent.{ExecutionContext, Future}
+import scalaz._
+import Scalaz._
 
 /**
  * The Class MainUpdateServiceImpl.
@@ -68,15 +73,17 @@ class MainUpdateServiceImpl(
    *
    * @throws IOException
    */
-  override def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Future[Int] = {
-    for {
-      allGames <- gameDao.getAll
-      latestSeason <- gameDao.getLatestSeason
-      newGames <- processUpdates("fixture", fixturesGameScanner, latestSeason, allGames)
-      _ <- processUpdates("ticket", ticketsGameScanner, latestSeason, allGames ++ newGames)
-    } yield {
-      lastUpdated at nowService.now
-      (allGames ++ newGames).size
+  override def processDatabaseUpdates(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Int]] = {
+    FE {
+      for {
+        allGames <- FE <~ gameDao.getAll
+        latestSeason <- FE <~ gameDao.getLatestSeason
+        newGames <- FE <~ processUpdates("fixture", fixturesGameScanner, latestSeason, allGames)
+        _ <- FE <~ processUpdates("ticket", ticketsGameScanner, latestSeason, allGames ++ newGames)
+      } yield {
+        lastUpdated at nowService.now
+        (allGames ++ newGames).size
+      }
     }
   }
 
@@ -92,17 +99,27 @@ class MainUpdateServiceImpl(
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def processUpdates(updatesType: String, scanner: GameScanner, latestSeason: Option[Int], allGames: List[Game])(implicit remoteStream: RemoteStream): Future[List[Game]] = {
+  def processUpdates(updatesType: String, scanner: GameScanner, latestSeason: Option[Int], allGames: List[Game])(implicit remoteStream: RemoteStream):
+  Future[\/[NonEmptyList[String], List[Game]]] = {
     logger info s"Scanning for $updatesType changes."
-    scanner.scan(latestSeason).flatMap { allGameUpdateCommands =>
-      val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
-      updatesByGameLocator.foldRight(Future.successful(List.empty[Game])) { (gl, fGames) =>
-        val (gameLocator, updates) = gl
-        fGames.flatMap { games =>
-          updateAndStoreGame(allGames, gameLocator, updates).map {
-            case Some(game) => game :: games
-            case _ => games
-          }
+    FE {
+      for {
+        allGameUpdateCommands <- FE <~ scanner.scan(latestSeason)
+        games <- FE <~ updateAndStoreGames(allGames, allGameUpdateCommands)
+      } yield {
+        games
+      }
+    }
+  }
+
+  def updateAndStoreGames(allGames: List[Game], allGameUpdateCommands: List[GameUpdateCommand]) = {
+    val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
+    updatesByGameLocator.foldRight(Future.successful(List.empty[Game])) { (gl, fGames) =>
+      val (gameLocator, updates) = gl
+      fGames.flatMap { games =>
+        updateAndStoreGame(allGames, gameLocator, updates).map {
+          case Some(game) => game :: games
+          case _ => games
         }
       }
     }

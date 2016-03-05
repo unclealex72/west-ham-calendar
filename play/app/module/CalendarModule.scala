@@ -38,6 +38,7 @@ import security.Authorised
 import security.Definitions.Auth
 import security.models.daos.{CredentialsStorage, PlayCacheCredentialsStorage}
 import services.{GameRowFactory, GameRowFactoryImpl}
+import sms.{SmsConfiguration, ClickatellSmsService, ClickatellData, SmsService}
 import update._
 import update.fixtures.{FixturesGameScanner, FixturesGameScannerImpl}
 import update.tickets.{TicketsGameScanner, TicketsGameScannerImpl}
@@ -92,6 +93,9 @@ class CalendarModule extends Module {
 
   // Logging
   bind[Fatal] toNonLazy injected[FatalImpl]
+  bind[FatalErrorDao] toNonLazy injected[SlickFatalErrorDao]
+  bind[SmsService] toNonLazy injected[ClickatellSmsService]
+  bind[SmsConfiguration] toNonLazy config.as[SmsConfiguration]("sms")
 
   // Security
   bind[Auth] toNonLazy {

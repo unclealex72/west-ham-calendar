@@ -27,6 +27,7 @@ import logging.RemoteStream
 import model.Game
 
 import scala.concurrent.Future
+import scalaz.{NonEmptyList, \/, ValidationNel}
 
 /**
  * The service used to combine reading game information from the web and
@@ -78,5 +79,5 @@ trait MainUpdateService {
     *
     * @return The number of games processed.
    */
-  def processDatabaseUpdates()(implicit remoteStream: RemoteStream): Future[Int]
+  def processDatabaseUpdates(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Int]]
 }

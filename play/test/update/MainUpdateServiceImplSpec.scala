@@ -33,18 +33,20 @@ import Location._
 import model.{Game, GameKey}
 import org.joda.time.DateTime
 import org.specs2.concurrent.ExecutionEnv
+import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import update.fixtures.FixturesGameScanner
 import update.tickets.TicketsGameScanner
 
 import scala.concurrent.Future
-
+import scalaz._
+import Scalaz._
 /**
  * @author alex
  *
  */
-class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRemoteStream {
+class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers with Mockito with SimpleRemoteStream {
 
   sequential
 
@@ -61,11 +63,11 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
       s.gameDao.getAll returns Future.successful(List.empty[Game])
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
       s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0))))
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand])
+        DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0))).right)
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand].right)
       val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(at = Some(September(5, 2013) at (15, 0)))
       s.gameDao.store(expectedStoredGame) returns Future.successful(expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates()(remoteStream) must be_==(1).await
+      s.mainUpdateService.processDatabaseUpdates(remoteStream) must be_\/-(1).await
       there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
@@ -81,14 +83,14 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
       s.gameDao.getAll returns Future.successful(List(existingStoredGame))
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
       s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        AttendenceUpdateCommand(SOUTHAMPTON, 34966)))
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand])
+        AttendenceUpdateCommand(SOUTHAMPTON, 34966)).right)
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand].right)
       val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0)),
         attendance = Some(34966)
       )
       s.gameDao.store(expectedStoredGame) returns Future.successful(expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
       there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
@@ -105,9 +107,9 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
       s.gameDao.getAll returns Future.successful(List(existingStoredGame))
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
       s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        AttendenceUpdateCommand(SOUTHAMPTON, 34966)))
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand])
-      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+        AttendenceUpdateCommand(SOUTHAMPTON, 34966)).right)
+      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand].right)
+      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
       there were no(s.gameDao).store(any[Game])(any[NowService])
       there was one(s.lastUpdated).at(s.now)
     }
@@ -122,15 +124,15 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
       )
       s.gameDao.getAll returns Future.successful(List(existingStoredGame))
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty.right)
       s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))))
+        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))).right)
       val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0)),
         seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
       )
       s.gameDao.store(expectedStoredGame)(s.nowService) returns Future.successful(expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
       there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
@@ -146,10 +148,10 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
       )
       s.gameDao.getAll returns Future.successful(List(existingStoredGame))
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty.right)
       s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))))
-      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))).right)
+      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
       there were no(s.gameDao).store(any[Game])(any[NowService])
       there was one(s.lastUpdated).at(s.now)
     }
@@ -162,9 +164,9 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
       s.gameDao.getAll returns Future.successful(List.empty)
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
       s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0))))
+        DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0))).right)
       s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))))
+        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))).right)
       val firstStoredGame = Game.gameKey(SOUTHAMPTON).copy(at = Some(September(5, 2013) at (15, 0)))
       val secondStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0)),
@@ -173,7 +175,7 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
       List(firstStoredGame, secondStoredGame) foreach { game =>
         s.gameDao.store(game) returns Future.successful(game)
       }
-      s.mainUpdateService.processDatabaseUpdates() must be_==(1).await
+      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
       there was one(s.gameDao).store(firstStoredGame)
       there was one(s.gameDao).store(secondStoredGame)
       there was one(s.lastUpdated).at(s.now)
@@ -186,10 +188,10 @@ class MainUpdateServiceImplTest extends Specification with Mockito with SimpleRe
       implicit val nowService = s.nowService
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
       s.gameDao.getAll returns Future.successful(List.empty)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty.right)
       s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))))
-      s.mainUpdateService.processDatabaseUpdates() must be_==(0).await
+        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))).right)
+      s.mainUpdateService.processDatabaseUpdates must be_\/-(0).await
       there were no(s.gameDao).store(any[Game])(any[NowService])
       there was one(s.lastUpdated).at(s.now)
     }

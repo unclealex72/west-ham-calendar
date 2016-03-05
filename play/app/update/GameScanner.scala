@@ -4,6 +4,7 @@ import html.GameUpdateCommand
 import logging.RemoteStream
 
 import scala.concurrent.Future
+import scalaz.{NonEmptyList, \/, ValidationNel}
 
 /**
  * The common interface for services that scan the web for details on West Ham games. Such details can either
@@ -14,5 +15,5 @@ import scala.concurrent.Future
  */
 trait GameScanner {
 
-  def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[List[GameUpdateCommand]]
+  def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]]
 }

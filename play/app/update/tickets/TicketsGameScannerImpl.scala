@@ -7,58 +7,62 @@ import html._
 import logging.{RemoteLogging, RemoteStream}
 import models.TicketType._
 import models._
-import monads.FL
+import monads.{FE, FL}
 import org.joda.time.DateTime
 import play.api.libs.ws.WSClient
-import update.WsClientImplicits._
-
+import update.WsBody
+import xml.NodeExtensions
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.{Elem, Node}
-import scalaz.Scalaz._
+import scalaz._
+import Scalaz._
 
 /**
  * Created by alex on 28/03/15.
  */
-class TicketsGameScannerImpl(val rootUri: URI, ws: WSClient)(implicit ec: ExecutionContext) extends TicketsGameScanner with RemoteLogging {
+class TicketsGameScannerImpl(val rootUri: URI, ws: WSClient)(implicit ec: ExecutionContext) extends TicketsGameScanner with RemoteLogging with WsBody with NodeExtensions {
 
-  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[List[GameUpdateCommand]] = {
+  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = FE {
     latestSeason match {
       case Some(ls) =>
-        val matchRegex = "(?:Home|Away)-Matches".r
         val ticketsUri = rootUri.resolve("/Tickets/Match-Tickets")
-        FL {
-          for {
-            ticketsXml <- FL <~ ws.url(ticketsUri).get().map { response => List(response.cleanXml) }
-            a <- FL <~ (ticketsXml \\ "a").toList
-            href <- FL <~ a.attributes.asAttrMap.get("href").toList if matchRegex.findFirstMatchIn(href).isDefined
-            updateCommands <- FL <~ createUpdateCommands(ls, rootUri.resolve(new URI(href)))
-          } yield updateCommands
-        }
+        for {
+          page <- FE <~ bodyXml(ticketsUri)(ws.url(_).get())
+          gameUpdateCommands <- FE <~ createUpdateCommandsForAllTicketsPage(ls, page)
+        } yield gameUpdateCommands
       case _ =>
         logger info "There are currently no games so tickets will not be searched for."
-        Future.successful(List.empty)
+        FE <~ List.empty
     }
   }
 
-  def createUpdateCommands(latestSeason: Int, uri: URI)(implicit remoteStream: RemoteStream): Future[List[GameUpdateCommand]] = {
-    logger info s"Found tickets page $uri"
-    ws.url(uri).get().map { response =>
-      val ticketPage = response.cleanXml
-      val ticketPageScanner = TicketPageScanner(ticketPage, latestSeason)(remoteStream)
-      ticketPageScanner.findWhen match {
-        case Some(dateTime) =>
-          logger info s"Found date $dateTime"
-          ticketPageScanner.scanTicketDates(dateTime).toList
-        case _ =>
-          logger warn s"Cannot find a date played at page $uri"
-          List.empty
+  def createUpdateCommandsForAllTicketsPage(latestSeason: Int, page: Elem)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = {
+    val matchRegex = "(?:Home|Away)-Matches".r
+    val ticketPageUrls = for {
+      a <- (page \\ "a").toList
+      href <- a.attributes.asAttrMap.get("href").toList if matchRegex.findFirstMatchIn(href).isDefined
+    } yield rootUri.resolve(new URI(href))
+    val empty: Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = Future.successful(List.empty.right)
+    ticketPageUrls.foldLeft(empty) {(existingGameUpdateCommands, ticketPageUrl) =>
+      FE {
+        for {
+         eguc <- FE <~ existingGameUpdateCommands
+         nguc <- FE <~ createUpdateCommandsForSinglePage(latestSeason, ticketPageUrl)
+        } yield eguc ++ nguc
       }
     }
   }
 
-  case class TicketPageScanner(pageXml: Elem, latestSeason: Int)(implicit remoteStream: RemoteStream) {
+  def createUpdateCommandsForSinglePage(latestSeason: Int, uri: URI)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = FE {
+    logger info s"Found tickets page $uri"
+    for {
+      page <- FE <~ bodyXml(uri)(ws.url(_).get())
+      ticketPageScanner <- FE <~ TicketPageScanner(page, latestSeason)(remoteStream)
+      when <- FE <~ ticketPageScanner.findWhen.toRightDisjunction(NonEmptyList(s"Cannot find a date played at page $uri"))
+    } yield ticketPageScanner.scanTicketDates(when).toList
+  }
 
-    import NodeImplicits._
+  case class TicketPageScanner(pageXml: Elem, latestSeason: Int)(implicit remoteStream: RemoteStream) {
 
     // look for <div class='matchDate'>Saturday 4 April 15:00</div>
     def findWhen: Option[DateTime] = {
@@ -89,17 +93,6 @@ class TicketsGameScannerImpl(val rootUri: URI, ws: WSClient)(implicit ec: Execut
           case GeneralSaleTicketType => GeneralSaleTicketsUpdateCommand.apply
         }
         updateCommandFactory(gameLocator, ticketSellingDate.withHourOfDay(9))
-      }
-    }
-
-    object NodeImplicits {
-
-      implicit class NodeHasAttribute(node: Node) {
-        def hasClass(value: String) = hasAttr("class", value)
-
-        def hasAttr(name: String, value: String): Boolean = node.attributes.asAttrMap.get(name).contains(value)
-
-        def trimmed: String = node.text.trim
       }
     }
   }

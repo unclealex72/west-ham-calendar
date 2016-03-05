@@ -23,7 +23,7 @@ package controllers
 
 import dao.GameDao
 import dates.NowService
-import logging.RemoteStream
+import logging.{Fatal, RemoteStream}
 import model.Game
 import models.Competition
 import models.Competition.FRIENDLY
@@ -38,7 +38,8 @@ import update.MainUpdateService
 
 import scala.concurrent.{Future, ExecutionContext}
 import scala.util.Failure
-
+import scalaz._
+import Scalaz._
 
 /**
  * @author alex
@@ -53,6 +54,7 @@ class Update(implicit injector: Injector) extends Secure with Secret with LinkFa
   val gameRowFactory: GameRowFactory = inject[GameRowFactory]
   val messagesApi: MessagesApi = inject[MessagesApi]
   val env: Env = inject[Env]
+  val fatal: Fatal = inject[Fatal]
   implicit val nowService: NowService = inject[NowService]
   implicit val ec: ExecutionContext = inject[ExecutionContext]
 
@@ -68,10 +70,14 @@ class Update(implicit injector: Injector) extends Secure with Secret with LinkFa
           channel.push(message)
         }
       }
-      mainUpdateService.processDatabaseUpdates.map { gameCount =>
+      mainUpdateService.processDatabaseUpdates.map {
+        case \/-(gameCount) =>
         channel.push(s"There are now $gameCount games.\n")
+        case -\/(errors) =>
+          fatal.fail(errors)
       }.andThen {
         case Failure(t) =>
+          fatal.fail("Updating all games failed", Some(t))
           logger.error("Updating all games failed.", t)
           remoteStream.log("Updating all games failed.", Some(t))
       }.andThen {

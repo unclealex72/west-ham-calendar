@@ -105,7 +105,7 @@ class CalendarFactoryImplSpec extends Specification with Mockito {
         opponents = "Them",
         dateTime = expectedPeriod._1,
         duration = expectedPeriod._2,
-        result = Some("4-0"),
+        result = Some("4 - 0"),
         attendence = Some(100),
         matchReport = Some("report"),
         televisionChannel = Some("TV"),

@@ -1,6 +1,6 @@
 package update.fixtures
 
-import json.JsonConverters
+import json.{JsonDeserialisers, JsonConverters}
 import upickle.Js
 import scalaz._
 import Scalaz._
@@ -27,7 +27,7 @@ case class Fixture(
 
 }
 
-object FixturesResponse extends JsonConverters[FixturesResponse] {
+object FixturesResponse extends JsonDeserialisers[FixturesResponse] {
 
   def jsonToFixture(value: Js.Value): ValidationNel[String, Fixture] = value.jsObj("Fixture") { fields =>
     val matchDate = fields.mandatory("MatchDate")(_.jsStr)
@@ -56,6 +56,4 @@ object FixturesResponse extends JsonConverters[FixturesResponse] {
     val isSuccess = fields.optionalDefault("isSuccess")(_.jsBool)(false)
     (fixtures |@| isSuccess)(FixturesResponse(_, _))
   }
-
-  def serialise(fixturesResponse: FixturesResponse): Js.Value = { Js.Null }
 }

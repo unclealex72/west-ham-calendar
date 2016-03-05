@@ -8,75 +8,85 @@ import logging.{Fatal, RemoteLogging, RemoteStream}
 import model.GameKey
 import models.{GameResult, Score, Location, Competition}
 import models.Location.{AWAY, HOME}
+import monads.FE
 import org.joda.time.DateTime
 import play.api.libs.ws.WSClient
-import update.WsClientImplicits._
+import update.WsBody
 import upickle.default._
 import FixturesRequest._
 import FixturesResponse._
+import xml.NodeExtensions
 import scala.concurrent.{ExecutionContext, Future}
+import scala.xml.Elem
+import scala.xml.{Node => XmlNode}
 import scalaz._
 import Scalaz._
-
 /**
  * Created by alex on 08/03/15.
  */
-class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient, fatal: Fatal)(implicit ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging {
+class FixturesGameScannerImpl(rootUri: URI, ws: WSClient)(implicit ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging with WsBody with NodeExtensions {
 
-  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[List[GameUpdateCommand]] = {
-    val currentYear = nowService.now.getYear
-    val seasonsDownloader = SeasonsDownloader(currentYear)(remoteStream)
-    seasonsDownloader.downloadFixtures(currentYear)
+  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = {
+    val fixturesUri = rootUri.resolve("/Fixtures/First-Team/Fixture-and-Results")
+    FE {
+      for {
+        page <- FE <~ bodyXml(fixturesUri)(uri => ws.url(uri).get())
+        seasons <- FE <~ listSeasons(page)
+        gameUpdateCommands <- FE <~ downloadFixtures(seasons)
+      } yield gameUpdateCommands.toList
+    }
   }
 
-  case class SeasonsDownloader(val currentYear: Int)(implicit val remoteStream: RemoteStream) {
+  def listSeasons(page: Elem)(implicit remoteStream: RemoteStream): \/[NonEmptyList[String], Seq[FixturesSeason]] = {
+    def parseSeasons(div: XmlNode): \/[NonEmptyList[String], Seq[FixturesSeason]] = {
+      val empty: Disjunction[NonEmptyList[String], Seq[FixturesSeason]] = List.empty.right
+      (div \\ "option").foldLeft(empty) { (seasons, option) =>
+        option.attribute("value").toSeq.flatten[XmlNode].headOption.map(_.text.trim) match {
+          case Some(season) => for {
+            ss <- seasons
+            i <- season.parseInt.disjunction.leftMap(_ => NonEmptyList(s"Cannot parse $season as a season"))
+          } yield ss :+ FixturesSeason(i)
+          case None => seasons
+        }
+      }
+    }
+    val possiblyEmptySeasons = for {
+      div <- (page \\ "div").find(_.hasId("seasonList")).toRightDisjunction(NonEmptyList("Cannot find a seasonList wrapper"))
+      seasons <- parseSeasons(div)
+    } yield seasons
+    possiblyEmptySeasons.ensure(NonEmptyList("Cannot find any seasons on the fixtures page"))(_.nonEmpty)
+  }
 
-    def downloadFixtures(yearToSearch: Int): Future[List[GameUpdateCommand]] = {
-      val fixturesRequest = FixturesRequest(yearToSearch)
-      val fixturesUri: URI = rootUri.resolve("/API/Fixture/Fixtures-and-Result-Listing-API.aspx")
-      val fResponse = ws.url(fixturesUri).
-        withQueryString("t" -> Math.random.toString).
-        withHeaders("Content-Type" -> "application/x-www-form-encoded").
-        post(write(fixturesRequest))
-      fResponse.flatMap { response =>
-        def fail(strs: NonEmptyList[String]): Future[List[GameUpdateCommand]] = {
-          fatal.fail(strs.toList)
-          Future.successful(List.empty)
-        }
-        def success(fixturesResponse: FixturesResponse): Future[List[GameUpdateCommand]] = {
-          val gameUpdateCommands = fixturesResponse.fixtures.flatMap(fx => toGameUpdateCommands(fx, rootUri, yearToSearch)).toList
-          if (gameUpdateCommands.isEmpty && currentYear == yearToSearch) {
-            downloadFixtures(yearToSearch - 1)
-          } else if (gameUpdateCommands.isEmpty) {
-            Future.successful(gameUpdateCommands)
-          }
-          else {
-            downloadFixtures(yearToSearch - 1).map {
-              gameUpdateCommands ::: _
-            }
-          }
-        }
-        val responseStatus = response.status
-        val bodyDisjunction: \/[NonEmptyList[String], String] = if (responseStatus < 400) {
-          response.body.right
-        }
-        else {
-          NonEmptyList(s"Received $responseStatus ${response.statusText} from $fixturesUri").left
-        }
-        val fixturesDisjunction: \/[NonEmptyList[String], FixturesResponse] = for {
-          body <- bodyDisjunction
-          fixturesResponse <- read[\/[NonEmptyList[String], FixturesResponse]](body)
-        } yield fixturesResponse
-        fixturesDisjunction.ensure(NonEmptyList("Received a failed fixtures response from the server")) { fixturesResponse =>
-          // Allow the first year to fail as it could be the season for the latest year has yet to start.
-          fixturesResponse.isSuccess || currentYear == yearToSearch
-        }.fold(fail, success)
+  def downloadFixtures(seasons: Seq[FixturesSeason])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
+    val empty: Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = Future.successful(Seq.empty.right)
+    seasons.foldLeft(empty){ (gameUpdateCommands, season) =>
+      FE {
+        for {
+          existingGameUpdateCommands <- FE <~ gameUpdateCommands
+          newGameUpdateCommands <- FE <~ downloadFixturesForSeason(season)
+        } yield existingGameUpdateCommands ++ newGameUpdateCommands
       }
     }
   }
 
+  def downloadFixturesForSeason(season: FixturesSeason)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
+    val fixturesRequest = FixturesRequest(season.yearFromHtml)
+    val fixturesUri: URI = rootUri.resolve("/API/Fixture/Fixtures-and-Result-Listing-API.aspx")
+    FE {
+      for {
+        fixturesResponse <- FE <~ bodyJson[FixturesResponse](fixturesUri) {
+          ws.url(_).
+            withQueryString("t" -> Math.random.toString).
+            withHeaders("Content-Type" -> "application/x-www-form-encoded").
+            post(write(fixturesRequest))
+        }.map(_.ensure(NonEmptyList(s"Did not get a valid fixtures response for season ${season.actualYear}"))(_.isSuccess))
+
+      } yield fixturesResponse.fixtures.flatMap(fx => toGameUpdateCommands(fx, rootUri, season.actualYear)).toList
+    }
+  }
+
   def toGameUpdateCommands(fixture: Fixture, rootUrl: URI, season: Int)
-                          (implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
+                          (implicit remoteStream: RemoteStream): Seq[GameUpdateCommand] = {
     val (opponents, location) = if (fixture.home) (fixture.awayTeam, HOME) else (fixture.homeTeam, AWAY)
     for {
       competition <- logOnEmpty(Competition.apply(fixture.competitionName)).toList
@@ -88,7 +98,7 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
     }
   }
 
-  def toGameCommands(fixture: Fixture, rootUrl: URI, opponents: String, location: Location, competition: Competition, matchDate: DateTime, season: Int)(implicit remoteStream: RemoteStream): List[GameUpdateCommand] = {
+  def toGameCommands(fixture: Fixture, rootUrl: URI, opponents: String, location: Location, competition: Competition, matchDate: DateTime, season: Int)(implicit remoteStream: RemoteStream): Seq[GameUpdateCommand] = {
     val locator: GameLocator = GameKeyLocator(GameKey(competition, location, opponents, season))
     val datePlayedUpdateCommand = Some(DatePlayedUpdateCommand(locator, matchDate))
     def isNeitherEmptyNorNull(str: String): Option[String] = Option(str.trim).filterNot(_.isEmpty)
@@ -132,7 +142,15 @@ class FixturesGameScannerImpl(rootUri: URI, nowService: NowService, ws: WSClient
           gameUpdater(absoluteUrl)
         }
     }
-    (List(datePlayedUpdateCommand, resultUpdateCommand, matchReportUpdateCommand) ++ logoUpdateCommands).flatten
+    (Seq(datePlayedUpdateCommand, resultUpdateCommand, matchReportUpdateCommand) ++ logoUpdateCommands).flatten
   }
 
+  // A case class to hold seasons from the top level fixture page. For some reason these are sometimes single figure numbers
+  // that need 2000 to be added to them.
+  case class FixturesSeason(yearFromHtml: Int, actualYear: Int)
+
+  object FixturesSeason {
+    def apply(yearFromHtml: Int): FixturesSeason =
+      FixturesSeason(yearFromHtml, if (yearFromHtml < 2000) yearFromHtml + 2000 else yearFromHtml)
+  }
 }

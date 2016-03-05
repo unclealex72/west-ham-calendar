@@ -17,17 +17,21 @@ import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
 import org.specs2.concurrent.ExecutionEnv
+import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.mutable.Specification
 import org.specs2.specification._
 import play.api.libs.ws.ning.NingWSClient
 import upickle.default._
+
+import scalaz._
+import Scalaz._
 
 import scala.io.Source
 
 /**
  * Created by alex on 28/03/15.
  */
-class FixturesGameScannerTest extends Specification with StrictLogging {
+class FixturesGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging {
 
 
   "The fixtures game scanner" should {
@@ -36,9 +40,9 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
       val nowService: NowService = NowService(December(25, 2015))
       implicit val ee: ExecutionEnv = ExecutionEnv.fromGlobalExecutionContext
       val wsClient = new NingWSClient(new AsyncHttpClientConfig.Builder().build())
-      val fixturesGameScanner = new FixturesGameScannerImpl(new URI(s"http://localhost:$port"), nowService, wsClient)
+      val fixturesGameScanner = new FixturesGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
       val gameCommands = fixturesGameScanner.scan(Some(2014))(remoteStream)
-      gameCommands must containTheSameElementsAs(Seq[GameUpdateCommand](
+      gameCommands must be_\/-(containTheSameElementsAs(Seq[GameUpdateCommand](
         DatePlayedUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Tottenham Hotspur",2014)), August(16,2014) at (15,0)),
         ResultUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Tottenham Hotspur", 2014)), GameResult(Score(0, 1))),
         MatchReportUpdateCommand(GameKeyLocator(GameKey(PREM,HOME,"Tottenham Hotspur", 2014)), s"http://localhost:$port/Fixtures/First-Team/Fixture-and-Results/Season-2014-2015/2014-August/West-Ham-United-vs-Tottenham-Hotspur"),
@@ -287,7 +291,7 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
         HomeTeamImageLinkCommand(GameKeyLocator(GameKey(PREM,AWAY,"Newcastle United",2014)),s"http://localhost:$port/getmedia/9d36c5ee-3963-43c6-9daa-54d3b230c99e/Newcastle.png.aspx"),
         AwayTeamImageLinkCommand(GameKeyLocator(GameKey(PREM,AWAY,"Newcastle United",2014)),s"http://localhost:$port/getmedia/939f0956-418a-4b86-be9e-6a3908ad7dc7/WestHam.png.aspx"),
         CompetitionImageLinkCommand(GameKeyLocator(GameKey(PREM,AWAY,"Newcastle United",2014)),"https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/barclays%20premier%20league/barclays-premier-league.png")
-      )).await
+      ))).await
     }
   }
 
@@ -297,11 +301,7 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
       val server = new Server(0)
       val handler: Handler = new AbstractHandler {
         override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Unit = {
-          if ("POST" == request.getMethod) {
-            val body = Source.fromInputStream(request.getInputStream).mkString
-            val fixturesRequest = read[FixturesRequest](body)
-            val season = fixturesRequest.season
-            val path = s"html${request.getPathInfo}.$season.json"
+          def loadResource(path: String): Unit = {
             Option(classOf[ServerContext].getClassLoader.getResourceAsStream(path)) match {
               case Some(in) =>
                 logger.info(s"Loading $path")
@@ -309,14 +309,31 @@ class FixturesGameScannerTest extends Specification with StrictLogging {
                 val writer: PrintWriter = response.getWriter
                 writer.println(jsonResponse)
                 writer.close()
-              case _ => {
+              case _ =>
                 logger.error(s"Cound not find a resource at $path")
                 response.sendError(HttpStatus.NOT_FOUND_404)
-              }
             }
           }
+          if ("POST" == request.getMethod) {
+            val body = Source.fromInputStream(request.getInputStream).mkString
+            logger.info(s"Received body $body")
+            read[ValidationNel[String, FixturesRequest]](body) match {
+              case Success(fixturesRequest) =>
+                val season = fixturesRequest.season
+                val path = s"html${request.getPathInfo}.$season.json"
+                loadResource(path)
+              case Failure(msgs) =>
+                logger.error(s"Could not parse $body")
+                msgs.foreach(msg => logger.error(msg))
+                response.sendError(HttpStatus.BAD_REQUEST_400)
+            }
+          }
+          else if ("GET" == request.getMethod && "/Fixtures/First-Team/Fixture-and-Results" == request.getPathInfo) {
+            val path = "html/fixtures-and-results.html"
+            loadResource(path)
+          }
           else {
-            response.sendError(HttpStatus.METHOD_NOT_ALLOWED_405)
+            response.sendError(HttpStatus.NOT_FOUND_404)
           }
         }
       }

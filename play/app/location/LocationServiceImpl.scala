@@ -12,7 +12,6 @@ import play.api.libs.ws.{WSResponse, WSClient}
 import scala.concurrent._
 import scalaz.Scalaz._
 import scalaz._
-import update.WsClientImplicits._
 
 /**
  * The default implementation of LocationService.

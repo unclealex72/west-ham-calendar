@@ -13,6 +13,7 @@ import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
 import org.specs2.concurrent.ExecutionEnv
+import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.specification._
@@ -24,7 +25,7 @@ import scala.io.Source
 /**
  * Created by alex on 28/03/15.
  */
-class TicketsGameScannerTest extends Specification with StrictLogging with Mockito with SimpleRemoteStream {
+class TicketsGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging with Mockito with SimpleRemoteStream {
 
 
   "The tickets game scanner" should {
@@ -33,12 +34,12 @@ class TicketsGameScannerTest extends Specification with StrictLogging with Mocki
       val wsClient = new NingWSClient(new AsyncHttpClientConfig.Builder().build())
 
       val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
-      val gameUpdateCommands: Future[List[GameUpdateCommand]] = ticketsGameScanner.scan(Some(2014))
+      val gameUpdateCommands = ticketsGameScanner.scan(Some(2014))
       val arsenal = DatePlayedLocator(March(14, 2015) at 3 pm)
       val sunderland = DatePlayedLocator(March(21, 2015) at (17, 30))
       val leicester = DatePlayedLocator(April(4, 2015) at 3 pm)
       var stoke = DatePlayedLocator(April(11, 2015) at 3 pm)
-      gameUpdateCommands must containTheSameElementsAs(Seq[GameUpdateCommand](
+      gameUpdateCommands must be_\/-(containTheSameElementsAs(Seq[GameUpdateCommand](
         BondHolderTicketsUpdateCommand(arsenal, February(12, 2015) at 9 am),
         PriorityPointTicketsUpdateCommand(arsenal, February(11, 2015) at 9 am),
         SeasonTicketsUpdateCommand(arsenal, February(14, 2015) at 9 am),
@@ -57,7 +58,7 @@ class TicketsGameScannerTest extends Specification with StrictLogging with Mocki
 
         SeasonTicketsUpdateCommand(stoke, March(2, 2015) at 9 am),
         AcademyTicketsUpdateCommand(stoke, February(24, 2015) at 9 am),
-        GeneralSaleTicketsUpdateCommand(stoke, March(3, 2015) at 9 am))).await
+        GeneralSaleTicketsUpdateCommand(stoke, March(3, 2015) at 9 am)))).await
     }
   } 
   

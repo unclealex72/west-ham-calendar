@@ -1,10 +1,11 @@
 package models
 
 import enumeratum.{Enum, EnumEntry}
-import json.JsonCodecs
+import json.{JsonDeserialiser, JsonSerialiser}
 import upickle.Js
+
+import scalaz.Scalaz._
 import scalaz._
-import Scalaz._
 
 /**
   * Type safe links object
@@ -42,7 +43,7 @@ trait RelEnum[R <: Rel] extends Enum[R] with (String => Option[R]) {
   def apply(rel: String): Option[R] = withNameOption(rel)
 }
 
-object Links extends JsonCodecs {
+object Links extends JsonSerialiser with JsonDeserialiser {
 
   def withSelf[R <: Rel](href: String) = Links[R]().withSelf(href)
 
