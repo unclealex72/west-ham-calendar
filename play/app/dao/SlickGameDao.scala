@@ -166,7 +166,7 @@ class SlickGameDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: Exec
     Seq[SearchOption](attendedSearchOption, locationSearchOption, gameOrTicketSearchOption).foldLeft(games.asInstanceOf[Query[TGame, Game, Seq]]) {
       (q, so) => so match {
         case AttendedSearchOption.ATTENDED => q.filter(_.attended === true)
-        case AttendedSearchOption.UNATTENDED => q.filter(_.attended === false)
+        case AttendedSearchOption.UNATTENDED => q.filterNot(_.attended === true)
         case LocationSearchOption.HOME =>
           val home: Location = Location.HOME
           q.filter(_.location === home)
