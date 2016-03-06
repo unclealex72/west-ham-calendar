@@ -1,6 +1,6 @@
 package controllers
 
-import model.Game
+import model.{FatalError, Game}
 import models.GameRowRel._
 import models.TicketType.PriorityPointTicketType
 import models._
@@ -9,7 +9,7 @@ import play.api.mvc.{AnyContent, Request}
 /**
  * Created by alex on 13/02/15.
  */
-trait LinkFactories extends Secure with FutureResults {
+trait LinkFactories extends Secure with Secret with FutureResults {
 
   def ticketLinksFactory(implicit request: Request[_ <: AnyContent]): Game => TicketType => Links[TicketingInformationRel] = game => ticketType => {
     secureLinks(game, Links[TicketingInformationRel]()) { links =>
@@ -41,6 +41,10 @@ trait LinkFactories extends Secure with FutureResults {
     else {
       links
     }
+  }
+
+  def fatalErrorReportLinksFactory(implicit request: Request[_ <: AnyContent]): FatalError => Links[FatalErrorReportRel] = fatalError => {
+    Links.withLink(FatalErrorReportRel.MESSAGE, routes.Errors.message(secret.token, fatalError.id).absoluteURL())
   }
 
   def secureLinks[R <: Rel](game: Game, links: Links[R])(f: Links[R] => Links[R])(implicit request: Request[_ <: AnyContent]): Links[R] = {

@@ -22,6 +22,7 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
   implicit val authorization: Auth = inject[Auth]
   val gameDao: GameDao = inject[GameDao]
   val gameRowFactory: GameRowFactory = inject[GameRowFactory]
+  val secret: SecretToken = inject[SecretToken]
   val messagesApi: MessagesApi = inject[MessagesApi]
   val env: Env = inject[Env]
   implicit val ec: ExecutionContext = inject[ExecutionContext]

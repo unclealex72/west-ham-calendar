@@ -24,7 +24,12 @@ package dates
 import java.util.Date
 
 import org.joda.time.chrono.ISOChronology
+import org.joda.time.format.ISODateTimeFormat
 import org.joda.time.{DateTime => JDateTime, DateTimeZone}
+
+import scalaz.Scalaz._
+import scalaz._
+
 /**
  * A companion object for Joda DateTime that ensures all created dates have the correct time zone and chronology.
   *
@@ -52,4 +57,13 @@ object JodaDateTime {
    * Create a new date time with the correct chronology.
    */
   def apply(d: Date): JDateTime = new JDateTime(d).withChronology(DEFAULT_CHRONOLOGY)
+
+  def apply(sd: SharedDate): JDateTime = apply(sd.toString).getOrElse(null)
+
+  def apply(str: String): ValidationNel[String, JDateTime] = try {
+    ISODateTimeFormat.dateTimeNoMillis().withChronology(DEFAULT_CHRONOLOGY).parseDateTime(str).successNel
+  }
+  catch {
+    case e: Exception => e.getMessage.failureNel
+  }
 }

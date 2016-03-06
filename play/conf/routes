@@ -40,7 +40,9 @@ GET     /calendars/$mask<(free|busy)>/:location/:ty/calendar.ics   controllers.C
 
 # Errors
 
-GET     /fail   controllers.Errors.quickFail
+# GET     /fail   controllers.Errors.quickFail
+GET     /:secretPayload/fatal/:id/message      controllers.Errors.message(secretPayload, id: Long)
+GET     /:secretPayload/fatal                  controllers.Errors.fatalErrors(secretPayload)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

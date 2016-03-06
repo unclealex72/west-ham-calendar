@@ -24,8 +24,8 @@ package controllers
 import dao.GameDao
 import dates.NowService
 import logging.{Fatal, RemoteStream}
-import model.Game
-import models.Competition
+import model.{FatalError, Game}
+import models.{FatalErrorReportRel, Competition}
 import models.Competition.FRIENDLY
 import models.GameRow._
 import play.api.i18n.MessagesApi
@@ -70,14 +70,15 @@ class Update(implicit injector: Injector) extends Secure with Secret with LinkFa
           channel.push(message)
         }
       }
+      val linkBuilder: FatalError => String = fe => fatalErrorReportLinksFactory(request)(fe).required(FatalErrorReportRel.MESSAGE)
       mainUpdateService.processDatabaseUpdates.map {
         case \/-(gameCount) =>
         channel.push(s"There are now $gameCount games.\n")
         case -\/(errors) =>
-          fatal.fail(errors)
+          fatal.fail(errors, linkBuilder)
       }.andThen {
         case Failure(t) =>
-          fatal.fail("Updating all games failed", Some(t))
+          fatal.fail("Updating all games failed", t, linkBuilder)
           logger.error("Updating all games failed.", t)
           remoteStream.log("Updating all games failed.", Some(t))
       }.andThen {

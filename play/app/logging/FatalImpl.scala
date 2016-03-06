@@ -17,11 +17,11 @@ import Scalaz._
   */
 class FatalImpl(val ws: WSClient, val fatalErrorDao: FatalErrorDao, val nowService: NowService, val smsService: SmsService)(implicit ec: ExecutionContext) extends Fatal with RemoteLogging {
 
-  override def fail(errors: NonEmptyList[String], optionalException: Option[Throwable])(implicit remoteStream: RemoteStream): Unit = {
+  override def fail(errors: NonEmptyList[String], optionalException: Option[Throwable], optionalLinkBuilder: Option[FatalError => String])(implicit remoteStream: RemoteStream): Unit = {
     log(errors, optionalException)
     for {
-      id <- store(errors, optionalException)
-      _ <- sms(id)
+      fatalError <- store(errors, optionalException)
+      _ <- sms(fatalError, optionalLinkBuilder)
     } yield {}
   }
 
@@ -40,7 +40,7 @@ class FatalImpl(val ws: WSClient, val fatalErrorDao: FatalErrorDao, val nowServi
     }
   }
 
-  def store(errors: NonEmptyList[String], optionalException: Option[Throwable]): Future[Long] = {
+  def store(errors: NonEmptyList[String], optionalException: Option[Throwable]): Future[FatalError] = {
     val exceptionStr = optionalException.map { e =>
       val stringWriter = new StringWriter
       e.printStackTrace(new PrintWriter(stringWriter))
@@ -48,10 +48,11 @@ class FatalImpl(val ws: WSClient, val fatalErrorDao: FatalErrorDao, val nowServi
     }
     val message = (errors.toList ++ exceptionStr).mkString("\n")
     val fatalError = FatalError(0, nowService.now, message)
-    fatalErrorDao.store(fatalError).map(_.id)
+    fatalErrorDao.store(fatalError)
   }
 
-  def sms(id: Long)(implicit remoteStream: RemoteStream): Future[Unit] = {
-    smsService.send(s"Fatal error $id has been logged.")
+  def sms(fatalError: FatalError, optionalLinkBuilder: Option[FatalError => String])(implicit remoteStream: RemoteStream): Future[Unit] = {
+    val msg = Seq(s"Fatal error ${fatalError.id} has been logged.") ++ optionalLinkBuilder.map(builder => builder(fatalError))
+    smsService.send(msg.mkString(" "))
   }
 }
