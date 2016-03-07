@@ -69,7 +69,8 @@ class IcalCalendarWriter(
       new XProperty("X-WR-CALDESC", calendar.title),
       new XProperty("X-WR-TIMEZONE", "Europe/London"),
       CalScale.GREGORIAN) foreach ical.getProperties().add
-    calendar.events.map(toVEvent(linkFactory)).foreach(ical.getComponents().add)
+    val vEvents: Seq[VEvent] = calendar.events.map(toVEvent(linkFactory))
+    vEvents.foreach(ical.getComponents().add)
     outputter.output(ical, writer)
   }
 

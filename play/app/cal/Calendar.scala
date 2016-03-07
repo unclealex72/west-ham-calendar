@@ -24,8 +24,6 @@
 
 package cal
 
-import scala.collection.SortedSet
-
 /**
  * A simple representation of a calendar that has a title, ID and a list of events.
  * @author alex
@@ -43,4 +41,4 @@ case class Calendar(
   /**
    * The list of events for this calendar.
    */
-  val events: SortedSet[Event])
+  val events: Seq[Event])

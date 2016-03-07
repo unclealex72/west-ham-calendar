@@ -56,7 +56,7 @@ class CalendarFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends Ca
       event <- gameToEvent(game)
     } yield event
     val title = createTitle(attendedSearchOption, locationSearchOption, gameOrTicketSearchOption)
-    Calendar("whufc" + title.replace(' ', '_'), title, SortedSet.empty[Event] ++ events)
+    Calendar("whufc" + title.replace(' ', '_'), title, events.sorted)
   }
 
   /**
