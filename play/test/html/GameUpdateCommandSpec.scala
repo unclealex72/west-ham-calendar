@@ -107,10 +107,10 @@ class GameUpdateCommandSpec extends Specification {
   "Updating the attended flag" should {
     testGameUpdateCommand(
       gameLocator => (attended: Boolean) => AttendedUpdateCommand(gameLocator, attended),
-      _.attended,
+      g => Some(g.attended),
       DEFAULT_ATTENDED,
       !DEFAULT_ATTENDED,
-      _.copy(attended = Some(!DEFAULT_ATTENDED)))
+      _.copy(attended = !DEFAULT_ATTENDED))
   }
 
   "Updating the bond holder ticket sale date" should {
@@ -203,7 +203,7 @@ class GameUpdateCommandSpec extends Specification {
       competition = DEFAULT_COMPETITION,
       opponents = DEFAULT_OPPONENTS,
       at = Some(DEFAULT_DATE_PLAYED.toDateTime),
-      attended = Some(DEFAULT_ATTENDED),
+      attended = DEFAULT_ATTENDED,
       result = Some(DEFAULT_RESULT),
       attendance = Some(DEFAULT_ATTENDANCE),
       matchReport = Some(DEFAULT_MATCH_REPORT),

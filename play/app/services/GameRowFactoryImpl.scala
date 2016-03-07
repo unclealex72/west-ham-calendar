@@ -59,7 +59,7 @@ class GameRowFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends Gam
           location = game.location,
           result = game.result,
           tickets = ticketFactory(game, ticketLinksFactory),
-          attended = if (includeAttended) game.attended orElse Some(false) else None,
+          attended = if (includeAttended) Some(game.attended) else None,
           links = gameLinksFactory(game))
       case None => throw new IllegalStateException(s"Game $game did not have it's date played attribute set.")
     }

@@ -202,13 +202,13 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
       val s = new Services()
       implicit val nowService = s.nowService
       val unattendedGame = Game.gameKey(SOUTHAMPTON)
-      val attendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = Some(true))
+      val attendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = true)
 
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
       s.gameDao.findById(1l) returns Future.successful(Some(unattendedGame))
       s.gameDao.store(attendedGame) returns Future.successful(attendedGame)
       val changedGame = s.mainUpdateService.attendGame(1l)
-      changedGame.map(_.flatMap(_.attended)) must beSome(true).await
+      changedGame.map(_.map(_.attended)) must beSome(true).await
       there was one(s.gameDao).store(attendedGame)
     }
   }
@@ -217,14 +217,14 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
     "persist its attended flag to false" in { implicit ee: ExecutionEnv =>
       val s = new Services()
       implicit val nowService = s.nowService
-      val unattendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = Some(false))
-      val attendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = Some(true))
+      val unattendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = false)
+      val attendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = true)
 
       s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
       s.gameDao.findById(1l) returns Future.successful(Some(attendedGame))
       s.gameDao.store(unattendedGame) returns Future.successful(unattendedGame)
       val changedGame = s.mainUpdateService.unattendGame(1l)
-      changedGame.map(_.flatMap(_.attended)) must beSome(false).await
+      changedGame.map(_.map(_.attended)) must beSome(false).await
     }
   }
 
@@ -234,7 +234,7 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
       implicit val nowService = s.nowService
       val homeGames2013 = List(SOUTHAMPTON, LIVERPOOL)
       val unattendedGames = homeGames2013.map(Game.gameKey)
-      val attendedGames = homeGames2013.map(Game.gameKey(_).copy(attended = Some(true)))
+      val attendedGames = homeGames2013.map(Game.gameKey(_).copy(attended = true))
 
       s.gameDao.getAllForSeasonAndLocation(2013, HOME) returns Future.successful(unattendedGames)
       attendedGames foreach (attendedGame => s.gameDao.store(attendedGame) returns Future.successful(attendedGame))

@@ -59,7 +59,7 @@ case class Game(
                  opponents: String,
                  competition: Competition,
                  at: Option[DateTime] = None,
-                 attended: Option[Boolean] = None,
+                 attended: Boolean = false,
                  result: Option[GameResult] = None,
                  attendance: Option[Int] = None,
                  matchReport: Option[String] = None,

@@ -31,7 +31,7 @@ trait LinkFactories extends Secure with Secret with FutureResults {
       .withLink(GameRowRel.AWAY_LOGO, game.awayTeamImageLink)
       .withLink(GameRowRel.COMPETITION_LOGO, game.competitionImageLink)
     if (includeUpdates) {
-      if (game.attended.contains(true)) {
+      if (game.attended) {
         links.withLink(UNATTEND, controllers.routes.Update.unattend(game.id).absoluteURL())
       }
       else {
