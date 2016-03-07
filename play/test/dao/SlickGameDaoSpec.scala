@@ -235,7 +235,7 @@ class SlickGameDaoSpec extends Specification with DatabaseContext {
           location,
           opponents,
           date.getYear).copy(
-          attended = Some(gameAttended),
+          attended = gameAttended,
           at = Some(date.withHourOfDay(15).withMinuteOfHour(0).withMillisOfSecond(0)))
         val tickets: Option[DateTime] = Some((August(1, 2013) at(9, 0)).plusDays(idx))
         gtso match {
@@ -263,8 +263,8 @@ class SlickGameDaoSpec extends Specification with DatabaseContext {
           case LocationSearchOption.ANY => true
         }
         val attendedPredicateFactory = (g: Game) => aso match {
-          case AttendedSearchOption.ATTENDED => g.attended.contains(true)
-          case AttendedSearchOption.UNATTENDED => g.attended.contains(false)
+          case AttendedSearchOption.ATTENDED => g.attended
+          case AttendedSearchOption.UNATTENDED => !g.attended
           case AttendedSearchOption.ANY => true
         }
         val gameOrTicketPredicateFactory = (g: Game) => gtso match {

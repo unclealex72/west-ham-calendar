@@ -288,9 +288,9 @@ case class TelevisionChannelUpdateCommand(
 case class AttendedUpdateCommand(
   override val gameLocator: GameLocator, override val newValue: Boolean) extends BaseGameUpdateCommand[Boolean](ATTENDED, gameLocator, newValue) {
 
-  override def currentValue(game: Game) = game.attended
+  override def currentValue(game: Game) = Some(game.attended)
 
-  override def setNewValue(game: Game) = game.copy(attended = Some(newValue))
+  override def setNewValue(game: Game) = game.copy(attended = newValue)
 }
 
 /**

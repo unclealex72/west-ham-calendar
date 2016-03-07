@@ -51,7 +51,7 @@ class SlickGameDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: Exec
     /** Database column bondholders SqlType(timestamp), Default(None) */
     val bondholders: Rep[Option[DateTime]] = column[Option[DateTime]]("bondholders", O.Default(None))
     /** Database column attended SqlType(bool), Default(None) */
-    val attended: Rep[Option[Boolean]] = column[Option[Boolean]]("attended", O.Default(None))
+    val attended: Rep[Boolean] = column[Boolean]("attended", O.Default(false))
     /** Database column result SqlType(varchar), Length(128,true), Default(None) */
     val result: Rep[Option[GameResult]] = column[Option[GameResult]]("result", O.Length(128,varying=true), O.Default(None))
     /** Database column competition SqlType(varchar), Length(128,true) */

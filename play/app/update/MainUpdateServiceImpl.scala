@@ -203,7 +203,7 @@ class MainUpdateServiceImpl(
     fGames.flatMap { games =>
       games.foldRight(Future.successful(List.empty[Game])) { (game, fGames) =>
         for {
-          newGame <- gameDao.store(game.copy(attended = Some(attend)))
+          newGame <- gameDao.store(game.copy(attended = attend))
           games <- fGames
         } yield newGame :: games
       }
