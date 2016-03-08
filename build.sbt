@@ -21,6 +21,7 @@ lazy val play = (project in file("play")).settings(
   ),
   routesGenerator := InjectedRoutesGenerator,
   scalacOptions in Test ++= Seq("-Yrangepos"),
+  includeFilter in (Assets, LessKeys.less) := "proto.less" | "main.less",
   libraryDependencies ++= Seq(
       //pdf
       "org.apache.pdfbox" % "pdfbox" % "2.0.0-RC3",
@@ -50,7 +51,8 @@ lazy val play = (project in file("play")).settings(
       // webjars
       "org.webjars.bower" % "bootstrap" % "3.3.6",
       "org.webjars" % "jquery" % "2.1.3",
-      "org.webjars" % "angularjs" % "1.3.13",
+      "org.webjars" % "angularjs" % "1.4.7",
+      "org.webjars" % "angular-strap" % "2.3.4",
       "org.webjars" % "angular-ui-bootstrap" % "1.1.1-1",
       // test
       "org.hsqldb" % "hsqldb" % "2.3.3" % "test",

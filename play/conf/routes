@@ -3,8 +3,9 @@
 # ~~~~
 
 # Home page
+GET     /index.html                            controllers.Application.index
 GET     /                                      controllers.Application.index
-
+GET     /proto.html                            controllers.Application.proto
 # Json
 
 # Initial entry point

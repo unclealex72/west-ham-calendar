@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="hammersCalendar">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+            <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <title>West Ham Calendar Prototype</title>
+
+            <!-- Bootstrap -->
+        <link href="@routes.Assets.at("stylesheets/proto.css")" rel="stylesheet">
+        <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet">
+    </head>
+    <body ng-controller="CalendarController">
+
+        <!-- Top level navigation -->
+        <header class="navbar navbar-default navbar-fixed-top bs-docs-nav" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                        <!--add data-template="views/partials/aside.tpl.html" below-->
+                    <button class="navbar-toggle" type="button" data-animation="am-fade-and-slide-left" data-placement="left" title="Menu" data-container="body" bs-aside="">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <span class="navbar-brand">Hammers Calendar</span>
+                </div>
+                <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+                    <ul class="nav navbar-nav">
+                        <li>
+                            <a href="#" data-animation="am-flip-x"
+                                bs-dropdown="seasonsDropdown" aria-haspopup="true" aria-expanded="false">
+                                Season <span class="caret"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-animation="am-flip-x"
+                            bs-dropdown="ticketsDropdown" aria-haspopup="true" aria-expanded="false">
+                                Tickets <span class="caret"></span>
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#">
+                                Login
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+        <!-- End top level navigation -->
+
+        <!-- Main body -->
+        <div class="container bs-docs-container">
+            <div class="row">
+                <div class="col-md-2 hidden-sm hidden-xs">
+                    <!-- Sidebar -->
+                    <div class="bs-sidebar hidden-print" role="complementary" data-offset-top="-100" bs-affix="" bs-scrollspy-list="">-
+                        <ul class="nav bs-sidenav">
+                            <li><a href="#july">July</a></li>
+                            <li><a href="#august">August</a></li>
+                        </ul>
+                    </div>
+                    <!-- End sidebar -->
+                </div>
+                <div class="col-md-10">
+                    <!-- Season row -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h1 class="page-header">2015/2016</h1>
+                        </div>
+                    </div>
+                    <!-- Month row -->
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <h2 class="sub-header"><a name="july"></a>July</h2>
+                        </div>
+                    </div>
+                    <!-- Game row 1 -->
+                    <div>
+                        <!-- Main game row -->
+                        <div class="row">
+                            <div class="col-xs-2">Thu 7th 19:45</div>
+                            <div class="competion-icon col-xs-2">
+                                <img class="competition" src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/barclays%20premier%20league/barclays-premier-league.png" title="Premier League">
+                            </div>
+                            <div class="info details col-md-6 col-sm-6 col-xs-6">
+                                <span>West Ham United</span>
+                                <img class="homeTeam" src="http://www.whufc.com/getmedia/939f0956-418a-4b86-be9e-6a3908ad7dc7/WestHam.png.aspx">
+                                <span class="home"><span class="westHam">2</span></span>
+                                <span class="hyphen">-</span>
+                                <span class="away">1</span>
+                                <img class="awayTeam" src="http://www.whufc.com/getmedia/a71481ba-d617-415f-9318-24272fee7601/Southampton.png.aspx">
+                                <span>Southampton</span>
+                            </div>
+                            <div class="col-xs-1">
+                                <div>
+                                    <a href="#">Yes</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-1">
+                                <span>
+                                        5th Sep
+                                    <a target="_blank" href="#">PDF</a>
+                                </span>
+                            </div>
+                        </div>
+                            <!-- Minor game row -->
+                        <div class="row">
+                            <div class="col-xs-10"></div>
+                                <div class="col-xs-1">
+                                    <a href="#">Match Report</a>
+                                </div>
+                                <div class="col-xs-1">
+                                    <a href="#">Map</a>
+                                </div>
+                            </div>
+                        </div>
+                    <!-- End game row 1 -->
+                    <!-- Game row 2 -->
+                    <div>
+                            <!-- Main game row -->
+                        <div class="row">
+                            <div class="col-xs-2">Sat 10th 15:00</div>
+                            <div class="competion-icon col-xs-2">
+                                <img class="competition" src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/barclays%20premier%20league/barclays-premier-league.png" title="Premier League">
+                            </div>
+                            <div class="info details col-md-6 col-sm-6 col-xs-6">
+                                <span>Arsenal</span>
+                                <img class="homeTeam" src="http://www.whufc.com/getmedia/73c6d8c1-28f6-4a05-ae61-2a1a230111a8/Arsenal.png.aspx">
+                                <span class="home">0</span>
+                                <span class="hyphen">-</span>
+                                <span class="away"><span class="westHam">2</span></span>
+                                <img class="awayTeam" src="http://www.whufc.com/getmedia/939f0956-418a-4b86-be9e-6a3908ad7dc7/WestHam.png.aspx">
+                                <span>West Ham United</span>
+                            </div>
+                            <div class="col-xs-1">
+                                <div>
+                                    <a href="#">Yes</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-1">
+                                <span>
+                                        5th Sep
+                                    <a target="_blank" href="#">PDF</a>
+                                </span>
+                            </div>
+                        </div>
+                            <!-- Minor game row -->
+                        <div class="row">
+                            <div class="col-xs-10"></div>
+                            <div class="col-xs-1">
+                                <a href="#">Match Report</a>
+                            </div>
+                            <div class="col-xs-1">
+                                <a href="#">Map</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End game row 2 -->
+                </div>
+            </div>
+        </div>
+        <!-- Javascripts -->
+
+        <script src="@routes.Assets.at("lib/jquery/jquery.js")"></script>
+        <script src="@routes.Assets.at("lib/angularjs/angular.js")"></script>
+        <script src="@routes.Assets.at("lib/angularjs/angular-animate.js")"></script>
+        <script src="@routes.Assets.at("lib/angularjs/angular-route.js")"></script>
+        <script src="@routes.Assets.at("lib/angular-strap/angular-strap.js")"></script>
+        <script src="@routes.Assets.at("lib/angular-strap/angular-strap.tpl.js")"></script>
+        <script>
+            var app = angular.module('hammersCalendar', ['mgcrea.ngStrap', 'ngRoute', 'ngAnimate']);
+            app.controller('CalendarController', function ($scope) {
+                $scope.seasonsDropdown = [
+                    {
+                        "text": "2015",
+                        "href": "#anotherAction",
+                        "active": true
+                    },
+                    {
+                        "text": "2014",
+                        "click": "$alert(\"Holy guacamole!\")"
+                    },
+                    {
+                        "text": "2013",
+                        "href": "/auth/facebook",
+                        "target": "_self"
+                    }
+                ];
+            });
+        </script>
+    </body>
+</html>
