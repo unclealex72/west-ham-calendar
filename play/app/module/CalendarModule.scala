@@ -29,10 +29,12 @@ import controllers.SecretToken
 import dao._
 import dates.geo.{GeoLocationFactory, GeoLocationFactoryImpl}
 import dates.{DateService, DateServiceImpl, NowService, SystemNowService}
+import filters.{Filters, SSLFilter}
 import location._
 import logging.{Fatal, FatalImpl}
 import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsPdfFactory}
 import play.api.cache.CacheApi
+import play.api.http.HttpFilters
 import scaldi.Module
 import security.Authorised
 import security.Definitions.Auth
@@ -96,6 +98,10 @@ class CalendarModule extends Module {
   bind[FatalErrorDao] toNonLazy injected[SlickFatalErrorDao]
   bind[SmsService] toNonLazy injected[ClickatellSmsService]
   bind[SmsConfiguration] toNonLazy config.as[SmsConfiguration]("sms")
+
+  // filters.Filters
+  bind[HttpFilters] toNonLazy injected[Filters]
+  bind[SSLFilter] toNonLazy injected[SSLFilter]
 
   // Security
   bind[Auth] toNonLazy {
