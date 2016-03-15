@@ -1,3 +1,4 @@
+@(minimise: Boolean)
 <!DOCTYPE html>
 <html lang="en" ng-app="hammersCalendar">
     <head>
@@ -5,49 +6,41 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
             <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-        <title>West Ham Calendar</title>
+        <title>West Ham Calendar Prototype</title>
 
             <!-- Bootstrap -->
+        <link href="@routes.Assets.at("stylesheets/proto.css")" rel="stylesheet">
         <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet">
-
+        <link href="@routes.Assets.at("lib/fontawesome/css/font-awesome.min.css")" rel="stylesheet">
     </head>
     <body ng-controller="CalendarController">
-        <!-- Fixed navbar -->
-        <header class="navbar navbar-default navbar-fixed-top navbar-inner">
+
+            <!-- Top level navigation -->
+        <header class="navbar navbar-default navbar-fixed-top bs-docs-nav" role="banner">
             <div class="container">
                 <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-3" ng-click="isCollapsed = !isCollapsed">
+                        <!--add data-template="views/partials/aside.tpl.html" below-->
+                    <button class="navbar-toggle" type="button" data-animation="am-fade-and-slide-left" data-placement="left" title="Menu" data-container="body" bs-aside="">
                         <span class="sr-only">Toggle navigation</span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand visible-xs" href="#">Hammers Calendar</a>
+                    <span class="navbar-brand">Hammers Calendar</span>
                 </div>
-                <nav class="hidden-xs">
+                <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
                     <ul class="nav navbar-nav">
-                        <a href="#top" role="button" class="navbar-brand">
-                            Hammers Calendar
-                        </a>
-                        <li class="dropdown" uib-dropdown>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                            uib-dropdown-toggle aria-haspopup="true" aria-expanded="false">
-                                {{season}} <span class="caret"></span></a>
-                            <ul class="dropdown-menu" uib-dropdown-menu>
-                                <li ng-repeat="newSeason in seasons | orderBy:'-'">
-                                    <a href="#" ng-click="controller.changeSeason(newSeason)">{{newSeason}}</a>
-                                </li>
-                            </ul>
+                        <li>
+                            <a href="#" data-animation="am-flip-x"
+                            bs-dropdown="seasonsDropdown" aria-haspopup="true" aria-expanded="false">
+                                Season <span class="caret"></span>
+                            </a>
                         </li>
-                        <li class="dropdown" uib-dropdown>
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
-                            uib-dropdown-toggle aria-haspopup="true" aria-expanded="false">
-                                {{ticketType.label}} <span class="caret"></span></a>
-                            <ul class="dropdown-menu" uib-dropdown-menu>
-                                <li ng-repeat="newTicketType in ticketTypes | orderBy:'ordering'">
-                                    <a href="#" ng-click="controller.changeTicketType(newTicketType.key)">{{newTicketType.label}}</a>
-                                </li>
-                            </ul>
+                        <li>
+                            <a href="#" data-animation="am-flip-x"
+                            bs-dropdown="ticketsDropdown" aria-haspopup="true" aria-expanded="false">
+                                Tickets <span class="caret"></span>
+                            </a>
                         </li>
                     </ul>
                     <form class="navbar-form navbar-left" role="search">
@@ -64,63 +57,105 @@
                         </li>
                     </ul>
                 </nav>
-                <nav class="visible-xs" uib-collapse="!isCollapsed">
-                    <ul class="nav navbar-nav">
-                        <li><a href="#getting_started" ng-click="isCollapsed = !isCollapsed">Getting started</a></li>
-                        <li><a href="#directives_small" ng-click="isCollapsed = !isCollapsed">Directives</a></li>
-                    </ul>
-                </nav>
             </div>
         </header>
-        <div class="header-placeholder"></div>
+            <!-- End top level navigation -->
 
+            <!-- Main body -->
         <div class="container">
+
             <div class="row">
-                <div class="col-xs-12">
-                    <h1 class="page-header" ng-cloak>{{season}}/{{season + 1}}</h1>
-                    <div ng-repeat="month in months | opponents:search">
-                        <h2 class="sub-header">{{month.date | date:'MMMM'}}</h2>
-                        <div ng-repeat="game in month.games | opponents:search">
-                            <!-- Main game row -->
-                            <div class="row">
-                                <div class="col-xs-2">{{game.datePlayed | customDate:'EEE dth, h:mm!a'}}</div>
-                                <div class="competion-icon col-xs-2">
-                                    <img ng-show="game.competitionLogo" class="competition" ng-src="{{game.competitionLogo}}" title="{{game.competition}}">
-                                    <span ng-hide="game.competitionLogo">{{game.competition}}</span>
-                                </div>
-                                <div class="info details col-md-6 col-sm-6 col-xs-6">
-                                    <span ng-hide="game.homeTeam">West Ham United</span>
-                                    <span ng-show="game.homeTeam">{{game.homeTeam}}</span>
-                                    <img class="homeTeam" ng-src="{{game.homeTeamLogo}}">
-                                    <span class="home"><span class="westHam">{{game.homeScore}}</span></span>
-                                    <span class="hyphen">-</span>
-                                    <span class="away">{{game.awayScore}}</span>
-                                    <img class="awayTeam" ng-src="{{game.awayTeamLogo}}">
-                                    <span ng-hide="game.awayTeam">West Ham United</span>
-                                    <span ng-show="game.awayTeam">{{game.awayTeam}}</span>
-                                </div>
-                                <div class="col-xs-1">
-                                    <div ng-show="{{game.showAttended}}">
-                                        <a ng-show="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">Yes</a>
-                                        <a ng-hide="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">No</a>
+                <div class="col-md-2 hidden-sm hidden-xs">
+                        <!-- Sidebar -->
+                    <div id="sidebar" class="bs-sidebar hidden-print months" role="complementary" data-offset-top="-100" bs-affix>
+                        <ul class="nav bs-sidenav">
+                            <li ng-repeat="month in months | opponents:search"  data-target="#{{month.id}}" bs-scrollspy>
+                                <a href="" ng-click="scrollTo(month.id)">{{month.date | date:'MMMM'}}</a>
+                            </li>
+                        </ul>
+                    </div>
+                        <!-- End sidebar -->
+                </div>
+                <div class="col-md-10">
+                    <div class="row" style="position: relative;">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="fixtureTableWrapper">
+                                <div ng-repeat="month in months | opponents:search">
+                                    <div id="{{month.id}}" class="monthHeader">
+                                        <div class="tableTitle">{{month.date | date:'MMMM'}}</div>
                                     </div>
-                                </div>
-                                <div class="col-xs-1">
-                                    <span ng-show="{{game.ticketsDate}}">
-                                        {{game.ticketsDate | customDate:"dth MMM"}}
-                                        <a ng-show="{{game.ticketsUrl}}" target="_blank" href="{{game.ticketsUrl | jsonDecode}}">PDF</a>
-                                    </span>
-                                </div>
-                            </div>
-                            <!-- Minor game row -->
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <a ng-show="{{game.matchReport}}" target="_blank" href="{{game.matchReport | jsonDecode }}">
-                                        Match Report
-                                    </a>
-                                    <a ng-show="{{game.locationUrl}}" target="_blank" href="{{game.locationUrl | jsonDecode}}">
-                                        Map
-                                    </a>
+                                    <div class="matchItem fulltime" ng-repeat="game in month.games | opponents:search">
+                                        <div class="infos row">
+                                            <div class="info date col-md-2 col-sm-2 col-xs-12">{{game.datePlayed | customDate:'EEEE dth MMMM, h:mm!a'}}</div>
+                                            <div class="info venueName match col-md-3 col-sm-3 hidden-xs">
+                                                <img ng-show="game.competitionLogo" class="competition" ng-src="{{game.competitionLogo}}" title="{{game.competition}}">
+                                                <span ng-hide="game.competitionLogo">{{game.competition}}</span>
+                                            </div>
+                                            <div class="info details col-md-6 col-sm-6 col-xs-12">
+                                                <div class="detailsWrapper">
+                                                    <div class="homeTeam">
+                                                        <div class="homeTeamName">
+                                                            <div class="cell" ng-hide="game.homeTeam">West Ham United</div>
+                                                            <div class="cell" ng-show="game.homeTeam">{{game.homeTeam}}</div>
+                                                        </div>
+                                                        <img ng-show="{{game.awayTeamLogo}}" class="homeTeam" ng-src="{{game.homeTeamLogo | jsonDecode}}">
+                                                    </div>
+                                                    <div ng-show="game.hasResult" ng-class="{'withShoot': game.hasShootout, 'versus': true}">
+                                                        <span class="home">
+                                                            <span ng-class="{'westHam': game.awayTeam}">{{game.homeScore}}</span>
+                                                        </span>
+                                                        <span class="hyphen">-</span>
+                                                        <span class="away">
+                                                            <span ng-class="{'westHam': game.homeTeam}">{{game.awayScore}}</span>
+                                                        </span>
+                                                        <div ng-show="game.hasShootout" class="shoot">
+                                                            <span class="home">
+                                                                <span ng-class="{'westHam': game.awayTeam}">({{game.homeShootout}}</span>
+                                                            </span>
+                                                            <span class="hyphen">-</span>
+                                                            <span class="away">
+                                                                <span ng-class="{'westHam': game.homeTeam}">{{game.awayShootout}})</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div ng-hide="game.hasResult" class="versus">v</div>
+                                                    <div class="awayTeam">
+                                                        <img ng-show="{{game.awayTeamLogo}}" ng-src="{{game.awayTeamLogo | jsonDecode }}">
+                                                        <div class="homeTeamName awayTeamName">
+                                                            <div class="cell" ng-hide="game.awayTeam">West Ham United</div>
+                                                            <div class="cell" ng-show="game.awayTeam">{{game.awayTeam}}</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="info details attendance col-md-1 col-sm-1 hidden-xs">
+                                                <div ng-show="{{game.showAttended}}">
+                                                    <input
+                                                        id="attended-{{game.idx}}" name="attended-{{game.idx}}"
+                                                    value="attended-{{game.idx}}" title="attended" type="checkbox"
+                                                    ng-checked="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">
+                                                    <label for="attended-{{game.idx}}">
+                                                        <span>X</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="links row">
+                                            <span class="match-report link">
+                                                <a ng-show="game.matchReport" ng-href="{{game.matchReport | jsonDecode }}" target="_blank">Match
+                                                    Centre</a>
+                                            </span>
+                                            <span class="map link">
+                                                <a ng-show="game.locationUrl" ng-href="{{game.locationUrl | jsonDecode }}" target="_blank">Map</a>
+                                            </span>
+                                            <span ng-show="game.ticketsUrl" class="tickets link">
+                                                <a ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">Tickets @@ {{game.ticketsDate | customDate: 'ddth MMM'}}</a>
+                                            </span>
+                                            <span ng-show="!game.ticketsUrl">
+                                                <span ng-show="game.ticketsDate && !game.ticketsUrl">Tickets @@ {{game.ticketsDate | customDate: 'ddth MMM'}}</span>
+                                            </span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -128,14 +163,20 @@
                 </div>
             </div>
         </div>
+            <!-- Javascripts -->
 
-        <script src="@routes.Assets.at("lib/jquery/jquery.min.js")"></script>
-        <script src="@routes.Assets.at("lib/angularjs/angular.min.js")"></script>
-        <script src="@routes.Assets.at("lib/angularjs/angular-animate.min.js")"></script>
-        <script src="@routes.Assets.at("lib/angularjs/angular-route.min.js")"></script>
-        <script src="@routes.Assets.at("lib/angular-ui-bootstrap/ui-bootstrap.min.js")"></script>
-
+        @for(lib <- Seq(
+            "jquery" -> Seq("jquery"),
+            "angularjs" -> Seq("angular", "angular-animate", "angular-route"),
+            "angular-strap" -> Seq("angular-strap", "angular-strap.tpl"))) {
+            @for(name <- lib._2) {
+                @defining(if (minimise) ".min" else "") { suffix =>
+                    @defining(s"lib/${lib._1}/$name$suffix.js") { libraryPath =>
+                        <script src="@routes.Assets.at(libraryPath)"></script>
+                    }
+                }
+            }
+        }
         @playscalajs.html.scripts("js", "/assets")
-
     </body>
 </html>

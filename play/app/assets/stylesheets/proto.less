@@ -1,4 +1,6 @@
 @import "bootstrap/less/bootstrap.less";
+@import "checkbox.less";
+@import "fixtures.less";
 
 body {
   padding-top:50px;
@@ -35,20 +37,36 @@ body {
 }
 
 @media (min-width: 979px) {
+
+  #sidebar {
+    background: #892D42;
+    font-weight: 600;
+  }
+
+  #sidebar li a {
+    color: white;
+  }
+
+  #sidebar li a:hover {
+    background: #4ca3de;
+    color: black;
+  }
+
   #sidebar.affix-top {
     position: static;
     margin-top:30px;
-    width:228px;
   }
 
   #sidebar.affix {
     position: fixed;
     top:70px;
-    width:228px;
   }
-}
 
-#sidebar li.active {
-  border:0 #eee solid;
-  border-right-width:5px;
+  #sidebar li.active {
+    background: #4ca3de;
+    color: black;
+    border:0 #eee solid;
+    border-right-width:5px;
+  }
+
 }

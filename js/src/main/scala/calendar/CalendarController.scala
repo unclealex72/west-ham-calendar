@@ -1,7 +1,7 @@
 package calendar
 
-import com.greencatsoft.angularjs.core.{RouteParams, Route, Scope}
-import com.greencatsoft.angularjs.{AbstractController, injectable}
+import com.greencatsoft.angularjs.core.{Location => AngularLocation, AnchorScroll, RouteParams, Route, Scope}
+import com.greencatsoft.angularjs.{FilterService, AbstractController, injectable}
 import dates.SharedDate
 import models.EntryRel._
 import models.GameRowRel._
@@ -18,7 +18,6 @@ import scala.scalajs.js.{JSON, Date}
 import scala.scalajs.js.annotation.{ScalaJSDefined, JSExport}
 import scalaz.Scalaz._
 import scala.scalajs.js.JSConverters._
-import com.greencatsoft.angularjs.core.{Location => AngularLocation}
 /**
   * Created by alex on 17/02/16.
   */
@@ -28,7 +27,10 @@ class CalendarController(
                           scope: CalendarScope,
                           ajax: AjaxService,
                           angularLocation: AngularLocation,
-                          attendanceService: AttendanceService) extends AbstractController[CalendarScope](scope){
+                          attendanceService: AttendanceService,
+                          location: AngularLocation,
+                          anchorScroll: AnchorScroll,
+                          filterService: FilterService) extends AbstractController[CalendarScope](scope){
 
   loadGames(None, None)
 
@@ -53,7 +55,10 @@ class CalendarController(
       monthsUrl <- FL <~? selectedSeason.links(MONTHS)
       months <- FL <~ ajax.get[Months](monthsUrl)
     } yield {
-      val monthViews = months.toSeq.map(MonthView.apply(ticketType)).toJSArray
+      def monthIdFactory(date: Date): String = {
+        filterService("date").call(scope, date, "MMMM").toString
+      }
+      val monthViews = months.toSeq.map(MonthView.apply(monthIdFactory, ticketType)).toJSArray
       scope.$apply {
         scope.alterAttendance = (monthView: MonthView, idx: Int) => FO.unit {
           for {
@@ -69,9 +74,13 @@ class CalendarController(
         scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
         scope.season = selectedSeason.season
         scope.months = monthViews.toJSArray
-        scope.seasons = seasons.map(_.season).toJSArray
+        scope.seasonsDropdown = seasons.toSeq.reverse.map(season => SeasonDropdown(season.season)).toJSArray
         scope.ticketType = JsTicketType(ticketType)
         scope.ticketTypes = TicketType.values.map(JsTicketType.apply).toJSArray
+        scope.scrollTo = (id: String) => {
+          location.hash(id)
+          anchorScroll()
+        }
       }
     }
   }
@@ -95,9 +104,10 @@ trait CalendarScope extends Scope {
   var user: js.UndefOr[String] = js.native
   var authenticationLink: js.UndefOr[String] = js.native
   var alterAttendance: js.Function2[MonthView, Int, Future[Unit]]
-  var seasons: js.Array[Int] = js.native
+  var seasonsDropdown: js.Array[SeasonDropdown] = js.native
   var ticketType: JsTicketType = js.native
   var ticketTypes: js.Array[JsTicketType] = js.native
+  var scrollTo: js.Function1[String, Unit]
 }
 
 @ScalaJSDefined
@@ -112,16 +122,17 @@ trait HasOpponents extends js.Object {
 
 @ScalaJSDefined
 class MonthView(
+  var id: String,
   var date: js.Date,
   var games: js.Array[GameView]) extends js.Object with HasOpponents {
 
   def hasOpponents(prefix: String): Boolean = games.exists(_.hasOpponents(prefix))
 }
 object MonthView {
-  def apply(ticketType: TicketType)(month: Month): MonthView = {
+  def apply(idFactory: Date => String, ticketType: TicketType)(month: Month): MonthView = {
     val date = new js.Date(month.year - 1900, month.month - 1, 1)
     val gameViews = month.games.toSeq.zipWithIndex.map { gameRowAndIndex => GameView(ticketType)(gameRowAndIndex._1, gameRowAndIndex._2) }
-    new MonthView(date, gameViews.toJSArray)
+    new MonthView(idFactory(date), date, gameViews.toJSArray)
   }
 }
 
@@ -132,11 +143,15 @@ class GameView(
                 var competition: String,
                 var competitionLogo: js.UndefOr[String],
                 var opponents: String,
+                var hasResult: Boolean,
+                var hasShootout: Boolean,
                 var homeTeam: js.UndefOr[String],
                 var homeScore: js.UndefOr[Int],
+                var homeShootout: js.UndefOr[Int],
                 var homeTeamLogo: js.UndefOr[String],
                 var awayTeam: js.UndefOr[String],
                 var awayScore: js.UndefOr[Int],
+                var awayShootout: js.UndefOr[Int],
                 var awayTeamLogo: js.UndefOr[String],
                 var attended: Boolean,
                 var showAttended: Boolean,
@@ -161,12 +176,16 @@ object GameView {
         gameRow.competition.name,
         gameRow.links(COMPETITION_LOGO).orUndefined,
         gameRow.opponents,
+        gameRow.result.isDefined,
+        gameRow.result.flatMap(_.shootoutScore).isDefined,
         Some(gameRow.opponents).filter(_ => gameRow.location.isAway).orUndefined,
         gameRow.result.map(_.score.home).orUndefined,
-        gameRow.links(HOME_LOGO).orUndefined,
+        gameRow.result.flatMap(_.shootoutScore).map(_.home).orUndefined,
+        gameRow.links(HOME_LOGO).map(JSON.stringify(_)).orUndefined,
         Some(gameRow.opponents).filter(_ => gameRow.location.isHome).orUndefined,
         gameRow.result.map(_.score.away).orUndefined,
-        gameRow.links(AWAY_LOGO).orUndefined,
+        gameRow.result.flatMap(_.shootoutScore).map(_.away).orUndefined,
+        gameRow.links(AWAY_LOGO).map(JSON.stringify(_)).orUndefined,
         gameRow.attended.getOrElse(false),
         attendedUrl.isDefined,
         attendedUrl.orUndefined,
@@ -175,4 +194,10 @@ object GameView {
         gameRow.links(MATCH_REPORT).map(JSON.stringify(_)).orUndefined,
         gameRow.links(LOCATION).map(JSON.stringify(_)).orUndefined)
   }
+}
+
+@ScalaJSDefined
+class SeasonDropdown(var text: String, var href: String) extends js.Object
+object SeasonDropdown {
+  def apply(season: Int) = new SeasonDropdown(season.toString, "#")
 }

@@ -20,7 +20,7 @@ class Location(implicit injector: Injector) extends Controller with Injectable {
    * Redirect to the  homepage.
    */
   def index = Action {
-    Ok(views.html.index())
+    Ok(views.html.index(true))
   }
 
 }

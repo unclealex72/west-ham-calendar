@@ -4,7 +4,8 @@ package calendar
   * Created by alex on 07/02/16.
   */
 
-import com.greencatsoft.angularjs.Angular
+import com.greencatsoft.angularjs.{Config, Angular}
+import com.greencatsoft.angularjs.core.LocationProvider
 
 import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
@@ -13,8 +14,12 @@ import scala.scalajs.js.annotation.JSExport
 object CalendarApp extends JSApp {
 
   override def main() {
-    val module = Angular.module("hammersCalendar", Seq("ui.bootstrap", "ngAnimate"))
-
+    val dependencies = Seq(
+      "mgcrea.ngStrap" -> Seq("", ".helpers.dimensions", ".helpers.debounce"),
+      "ng" -> Seq("Route", "Animate"))
+    val module =
+      Angular.module("hammersCalendar",
+        dependencies.flatMap { case (prefix, suffices) => suffices.map(suffix => s"$prefix$suffix") })
     module
       .controller[CalendarController]
       .factory[AjaxServiceFactory]

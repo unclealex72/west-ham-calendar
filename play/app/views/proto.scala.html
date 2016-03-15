@@ -10,10 +10,11 @@
             <!-- Bootstrap -->
         <link href="@routes.Assets.at("stylesheets/proto.css")" rel="stylesheet">
         <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet">
+        <link href="@routes.Assets.at("lib/fontawesome/css/font-awesome.min.css")" rel="stylesheet">
     </head>
     <body ng-controller="CalendarController">
 
-        <!-- Top level navigation -->
+            <!-- Top level navigation -->
         <header class="navbar navbar-default navbar-fixed-top bs-docs-nav" role="banner">
             <div class="container">
                 <div class="navbar-header">
@@ -30,7 +31,7 @@
                     <ul class="nav navbar-nav">
                         <li>
                             <a href="#" data-animation="am-flip-x"
-                                bs-dropdown="seasonsDropdown" aria-haspopup="true" aria-expanded="false">
+                            bs-dropdown="seasonsDropdown" aria-haspopup="true" aria-expanded="false">
                                 Season <span class="caret"></span>
                             </a>
                         </li>
@@ -51,120 +52,152 @@
                 </nav>
             </div>
         </header>
-        <!-- End top level navigation -->
+            <!-- End top level navigation -->
 
-        <!-- Main body -->
-        <div class="container bs-docs-container">
+            <!-- Main body -->
+        <div class="container">
+
             <div class="row">
                 <div class="col-md-2 hidden-sm hidden-xs">
-                    <!-- Sidebar -->
-                    <div class="bs-sidebar hidden-print" role="complementary" data-offset-top="-100" bs-affix="" bs-scrollspy-list="">-
+                        <!-- Sidebar -->
+                    <div id="sidebar" class="bs-sidebar hidden-print months" role="complementary" data-offset-top="-100" bs-affix="" bs-scrollspy-list="">-
                         <ul class="nav bs-sidenav">
-                            <li><a href="#july">July</a></li>
+                            <li class="active"><a href="#july">July</a></li>
                             <li><a href="#august">August</a></li>
                         </ul>
                     </div>
-                    <!-- End sidebar -->
+                        <!-- End sidebar -->
                 </div>
                 <div class="col-md-10">
-                    <!-- Season row -->
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h1 class="page-header">2015/2016</h1>
+                    <div class="row" style="position: relative;">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <div class="fixtureTableWrapper">
+                                <div class="monthHeader">
+                                    <div class="tableTitle">July</div>
+                                </div>
+                                <div class="matchItem fulltime">
+                                    <div class="infos row">
+                                    <div class="info date col-md-2 col-sm-2 col-xs-12">Thursday 23 July 19:45</div>
+                                    <div class="info venueName match col-md-3 col-sm-3 hidden-xs"><img
+                                    src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/competitions/europaleague.png?width=351&amp;height=461&amp;ext=.png">
+                                    </div>
+                                    <div class="info details col-md-6 col-sm-6 col-xs-12">
+                                        <div class="detailsWrapper">
+                                            <div class="homeTeam">
+                                                <div class="homeTeamName">
+                                                    <div class="cell">Birkirkara FC</div>
+                                                </div>
+                                                <img src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/teams/birkirkara.png?width=174&amp;height=243&amp;ext=.png">
+                                            </div>
+                                            <div class="versus withShoot"><span class="home">1</span><span class="hyphen">-</span><span
+                                            class="away"><span class="westHam">0</span></span>
+                                                <div class="shoot"><span class="home">(3</span><span class="hyphen">-</span><span
+                                                class="away"><span class="westHam">5)</span></span></div>
+                                            </div>
+                                            <div class="awayTeam"><img
+                                            src="/getmedia/939f0956-418a-4b86-be9e-6a3908ad7dc7/WestHam.png.aspx?width=200&amp;height=200&amp;ext=.png">
+                                                <div class="homeTeamName awayTeamName">
+                                                    <div class="cell">West Ham United</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info details attendance col-md-1 col-sm-1 hidden-xs">
+                                        <input id="attended-999" name="attended-999" value="attended-999" title="attended" type="checkbox" checked>
+                                        <label for="attended-999"><span>X</span></label>
+                                    </div>
+                                </div>
+                                    <div class="links row">
+                                        <span class="match-report link">
+                                            <a href="/Fixtures/First-Team/Fixture-and-Results/Season-2015-2016/2015-July/Birkirkara-FC-vs-West-Ham-United">Match
+                                                Centre</a>
+                                        </span>
+                                        <span class="map link">
+                                            <a href="#">Map</a>
+                                        </span>
+                                        <span class="tickets link">
+                                            <a href="#">Tickets @@ 17th Jul</a>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="matchItem fulltime"><div class="infos row">
+                                    <div class="info date col-md-2 col-sm-2 col-xs-12">Saturday 25 July 15:00</div>
+                                    <div class="info venueName match col-md-3 col-sm-3 hidden-xs"><span
+                                    class="cName">Pre-Season Match</span></div>
+                                    <div class="info details col-md-6 col-sm-6 col-xs-12">
+                                        <div class="detailsWrapper">
+                                            <div class="homeTeam">
+                                                <div class="homeTeamName">
+                                                    <div class="cell">Charlton Athletic</div>
+                                                </div>
+                                                <img src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/teams/charlton-athletic.png?width=256&amp;height=256&amp;ext=.png">
+                                            </div>
+                                            <div class="versus"><span class="home">0</span><span class="hyphen">-</span><span
+                                            class="away"><span class="westHam">0</span></span></div>
+                                            <div class="awayTeam"><img
+                                            src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/teams/west ham united/westham.png?width=200&amp;height=200&amp;ext=.png">
+                                                <div class="homeTeamName awayTeamName">
+                                                    <div class="cell">West Ham United</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="info details attendance col-md-1 col-sm-1 hidden-xs">
+                                        <input id="attended-998" name="attended-998" value="attended-998" title="attended" type="checkbox" checked>
+                                        <label for="attended-998"><span>X</span></label>
+                                    </div>
+
+                                </div>
+                                    <div class="links row">
+                                        <span class="match-report link">
+                                            <a href="/Fixtures/First-Team/Fixture-and-Results/Season-2015-2016/2015-July/Birkirkara-FC-vs-West-Ham-United">Match
+                                                Centre</a>
+                                        </span>
+                                        <span class="map link">
+                                            <a href="#">Map</a>
+                                        </span>
+                                        <span class="tickets">
+                                            <span>Tickets @@ 17th Jul</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="monthHeader">
+                                    <div class="tableTitle">November</div>
+                                </div>
+                                <div class="matchItem fulltime">
+                                    <a class="infos row">
+                                        <div class="info date col-md-2 col-sm-2 col-xs-12">Sunday 15 May 15:00</div>
+                                        <div class="info venueName match col-md-3 col-sm-3 hidden-xs">
+                                            <img src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/barclays premier league/barclays-premier-league.png?width=150&amp;height=36&amp;ext=.png">
+                                        </div>
+                                        <div class="info details col-md-6 col-sm-6 col-xs-12">
+                                            <div class="detailsWrapper">
+                                                <div class="homeTeam">
+                                                    <div class="homeTeamName">
+                                                        <div class="cell">Stoke City               </div>
+                                                    </div>
+                                                    <img src="/getmedia/1d93a243-25a4-4a66-819d-81e84332a2d6/Stroke.png.aspx?width=200&amp;height=200&amp;ext=.png">
+                                                </div>
+                                                <div class="versus">v</div>
+                                                <div class="awayTeam">
+                                                    <img src="/getmedia/939f0956-418a-4b86-be9e-6a3908ad7dc7/WestHam.png.aspx?width=200&amp;height=200&amp;ext=.png">
+                                                    <div class="homeTeamName awayTeamName">
+                                                        <div class="cell">West Ham United               </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <div class="links row">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <!-- Month row -->
-                    <div class="row">
-                        <div class="col-xs-12">
-                            <h2 class="sub-header"><a name="july"></a>July</h2>
-                        </div>
-                    </div>
-                    <!-- Game row 1 -->
-                    <div>
-                        <!-- Main game row -->
-                        <div class="row">
-                            <div class="col-xs-2">Thu 7th 19:45</div>
-                            <div class="competion-icon col-xs-2">
-                                <img class="competition" src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/barclays%20premier%20league/barclays-premier-league.png" title="Premier League">
-                            </div>
-                            <div class="info details col-md-6 col-sm-6 col-xs-6">
-                                <span>West Ham United</span>
-                                <img class="homeTeam" src="http://www.whufc.com/getmedia/939f0956-418a-4b86-be9e-6a3908ad7dc7/WestHam.png.aspx">
-                                <span class="home"><span class="westHam">2</span></span>
-                                <span class="hyphen">-</span>
-                                <span class="away">1</span>
-                                <img class="awayTeam" src="http://www.whufc.com/getmedia/a71481ba-d617-415f-9318-24272fee7601/Southampton.png.aspx">
-                                <span>Southampton</span>
-                            </div>
-                            <div class="col-xs-1">
-                                <div>
-                                    <a href="#">Yes</a>
-                                </div>
-                            </div>
-                            <div class="col-xs-1">
-                                <span>
-                                        5th Sep
-                                    <a target="_blank" href="#">PDF</a>
-                                </span>
-                            </div>
-                        </div>
-                            <!-- Minor game row -->
-                        <div class="row">
-                            <div class="col-xs-10"></div>
-                                <div class="col-xs-1">
-                                    <a href="#">Match Report</a>
-                                </div>
-                                <div class="col-xs-1">
-                                    <a href="#">Map</a>
-                                </div>
-                            </div>
-                        </div>
-                    <!-- End game row 1 -->
-                    <!-- Game row 2 -->
-                    <div>
-                            <!-- Main game row -->
-                        <div class="row">
-                            <div class="col-xs-2">Sat 10th 15:00</div>
-                            <div class="competion-icon col-xs-2">
-                                <img class="competition" src="https://az719727.vo.msecnd.net/cmsstorage/whu/media/whu/barclays%20premier%20league/barclays-premier-league.png" title="Premier League">
-                            </div>
-                            <div class="info details col-md-6 col-sm-6 col-xs-6">
-                                <span>Arsenal</span>
-                                <img class="homeTeam" src="http://www.whufc.com/getmedia/73c6d8c1-28f6-4a05-ae61-2a1a230111a8/Arsenal.png.aspx">
-                                <span class="home">0</span>
-                                <span class="hyphen">-</span>
-                                <span class="away"><span class="westHam">2</span></span>
-                                <img class="awayTeam" src="http://www.whufc.com/getmedia/939f0956-418a-4b86-be9e-6a3908ad7dc7/WestHam.png.aspx">
-                                <span>West Ham United</span>
-                            </div>
-                            <div class="col-xs-1">
-                                <div>
-                                    <a href="#">Yes</a>
-                                </div>
-                            </div>
-                            <div class="col-xs-1">
-                                <span>
-                                        5th Sep
-                                    <a target="_blank" href="#">PDF</a>
-                                </span>
-                            </div>
-                        </div>
-                            <!-- Minor game row -->
-                        <div class="row">
-                            <div class="col-xs-10"></div>
-                            <div class="col-xs-1">
-                                <a href="#">Match Report</a>
-                            </div>
-                            <div class="col-xs-1">
-                                <a href="#">Map</a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- End game row 2 -->
                 </div>
             </div>
         </div>
-        <!-- Javascripts -->
+            <!-- Javascripts -->
 
         <script src="@routes.Assets.at("lib/jquery/jquery.js")"></script>
         <script src="@routes.Assets.at("lib/angularjs/angular.js")"></script>

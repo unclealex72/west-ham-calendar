@@ -31,7 +31,7 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
    * Redirect to the  homepage.
    */
   def index = Action {
-    Ok(views.html.index())
+    Ok(views.html.index(true))
   }
 
   def proto = Action {

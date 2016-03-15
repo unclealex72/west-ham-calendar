@@ -1,0 +1,208 @@
+#fixtureBanner { position: relative; overflow-x: hidden; margin-top: 20px; }
+#fixtureBanner .wrapper { position: relative; height: 185px; overflow:visible; transition: left 0.4s ease-out; margin: 0 -15px; }
+#fixtureBanner .wrapper .box { position: absolute; top: 0; height: 170px; }
+#fixtureBanner .wrapper .box .body { display: inline-block; position: relative; width: 100%; height: 100%; color: white; font-size: 11px; }
+#fixtureBanner .wrapper .box .body::before {position:absolute; content:''; top:0; left:0; width:100%; height:100%; border:4px rgba(255,255,255,0.15) solid; z-index:1}
+
+#fixtureBanner .wrapper .box .body::after { content: ''; position: absolute; bottom: -10px; width: 100%; height: 10px; overflow: hidden; background-image: url(/Res/image/fixture/upcomingshadow.png); background-position: center; background-repeat: no-repeat; }
+
+#fixtureBanner .wrapper .box .body .teamBadge { width: 40%; height: 135px; line-height: 135px; float: left; text-align: center; padding-left: 25px; }
+#fixtureBanner .wrapper .box .body .teamBadge img { width: 100%; max-width: 85px; }
+#fixtureBanner .wrapper .box .body .matchInfo { width: 60%; height: 135px; float: left; text-align: center; background-position: top center; background-repeat: no-repeat; }
+
+#fixtureBanner .wrapper .box.odd .body { background-image: url(/Res/image/fixture/upcomingbg_odd2.png); }
+#fixtureBanner .wrapper .box.even .body { background-image: url(/Res/image/fixture/upcomingbg_even2.png); }
+#fixtureBanner .wrapper .box.odd .body .matchInfo { background-image: url(/Res/image/fixture/upcomingbg_odd.png); }
+#fixtureBanner .wrapper .box.even .body .matchInfo { background-image: url(/Res/image/fixture/upcomingbg_even.png); }
+
+#fixtureBanner .wrapper .box .body .matchInfo .date { margin-top: 12px; height: 20px; line-height: 20px; }
+#fixtureBanner .wrapper .box .body .matchInfo .match { margin-top: 5px; height: 18px; line-height:0; }
+#fixtureBanner .wrapper .box .body .matchInfo .match img { max-width: 80px; max-height: 18px; }
+#fixtureBanner .wrapper .box .body .matchInfo .homeAway { height: 15px; opacity: 0.5; }
+
+#fixtureBanner .wrapper .box .body .matchInfo .teams { height: 44px; position: relative; margin-top:12px; white-space:nowrap}
+#fixtureBanner .wrapper .box .body .matchInfo .teams > * { /*float: left;*/ line-height: 15px; }
+#fixtureBanner .wrapper .box .body .matchInfo .teams .home {font-weight:bold; text-align:center}
+#fixtureBanner .wrapper .box .body .matchInfo .teams .v {text-align:center}
+#fixtureBanner .wrapper .box .body .matchInfo .teams .away {font-weight:bold; text-align:center}
+
+#fixtureBanner .wrapper .box .body .footer { height: 30px; border-top: 1px solid rgba(255, 255, 255, 0.2); margin: 135px 4px; padding: 0 10px; margin-bottom: 0; background-image: url(/Res/image/fixture/upcomingfooter.png); text-align: center; position:relative; z-index:2; white-space:nowrap}
+#fixtureBanner .wrapper .box .body .footer a { line-height: 31px; margin: 0 4px; color: #F3D24C; }
+#fixtureBanner .wrapper .box .body .footer a.empty { display: none; }
+#fixtureBanner .wrapper .box .body .footer.two a { margin: 0 15px; }
+#fixtureBanner .wrapper .box .body .footer a:before { content: '> ';display: inline-block;margin-right: 3px;}
+#fixtureBanner .wrapper .box .body .footer a:hover{text-decoration:underline;}
+#fixtureBanner .wrapper .box .body .footer a.matchCentre { color: #9ADCF3; }
+
+#fixtureBannerBullets { height: 30px; text-align: center; margin-top: -10px; }
+#fixtureBannerBullets .bullet { background-image: url(/Res/image/home/homeBullet.png); width: 30px; height: 30px; display: inline-block; cursor: pointer; }
+#fixtureBannerBullets .bullet.shown { background-position: 0 -30px; }
+#fixtureBannerBullets .bullet:hover{opacity:0.5; -webkit-transition:opacity 100ms linear; -moz-transition:opacity 100ms linear; -o-transition:opacity 100ms linear; -ms-transition:opacity 100ms linear; transition:opacity 100ms linear; }
+
+.fixtureTableHeader { height: 60px; border-top: 2px solid #B2939A; background-color: #892D42; position: relative; margin-bottom: 10px; }
+.fixtureTableHeader .tableTitle { color: white; line-height: 60px; padding-left: 12px; font-weight: 600; font-size: 18px; }
+.fixtureTableHeader .tableFilter { position: absolute; right: 10px; top: 0; height: 60px; }
+.fixtureTableHeader .tableFilter div { display: inline; line-height: 60px; }
+.fixtureTableHeader .tableFilter select { background-color: #501F2A; color: white; height: 32px; line-height: 32px; font-size: 12px; padding: 0 10px; min-width: 150px; border: 0; vertical-align: middle; font-weight:bold}
+
+.leagueTablePage .fixtureTableHeader { margin-top: 20px; margin-bottom: 0; }
+
+.fixtureTableWrapper { min-height: 50px; min-width: 300px; }
+
+.fixtureTableWrapper .monthHeader { height: 40px; background-color: #882D42; border-top: 2px solid #C496A1; position: relative; margin-bottom: 2px; }
+.fixtureTableWrapper .monthHeader .tableTitle { color: white; line-height: 40px; padding-left: 12px; font-weight: 600; font-size: 16px; }
+
+.fixtureTableWrapper .matchItem { margin-bottom: 2px; font-weight: 600; }
+.fixtureTableWrapper .matchItem .infos { background-color: #ebebeb; display: block; color: black; }
+.fixtureTableWrapper .matchItem.live .infos { background-color: #F5D34C; }
+.fixtureTableWrapper .matchItem .infos .info { height: 70px; line-height: 70px; font-size: 14px; }
+
+.fixtureTableWrapper .matchItem .infos .info.date { white-space: nowrap;}
+
+.firstTeamFixtureContentContainer .matchItem .infos .info.match { width: 30%; }
+.fixtureTableWrapper .matchItem .infos .info.match { padding-left: 50px; text-align: center; }
+.fixtureTableWrapper .matchItem .infos .info.match img { max-width: 80px; max-height: 50px;}
+
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper { display: table; width: 100%; font-size: 14px; }
+.firstTeamFixtureContentContainer .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper { width: 110%; margin-left: -10px;}
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper div { display: table-cell; vertical-align: top; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .westHam { color: #671A2C; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .away { color: #333; }
+
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper div.homeTeamName{position:absolute; left:0; top:0; width:70%; display:block; white-space:normal; line-height:120%; display:table; height:70px; vertical-align:middle}
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper div.cell { display:table-cell; vertical-align:middle; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper div.homeTeamName.awayTeamName{left:60px; right:0}
+
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .homeTeam { text-align: right; width: 40%; white-space: nowrap; font-size:16px; position:relative}
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .versus { text-align: center; width: 20%; font-size: 28px; line-height: 70px; position: relative; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .versus.withShoot { line-height: 55px }
+
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .versus span { display: inline-block; min-width: 20px; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .versus .hyphen { display: inline-block; min-width: 10px; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .versus .shoot span { display: inline-block; min-width: 20px; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .versus .shoot .hyphen { display: inline-block; min-width: 10px; }
+
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .shoot { position: absolute; font-size: 18px; bottom: 10px; line-height: 1em; width: 100%; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .awayTeam { text-align: left; width: 40%; white-space: nowrap; font-size:16px; position:relative}
+
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .homeTeam img { margin-left: 5px; width: 50px; }
+.fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .awayTeam img { margin-right: 5px; width: 50px; }
+
+.fixtureTableWrapper .matchItem .infos .info.details .attendance img { margin-right: 5px; width: 50px; }
+
+.fixtureTableWrapper .matchItem .links { height: 30px; line-height: 30px; background-color: #f5f5f5; font-size: 12px; color: black; }
+.fixtureTableWrapper .matchItem .links span { border-left: 2px solid white; line-height: 30px; float: right; text-align: center; }
+.fixtureTableWrapper .matchItem .links span.link::before { content: '> '; color: #691c2e;   font-weight: bold;  font-size: 14px;}
+.fixtureTableWrapper .matchItem .links span.link a { color: black; font-size:14px; font-weight:bold}
+.fixtureTableWrapper .matchItem .links span span { color: black; font-size:14px; font-weight:bold}
+.fixtureTableWrapper .matchItem .links span.link a:hover { color: black; text-decoration: underline; }
+.fixtureTableWrapper .matchItem .links span.match-report { width: 135px; }
+.fixtureTableWrapper .matchItem .links span.map { width: 135px; }
+.fixtureTableWrapper .matchItem .links span.tickets { width: 180px; }
+.fixtureTableWrapper .matchItem .links span.tickets span { width: 180px; }
+
+.otherTeamFixtureContentContainer,
+.firstTeamFixtureContentContainer { margin-bottom: 50px; }
+.otherTeamFixtureContentContainer .loadMore,
+.firstTeamFixtureContentContainer .loadMore { display: none; cursor: pointer; width: 100%; height: 40px; font-size: 16px; line-height: 40px; text-align: center; background-color: #f5f5f5; margin-top: 20px; font-weight: 600; background-image: url(/Res/image/fixture/fixtureshowallbg.png); background-position: center; background-repeat: no-repeat; color: #333; }
+.otherTeamFixtureContentContainer .loadMore:hover span,
+.firstTeamFixtureContentContainer .loadMore:hover span { text-decoration: underline; }
+.otherTeamFixtureContentContainer .loadMore::before,
+.firstTeamFixtureContentContainer .loadMore::before { content: '> '; color: #66192C; }
+
+.otherTeamFixtureContentContainer .fixtureTableHeader { margin-top: 20px; }
+.firstTeamFixtureContentContainer .info.venueName .vName{ display:none; }
+
+.otherTeamFixtureContentContainer .matchItem .infos .info.venueName {}
+.otherTeamFixtureContentContainer .matchItem .infos .info.venueName .vName{display: inline-block;width: 45%;line-height: 110%;text-align: center;}
+.otherTeamFixtureContentContainer .matchItem .infos .info.match {padding-right: 0px;padding-left: 50px;}
+.otherTeamFixtureContentContainer .matchItem .infos .info.match .cName{padding-left: 10px;max-width: 50%;text-align: center;display: inline-block;line-height: 110%;}
+.otherTeamFixtureContentContainer .matchItem .infos .info.match img {display: inline-block;padding-left: 20px;}
+
+.fixtureTableLoading { height: 50px; position: absolute; top: 0; width: 100%; }
+
+.nextMatchContainer { position: absolute; top: 0; left: 50%; width: 978px; margin-left: -489px; }
+.nextMatchContainer .nextMatchBox { position: absolute; top: 0; right: 0; width: 276px; height: 102px; background-image: url(/Res/image/fixture/countdownbg.png); color: white; }
+.nextMatchContainer .nextMatchBox .boxContent { position: absolute; top: 35px; left: 59px; }
+.nextMatchContainer .nextMatchBox .boxContent .boxTitle { font-size: 12px; line-height: 12px; letter-spacing: 2px; text-shadow: 1px 1px 1px black; font-weight:bold}
+.nextMatchContainer .nextMatchBox .boxContent .countDownBox > div { height: 35px; width: 32px; margin-right: 5px; float: left; position: relative; }
+.nextMatchContainer .nextMatchBox .boxContent .countDownBox .value { display: block; text-align: center; font-size: 16px; text-shadow: 1px 1px 1px black; letter-spacing: 1px; }
+.nextMatchContainer .nextMatchBox .boxContent .countDownBox .unit { font-size: 12px; line-height: 12px; display: block; transform: scale(0.8); position: absolute; bottom: 0; left: 0; width: 100%; text-align: center; opacity:0.7}
+
+.row .columnTopShadow { height: 30px; background-image: url(/Res/image/home/homeshadowhr.png); background-position: top center; background-repeat: no-repeat; opacity: 0.5; }
+
+.fixtureTableWrapper .tableRow { display: table; width: 100%; height: 62px; border-top: 1px dotted #ebebeb; border-bottom: 1px dotted #ccc; font-weight: 600; font-size: 15px; }
+.fixtureTableWrapper .tableRow:first-child { border-top: 0; }
+.fixtureTableWrapper .tableRow:last-child { border-bottom: 0; }
+.fixtureTableWrapper .tableRow.tableHeader { height: 40px; line-height: 40px; color: #66192C; }
+.fixtureTableWrapper .tableRow .tableCell { display: table-cell; line-height: 62px; text-align: center; }
+.fixtureTableWrapper .tableRow.tableHeader .tableCell { line-height: 40px; position: relative; }
+
+.fixtureTableWrapper .tableRow.tableHeader .home, .fixtureTableWrapper .tableRow.tableHeader .away, .fixtureTableWrapper .tableRow.tableHeader .total { position: absolute; top: 0; }
+.fixtureTableWrapper .tableRow.tableHeader .home, .fixtureTableWrapper .tableRow.tableHeader .away { left: 50%; width: 60px; margin-left: -30px; }
+.fixtureTableWrapper .tableRow.tableHeader .total { left: 0; width: 200%; }
+
+.fixtureTableWrapper .tableRow.even { background-color: #ebebeb; }
+.fixtureTableWrapper .tableRow.odd { background-color: #f5f5f5; }
+.fixtureTableWrapper .tableRow.westHam { background-color:#882D42; color: white; }
+
+.fixtureTableWrapper .tableRow .tableCell.pos { width: 6%; text-align: left; padding-left: 20px; }
+.fixtureTableWrapper .tableRow .tableCell.logo { width: 6%; position: relative; }
+.fixtureTableWrapper .tableRow .tableCell.logo img { max-height: 46px; }
+.fixtureTableWrapper .tableRow .tableCell.team { width: 22%; text-align: left; padding-left: 5px; white-space: nowrap; }
+.fixtureTableWrapper .tableRow .tableCell.p { width: 6%; }
+
+.fixtureTableWrapper .tableRow .tableCell.w { width: 5%; border-left: 1px solid #dbdbdb; }
+.fixtureTableWrapper .tableRow .tableCell.d { width: 5%; }
+.fixtureTableWrapper .tableRow .tableCell.l { width: 5%; }
+.fixtureTableWrapper .tableRow .tableCell.f { width: 5%; }
+.fixtureTableWrapper .tableRow .tableCell.a { width: 5%; }
+.fixtureTableWrapper .tableRow .tableCell.gd { width: 5%; border-left: 1px solid #dbdbdb; }
+.fixtureTableWrapper .tableRow .tableCell.pt { width: 5%; }
+
+/* md or less, tablet */
+@media (max-width: 977px) {
+    .nextMatchContainer { left: 0; width: 100%; margin-left: 0; }
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .homeTeam img, .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .awayTeam img { display: none; }
+    .fixtureTableWrapper .matchItem .infos .info.match {padding-left: 70px;}
+    .otherTeamFixtureContentContainer .matchItem .infos .info.match {padding-left: 90px;}
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .shoot { bottom: -5px; }
+}
+
+/* sm or less, mobile */
+@media (max-width: 767px) {
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper div.homeTeamName{width:100%}
+    .fixtureTableHeader .tableFilter div{line-height:40px}
+    .fixtureTableHeader { height: auto; }
+
+    .fixtureTableHeader .tableTitle { line-height: 32px; padding-top:10px; padding-bottom:10px; }
+    .fixtureTableHeader .tableFilter { position: relative; height: auto; padding-bottom: 10px; }
+    .fixtureTableHeader .tableFilter div { display: block; line-height: normal; margin: 5px 20px; }
+
+    .fixtureTableWrapper .matchItem .infos .info.date { text-align: center; height: 30px; line-height: 30px; }
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper div { vertical-align: middle; line-height: normal; }
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .homeTeam, .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .awayTeam { white-space: normal; }
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .homeTeam img, .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .awayTeam img { display: none; }
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .versus.withShoot { line-height: 70px; }
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper .shoot { bottom: 5px; }
+    .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper div.homeTeamName.awayTeamName{left:0px;}
+    .firstTeamFixtureContentContainer .fixtureTableWrapper .matchItem .infos .info.details .detailsWrapper { width: 100%; margin: 0; }
+
+    .fixtureTableWrapper .tableRow { font-size: 14px; }
+
+    .fixtureTableWrapper .tableRow .tableCell.pos { width: 10%; padding-left: 15px; }
+    .fixtureTableWrapper .tableRow .tableCell.team { width: 45%; }
+    .fixtureTableWrapper .tableRow .tableCell.p { width: 15%; }
+    .fixtureTableWrapper .tableRow .tableCell.gd { width: 15%; }
+    .fixtureTableWrapper .tableRow .tableCell.pt { width: 15%; }
+
+    .fixtureTableWrapper .tableRow .tableCell.logo,
+    .fixtureTableWrapper .tableRow.firstRow,
+    .fixtureTableWrapper .tableRow.tableHeader .total,
+    .fixtureTableWrapper .tableRow .tableCell.w,
+    .fixtureTableWrapper .tableRow .tableCell.d,
+    .fixtureTableWrapper .tableRow .tableCell.l,
+    .fixtureTableWrapper .tableRow .tableCell.f,
+    .fixtureTableWrapper .tableRow .tableCell.a { display: none; }
+    .fixtureTableWrapper .tableRow .tableCell.pt {border-left: 1px solid #dbdbdb;}
+}
