@@ -74,9 +74,13 @@ class CalendarController(
         scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
         scope.season = selectedSeason.season
         scope.months = monthViews.toJSArray
-        scope.seasonsDropdown = seasons.toSeq.reverse.map(season => SeasonDropdown(season.season)).toJSArray
+        scope.seasonsDropdown = seasons.toSeq.reverse.map { season =>
+          new Dropdown(season.season.toString, () => changeSeason(season.season))
+        }.toJSArray
         scope.ticketType = JsTicketType(ticketType)
-        scope.ticketTypes = TicketType.values.map(JsTicketType.apply).toJSArray
+        scope.ticketTypesDropdown = TicketType.values.map { ticketType =>
+          new Dropdown(ticketType.label, () => changeTicketType(ticketType.name))
+        }.toJSArray
         scope.scrollTo = (id: String) => {
           location.hash(id)
           anchorScroll()
@@ -86,12 +90,12 @@ class CalendarController(
   }
 
   @JSExport
-  def changeTicketType(ticketTypeName: String) = {
+  def changeTicketType(ticketTypeName: String): Unit = {
     loadGames(Some(ticketTypeName), Some(scope.season))
   }
 
   @JSExport
-  def changeSeason(season: Int) = {
+  def changeSeason(season: Int): Unit = {
     loadGames(Some(scope.ticketType.key), Some(season))
   }
 }
@@ -104,9 +108,9 @@ trait CalendarScope extends Scope {
   var user: js.UndefOr[String] = js.native
   var authenticationLink: js.UndefOr[String] = js.native
   var alterAttendance: js.Function2[MonthView, Int, Future[Unit]]
-  var seasonsDropdown: js.Array[SeasonDropdown] = js.native
+  var seasonsDropdown: js.Array[Dropdown] = js.native
+  var ticketTypesDropdown: js.Array[Dropdown] = js.native
   var ticketType: JsTicketType = js.native
-  var ticketTypes: js.Array[JsTicketType] = js.native
   var scrollTo: js.Function1[String, Unit]
 }
 
@@ -197,7 +201,4 @@ object GameView {
 }
 
 @ScalaJSDefined
-class SeasonDropdown(var text: String, var href: String) extends js.Object
-object SeasonDropdown {
-  def apply(season: Int) = new SeasonDropdown(season.toString, "#")
-}
+class Dropdown(var text: String, var click: js.Function0[Unit]) extends js.Object

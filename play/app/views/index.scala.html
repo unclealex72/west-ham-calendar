@@ -38,9 +38,14 @@
                         </li>
                         <li>
                             <a href="#" data-animation="am-flip-x"
-                            bs-dropdown="ticketsDropdown" aria-haspopup="true" aria-expanded="false">
+                            bs-dropdown="ticketTypesDropdown" aria-haspopup="true" aria-expanded="false">
                                 Tickets <span class="caret"></span>
                             </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="#anotherAction"><i class="fa fa-download"></i>&nbsp;Some action</a></li>
+                                <li><a ng-click="$alert('Holy guacamole')"><i class="fa fa-globe"></i>&nbsp;Display an alert</a></li>
+                                <li ng-repeat="i in ['Foo', 'Bar', 'Baz']"><a ng-href="#action{{i}}"><i class="fa fa-chevron-right"></i>&nbsp;{{i}}</a></li>
+                            </ul>
                         </li>
                     </ul>
                     <form class="navbar-form navbar-left" role="search">

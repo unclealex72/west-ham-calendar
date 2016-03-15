@@ -5,7 +5,7 @@ package calendar
   */
 
 import com.greencatsoft.angularjs.{Config, Angular}
-import com.greencatsoft.angularjs.core.LocationProvider
+import com.greencatsoft.angularjs.core.{Route, RouteProvider, LocationProvider}
 
 import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
