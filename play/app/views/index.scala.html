@@ -154,10 +154,10 @@
                                                 <a ng-show="game.locationUrl" ng-href="{{game.locationUrl | jsonDecode }}" target="_blank">Map</a>
                                             </span>
                                             <span ng-show="game.ticketsUrl" class="tickets link">
-                                                <a ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">Tickets @@ {{game.ticketsDate | customDate: 'ddth MMM'}}</a>
+                                                <a ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">Tickets @@ {{game.ticketsDate | customDate: 'dth MMM'}}</a>
                                             </span>
                                             <span ng-show="!game.ticketsUrl">
-                                                <span ng-show="game.ticketsDate && !game.ticketsUrl">Tickets @@ {{game.ticketsDate | customDate: 'ddth MMM'}}</span>
+                                                <span ng-show="game.ticketsDate && !game.ticketsUrl">Tickets @@ {{game.ticketsDate | customDate: 'dth MMM'}}</span>
                                             </span>
                                         </div>
                                     </div>
