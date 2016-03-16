@@ -30,7 +30,8 @@ class CalendarController(
                           attendanceService: AttendanceService,
                           location: AngularLocation,
                           anchorScroll: AnchorScroll,
-                          filterService: FilterService) extends AbstractController[CalendarScope](scope){
+                          filterService: FilterService,
+                          dropdownProvider: DropdownProvider) extends AbstractController[CalendarScope](scope){
 
   loadGames(None, None)
 
@@ -75,11 +76,11 @@ class CalendarController(
         scope.season = selectedSeason.season
         scope.months = monthViews.toJSArray
         scope.seasonsDropdown = seasons.toSeq.reverse.map { season =>
-          new Dropdown(season.season.toString, () => changeSeason(season.season))
+          dropdownProvider(season.season).click(() => changeSeason(season.season))
         }.toJSArray
         scope.ticketType = JsTicketType(ticketType)
         scope.ticketTypesDropdown = TicketType.values.map { ticketType =>
-          new Dropdown(ticketType.label, () => changeTicketType(ticketType.name))
+          dropdownProvider(ticketType.label).click(() => changeTicketType(ticketType.name))
         }.toJSArray
         scope.scrollTo = (id: String) => {
           location.hash(id)
@@ -199,6 +200,3 @@ object GameView {
         gameRow.links(LOCATION).map(JSON.stringify(_)).orUndefined)
   }
 }
-
-@ScalaJSDefined
-class Dropdown(var text: String, var click: js.Function0[Unit]) extends js.Object

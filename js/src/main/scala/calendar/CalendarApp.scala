@@ -24,6 +24,7 @@ object CalendarApp extends JSApp {
       .controller[CalendarController]
       .factory[AjaxServiceFactory]
       .factory[AttendanceServiceFactory]
+      .factory[DropdownProviderFactory]
       .filter[CustomDateFilter]
       .filter[OpponentsFilter]
       .filter[JsonDecodeFilter]
