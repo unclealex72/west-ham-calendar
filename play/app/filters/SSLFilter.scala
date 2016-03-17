@@ -5,17 +5,18 @@ package filters
   * Created by alex on 15/03/16.
   */
 import play.api.mvc._
+import security.RequireSSL
 
 import scala.concurrent.Future
 
 /**
   * A filter to make Play aware of the X-Forwarded-Proto header.
   */
-class SSLFilter extends Filter {
+class SSLFilter(requireSSL: RequireSSL) extends Filter {
 
   def apply(nextFilter: RequestHeader => Future[Result])
            (requestHeader: RequestHeader): Future[Result] = {
-    val isSecure = requestHeader.secure || requestHeader.headers.get("X-Forwarded-Proto").contains("https")
+    val isSecure = requestHeader.secure || requireSSL() || requestHeader.headers.get("X-Forwarded-Proto").contains("https")
     val wrappedRequestHeader = new RequestHeader {
       override def secure: Boolean = isSecure
       override def uri: String = requestHeader.uri

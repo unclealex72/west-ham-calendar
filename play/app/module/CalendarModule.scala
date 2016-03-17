@@ -21,6 +21,7 @@
   */
 package module
 
+import java.lang.Boolean
 import java.net.URI
 
 import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
@@ -36,7 +37,7 @@ import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsPdfFac
 import play.api.cache.CacheApi
 import play.api.http.HttpFilters
 import scaldi.Module
-import security.Authorised
+import security.{RequireSSL, Authorised}
 import security.Definitions.Auth
 import security.models.daos.{CredentialsStorage, PlayCacheCredentialsStorage}
 import services.{GameRowFactory, GameRowFactoryImpl}
@@ -48,7 +49,7 @@ import net.ceedubs.ficus.Ficus._
 import scala.concurrent.ExecutionContext
 import scala.concurrent.duration._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
-
+import scala.collection.JavaConversions._
 /**
   * @author alex
   *
@@ -106,6 +107,9 @@ class CalendarModule extends Module {
   // Security
   bind[Auth] toNonLazy {
     Authorised(config.getString("valid-users.users").split(",").map(_.trim()))
+  }
+  bind[RequireSSL] toNonLazy {
+    RequireSSL(config.getBooleanList("require-ssl").headOption.contains(true))
   }
 
   bind[CredentialsStorage] toNonLazy new PlayCacheCredentialsStorage(inject[CacheApi], 15.minutes)(inject[ExecutionContext])
