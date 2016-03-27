@@ -8,6 +8,8 @@
             <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <title>West Ham Calendar Prototype</title>
 
+        <base href="/">
+
             <!-- Bootstrap -->
         <link href="@routes.Assets.at("stylesheets/proto.css")" rel="stylesheet">
         <link href="@routes.Assets.at("stylesheets/main.css")" rel="stylesheet">
@@ -75,7 +77,7 @@
                     <div id="sidebar" class="bs-sidebar hidden-print months" role="complementary" data-offset-top="-100" bs-affix>
                         <ul class="nav bs-sidenav">
                             <li ng-repeat="month in months | opponents:search"  data-target="#{{month.id}}" bs-scrollspy>
-                                <a href="" ng-click="scrollTo(month.id)">{{month.date | date:'MMMM'}}</a>
+                                <a href="#{{month.id}}">{{month.date | date:'MMMM'}}</a>
                             </li>
                         </ul>
                     </div>
@@ -172,7 +174,7 @@
 
         @for(lib <- Seq(
             "jquery" -> Seq("jquery"),
-            "angularjs" -> Seq("angular", "angular-animate", "angular-route"),
+            "angularjs" -> Seq("angular", "angular-animate"),
             "angular-strap" -> Seq("angular-strap", "angular-strap.tpl"))) {
             @for(name <- lib._2) {
                 @defining(if (minimise) ".min" else "") { suffix =>
