@@ -1,5 +1,6 @@
 package models
 
+import dates.SharedDate
 import json.JsonConverters
 import upickle.Js
 
@@ -13,20 +14,18 @@ import scalaz.{ValidationNel, _}
   */
 case class Months(months : SortedSet[Month])
 
-case class Month(month: Int, year: Int, games: SortedSet[GameRow])
+case class Month(date: SharedDate, games: SortedSet[GameRow])
 
 object Months extends JsonConverters[Months] {
 
   def jsonToMonth(value: Js.Value): ValidationNel[String, Month] = value.jsObj("Month") { fields =>
-    val month = fields.mandatory("month")(_.jsInt)
-    val year = fields.mandatory("year")(_.jsInt)
+    val date = fields.mandatory("date")(_.jsDate)
     val games = fields.mandatory("games")(_.jsSorted(GameRow.deserialise))
-    (month |@| year |@| games)(Month.apply)
+    (date |@| games)(Month.apply)
   }
 
   def monthToJson(m: Month): Js.Value = Js.Obj (
-    "month" -> Js.Num(m.month),
-    "year" -> Js.Num(m.year),
+    "date" -> dateToJson(m.date),
     "games" -> jsSorted(GameRow.serialise)(m.games)
   )
 
@@ -41,6 +40,6 @@ object Months extends JsonConverters[Months] {
 
 object Month {
 
-  implicit val ordering: SOrdering[Month] = SOrdering.by((m: Month) => (m.year, m.month))
+  implicit val ordering: SOrdering[Month] = SOrdering.by((m: Month) => (m.date.year, m.date.month))
 
 }

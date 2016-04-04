@@ -113,5 +113,17 @@ trait GameDao {
    * Get all known games.
    */
   def getAll: Future[List[Game]]
+
+  /**
+    * Get all home and away logos.
+    * @return
+    */
+  def getAllTeamLogos: Future[Set[String]]
+
+  /**
+    * Get all competition logos.
+    * @return
+    */
+  def getAllCompetitionLogos: Future[Set[String]]
 }
 

@@ -3,9 +3,9 @@
 # ~~~~
 
 # Home page
-GET     /index.html                            controllers.Application.index
-GET     /                                      controllers.Application.index
-GET     /proto.html                            controllers.Application.proto
+GET     /index.html                            controllers.Application.proto
+GET     /                                      controllers.Application.proto
+GET     /index-old.html                        controllers.Application.index
 # Json
 
 # Initial entry point
@@ -51,6 +51,13 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 # FavIcon
 
 GET	/favicon.ico		    controllers.Assets.at(path="/public", file="favicon.ico")
+
+# Sprites
+
+GET /sprites/teams.css              controllers.Sprites.teamCss
+GET /sprites/competition.css        controllers.Sprites.competitionCss
+GET /sprites/teams.png              controllers.Sprites.teamImage
+GET /sprites/competition.png        controllers.Sprites.competitionImage
 
 # Providers entry points
 

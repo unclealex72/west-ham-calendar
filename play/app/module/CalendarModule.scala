@@ -21,6 +21,7 @@
   */
 package module
 
+import java.awt.Dimension
 import java.lang.Boolean
 import java.net.URI
 
@@ -37,19 +38,23 @@ import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsPdfFac
 import play.api.cache.CacheApi
 import play.api.http.HttpFilters
 import scaldi.Module
-import security.{RequireSSL, Authorised}
+import security.{Authorised, RequireSSL}
 import security.Definitions.Auth
 import security.models.daos.{CredentialsStorage, PlayCacheCredentialsStorage}
 import services.{GameRowFactory, GameRowFactoryImpl}
-import sms.{SmsConfiguration, ClickatellSmsService, ClickatellData, SmsService}
+import sms.{ClickatellData, ClickatellSmsService, SmsConfiguration, SmsService}
 import update._
 import update.fixtures.{FixturesGameScanner, FixturesGameScannerImpl}
 import update.tickets.{TicketsGameScanner, TicketsGameScannerImpl}
 import net.ceedubs.ficus.Ficus._
-import scala.concurrent.ExecutionContext
+
+import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
+import sprites._
+
 import scala.collection.JavaConversions._
+import scala.language.postfixOps
 /**
   * @author alex
   *
@@ -99,6 +104,17 @@ class CalendarModule extends Module {
   bind[FatalErrorDao] toNonLazy injected[SlickFatalErrorDao]
   bind[SmsService] toNonLazy injected[ClickatellSmsService]
   bind[SmsConfiguration] toNonLazy config.as[SmsConfiguration]("sms")
+
+  // Sprites
+  bind[SpriteService] toNonLazy injected[SpriteServiceImpl]
+  bind[LogoSizes] to {
+    def dimension(ty: String): Dimension = new Dimension(config.getInt(s"sprites.$ty.x"), config.getInt(s"sprites.$ty.y"))
+    LogoSizes(dimension("teams"), dimension("competitions"))
+  }
+  bind[SpriteHolder] toNonLazy injected[PlayCacheSpriteHolder] initWith { spriteHolder =>
+    implicit val executionContext = inject[ExecutionContext]
+    Await.result(spriteHolder.update, 1 minute)
+  }
 
   // filters.Filters
   bind[HttpFilters] toNonLazy injected[Filters]

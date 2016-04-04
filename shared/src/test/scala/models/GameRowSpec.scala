@@ -30,6 +30,9 @@ class GameRowSpec extends Specification {
       TicketingInformation(at = SharedDate(2016, 2, 11, 9, 0, 0, 0, 0), links = Links[TicketingInformationRel]())
     ),
     attended = Some(true),
+    homeTeamLogoClass = Some("homeTeamLogoClass"),
+    awayTeamLogoClass = Some("awayTeamLogoClass"),
+    competitionLogoClass = Some("competitionLogoClass"),
     links = Links.withSelf("http://localhost:9000/game/728")
   )
 

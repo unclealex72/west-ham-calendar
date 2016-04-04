@@ -116,7 +116,7 @@ class IcalCalendarWriterSpec extends Specification {
     val linkFactory = new LinkFactory {
       override def locationLink(gameId: Long): URI = new URI(s"http://location/${gameId}")
     }
-    icalCalendarWriter.write(Calendar("id", "title", SortedSet(event)), writer, linkFactory)
+    icalCalendarWriter.write(Calendar("id", "title", SortedSet(event).toSeq), writer, linkFactory)
     writer.toString.trim
   }
 

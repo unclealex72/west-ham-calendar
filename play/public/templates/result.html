@@ -1,0 +1,18 @@
+<div ng-class="{'withShoot': game.hasShootout, 'versus': true}">
+    <span class="home">
+        <span ng-class="{'westHam': game.homeTeam.isWestHam}">{{game.homeTeam.score}}</span>
+    </span>
+    <span class="hyphen">-</span>
+    <span class="away">
+        <span ng-class="{'westHam': game.awayTeam.isWestHam}">{{game.awayTeam.score}}</span>
+    </span>
+    <div ng-show="game.hasShootout" class="shoot">
+        <span class="home">
+            <span ng-class="{'westHam': game.homeTeam.isWestHam}">{{game.homeTeam.shootout}}</span>
+        </span>
+        <span class="hyphen">-</span>
+        <span class="away">
+            <span ng-class="{'westHam': game.awayTeam.isWestHam}">{{game.awayTeam.shootout}}</span>
+        </span>
+    </div>
+</div>

@@ -1,0 +1,16 @@
+@import java.awt.Point
+@import java.awt.Dimension
+@(size: Dimension, mainClass: String, imageUrl: String, coordinatesByClassName: Seq[(String, Point)])
+
+.@mainClass @Html("{")
+    width: @{size.width}px;
+    height: @{size.height}px;
+    background-image: url("@imageUrl");
+    background-repeat: no-repeat;
+@Html("}")
+
+@for(classNameAndPosition <- coordinatesByClassName) {
+.@classNameAndPosition._1 @Html("{")
+    background-position: @{-classNameAndPosition._2.x}px @{-classNameAndPosition._2.y}px;
+@Html("}")
+}

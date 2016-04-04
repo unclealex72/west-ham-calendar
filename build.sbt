@@ -48,6 +48,7 @@ lazy val play = (project in file("play")).settings(
       "org.mnode.ical4j" % "ical4j" % "1.0.4",
       "org.postgresql" % "postgresql" % "9.4.1207",
       "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
+      "org.imgscalr" % "imgscalr-lib" % "4.2",
       // webjars
       "org.webjars.bower" % "bootstrap" % "3.3.6",
       "org.webjars" % "jquery" % "2.1.3",
@@ -69,6 +70,7 @@ lazy val js = (project in file("js")).settings(
   scalaVersion := scalaV,
   persistLauncher := true,
   persistLauncher in Test := false,
+  emitSourceMaps := true,
   libraryDependencies ++= Seq(
     "com.greencatsoft" %%% "scalajs-angular" % "0.6",
     "com.lihaoyi" %%% "upickle" % "0.3.8",
@@ -81,6 +83,7 @@ lazy val js = (project in file("js")).settings(
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
   settings(
     scalaVersion := scalaV,
+    emitSourceMaps := true,
     libraryDependencies ++= Seq(
       "com.beachape" %% "enumeratum" % "1.3.6",
       "com.lihaoyi" %% "upickle" % "0.3.8",

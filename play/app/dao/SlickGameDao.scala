@@ -210,4 +210,22 @@ class SlickGameDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: Exec
   override def findByDatePlayed(datePlayed: DateTime): Future[Option[Game]] = dbConfig.db.run {
     games.filter(_.at === datePlayed).sortBy(_.at).result.headOption
   }
+
+  /**
+    * Get all competition logos.
+    *
+    * @return
+    */
+  override def getAllCompetitionLogos: Future[Set[String]] = dbConfig.db.run {
+    games.map(_.competitionimageurl).distinct.result
+  }.map(_.flatten.toSet)
+
+  /**
+    * Get all home and away logos.
+    *
+    * @return
+    */
+  override def getAllTeamLogos: Future[Set[String]] = dbConfig.db.run {
+    games.map(_.hometeamimageurl).union(games.map(_.awayteamimageurl)).distinct.result
+  }.map(_.flatten.toSet)
 }

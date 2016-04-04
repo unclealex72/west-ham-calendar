@@ -1,7 +1,8 @@
 package controllers
 
 import dao.GameDao
-import models.EntryRel.{LOGOUT, LOGIN, SEASONS}
+import dates.SharedDate
+import models.EntryRel.{LOGIN, LOGOUT, SEASONS}
 import models.GameRow._
 import models.SeasonRel.MONTHS
 import models._
@@ -47,7 +48,8 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
       val months = gamesByMonth.map { mygs =>
         val (month, year, games) = mygs
         val gameRows = games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory))
-        Month(month, year, SortedSet.empty[GameRow] ++ gameRows)
+        val firstDayInMonth = SharedDate(year, month, 2, 0, 0, 0, 0, 0)
+        Month(firstDayInMonth, SortedSet.empty[GameRow] ++ gameRows)
       }
       Months(SortedSet.empty[Month] ++ months)
     }

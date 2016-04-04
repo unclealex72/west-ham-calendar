@@ -22,14 +22,14 @@
 package update
 
 import org.joda.time.DateTime
+import play.api.Application
 import play.api.cache.Cache
-import play.api.Play.current
 
 /**
  * @author alex
  *
  */
-class PlayCacheLastUpdated extends LastUpdated {
+class PlayCacheLastUpdated(implicit val application: Application) extends LastUpdated {
 
   val cacheKey = s"$getClass.lastUpdated"
   

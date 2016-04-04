@@ -4,8 +4,10 @@ package calendar
   * Created by alex on 07/02/16.
   */
 
-import com.greencatsoft.angularjs.{Config, Angular}
-import com.greencatsoft.angularjs.core.{Route, RouteProvider, LocationProvider}
+import calendar.controllers.AppController
+import calendar.directives._
+import com.greencatsoft.angularjs.{Angular, Config}
+import com.greencatsoft.angularjs.core.{LocationProvider, Route, RouteProvider}
 
 import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
@@ -14,20 +16,30 @@ import scala.scalajs.js.annotation.JSExport
 object CalendarApp extends JSApp {
 
   override def main() {
-    val dependencies = Seq(
-      "mgcrea.ngStrap" -> Seq("", ".helpers.dimensions", ".helpers.debounce"),
-      "ng" -> Seq("Animate"))
-    val module =
-      Angular.module("hammersCalendar",
-        dependencies.flatMap { case (prefix, suffices) => suffices.map(suffix => s"$prefix$suffix") })
+    val module = Angular.module("hammersCalendar", Seq("ui.materialize"))
     module
+      // Directives
+      .directive[AppDirective]
+      .directive[NavDirective]
+      .directive[SidebarDirective]
+      .directive[ContentDirective]
+      .directive[MonthDirective]
+      .directive[GameDirective]
+      .directive[TeamNameDirective]
+      .directive[TeamLogoDirective]
+      .directive[ResultDirective]
+      // Controllers
       .controller[CalendarController]
+      .controller[AppController]
+      // Services
       .factory[AjaxServiceFactory]
       .factory[AttendanceServiceFactory]
       .factory[DropdownProviderFactory]
+      // Filters
       .filter[CustomDateFilter]
       .filter[OpponentsFilter]
       .filter[JsonDecodeFilter]
+      // Config
       .config[CalendarConfig]
   }
 }

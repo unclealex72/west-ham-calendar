@@ -135,7 +135,7 @@ class MonthView(
 }
 object MonthView {
   def apply(idFactory: Date => String, ticketType: TicketType)(month: Month): MonthView = {
-    val date = new js.Date(month.year - 1900, month.month - 1, 1)
+    val date = new js.Date(month.date.year - 1900, month.date.month - 1, 1)
     val gameViews = month.games.toSeq.zipWithIndex.map { gameRowAndIndex => GameView(ticketType)(gameRowAndIndex._1, gameRowAndIndex._2) }
     new MonthView(idFactory(date), date, gameViews.toJSArray)
   }

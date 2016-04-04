@@ -1,78 +1,18 @@
-@import "bootstrap/less/bootstrap.less";
-//@import "checkbox.less";
-@import "fixtures.less";
-
-body {
-  padding-top:50px;
+.game-details {
+  width: 100%;
+  display: table;
 }
 
-#masthead {
-  min-height:250px;
+.game-cell {
+  display: table-cell;
+  vertical-align: middle;
 }
 
-#masthead h1 {
-  font-size: 30px;
-  line-height: 1;
-  padding-top:20px;
+.team {
+  display: table-cell;
+  width: 40%;
 }
 
-#masthead .well {
-  margin-top:8%;
-}
-
-:target:before {
-  content: "";
-  display: block;
-  height: 60px; /* fixed header height*/
-  margin: -60px 0 0; /* negative fixed header height */
-}
-
-@media screen and (min-width: 768px) {
-  #masthead h1 {
-    font-size: 50px;
-  }
-}
-
-.navbar-bright {
-  background-color:#111155;
-  color:#fff;
-
-}
-
-.affix-top,.affix{
-  position: static;
-}
-
-@media (min-width: 979px) {
-
-  #sidebar {
-    background: #892D42;
-    font-weight: 600;
-  }
-
-  #sidebar li a {
-    color: white;
-  }
-
-  #sidebar li a:hover {
-    background: #4ca3de;
-    color: black;
-  }
-
-  #sidebar.affix-top {
-    position: static;
-    margin-top:30px;
-  }
-
-  #sidebar.affix {
-    position: fixed;
-    top:70px;
-  }
-
-  #sidebar li.active {
-    background: #4ca3de;
-    color: black;
-    border:0 #eee solid;
-  }
-
+.versus {
+  width: 20%;
 }
