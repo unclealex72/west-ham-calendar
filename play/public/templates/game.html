@@ -10,12 +10,10 @@
     </div>
     <div class="col s7">
         <div class="game-details">
-            <div class="team">
-                <div hc-team-name class="right-align game-cell" team="game.homeTeam"></div>
-                <div class="team-logo {{game.homeTeam.logo}} right-align game-cell" ng-show="{{game.homeTeam.logo}}"></div>
-            </div>
+            <div hc-team-name class="team right-align" team="game.homeTeam"></div>
+            <div class="team-logo {{game.homeTeam.logo}} no-flex" ng-show="{{game.homeTeam.logo}}"></div>
             <!-- Result -->
-            <div ng-show="game.hasResult" class="versus game-cell center-align" ng-class="{'withShoot': game.hasShootout}">
+            <div ng-show="game.hasResult" class="versus center-align" ng-class="{'withShoot': game.hasShootout}">
                 <span class="home">
                     <span ng-class="{'westHam': game.homeTeam.isWestHam}">{{game.homeTeam.score}}</span>
                 </span>
@@ -34,10 +32,8 @@
                 </div>
             </div>
             <div ng-hide="game.hasResult" class="versus">v</div>
-            <div class="team">
-                <div class="team-logo {{game.awayTeam.logo}} right-align game-cell" ng-show="{{game.awayTeam.logo}}"></div>
-                <div hc-team-name class="left-align game-cell" team="game.awayTeam"></div>
-            </div>
+            <div class="team-logo {{game.awayTeam.logo}} no-flex" ng-show="{{game.awayTeam.logo}}"></div>
+            <div hc-team-name class="team left-align" team="game.awayTeam"></div>
         </div>
     </div>
     <div class="col s1">
