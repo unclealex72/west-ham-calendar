@@ -26,6 +26,8 @@ package cal
 
 
 
+import javax.inject.Inject
+
 import dates.DateTimeImplicits._
 import dates.geo.GeoLocationFactory
 import model.Game
@@ -41,7 +43,7 @@ import scala.collection.SortedSet
  * @author alex
  *
  */
-class CalendarFactoryImpl(val geoLocationFactory: GeoLocationFactory) extends CalendarFactory {
+class CalendarFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory) extends CalendarFactory {
 
   def create(
     games: List[Game],

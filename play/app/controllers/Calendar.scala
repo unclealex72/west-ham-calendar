@@ -23,13 +23,12 @@ package controllers
 
 import java.io.StringWriter
 import java.net.URI
-import javax.inject.{Inject, Named}
+import javax.inject.Inject
 
 import cal.{CalendarFactory, CalendarWriter, LinkFactory}
 import dao.GameDao
 import play.api.i18n.MessagesApi
 import play.api.mvc.Action
-import scaldi.{Injector, Injectable}
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
 import security.Definitions._
 import update.LastUpdated
@@ -41,16 +40,14 @@ import scala.concurrent.ExecutionContext
   * @author alex
  *
  */
-class Calendar(implicit injector: Injector) extends Secret with Etag with Injectable {
-
-  val secret: SecretToken = inject[SecretToken]
-  val lastUpdated: LastUpdated = inject[LastUpdated]
-  val calendarFactory: CalendarFactory = inject[CalendarFactory]
-  val gameDao: GameDao = inject[GameDao]
-  val calendarWriter: CalendarWriter = inject[CalendarWriter]
-  val messagesApi: MessagesApi = inject[MessagesApi]
-  val env:Env = inject[Env]
-  implicit val ec: ExecutionContext = inject[ExecutionContext]
+class Calendar @Inject() (val secret: SecretToken,
+                          val lastUpdated: LastUpdated,
+                          val calendarFactory: CalendarFactory,
+                          val gameDao: GameDao,
+                          val calendarWriter: CalendarWriter,
+                          val messagesApi: MessagesApi,
+                          val env:DefaultEnvironment,
+                          implicit val ec: ExecutionContext) extends Secret with Etag {
 
   def searchSecure(secretPayload: String, attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     Secret(secretPayload) {

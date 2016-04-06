@@ -4,11 +4,11 @@ import java.io.PrintWriter
 import java.net.URI
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import com.ning.http.client.AsyncHttpClientConfig
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dates.{April, February, March}
 import html._
 import logging.SimpleRemoteStream
+import org.asynchttpclient.DefaultAsyncHttpClientConfig
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
@@ -17,10 +17,10 @@ import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.specification._
-import play.api.libs.ws.ning.NingWSClient
+import play.api.libs.ws.ahc.AhcWSClient
 
-import scala.concurrent.Future
 import scala.io.Source
+import scala.language.postfixOps
 
 /**
  * Created by alex on 28/03/15.
@@ -31,7 +31,7 @@ class TicketsGameScannerTest extends Specification with DisjunctionMatchers with
   "The tickets game scanner" should {
     "find all the known tickets" in new ServerContext {
       implicit val ee: ExecutionEnv = ExecutionEnv.fromGlobalExecutionContext
-      val wsClient = new NingWSClient(new AsyncHttpClientConfig.Builder().build())
+      val wsClient = new AhcWSClient(new DefaultAsyncHttpClientConfig.Builder().build())
 
       val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
       val gameUpdateCommands = ticketsGameScanner.scan(Some(2014))

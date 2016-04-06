@@ -1,5 +1,7 @@
 package controllers
 
+import javax.inject.Inject
+
 import dao.GameDao
 import dates.SharedDate
 import models.EntryRel.{LOGIN, LOGOUT, SEASONS}
@@ -8,7 +10,6 @@ import models.SeasonRel.MONTHS
 import models._
 import play.api.i18n.MessagesApi
 import play.api.mvc._
-import scaldi.{Injectable, Injector}
 import security.Definitions._
 import services.GameRowFactory
 import upickle.default._
@@ -18,15 +19,12 @@ import models.Seasons._
 import scala.collection.SortedSet
 import scala.concurrent.ExecutionContext
 
-class Application(implicit injector: Injector) extends Secure with LinkFactories with JsonResults with Injectable {
-
-  implicit val authorization: Auth = inject[Auth]
-  val gameDao: GameDao = inject[GameDao]
-  val gameRowFactory: GameRowFactory = inject[GameRowFactory]
-  val secret: SecretToken = inject[SecretToken]
-  val messagesApi: MessagesApi = inject[MessagesApi]
-  val env: Env = inject[Env]
-  implicit val ec: ExecutionContext = inject[ExecutionContext]
+class Application @Inject() (val gameDao: GameDao,
+                             val gameRowFactory: GameRowFactory,
+                             val secret: SecretToken,
+                             val messagesApi: MessagesApi,
+                             val silhouette: DefaultSilhouette,
+                             implicit val ec: ExecutionContext) extends Secure with LinkFactories with JsonResults {
 
   /**
    * Redirect to the  homepage.
@@ -39,7 +37,7 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
     Ok(views.html.proto())
   }
 
-  def months(season: Int) = UserAwareAction.async { implicit request =>
+  def months(season: Int) = silhouette.UserAwareAction.async { implicit request =>
     jsonF(gameDao.getAllForSeason(season)) { games =>
       val includeAttended = request.identity.isDefined
       val gamesByMonth = games.groupBy { game =>
@@ -55,14 +53,14 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
     }
   }
 
-  def game(id: Long) = UserAwareAction.async { implicit request =>
+  def game(id: Long) = silhouette.UserAwareAction.async { implicit request =>
     jsonFo(gameDao.findById(id)) { game =>
       val includeAttended = request.identity.isDefined
       gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory)(game)
     }
   }
 
-  def entry() = UserAwareAction { implicit request =>
+  def entry() = silhouette.UserAwareAction { implicit request =>
     json[Entry] {
       val fullName: Option[String] = request.identity.flatMap(_.fullName)
       val (authRel, authLink): (EntryRel, String) = if (fullName.isDefined) {
@@ -79,7 +77,7 @@ class Application(implicit injector: Injector) extends Secure with LinkFactories
     }
   }
 
-  def seasons() = UserAwareAction.async { implicit request =>
+  def seasons() = silhouette.UserAwareAction.async { implicit request =>
     jsonF(gameDao.getAllSeasons) { years =>
       val seasons = years.foldLeft(SortedSet.empty[Season]) { (seasons, year) =>
         val seasonLinks = Links.withLink(MONTHS.asInstanceOf[SeasonRel], routes.Application.months(year).absoluteURL())

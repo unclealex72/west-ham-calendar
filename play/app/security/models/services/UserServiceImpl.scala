@@ -1,7 +1,7 @@
 package security.models.services
 
 import java.util.UUID
-
+import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api.LoginInfo
 import com.mohiva.play.silhouette.impl.providers.CommonSocialProfile
@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
  *
  * @param userDAO The user DAO implementation.
  */
-class UserServiceImpl(userDAO: UserDAO)(implicit ec: ExecutionContext) extends UserService {
+class UserServiceImpl @Inject() (val userDAO: UserDAO, implicit val ec: ExecutionContext) extends UserService {
 
   /**
    * Retrieves a user that matches the specified login info.

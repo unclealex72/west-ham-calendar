@@ -1,13 +1,12 @@
 package controllers
 
+import javax.inject.Inject
+
 import location.LocationService
 import play.api.mvc._
 import play.api.libs.concurrent.Execution.Implicits._
-import scaldi.{Injector, Injectable}
 
-class Location(implicit injector: Injector) extends Controller with Injectable {
-
-  val locationService: LocationService = inject[LocationService]
+class Location @Inject() (val locationService: LocationService) extends Controller {
 
   def location(gameId: Long) = Action.async {
     locationService.location(gameId).map {

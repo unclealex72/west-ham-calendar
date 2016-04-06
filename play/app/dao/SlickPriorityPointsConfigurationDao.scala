@@ -2,6 +2,8 @@ package dao
 
 
 
+import javax.inject.Inject
+
 import pdf.Client._
 import pdf._
 import play.api.db.slick.DatabaseConfigProvider
@@ -14,7 +16,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by alex on 19/01/16.
   */
-class SlickPriorityPointsConfigurationDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: ExecutionContext) extends PriorityPointsConfigurationDao with Slick {
+class SlickPriorityPointsConfigurationDao @Inject() (val dbConfigFactory: DatabaseConfigFactory, implicit val ec: ExecutionContext) extends PriorityPointsConfigurationDao with Slick {
 
   import dbConfig.driver.api._
 

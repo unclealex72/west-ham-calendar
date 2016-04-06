@@ -15,7 +15,7 @@ import Scalaz._
 /**
   * Created by alex on 28/02/16.
   */
-class FatalImpl(val ws: WSClient, val fatalErrorDao: FatalErrorDao, val nowService: NowService, val smsService: SmsService)(implicit ec: ExecutionContext) extends Fatal with RemoteLogging {
+class FatalImpl @javax.inject.Inject() (val ws: WSClient, val fatalErrorDao: FatalErrorDao, val nowService: NowService, val smsService: SmsService, implicit val ec: ExecutionContext) extends Fatal with RemoteLogging {
 
   override def fail(errors: NonEmptyList[String], optionalException: Option[Throwable], optionalLinkBuilder: Option[FatalError => String])(implicit remoteStream: RemoteStream): Unit = {
     log(errors, optionalException)

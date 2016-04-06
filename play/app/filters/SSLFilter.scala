@@ -4,6 +4,10 @@ package filters
   * X-Forwarded-Proto
   * Created by alex on 15/03/16.
   */
+import java.security.cert.X509Certificate
+import javax.inject.Inject
+
+import akka.stream.Materializer
 import play.api.mvc._
 import security.RequireSSL
 
@@ -12,7 +16,7 @@ import scala.concurrent.Future
 /**
   * A filter to make Play aware of the X-Forwarded-Proto header.
   */
-class SSLFilter(requireSSL: RequireSSL) extends Filter {
+class SSLFilter @Inject() (requireSSL: RequireSSL, implicit val mat: Materializer) extends Filter {
 
   def apply(nextFilter: RequestHeader => Future[Result])
            (requestHeader: RequestHeader): Future[Result] = {
@@ -28,6 +32,7 @@ class SSLFilter(requireSSL: RequireSSL) extends Filter {
       override def version: String = requestHeader.version
       override def tags: Map[String, String] = requestHeader.tags
       override def id: Long = requestHeader.id
+      override def clientCertificateChain: Option[Seq[X509Certificate]] = requestHeader.clientCertificateChain
     }
     nextFilter(wrappedRequestHeader)
   }

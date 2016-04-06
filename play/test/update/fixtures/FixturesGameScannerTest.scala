@@ -4,15 +4,15 @@ import java.io.PrintWriter
 import java.net.URI
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import com.ning.http.client.AsyncHttpClientConfig
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dates._
 import html._
 import logging.SimpleRemoteStream
 import model.GameKey
 import models.Competition.{FACP, LGCP, PREM}
-import models.{Score, GameResult}
 import models.Location.{AWAY, HOME}
+import models.{GameResult, Score}
+import org.asynchttpclient.DefaultAsyncHttpClientConfig
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
@@ -20,13 +20,11 @@ import org.specs2.concurrent.ExecutionEnv
 import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.mutable.Specification
 import org.specs2.specification._
-import play.api.libs.ws.ning.NingWSClient
+import play.api.libs.ws.ahc.AhcWSClient
 import upickle.default._
 
-import scalaz._
-import Scalaz._
-
 import scala.io.Source
+import scalaz._
 
 /**
  * Created by alex on 28/03/15.
@@ -39,7 +37,7 @@ class FixturesGameScannerTest extends Specification with DisjunctionMatchers wit
 
       val nowService: NowService = NowService(December(25, 2015))
       implicit val ee: ExecutionEnv = ExecutionEnv.fromGlobalExecutionContext
-      val wsClient = new NingWSClient(new AsyncHttpClientConfig.Builder().build())
+      val wsClient = new AhcWSClient(new DefaultAsyncHttpClientConfig.Builder().build())
       val fixturesGameScanner = new FixturesGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
       val gameCommands = fixturesGameScanner.scan(Some(2014))(remoteStream)
       gameCommands must be_\/-(containTheSameElementsAs(Seq[GameUpdateCommand](

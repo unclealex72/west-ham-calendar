@@ -45,7 +45,7 @@ import Scalaz._
  *
  * @author alex
  */
-class MainUpdateServiceImpl(
+class MainUpdateServiceImpl @javax.inject.Inject() (
   /**
    * The {@link GameDao} for getting persisted {@link Game} information.
    */

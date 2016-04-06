@@ -26,7 +26,7 @@ package cal
 
 import java.io.Writer
 import java.net.URI
-
+import javax.inject.Inject
 
 import dates.NowService
 import models.Location
@@ -35,8 +35,8 @@ import net.fortuna.ical4j.data.CalendarOutputter
 import net.fortuna.ical4j.model.component.VEvent
 import net.fortuna.ical4j.model.property.Status._
 import net.fortuna.ical4j.model.property.Transp._
-import net.fortuna.ical4j.model.property.{Attach, CalScale, Created, Description, DtEnd, DtStamp, DtStart, LastModified, Location => ILocation, Method, ProdId, Sequence, Summary, Uid, Version, XProperty}
-import net.fortuna.ical4j.model.{Calendar => ICalendar, DateTime => IDateTime, Property, PropertyList}
+import net.fortuna.ical4j.model.property.{Attach, CalScale, Created, Description, DtEnd, DtStamp, DtStart, LastModified, Method, ProdId, Sequence, Summary, Uid, Version, XProperty, Location => ILocation}
+import net.fortuna.ical4j.model.{Property, PropertyList, Calendar => ICalendar, DateTime => IDateTime}
 import org.joda.time.{DateTime => JodaDateTime}
 
 import scala.language.implicitConversions
@@ -46,7 +46,7 @@ import scala.language.implicitConversions
  * @author alex
  *
  */
-class IcalCalendarWriter(
+class IcalCalendarWriter @Inject() (
   /**
    * The service used to get the curent time for DTSTAMP properties.
    */

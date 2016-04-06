@@ -22,11 +22,10 @@
 package module
 
 import java.awt.Dimension
-import java.lang.Boolean
 import java.net.URI
 
 import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}
-import com.typesafe.config.ConfigFactory
+import com.google.inject.{AbstractModule, Provides}
 import controllers.SecretToken
 import dao._
 import dates.geo.{GeoLocationFactory, GeoLocationFactoryImpl}
@@ -34,100 +33,113 @@ import dates.{DateService, DateServiceImpl, NowService, SystemNowService}
 import filters.{Filters, SSLFilter}
 import location._
 import logging.{Fatal, FatalImpl}
+import net.ceedubs.ficus.Ficus._
+import net.ceedubs.ficus.readers.ArbitraryTypeReader._
+import net.codingwell.scalaguice.ScalaModule
 import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsPdfFactory}
+import play.api.Configuration
 import play.api.cache.CacheApi
 import play.api.http.HttpFilters
-import scaldi.Module
-import security.{Authorised, RequireSSL}
-import security.Definitions.Auth
 import security.models.daos.{CredentialsStorage, PlayCacheCredentialsStorage}
+import security.{Authorised, RequireSSL}
 import services.{GameRowFactory, GameRowFactoryImpl}
-import sms.{ClickatellData, ClickatellSmsService, SmsConfiguration, SmsService}
+import sms.{ClickatellSmsService, SmsConfiguration, SmsService}
+import sprites._
 import update._
 import update.fixtures.{FixturesGameScanner, FixturesGameScannerImpl}
 import update.tickets.{TicketsGameScanner, TicketsGameScannerImpl}
-import net.ceedubs.ficus.Ficus._
-
-import scala.concurrent.{Await, ExecutionContext}
-import scala.concurrent.duration._
-import net.ceedubs.ficus.readers.ArbitraryTypeReader._
-import sprites._
 
 import scala.collection.JavaConversions._
+import scala.concurrent.ExecutionContext
+import scala.concurrent.duration._
 import scala.language.postfixOps
 /**
   * @author alex
   *
   */
-class CalendarModule extends Module {
+class CalendarModule() extends AbstractModule with ScalaModule {
 
-  /**
-    * The configuration object supplied with this application.
-    */
-  val config = ConfigFactory.load
+  def configure() {
 
-  // Persistence
-  bind[DatabaseConfigFactory] toNonLazy injected[PlayDatabaseConfigFactory]
-  bind[NowService] toNonLazy new SystemNowService()
-  bind[GameDao] toNonLazy injected[SlickGameDao]
+    // Persistence
+    bind[DatabaseConfigFactory].to[PlayDatabaseConfigFactory]
+    bind[NowService].toInstance(new SystemNowService())
+    bind[GameDao].to[SlickGameDao]
 
-  bind[GeoLocationFactory] toNonLazy injected[GeoLocationFactoryImpl]
-  // Dates
-  bind[DateService] toNonLazy injected[DateServiceImpl]
-  bind[LastUpdated] toNonLazy injected[PlayCacheLastUpdated]
+    bind[GeoLocationFactory].to[GeoLocationFactoryImpl]
+    // Dates
+    bind[DateService].to[DateServiceImpl]
+    bind[LastUpdated].to[PlayCacheLastUpdated]
 
-  // Game harvesting and update services
-  bind[URI] toNonLazy new URI("http://www.whufc.com")
-  bind[FixturesGameScanner] toNonLazy injected[FixturesGameScannerImpl]
-  bind[TicketsGameScanner] toNonLazy injected[TicketsGameScannerImpl]
-  bind[MainUpdateService] toNonLazy injected[MainUpdateServiceImpl]
+    // Game harvesting and update services
+    bind[URI].toInstance(new URI("http://www.whufc.com"))
+    bind[FixturesGameScanner].to[FixturesGameScannerImpl]
+    bind[TicketsGameScanner].to[TicketsGameScannerImpl]
+    bind[MainUpdateService].to[MainUpdateServiceImpl]
 
-  // Calendars
-  bind[CalendarFactory] toNonLazy injected[CalendarFactoryImpl]
-  bind[CalendarWriter] toNonLazy injected[IcalCalendarWriter]
+    // Calendars
+    bind[CalendarFactory].to[CalendarFactoryImpl]
+    bind[CalendarWriter].to[IcalCalendarWriter]
 
-  // Game Locations
-  bind[LocationService] toNonLazy injected[LocationServiceImpl]
-  bind[LocationClientKey] toNonLazy LocationClientKey("AIzaSyCnaYyFjEYYaKIQ6ZQ64Tx-xkKP2kArRzE")
+    // Game Locations
+    bind[LocationService].to[LocationServiceImpl]
+    bind[LocationClientKey].toInstance(LocationClientKey("AIzaSyCnaYyFjEYYaKIQ6ZQ64Tx-xkKP2kArRzE"))
 
-  //MVC
-  bind[GameRowFactory] toNonLazy injected[GameRowFactoryImpl]
-  bind[SecretToken] toNonLazy SecretToken(config.getString("secret"))
+    //MVC
+    bind[GameRowFactory].to[GameRowFactoryImpl]
 
-  // PDF
-  bind[PriorityPointsPdfFactory] toNonLazy injected[PdfBoxPriorityPointsPdfFactory]
-  bind[PdfPositioning] toNonLazy config.as[PdfPositioning]("pdf")
-  bind[PriorityPointsConfigurationDao] toNonLazy injected[SlickPriorityPointsConfigurationDao]
+    // PDF
+    bind[PriorityPointsPdfFactory].to[PdfBoxPriorityPointsPdfFactory]
+    bind[PriorityPointsConfigurationDao].to[SlickPriorityPointsConfigurationDao]
 
-  // Logging
-  bind[Fatal] toNonLazy injected[FatalImpl]
-  bind[FatalErrorDao] toNonLazy injected[SlickFatalErrorDao]
-  bind[SmsService] toNonLazy injected[ClickatellSmsService]
-  bind[SmsConfiguration] toNonLazy config.as[SmsConfiguration]("sms")
+    // Logging
+    bind[Fatal].to[FatalImpl]
+    bind[FatalErrorDao].to[SlickFatalErrorDao]
+    bind[SmsService].to[ClickatellSmsService]
 
-  // Sprites
-  bind[SpriteService] toNonLazy injected[SpriteServiceImpl]
-  bind[LogoSizes] to {
-    def dimension(ty: String): Dimension = new Dimension(config.getInt(s"sprites.$ty.x"), config.getInt(s"sprites.$ty.y"))
+    // Sprites
+    bind[SpriteService].to[SpriteServiceImpl]
+
+    bind[SpriteHolder].to[PlayCacheSpriteHolder]
+
+    // filters.Filters
+    //bind[SSLFilter].to[SSLFilter]
+
+  }
+
+  @Provides
+  def provideCredentialsStorage(cache: CacheApi)(implicit ec: ExecutionContext): CredentialsStorage = {
+    new PlayCacheCredentialsStorage(cache, 15.minutes)
+  }
+
+  @Provides
+  def provideLogoSizes(config: Configuration): LogoSizes = {
+    def dimension(ty: String): Dimension = new Dimension(config.underlying.getInt(s"sprites.$ty.x"), config.underlying.getInt(s"sprites.$ty.y"))
     LogoSizes(dimension("teams"), dimension("competitions"))
   }
-  bind[SpriteHolder] toNonLazy injected[PlayCacheSpriteHolder] initWith { spriteHolder =>
-    implicit val executionContext = inject[ExecutionContext]
-    Await.result(spriteHolder.update, 1 minute)
+
+  @Provides
+  def providePdfPositioning(config: Configuration): PdfPositioning = {
+    config.underlying.as[PdfPositioning]("pdf")
   }
 
-  // filters.Filters
-  bind[HttpFilters] toNonLazy injected[Filters]
-  bind[SSLFilter] toNonLazy injected[SSLFilter]
-
-  // Security
-  bind[Auth] toNonLazy {
-    Authorised(config.getString("valid-users.users").split(",").map(_.trim()))
-  }
-  bind[RequireSSL] toNonLazy {
-    RequireSSL(config.getBooleanList("require-ssl").headOption.contains(true))
+  @Provides
+  def provideSmsConfiguration(config: Configuration): SmsConfiguration = {
+    config.underlying.as[SmsConfiguration]("sms")
   }
 
-  bind[CredentialsStorage] toNonLazy new PlayCacheCredentialsStorage(inject[CacheApi], 15.minutes)(inject[ExecutionContext])
+  @Provides
+  def provideSecretToken(config: Configuration): SecretToken = {
+    SecretToken(config.underlying.getString("secret"))
+  }
 
+  @Provides
+  def provideAuth(config: Configuration) = {
+    Authorised(config.underlying.getString("valid-users.users").split(",").map(_.trim()))
+  }
+
+  @Provides
+  def provideRequireSSL(config: Configuration) = {
+    RequireSSL(config.underlying.getBooleanList("require-ssl").headOption.contains(true))
+  }
 }

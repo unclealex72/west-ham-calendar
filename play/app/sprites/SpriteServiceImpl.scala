@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
 import javax.imageio.ImageIO
+import javax.inject.Inject
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import org.imgscalr.Scalr
@@ -12,7 +13,7 @@ import org.imgscalr.Scalr.{Method, Mode}
 /**
   * Created by alex on 03/04/16.
   */
-class SpriteServiceImpl extends SpriteService with StrictLogging {
+class SpriteServiceImpl @Inject() extends SpriteService with StrictLogging {
 
   /**
     * Generate an image containing all the input images scaled to a max width and height

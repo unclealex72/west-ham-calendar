@@ -22,3 +22,4 @@ bin
 
 # Secure files that should not be uploaded to github
 play/conf/secure
+env-activator.sh

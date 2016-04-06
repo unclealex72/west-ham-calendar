@@ -3,7 +3,7 @@ package pdf
 import java.io.{ByteArrayInputStream, OutputStream}
 import java.util.Base64
 import javax.imageio.ImageIO
-
+import javax.inject.Inject
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import org.apache.pdfbox.pdmodel.font.PDType1Font
@@ -15,7 +15,7 @@ import pdf.ContentStream._
 /**
  * Created by alex on 08/02/15.
  */
-class PdfBoxPriorityPointsPdfFactory(pdfPositioning: PdfPositioning) extends PriorityPointsPdfFactory with App with StrictLogging {
+class PdfBoxPriorityPointsPdfFactory @Inject() (pdfPositioning: PdfPositioning) extends PriorityPointsPdfFactory with App with StrictLogging {
 
   override def generate(priorityPointsConfiguration: PriorityPointsConfiguration, team: String, league: Boolean, clientFilter: Client => Boolean, out: OutputStream): Unit = {
     try {

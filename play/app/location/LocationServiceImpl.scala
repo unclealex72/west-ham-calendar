@@ -17,11 +17,11 @@ import scalaz._
  * The default implementation of LocationService.
  * Created by alex on 12/04/15.
  */
-class LocationServiceImpl(
+class LocationServiceImpl @javax.inject.Inject() (
                            val wsClient: WSClient,
                            val gameDao: GameDao,
                            val geoLocationFactory: GeoLocationFactory,
-                           val locationClientKey: LocationClientKey)(implicit ec: ExecutionContext) extends LocationService {
+                           val locationClientKey: LocationClientKey, implicit val ec: ExecutionContext) extends LocationService {
 
   override def location(gameId: Long): Future[Option[URL]] = {
     val urlT = for {

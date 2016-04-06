@@ -21,13 +21,13 @@ lazy val play = (project in file("play")).settings(
   ),
   routesGenerator := InjectedRoutesGenerator,
   scalacOptions in Test ++= Seq("-Yrangepos"),
-  includeFilter in (Assets, LessKeys.less) := "proto.less" | "main.less",
   libraryDependencies ++= Seq(
       //pdf
       "org.apache.pdfbox" % "pdfbox" % "2.0.0-RC3",
       //security
-      "com.mohiva" %% "play-silhouette" % "3.0.4",
-      "com.mohiva" %% "play-silhouette-testkit" % "3.0.4" % "test",
+      "com.mohiva" %% "play-silhouette" % "4.0.0-BETA1",
+      "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0-BETA1",
+      "com.mohiva" %% "play-silhouette-testkit" % "4.0.0-BETA1" % "test",
       //backend libraries
       "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
       "org.mozilla" % "rhino" % "1.7R3",
@@ -36,8 +36,9 @@ lazy val play = (project in file("play")).settings(
       "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.2",
       "com.iheart" %% "ficus" % "1.2.2",
       "org.scalaz" %% "scalaz-core" % "7.2.0",
-      // Dependency injection
-      "org.scaldi" %% "scaldi-play" % "0.5.13",
+      // Dependency Injection
+      "net.codingwell" %% "scala-guice" % "4.0.1",
+      // Database
       "com.typesafe.play" %% "play-slick" % "1.1.1",
       "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
       "com.typesafe.slick" %% "slick-codegen" % "3.1.1",

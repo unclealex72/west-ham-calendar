@@ -21,21 +21,23 @@
  */
 package update
 
+import javax.inject.Inject
+
 import org.joda.time.DateTime
 import play.api.Application
-import play.api.cache.Cache
+import play.api.cache.{Cache, CacheApi}
 
 /**
  * @author alex
  *
  */
-class PlayCacheLastUpdated(implicit val application: Application) extends LastUpdated {
+class PlayCacheLastUpdated @Inject() (cacheApi: CacheApi) extends LastUpdated {
 
   val cacheKey = s"$getClass.lastUpdated"
   
   def at(lastUpdatedTime: DateTime) = {
-    Cache.set(cacheKey, lastUpdatedTime)
+    cacheApi.set(cacheKey, lastUpdatedTime)
   }
   
-  def when = Cache.get(cacheKey) map { _.asInstanceOf[DateTime]}
+  def when = cacheApi.get[DateTime](cacheKey)
 }

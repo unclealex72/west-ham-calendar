@@ -1,6 +1,8 @@
 package controllers
 
-import play.api.mvc.{AnyContent, Request}
+import com.mohiva.play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
+import play.api.mvc.{AnyContent, Controller, Request}
+import security.Definitions
 import security.Definitions._
 
 /**
@@ -8,17 +10,17 @@ import security.Definitions._
   * and email from a Silhouette request.
   * Created by alex on 17/01/16.
   */
-trait Secure extends Sil {
+trait Secure extends Controller {
 
   case class EmailAndUsername(email: String, name: String)
 
   def emailAndUsername(implicit request: Request[_ <: AnyContent]): Option[EmailAndUsername] = request match {
-    case securedRequest: SecuredRequest[_] => toEmailAndUsername(securedRequest.identity)
-    case userAwareRequest: UserAwareRequest[_] => userAwareRequest.identity.flatMap(toEmailAndUsername)
+    case securedRequest: SecuredRequest[DefaultEnv, _] => toEmailAndUsername(securedRequest.identity)
+    case userAwareRequest: UserAwareRequest[DefaultEnv, _] => userAwareRequest.identity.flatMap(toEmailAndUsername)
     case _ => None
   }
 
-  def toEmailAndUsername(user: UserType): Option[EmailAndUsername] = {
+  def toEmailAndUsername(user: Definitions.UserType): Option[EmailAndUsername] = {
     for {
       email <- user.email
       name <- user.fullName

@@ -18,9 +18,10 @@ case class Authorised(
    */
   emailAddresses: Seq[String]) extends Auth with StrictLogging {
 
+
   override def isAuthorized[B](
     identity: UserType,
-    authenticator: AuthenticatorType)(implicit request: Request[B], messages: Messages): Future[Boolean] = Future.successful {
+    authenticator: AuthenticatorType)(implicit request: Request[B]): Future[Boolean] = Future.successful {
       identity.email match {
         case Some(email) =>
           val authorized = emailAddresses contains email

@@ -1,5 +1,7 @@
 package dates.geo
 
+import javax.inject.Inject
+
 import com.rockymadden.stringmetric.similarity.JaroWinklerMetric
 import model.Game
 import models.GeoLocation._
@@ -8,7 +10,7 @@ import models.{GeoLocation, Location}
 /**
   * Created by alex on 14/02/16.
   */
-class GeoLocationFactoryImpl extends GeoLocationFactory {
+class GeoLocationFactoryImpl @Inject() extends GeoLocationFactory {
 
   def lookFor(team: String): Option[GeoLocation] = {
     val lowerCaseTeam = team.toLowerCase

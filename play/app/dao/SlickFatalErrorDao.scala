@@ -1,5 +1,7 @@
 package dao
 
+import javax.inject.Inject
+
 import model.FatalError
 import org.joda.time.DateTime
 
@@ -8,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by alex on 19/01/16.
   */
-class SlickFatalErrorDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: ExecutionContext) extends FatalErrorDao with Slick {
+class SlickFatalErrorDao @Inject() (val dbConfigFactory: DatabaseConfigFactory, implicit val ec: ExecutionContext) extends FatalErrorDao with Slick {
 
   import dbConfig.driver.api._
 

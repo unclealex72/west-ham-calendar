@@ -16,5 +16,5 @@ trait SpriteHolder {
 
   def lastUpdated: Option[DateTime]
 
-  def update(implicit ec: ExecutionContext): Future[Unit]
+  def update: Future[Unit]
 }

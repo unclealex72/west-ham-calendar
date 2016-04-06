@@ -22,6 +22,7 @@
 package services
 
 import java.util.Date
+import javax.inject.Inject
 
 import dates.DateTimeImplicits._
 import dates.geo.GeoLocationFactory
@@ -36,7 +37,7 @@ import sprites.{Sprite, SpriteHolder}
  * @author alex
  *
  */
-class GameRowFactoryImpl(val geoLocationFactory: GeoLocationFactory, val spriteHolder: SpriteHolder) extends GameRowFactory {
+class GameRowFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory, val spriteHolder: SpriteHolder) extends GameRowFactory {
 
   def timeTypeOf(dateTime: DateTime): GameTimeType = {
     if (dateTime.isThreeOClockOnASaturday) {

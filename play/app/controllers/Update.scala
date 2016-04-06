@@ -21,42 +21,39 @@
  */
 package controllers
 
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import dao.GameDao
 import dates.NowService
 import logging.{Fatal, RemoteStream}
 import model.{FatalError, Game}
-import models.{FatalErrorReportRel, Competition}
 import models.Competition.FRIENDLY
 import models.GameRow._
+import models.{Competition, FatalErrorReportRel}
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Concurrent
 import play.api.mvc.Action
-import scaldi.{Injectable, Injector}
 import security.Definitions._
 import services.GameRowFactory
 import update.MainUpdateService
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Failure
 import scalaz._
-import Scalaz._
 
 /**
  * @author alex
  *
  */
-class Update(implicit injector: Injector) extends Secure with Secret with LinkFactories with JsonResults with Injectable {
-
-  val secret: SecretToken = inject[SecretToken]
-  implicit val authorization: Auth = inject[Auth]
-  val mainUpdateService: MainUpdateService = inject[MainUpdateService]
-  val gameDao: GameDao = inject[GameDao]
-  val gameRowFactory: GameRowFactory = inject[GameRowFactory]
-  val messagesApi: MessagesApi = inject[MessagesApi]
-  val env: Env = inject[Env]
-  val fatal: Fatal = inject[Fatal]
-  implicit val nowService: NowService = inject[NowService]
-  implicit val ec: ExecutionContext = inject[ExecutionContext]
+class Update @javax.inject.Inject() (val secret: SecretToken,
+                                     val mainUpdateService: MainUpdateService,
+                                     val gameDao: GameDao,
+                                     val gameRowFactory: GameRowFactory,
+                                     val messagesApi: MessagesApi,
+                                     val silhouette: DefaultSilhouette,
+                                     val fatal: Fatal,
+                                     implicit val nowService: NowService,
+                                     implicit val ec: ExecutionContext
+                                    ) extends Secure with Secret with LinkFactories with JsonResults with StrictLogging {
 
   /**
    * Update all games in the database from the web.
@@ -92,7 +89,7 @@ class Update(implicit injector: Injector) extends Secure with Secret with LinkFa
    * Attend or unattend a game.
    */
   def attendOrUnattend(gameUpdater: Long => Future[Option[Game]], gameId: Long) =
-    SecuredAction(authorization).async { implicit request =>
+    silhouette.SecuredAction.async { implicit request =>
       gameUpdater(gameId).map {
         case Some(game) => json {
           gameRowFactory.toRow(includeAttended = true, gameRowLinksFactory(includeUpdates = true), ticketLinksFactory)(game)

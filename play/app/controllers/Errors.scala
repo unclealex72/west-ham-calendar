@@ -1,28 +1,25 @@
 package controllers
 
 import dao.FatalErrorDao
-import dates.{JodaDateTime, DateTimeImplicits, SharedDate}
+import dates.DateTimeImplicits._
+import dates.JodaDateTime
 import logging.{Fatal, RemoteStream}
 import model.FatalError
-import models.{FatalErrorReportRel, FatalErrorReport, FatalErrorReports}
+import models.{FatalErrorReport, FatalErrorReportRel, FatalErrorReports}
 import play.api.i18n.MessagesApi
 import play.api.mvc._
-import scaldi.{Injectable, Injector}
 import security.Definitions._
 
-import scala.concurrent.{Future, ExecutionContext}
-import DateTimeImplicits._
+import scala.concurrent.{ExecutionContext, Future}
+import scalaz.Scalaz._
 import scalaz._
-import Scalaz._
 
-class Errors(implicit injector: Injector) extends Secret with JsonResults with LinkFactories with Injectable {
-
-  val secret: SecretToken = inject[SecretToken]
-  val fatal: Fatal = inject[Fatal]
-  val fatalErrorDao: FatalErrorDao = inject[FatalErrorDao]
-  val messagesApi: MessagesApi = inject[MessagesApi]
-  val env: Env = inject[Env]
-  implicit val ec: ExecutionContext = inject[ExecutionContext]
+class Errors @javax.inject.Inject() (val secret: SecretToken,
+             val fatal: Fatal,
+             val fatalErrorDao: FatalErrorDao,
+             val messagesApi: MessagesApi,
+             val env: DefaultEnvironment,
+             implicit val ec: ExecutionContext) extends Secret with JsonResults with LinkFactories {
 
   def quickFail = {
     Action { implicit request =>

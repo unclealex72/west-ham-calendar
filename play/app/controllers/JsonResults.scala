@@ -36,10 +36,9 @@ trait JsonResults extends FutureResults {
 
   def json[B: Writer](b: B): Result = {
     Ok(write(b, 2)).withHeaders(
-      CONTENT_TYPE -> "application/json",
       CACHE_CONTROL -> "max-age=0, no-store, no-cache, must-revalidate",
       PRAGMA -> "no-cache",
-      EXPIRES -> "0")
+      EXPIRES -> "0").as("application/json")
   }
 
   def jsonFoo[A, B: Writer](fa: Future[Option[A]])(f: A => Option[B]): Future[Result] =

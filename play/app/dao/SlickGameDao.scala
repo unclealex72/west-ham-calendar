@@ -1,8 +1,10 @@
 package dao
 
+import javax.inject.Inject
+
 import dates.NowService
 import model.Game
-import models.{GameResult, Competition, Location}
+import models.{Competition, GameResult, Location}
 import org.joda.time.DateTime
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption, SearchOption}
 
@@ -12,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by alex on 19/01/16.
   */
-class SlickGameDao(val dbConfigFactory: DatabaseConfigFactory)(implicit ec: ExecutionContext) extends GameDao with Slick {
+class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory, implicit val ec: ExecutionContext) extends GameDao with Slick {
 
   import dbConfig.driver.api._
 

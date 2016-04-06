@@ -1,6 +1,6 @@
 package security
 
-import com.mohiva.play.silhouette.api.{Authorization, Environment, Silhouette}
+import com.mohiva.play.silhouette.api.{Authorization, Env, Environment, Silhouette}
 import com.mohiva.play.silhouette.impl.authenticators.CookieAuthenticator
 import security.models.User
 
@@ -12,7 +12,11 @@ object Definitions {
   type UserType = User
   type AuthenticatorType = CookieAuthenticator
   type Auth = Authorization[UserType, AuthenticatorType]
-  type Env = Environment[UserType, AuthenticatorType]
-  type Sil = Silhouette[UserType, AuthenticatorType]
+  trait DefaultEnv extends Env {
+    type I = UserType
+    type A = AuthenticatorType
+  }
+  type DefaultEnvironment = Environment[DefaultEnv]
+  type DefaultSilhouette = Silhouette[DefaultEnv]
 
 }

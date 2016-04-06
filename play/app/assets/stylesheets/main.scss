@@ -1,0 +1,20 @@
+@import "../../../public/bower_components/materialize/sass/materialize";
+
+.game-details {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.team {
+  flex: 1
+}
+
+.no-flex {
+  flex: none;
+}
+
+.versus {
+  flex: none;
+  width: 20%;
+}

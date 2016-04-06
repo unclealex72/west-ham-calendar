@@ -21,6 +21,8 @@
  */
 package dates
 
+import javax.inject.Inject
+
 import org.joda.time.DateTime
 /**
  * The default implementation of {@link DateService}.
@@ -28,7 +30,7 @@ import org.joda.time.DateTime
  * @author alex
  *
  */
-class DateServiceImpl extends DateService {
+class DateServiceImpl @Inject() extends DateService {
 
   override def parsePossiblyYearlessDate(date: String, yearDeterminingDate: DateTime,
     yearDeterminingDateIsLaterThanTheDate: Boolean, possiblyYearlessDateFormats: String*): Option[DateTime] = {

@@ -13,7 +13,7 @@ import Scalaz._
 /**
   * Created by alex on 01/03/16.
   */
-class ClickatellSmsService(ws: WSClient, smsConfiguration: SmsConfiguration)(implicit ec: ExecutionContext) extends SmsService with RemoteLogging {
+class ClickatellSmsService @javax.inject.Inject() (ws: WSClient, smsConfiguration: SmsConfiguration, implicit val ec: ExecutionContext) extends SmsService with RemoteLogging {
 
   import ClickatellResponse._
 

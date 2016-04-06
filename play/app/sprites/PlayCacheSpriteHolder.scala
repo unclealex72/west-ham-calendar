@@ -1,31 +1,36 @@
 package sprites
 import java.awt.{Dimension, Point}
 import java.io.ByteArrayOutputStream
+import javax.annotation.PostConstruct
 import javax.imageio.ImageIO
+import javax.inject.{Inject, Singleton}
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dao.GameDao
 import dates.NowService
 import org.joda.time.DateTime
 import play.api.Application
-import play.api.cache.Cache
+import play.api.cache.{Cache, CacheApi}
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.language.implicitConversions
 import scala.reflect.ClassTag
-
+import scala.concurrent.duration._
 /**
   * Created by alex on 03/04/16.
   */
-class PlayCacheSpriteHolder(val logoSizes: LogoSizes, val spriteService: SpriteService, val gameDao: GameDao, val nowService: NowService)(implicit val application: Application) extends SpriteHolder with StrictLogging {
+@Singleton
+class PlayCacheSpriteHolder @Inject() (val cacheApi: CacheApi, val logoSizes: LogoSizes, val spriteService: SpriteService, val gameDao: GameDao, val nowService: NowService, implicit val ec: ExecutionContext) extends SpriteHolder with StrictLogging {
+
+  initialise()
 
   sealed abstract class Key[T: ClassTag](val name: String) {
     def toKey = s"${classOf[PlayCacheSpriteHolder]}.$name"
 
     def get: Option[T] = {
-      Cache.getAs[T](toKey)
+      cacheApi.get[T](toKey)
     }
-    def put(value: T) = Cache.set(toKey, value)
+    def put(value: T) = cacheApi.set(toKey, value)
   }
 
   object COMPETITIONS extends Key[Sprite]("competitions")
@@ -38,7 +43,7 @@ class PlayCacheSpriteHolder(val logoSizes: LogoSizes, val spriteService: SpriteS
 
   override def lastUpdated: Option[DateTime] = LAST_UPDATED.get
 
-  override def update(implicit ec: ExecutionContext): Future[Unit] = {
+  override def update: Future[Unit] = {
     for {
       _ <- update(TEAMS, logoSizes.teamLogoSize, gameDao.getAllTeamLogos)
       _ <- update(COMPETITIONS, logoSizes.competionLogoSize, gameDao.getAllCompetitionLogos)
@@ -58,5 +63,10 @@ class PlayCacheSpriteHolder(val logoSizes: LogoSizes, val spriteService: SpriteS
       positionsByClassName + (positionToClassName(coordinate) -> coordinate)
     }
     key.put(Sprite(out.toByteArray, positionsByClassName, classNamesByUrl))
+  }
+
+  @PostConstruct
+  def initialise(): Unit = {
+    Await.result(update, 1.minute)
   }
 }

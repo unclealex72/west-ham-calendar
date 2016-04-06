@@ -2,20 +2,18 @@ package controllers
 
 import java.awt.Dimension
 import java.io.ByteArrayInputStream
+import javax.inject.Inject
 
 import org.joda.time.format.ISODateTimeFormat
 import play.api.libs.iteratee.Enumerator
 import play.api.mvc._
-import scaldi.{Injectable, Injector}
 import sprites.{LogoSizes, Sprite, SpriteHolder}
 
 import scala.concurrent.ExecutionContext
 
-class Sprites(implicit injector: Injector) extends Controller with Etag with Injectable {
-
-  val spriteHolder: SpriteHolder = inject[SpriteHolder]
-  val logoSizes: LogoSizes = inject[LogoSizes]
-  implicit val ec: ExecutionContext = inject[ExecutionContext]
+class Sprites @Inject() (val spriteHolder: SpriteHolder,
+              val logoSizes: LogoSizes,
+              implicit val ec: ExecutionContext) extends Controller with Etag {
 
   def spriteAndLastUpdated(f: SpriteHolder => Option[Sprite])(action: Sprite => Action[AnyContent]): Action[AnyContent] = {
     val optionalResult = for {
@@ -29,13 +27,13 @@ class Sprites(implicit injector: Injector) extends Controller with Etag with Inj
 
   def css(f: SpriteHolder => Option[Sprite], mainClass: String, size: Dimension, call: Call) = spriteAndLastUpdated(f) { sprite =>
     Action { implicit request =>
-      Ok(views.html.sprites(size, mainClass, call.absoluteURL(), sprite.positionsByClassName.toSeq)).withHeaders(CONTENT_TYPE -> "text/css")
+      Ok(views.html.sprites(size, mainClass, call.absoluteURL(), sprite.positionsByClassName.toSeq)).as("text/css")
     }
   }
 
   def image(f: SpriteHolder => Option[Sprite]) = spriteAndLastUpdated(f) { sprite =>
       Action { implicit request =>
-        Ok.chunked(Enumerator.fromStream(new ByteArrayInputStream(sprite.image))).withHeaders(CONTENT_TYPE -> "image/png")
+        Ok.chunked(Enumerator.fromStream(new ByteArrayInputStream(sprite.image))).as("image/png")
       }
   }
 
