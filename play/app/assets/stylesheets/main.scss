@@ -1,4 +1,10 @@
+@import "colours";
 @import "../../../public/bower_components/materialize/sass/materialize";
+
+.game {
+  font-size: 16px;
+  font-weight: bold;
+}
 
 .game-details {
   width: 100%;
@@ -6,8 +12,16 @@
   align-items: center;
 }
 
+.game .competition-logo {
+    margin: auto;
+}
+
+.game .team-logo {
+  margin-left: 5px;
+  margin-right: 5px;
+}
 .team {
-  flex: 1
+  flex: 1;
 }
 
 .no-flex {
@@ -15,6 +29,12 @@
 }
 
 .versus {
+  text-align: center;
+  font-size: 18px;
   flex: none;
-  width: 20%;
+  min-width: 10%;
+}
+
+.west-ham {
+  color: $primary-color
 }

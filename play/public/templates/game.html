@@ -4,7 +4,7 @@
             {{game.datePlayed | customDate:'EEE dth, h:mm!a'}}
         </div>
     </div>
-    <div class="col s2">
+    <div class="col s1 center-align">
         <div ng-show="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}" title="{{game.competition}}"></div>
         <span ng-hide="game.competitionLogo">{{game.competition}}</span>
     </div>
@@ -13,21 +13,21 @@
             <div hc-team-name class="team right-align" team="game.homeTeam"></div>
             <div class="team-logo {{game.homeTeam.logo}} no-flex" ng-show="{{game.homeTeam.logo}}"></div>
             <!-- Result -->
-            <div ng-show="game.hasResult" class="versus center-align" ng-class="{'withShoot': game.hasShootout}">
+            <div ng-show="game.hasResult" class="versus" ng-class="{'withShoot': game.hasShootout}">
                 <span class="home">
-                    <span ng-class="{'westHam': game.homeTeam.isWestHam}">{{game.homeTeam.score}}</span>
+                    <span ng-class="{'west-ham': game.homeTeam.isWestHam}">{{game.homeTeam.score}}</span>
                 </span>
                 <span class="hyphen">-</span>
                 <span class="away">
-                    <span ng-class="{'westHam': game.awayTeam.isWestHam}">{{game.awayTeam.score}}</span>
+                    <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.score}}</span>
                 </span>
                 <div ng-show="game.hasShootout" class="shoot">
                     <span class="home">
-                        <span ng-class="{'westHam': game.homeTeam.isWestHam}">{{game.homeTeam.shootout}}</span>
+                        <span ng-class="{'west-ham': game.homeTeam.isWestHam}">({{game.homeTeam.shootout}}</span>
                     </span>
                     <span class="hyphen">-</span>
                     <span class="away">
-                        <span ng-class="{'westHam': game.awayTeam.isWestHam}">{{game.awayTeam.shootout}}</span>
+                        <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.shootout}})</span>
                     </span>
                 </div>
             </div>
@@ -36,7 +36,7 @@
             <div hc-team-name class="team left-align" team="game.awayTeam"></div>
         </div>
     </div>
-    <div class="col s1">
+    <div class="col s2">
         <div class="switch valign">
             <label>
                 <input type="checkbox">
