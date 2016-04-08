@@ -1,9 +1,14 @@
 @import "colours";
 @import "../../../public/bower_components/materialize/sass/materialize";
+@import "custom";
 
 .game {
   font-size: 16px;
   font-weight: bold;
+}
+
+.game.row {
+  margin-bottom: 0;
 }
 
 .game-details {
@@ -38,3 +43,4 @@
 .west-ham {
   color: $primary-color
 }
+

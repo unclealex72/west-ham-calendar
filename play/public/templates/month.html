@@ -1,7 +1,10 @@
 <div id="{{month.id}}" class="card">
     <div class="card-content">
         <div class="card-title">{{month.date | date:'MMMM'}}</div>
-        <hc-game ng-repeat="game in month.games" game="game">
-        </hc-game>
+        <ul ng-repeat="game in month.games | opponents:search" class="collection">
+            <li class="collection-item">
+                <hc-game game="game"></hc-game>
+            </li>
+        </ul>
     </div>
 </div>

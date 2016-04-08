@@ -11,7 +11,8 @@ class MonthDirective extends ElementDirective with TemplatedDirective with Isola
   override val templateUrl = at("month.html")
 
   bindings ++= Seq(
-    "month" := ""
+    "month" := "",
+    "search" := ""
   )
 
 }

@@ -11,6 +11,7 @@ class ContentDirective extends ElementDirective with TemplatedDirective with Iso
   override val templateUrl = at("content.html")
 
   bindings ++= Seq(
-    "months" := ""
+    "months" := "",
+    "search" := ""
   )
 }

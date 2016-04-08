@@ -1,15 +1,13 @@
-<div id="navbar" class="navbar-fixed">
-    <nav>
+<!-- top navigation -->
+<nav class="top-nav">
+    <div class="container">
         <div class="nav-wrapper">
-            <a href="#!" class="brand-logo">Hammers Calendar</a>
-            <a href="#" data-activates="nav-mobile" class="button-collapse top-nav" data-sidenav="left" data-menuwidth="500"  data-closeonclick="true">
-                <i class="material-icons">menu</i>
-            </a>
+            <a href="#!" class="page-title">Hammers Calendar</a>
             <ul class="right hide-on-med-and-down">
                 <li>
                     <form>
                         <div class="input-field">
-                            <input id="search" type="search" required>
+                            <input id="search" type="search" placeholder="Search" ng-model="search" ng-trim="true">
                             <label for="search"><i class="material-icons">search</i></label>
                             <i class="material-icons">close</i>
                         </div>
@@ -17,9 +15,72 @@
                 </li>
                 <li><a href="#">Login</a></li>
             </ul>
-            <ul class="side-nav" id="nav-mobile">
-                <li><a href="mobile.html">Login</a></li>
-            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+<!-- nav button -->
+<div class="container">
+    <a href="#"
+       class="button-collapse top-nav full hide-on-large-only"
+       data-activates="nav-mobile" data-sidenav="left" data-menuwidth="240" data-closeonclick="false">
+        <i class="material-icons">menu</i>
+    </a>
 </div>
+<!-- side nav -->
+<ul id="nav-mobile" class="side-nav fixed">
+    <!--Maybe a logo?-->
+    <!--<li class="logo" style="margin-left: -15px;"><a id="logo-container" href="http://materializecss.com/"class="brand-logo"><h3></h3></a></li>-->
+
+    <li ng-repeat="month in months | opponents:search" class="bold">
+        <a href="#" class="waves-effect waves-teal">{{month.date | customDate:'MMMM'}}</a>
+    </li>
+
+    <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+            <li class="bold"><a class="collapsible-header waves-effect waves-teal active">Forms</a>
+                <div class="collapsible-body">
+                    <ul>
+                        <li><a href="#input-field">Input-field</a></li>
+                        <li><a href="#input-date">Input-date</a></li>
+                        <li><a href="#select">Material select</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </li>
+
+    <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+            <li class="bold"><a class="collapsible-header waves-effect waves-teal active">JavaScript</a>
+                <div class="collapsible-body">
+                    <ul>
+                        <li><a href="#collapsible">Collapsible</a></li>
+                        <li><a href="#toast">Dialogs - Toast</a></li>
+                        <li><a href="#tooltip">Tooltip</a></li>
+                        <li><a href="#pushpin">Pushpin</a></li>
+                        <li><a href="#dropdown">Dropdown</a></li>
+                        <li><a href="#modals">Modals</a></li>
+                        <li><a href="#parallax">Parallax</a></li>
+                        <li><a href="#scrollfire">ScrollFire</a></li>
+                        <li><a href="#sidenav">SideNav</a></li>
+                        <li><a href="#slider">Slider</a></li>
+                        <li><a href="#media">Media</a></li>
+                        <li><a href="#tabs">Tabs</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </li>
+
+    <li class="no-padding">
+        <ul class="collapsible collapsible-accordion">
+            <li class="bold"><a class="collapsible-header waves-effect waves-teal active">Components</a>
+                <div class="collapsible-body">
+                    <ul>
+                        <li><a href="#pagination">Pagination</a></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </li>
+</ul>

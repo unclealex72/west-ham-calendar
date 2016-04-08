@@ -74,6 +74,7 @@ lazy val js = (project in file("js")).settings(
   emitSourceMaps := true,
   libraryDependencies ++= Seq(
     "com.greencatsoft" %%% "scalajs-angular" % "0.6",
+    "org.querki" %%% "jquery-facade" % "1.0-RC3",
     "com.lihaoyi" %%% "upickle" % "0.3.8",
     "com.github.japgolly.fork.scalaz" %%% "scalaz-core" % "7.2.0",
     "com.github.japgolly.fork.scalaz" %%% "scalaz-scalacheck-binding" % "7.2.0"
