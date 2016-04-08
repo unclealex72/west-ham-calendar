@@ -1,7 +1,13 @@
 <div class="game row valign-wrapper">
     <div class="col s2">
         <div class="valign">
-            {{game.datePlayed | customDate:'EEE dth, h:mm!a'}}
+            <div>{{game.datePlayed | customDate:'EEE dth, h:mm!a'}}</div>
+            <div ng-show="game.ticketsDate">
+                <span ng-hide="game.ticketsUrl">({{game.ticketsDate | customDate:'EEE dth MMM'}})</span>
+                <a ng-show="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
+                    ({{game.ticketsDate | customDate:'EEE dth MMM'}})
+                </a>
+            </div>
         </div>
     </div>
     <div class="col s1 center-align">
