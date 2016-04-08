@@ -4,7 +4,7 @@ import calendar.views.{JsTicketType, MonthView}
 import calendar.{AjaxService, Dropdown}
 import com.greencatsoft.angularjs.core.Scope
 import com.greencatsoft.angularjs.{AbstractController, FilterService, injectable}
-import models.EntryRel.SEASONS
+import models.EntryRel.{LOGIN, LOGOUT, SEASONS}
 import models.SeasonRel.MONTHS
 import models.TicketType.PriorityPointTicketType
 import models.{Entry, Months, Seasons}
@@ -39,6 +39,8 @@ class AppController(scope: AppScope, filterService: FilterService, ajax: AjaxSer
     }
     val monthViews = months.toSeq.map(MonthView.apply(monthIdFactory, PriorityPointTicketType)).toJSArray
     scope.$apply {
+      scope.user = entry.user.orUndefined
+      scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
       scope.season = selectedSeason.season
       scope.months = monthViews.toJSArray
     }

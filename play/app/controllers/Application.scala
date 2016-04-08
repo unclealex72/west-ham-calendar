@@ -30,7 +30,7 @@ class Application @Inject() (val gameDao: GameDao,
    * Redirect to the  homepage.
    */
   def index = Action {
-    Ok(views.html.index(true))
+    Ok(views.html.proto())
   }
 
   def proto = Action {

@@ -37,17 +37,17 @@
         </div>
     </div>
     <div class="col s2">
-        <div class="switch valign">
+        <div class="switch valign" ng-show="{{game.showAttended}}">
             <label>
-                <input type="checkbox">
+                <input type="checkbox" ng-checked="{{game.attended}}">
                 <span class="lever"></span>
             </label>
         </div>
-        <div ng-show="{{game.showAttended}}">
+        <!--div ng-show="{{game.showAttended}}">
             <input
                     id="attended-{{game.idx}}" name="attended-{{game.idx}}"
                     value="attended-{{game.idx}}" title="attended" type="checkbox"
                     ng-checked="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">
-        </div>
+        </div-->
     </div>
 </div>

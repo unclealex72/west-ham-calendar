@@ -12,7 +12,9 @@ class NavDirective extends ElementDirective with AttributeDirective with Templat
 
   bindings ++= Seq(
     "months" := "",
-    "search" := ""
+    "search" := "",
+    "authenticationLink" := "",
+    "user" := ""
   )
 
 }

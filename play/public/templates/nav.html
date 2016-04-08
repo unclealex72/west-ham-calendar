@@ -13,7 +13,10 @@
                         </div>
                     </form>
                 </li>
-                <li><a href="#">Login</a></li>
+                <li ng-show="authenticationLink">
+                    <a ng-show="user" ng-href="{{authenticationLink}}">Logout {{user}}</a>
+                    <a ng-hide="user" ng-href="{{authenticationLink}}">Login</a>
+                </li>
             </ul>
         </div>
     </div>
