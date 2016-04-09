@@ -1,16 +1,15 @@
-package calendar
+package calendar.services
 
 import com.greencatsoft.angularjs.core.{HttpPromise, HttpService}
 import com.greencatsoft.angularjs.{Factory, Service, injectable}
+import upickle.default.{Reader => UPReader, _}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.scalajs.js
 import scala.scalajs.js.JSON
-import upickle.default.{Reader => UPReader}
-import upickle.default._
-import scala.concurrent.ExecutionContext.Implicits.global
+import scalaz.Scalaz._
 import scalaz._
-import Scalaz._
 /**
   * Created by alex on 17/02/16.
   */

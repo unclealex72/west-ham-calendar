@@ -1,7 +1,8 @@
 package calendar
 
-import com.greencatsoft.angularjs.core.{Location => AngularLocation, AnchorScroll, RouteParams, Route, Scope}
-import com.greencatsoft.angularjs.{FilterService, AbstractController, injectable}
+import calendar.services.{AjaxService, AttendanceService}
+import com.greencatsoft.angularjs.core.{AnchorScroll, Route, RouteParams, Scope, Location => AngularLocation}
+import com.greencatsoft.angularjs.{AbstractController, FilterService, injectable}
 import dates.SharedDate
 import models.EntryRel._
 import models.GameRowRel._
@@ -9,13 +10,13 @@ import models.SeasonRel.MONTHS
 import models.TicketType.PriorityPointTicketType
 import models.TicketingInformationRel.FORM
 import models._
-import monads.{FO, FL}
+import monads.{FL, FO}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.scalajs.js
-import scala.scalajs.js.{JSON, Date}
-import scala.scalajs.js.annotation.{ScalaJSDefined, JSExport}
+import scala.scalajs.js.{Date, JSON}
+import scala.scalajs.js.annotation.{JSExport, ScalaJSDefined}
 import scalaz.Scalaz._
 import scala.scalajs.js.JSConverters._
 /**
@@ -61,7 +62,7 @@ class CalendarController(
       }
       val monthViews = months.toSeq.map(MonthView.apply(monthIdFactory, ticketType)).toJSArray
       scope.$apply {
-        scope.alterAttendance = (monthView: MonthView, idx: Int) => FO.unit {
+        /*scope.alterAttendance = (monthView: MonthView, idx: Int) => FO.unit {
           for {
             url <- FO <~ monthView.games(idx).attendedUrl.toOption
             gameRow <- FO <~< attendanceService.alterAttendance(url)
@@ -70,7 +71,7 @@ class CalendarController(
               monthView.games.update(idx, GameView(ticketType)(gameRow, idx))
             }
           }
-        }
+        }*/
         scope.user = entry.user.orUndefined
         scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
         scope.season = selectedSeason.season

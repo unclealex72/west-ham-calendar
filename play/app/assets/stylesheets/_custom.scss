@@ -25,7 +25,7 @@ nav {
     -webkit-font-smoothing: antialiased;
   }
   ul li a:hover, ul li.active {
-    background-color: color("materialize-red", "lighten-1");
+    background-color: $secondary-color;
   }
 }
 

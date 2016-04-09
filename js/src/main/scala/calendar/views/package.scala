@@ -57,7 +57,8 @@ package object views {
                   var awayTeam: TeamView,
                   var attended: Boolean,
                   var showAttended: Boolean,
-                  var attendedUrl: js.UndefOr[String],
+                  var attendUrl: js.UndefOr[String],
+                  var unattendUrl: js.UndefOr[String],
                   var ticketsDate: js.UndefOr[js.Date],
                   var ticketsUrl: js.UndefOr[String],
                   var matchReport: js.UndefOr[String],
@@ -68,7 +69,8 @@ package object views {
 
   object GameView {
     def apply(ticketType: TicketType)(gameRow: GameRow, idx: Int): GameView = {
-      val attendedUrl = gameRow.links(ATTEND).orElse(gameRow.links(UNATTEND))
+      val attendUrl = gameRow.links(ATTEND)
+      val unattendUrl = gameRow.links(UNATTEND)
       val ticketingInfo = gameRow.tickets.get(ticketType).map { ticketingInformation =>
         (ticketingInformation.at, ticketingInformation.links(FORM))
       }
@@ -84,8 +86,9 @@ package object views {
         TeamView(gameRow, _.isHome, gameRow.homeTeamLogoClass, _.home),
         TeamView(gameRow, _.isAway, gameRow.awayTeamLogoClass, _.away),
         gameRow.attended.getOrElse(false),
-        attendedUrl.isDefined,
-        attendedUrl.orUndefined,
+        attendUrl.isDefined && unattendUrl.isDefined,
+        attendUrl.orUndefined,
+        unattendUrl.orUndefined,
         ticketingInfo.map(_._1).map(sharedDateToJsDate).orUndefined,
         ticketingInfo.flatMap(_._2).map(JSON.stringify(_)).orUndefined,
         gameRow.links(MATCH_REPORT).map(JSON.stringify(_)).orUndefined,

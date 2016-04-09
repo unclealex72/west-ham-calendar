@@ -1,6 +1,6 @@
-package calendar
+package calendar.filters
 
-import com.greencatsoft.angularjs.{FilterService, Filter, injectable}
+import com.greencatsoft.angularjs.{Filter, FilterService, injectable}
 
 import scala.scalajs.js
 

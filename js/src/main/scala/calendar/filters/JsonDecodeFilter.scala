@@ -1,4 +1,4 @@
-package calendar
+package calendar.filters
 
 import com.greencatsoft.angularjs.{Filter, FilterService, injectable}
 

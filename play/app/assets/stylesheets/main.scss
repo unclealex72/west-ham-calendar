@@ -1,3 +1,7 @@
+/*** Fonts ***/
+$roboto-font-path: "/assets/bower_components/materialize/font/roboto/";
+$icons-font-path: "/assets/bower_components/materialize/font/material-design-icons/";
+
 @import "colours";
 @import "../../../public/bower_components/materialize/sass/materialize";
 @import "custom";
@@ -43,4 +47,3 @@
 .west-ham {
   color: $primary-color
 }
-

@@ -1,7 +1,8 @@
 package calendar.controllers
 
 import calendar.views.{JsTicketType, MonthView}
-import calendar.{AjaxService, Dropdown}
+import calendar.Dropdown
+import calendar.services.AjaxService
 import com.greencatsoft.angularjs.core.Scope
 import com.greencatsoft.angularjs.{AbstractController, FilterService, injectable}
 import models.EntryRel.{LOGIN, LOGOUT, SEASONS}
