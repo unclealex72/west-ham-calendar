@@ -1,5 +1,6 @@
 # General ignores
 .sass-cache
+bower.json
 logs
 project/project
 project/target
