@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "node-sass": "^3.4.2"
+    "bower": "1.7.9"
+  },
+  "scripts": {
+    "postinstall": "./node_modules/bower/bin/bower install"
   }
 }
