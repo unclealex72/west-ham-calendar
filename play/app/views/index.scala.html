@@ -58,8 +58,8 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li>
                             <a ng-href="{{authenticationLink}}">
-                                <span ng-show="user">Logout {{user}}</span>
-                                <span ng-hide="user">Login</span>
+                                <span ng-if="user">Logout {{user}}</span>
+                                <span ng-if="!user">Login</span>
                             </a>
                         </li>
                     </ul>
@@ -95,19 +95,19 @@
                                         <div class="infos row">
                                             <div class="info date col-md-2 col-sm-2 col-xs-12">{{game.datePlayed | customDate:'EEEE dth MMMM, h:mm!a'}}</div>
                                             <div class="info venueName match col-md-3 col-sm-3 hidden-xs">
-                                                <img ng-show="game.competitionLogo" class="competition" ng-src="{{game.competitionLogo}}" title="{{game.competition}}">
-                                                <span ng-hide="game.competitionLogo">{{game.competition}}</span>
+                                                <img ng-if="game.competitionLogo" class="competition" ng-src="{{game.competitionLogo}}" title="{{game.competition}}">
+                                                <span ng-if="!game.competitionLogo">{{game.competition}}</span>
                                             </div>
                                             <div class="info details col-md-6 col-sm-6 col-xs-12">
                                                 <div class="detailsWrapper">
                                                     <div class="homeTeam">
                                                         <div class="homeTeamName">
-                                                            <div class="cell" ng-hide="game.homeTeam">West Ham United</div>
-                                                            <div class="cell" ng-show="game.homeTeam">{{game.homeTeam}}</div>
+                                                            <div class="cell" ng-if="!game.homeTeam">West Ham United</div>
+                                                            <div class="cell" ng-if="game.homeTeam">{{game.homeTeam}}</div>
                                                         </div>
-                                                        <img ng-show="{{game.awayTeamLogo}}" class="homeTeam" ng-src="{{game.homeTeamLogo | jsonDecode}}">
+                                                        <img ng-if="game.awayTeamLogo" class="homeTeam" ng-src="{{game.homeTeamLogo | jsonDecode}}">
                                                     </div>
-                                                    <div ng-show="game.hasResult" ng-class="{'withShoot': game.hasShootout, 'versus': true}">
+                                                    <div ng-if="game.hasResult" ng-class="{'withShoot': game.hasShootout, 'versus': true}">
                                                         <span class="home">
                                                             <span ng-class="{'westHam': game.awayTeam}">{{game.homeScore}}</span>
                                                         </span>
@@ -115,7 +115,7 @@
                                                         <span class="away">
                                                             <span ng-class="{'westHam': game.homeTeam}">{{game.awayScore}}</span>
                                                         </span>
-                                                        <div ng-show="game.hasShootout" class="shoot">
+                                                        <div ng-if="game.hasShootout" class="shoot">
                                                             <span class="home">
                                                                 <span ng-class="{'westHam': game.awayTeam}">({{game.homeShootout}}</span>
                                                             </span>
@@ -125,18 +125,18 @@
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    <div ng-hide="game.hasResult" class="versus">v</div>
+                                                    <div ng-if="!game.hasResult" class="versus">v</div>
                                                     <div class="awayTeam">
-                                                        <img ng-show="{{game.awayTeamLogo}}" ng-src="{{game.awayTeamLogo | jsonDecode }}">
+                                                        <img ng-if="game.awayTeamLogo" ng-src="{{game.awayTeamLogo | jsonDecode }}">
                                                         <div class="homeTeamName awayTeamName">
-                                                            <div class="cell" ng-hide="game.awayTeam">West Ham United</div>
-                                                            <div class="cell" ng-show="game.awayTeam">{{game.awayTeam}}</div>
+                                                            <div class="cell" ng-if="!game.awayTeam">West Ham United</div>
+                                                            <div class="cell" ng-if="game.awayTeam">{{game.awayTeam}}</div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="info details attendance col-md-1 col-sm-1 hidden-xs">
-                                                <div ng-show="{{game.showAttended}}">
+                                                <div ng-if="game.showAttended">
                                                     <input
                                                         id="attended-{{game.idx}}" name="attended-{{game.idx}}"
                                                     value="attended-{{game.idx}}" title="attended" type="checkbox"
@@ -146,17 +146,17 @@
                                         </div>
                                         <div class="links row">
                                             <span class="match-report link">
-                                                <a ng-show="game.matchReport" ng-href="{{game.matchReport | jsonDecode }}" target="_blank">Match
+                                                <a ng-if="game.matchReport" ng-href="{{game.matchReport | jsonDecode }}" target="_blank">Match
                                                     Centre</a>
                                             </span>
                                             <span class="map link">
-                                                <a ng-show="game.locationUrl" ng-href="{{game.locationUrl | jsonDecode }}" target="_blank">Map</a>
+                                                <a ng-if="game.locationUrl" ng-href="{{game.locationUrl | jsonDecode }}" target="_blank">Map</a>
                                             </span>
-                                            <span ng-show="game.ticketsUrl" class="tickets link">
+                                            <span ng-if="game.ticketsUrl" class="tickets link">
                                                 <a ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">Tickets @@ {{game.ticketsDate | customDate: 'dth MMM'}}</a>
                                             </span>
-                                            <span ng-show="!game.ticketsUrl">
-                                                <span ng-show="game.ticketsDate && !game.ticketsUrl">Tickets @@ {{game.ticketsDate | customDate: 'dth MMM'}}</span>
+                                            <span ng-if="!game.ticketsUrl">
+                                                <span ng-if="game.ticketsDate && !game.ticketsUrl">Tickets @@ {{game.ticketsDate | customDate: 'dth MMM'}}</span>
                                             </span>
                                         </div>
                                     </div>

@@ -6,7 +6,7 @@
     <span class="away">
         <span ng-class="{'westHam': game.awayTeam.isWestHam}">{{game.awayTeam.score}}</span>
     </span>
-    <div ng-show="game.hasShootout" class="shoot">
+    <div ng-if="game.hasShootout" class="shoot">
         <span class="home">
             <span ng-class="{'westHam': game.homeTeam.isWestHam}">{{game.homeTeam.shootout}}</span>
         </span>

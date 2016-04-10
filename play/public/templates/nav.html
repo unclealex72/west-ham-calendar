@@ -14,9 +14,9 @@
                             </div>
                         </form>
                     </li>
-                    <li ng-show="authenticationLink">
-                        <a ng-show="user" ng-href="{{authenticationLink}}">Logout {{user}}</a>
-                        <a ng-hide="user" ng-href="{{authenticationLink}}">Login</a>
+                    <li ng-if="authenticationLink">
+                        <a ng-if="user" ng-href="{{authenticationLink}}">Logout {{user}}</a>
+                        <a ng-if="!user" ng-href="{{authenticationLink}}">Login</a>
                     </li>
                 </ul>
             </div>
@@ -40,9 +40,9 @@
         </a>
     </li>
 
-    <li class="hide-on-large-only" ng-show="authenticationLink">
-        <a ng-show="user" ng-href="{{authenticationLink}}">Logout {{user}}</a>
-        <a ng-hide="user" ng-href="{{authenticationLink}}">Login</a>
+    <li class="hide-on-large-only" ng-if="authenticationLink">
+        <a ng-if="user" ng-href="{{authenticationLink}}">Logout {{user}}</a>
+        <a ng-if="!user" ng-href="{{authenticationLink}}">Login</a>
     </li>
     <li class="hide-on-large-only">
         <form>

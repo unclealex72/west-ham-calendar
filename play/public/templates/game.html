@@ -2,24 +2,24 @@
     <div class="col s2">
         <div class="valign">
             <div>{{game.datePlayed | customDate:'EEE dth, h:mm!a'}}</div>
-            <div ng-show="game.ticketsDate">
-                <span ng-hide="game.ticketsUrl">({{game.ticketsDate | customDate:'EEE dth MMM'}})</span>
-                <a ng-show="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
+            <div ng-if="game.ticketsDate">
+                <span ng-if="!game.ticketsUrl">({{game.ticketsDate | customDate:'EEE dth MMM'}})</span>
+                <a ng-if="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
                     ({{game.ticketsDate | customDate:'EEE dth MMM'}})
                 </a>
             </div>
         </div>
     </div>
     <div class="col s1 center-align">
-        <div ng-show="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}" title="{{game.competition}}"></div>
-        <span ng-hide="game.competitionLogo">{{game.competition}}</span>
+        <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}" title="{{game.competition}}"></div>
+        <span ng-if="!game.competitionLogo">{{game.competition}}</span>
     </div>
     <div class="col s7">
         <div class="game-details">
             <div hc-team-name class="team right-align" team="game.homeTeam"></div>
-            <div class="team-logo {{game.homeTeam.logo}} no-flex" ng-show="{{game.homeTeam.logo}}"></div>
+            <div class="team-logo {{game.homeTeam.logo}} no-flex" ng-if="game.homeTeam.logo"></div>
             <!-- Result -->
-            <div ng-show="game.hasResult" class="versus" ng-class="{'withShoot': game.hasShootout}">
+            <div ng-if="game.hasResult" class="versus" ng-class="{'withShoot': game.hasShootout}">
                 <span class="home">
                     <span ng-class="{'west-ham': game.homeTeam.isWestHam}">{{game.homeTeam.score}}</span>
                 </span>
@@ -27,7 +27,7 @@
                 <span class="away">
                     <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.score}}</span>
                 </span>
-                <div ng-show="game.hasShootout" class="shoot">
+                <div ng-if="game.hasShootout" class="shoot">
                     <span class="home">
                         <span ng-class="{'west-ham': game.homeTeam.isWestHam}">({{game.homeTeam.shootout}}</span>
                     </span>
@@ -37,19 +37,19 @@
                     </span>
                 </div>
             </div>
-            <div ng-hide="game.hasResult" class="versus">v</div>
-            <div class="team-logo {{game.awayTeam.logo}} no-flex" ng-show="{{game.awayTeam.logo}}"></div>
+            <div ng-if="!game.hasResult" class="versus">v</div>
+            <div class="team-logo {{game.awayTeam.logo}} no-flex" ng-if="game.awayTeam.logo"></div>
             <div hc-team-name class="team left-align" team="game.awayTeam"></div>
         </div>
     </div>
     <div class="col s2">
-        <div class="switch valign" ng-show="{{game.showAttended}}">
+        <div class="switch valign" ng-if="game.showAttended">
             <label>
                 <input type="checkbox" ng-model="game.attended">
                 <span class="lever"></span>
             </label>
         </div>
-        <!--div ng-show="{{game.showAttended}}">
+        <!--div ng-if="game.showAttended">
             <input
                     id="attended-{{game.idx}}" name="attended-{{game.idx}}"
                     value="attended-{{game.idx}}" title="attended" type="checkbox"
