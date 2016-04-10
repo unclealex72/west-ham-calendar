@@ -53,3 +53,9 @@ $icons-font-path: "/assets/bower_components/materialize/font/material-design-ico
   text-indent: 15px;
   color: white;
 }
+
+.top-nav .container {
+  @media #{$large-and-up} {
+    margin-left: 15px;
+  }
+}
