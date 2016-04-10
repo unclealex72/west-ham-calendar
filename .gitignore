@@ -1,5 +1,5 @@
 # General ignores
-
+.sass-cache
 logs
 project/project
 project/target
