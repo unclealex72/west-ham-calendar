@@ -22,8 +22,6 @@ import scala.concurrent.duration._
 @Singleton
 class PlayCacheSpriteHolder @Inject() (val cacheApi: CacheApi, val logoSizes: LogoSizes, val spriteService: SpriteService, val gameDao: GameDao, val nowService: NowService, implicit val ec: ExecutionContext) extends SpriteHolder with StrictLogging {
 
-  initialise()
-
   sealed abstract class Key[T: ClassTag](val name: String) {
     def toKey = s"${classOf[PlayCacheSpriteHolder]}.$name"
 
@@ -63,10 +61,5 @@ class PlayCacheSpriteHolder @Inject() (val cacheApi: CacheApi, val logoSizes: Lo
       positionsByClassName + (positionToClassName(coordinate) -> coordinate)
     }
     key.put(Sprite(out.toByteArray, positionsByClassName, classNamesByUrl))
-  }
-
-  @PostConstruct
-  def initialise(): Unit = {
-    Await.result(update, 1.minute)
   }
 }
