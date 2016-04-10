@@ -1,59 +1,132 @@
-<div class="game row valign-wrapper">
-    <div class="col s2">
-        <div class="valign">
-            <div>{{game.datePlayed | customDate:'EEE dth, h:mm!a'}}</div>
-            <div ng-if="game.ticketsDate">
-                <span ng-if="!game.ticketsUrl">({{game.ticketsDate | customDate:'EEE dth MMM'}})</span>
-                <a ng-if="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
-                    ({{game.ticketsDate | customDate:'EEE dth MMM'}})
-                </a>
+<div class="card game-small show-on-small hide-on-med-and-up" ng-class="{'home' : game.homeTeam.isWestHam, 'away' : game.awayTeam.isWestHam}">
+    <div class="card-title">
+        {{game.opponents}} ({{game.competition}})
+    </div>
+    <div class="card-content">
+        <div class="row">
+            <div class="col s2 small-game-label">
+                Date
+            </div>
+            <div class="col s4">
+                {{game.datePlayed | customDate:'EEE dth, h:mm!a'}}
+            </div>
+            <div class="col s2 small-game-label">
+                <div ng-if="game.ticketsDate">
+                    Tickets
+                </div>
+            </div>
+            <div class="col s4">
+                <div ng-if="game.ticketsDate">
+                    {{game.ticketsDate | customDate:'EEE dth MMM'}}
+                    <a ng-if="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
+                        {{game.ticketsDate | customDate:'EEE dth MMM'}}
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s2 small-game-label" ng-if="game.hasResult">
+                Result
+            </div>
+            <div class="col s4" ng-if="game.hasResult">
+                {{game.homeTeam.score}} - {{game.awayTeam.score}}
+            </div>
+            <div class="col s2 small-game-label" ng-class="{'offset-s6' : !game.hasResult}">
+                Attended
+            </div>
+            <div class="col s4">
+                <div class="switch valign" ng-if="game.showAttended">
+                    <label>
+                        <input type="checkbox" ng-model="game.attended">
+                        <span class="lever"></span>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
-    <div class="col s1 center-align">
-        <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}" title="{{game.competition}}"></div>
-        <span ng-if="!game.competitionLogo">{{game.competition}}</span>
+    <div class="card-action">
+        <a class="right" ng-if="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
+            Tickets
+        </a>
+        <a class="right" ng-if="game.matchReport" ng-href="{{game.matchReport | jsonDecode}}" target="_blank">
+            Match
+        </a>
+        <a class="right" ng-if="game.locationUrl" ng-href="{{game.locationUrl | jsonDecode}}" target="_blank">
+            Map
+        </a>
+        <a href="#"></a>
     </div>
-    <div class="col s7">
-        <div class="game-details">
-            <div hc-team-name class="team right-align" team="game.homeTeam"></div>
-            <div class="team-logo {{game.homeTeam.logo}} no-flex" ng-if="game.homeTeam.logo"></div>
-            <!-- Result -->
-            <div ng-if="game.hasResult" class="versus" ng-class="{'withShoot': game.hasShootout}">
+</div>
+
+<div class="card hide-on-small-only">
+    <div class="card-content">
+        <div class="game row valign-wrapper">
+            <div class="col s2">
+                <div class="valign">
+                    <div>{{game.datePlayed | customDate:'EEE dth, h:mm!a'}}</div>
+                    <div ng-if="game.ticketsDate">
+                        ({{game.ticketsDate | customDate:'EEE dth MMM'}})
+                    </div>
+                </div>
+            </div>
+            <div class="col s1 center-align">
+                <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}" title="{{game.competition}}"></div>
+                <span ng-if="!game.competitionLogo">{{game.competition}}</span>
+            </div>
+            <div class="col s7">
+                <div class="game-details">
+                    <div hc-team-name class="team right-align" team="game.homeTeam"></div>
+                    <div class="team-logo {{game.homeTeam.logo}} no-flex" ng-if="game.homeTeam.logo"></div>
+                    <!-- Result -->
+                    <div ng-if="game.hasResult" class="versus" ng-class="{'withShoot': game.hasShootout}">
                 <span class="home">
                     <span ng-class="{'west-ham': game.homeTeam.isWestHam}">{{game.homeTeam.score}}</span>
                 </span>
-                <span class="hyphen">-</span>
+                        <span class="hyphen">-</span>
                 <span class="away">
                     <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.score}}</span>
                 </span>
-                <div ng-if="game.hasShootout" class="shoot">
+                        <div ng-if="game.hasShootout" class="shoot">
                     <span class="home">
                         <span ng-class="{'west-ham': game.homeTeam.isWestHam}">({{game.homeTeam.shootout}}</span>
                     </span>
-                    <span class="hyphen">-</span>
+                            <span class="hyphen">-</span>
                     <span class="away">
                         <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.shootout}})</span>
                     </span>
+                        </div>
+                    </div>
+                    <div ng-if="!game.hasResult" class="versus">v</div>
+                    <div class="team-logo {{game.awayTeam.logo}} no-flex" ng-if="game.awayTeam.logo"></div>
+                    <div hc-team-name class="team left-align" team="game.awayTeam"></div>
                 </div>
             </div>
-            <div ng-if="!game.hasResult" class="versus">v</div>
-            <div class="team-logo {{game.awayTeam.logo}} no-flex" ng-if="game.awayTeam.logo"></div>
-            <div hc-team-name class="team left-align" team="game.awayTeam"></div>
+            <div class="col s2">
+                <div class="switch valign" ng-if="game.showAttended">
+                    <label>
+                        <input type="checkbox" ng-model="game.attended">
+                        <span class="lever"></span>
+                    </label>
+                </div>
+                <!--div ng-if="game.showAttended">
+                    <input
+                            id="attended-{{game.idx}}" name="attended-{{game.idx}}"
+                            value="attended-{{game.idx}}" title="attended" type="checkbox"
+                            ng-checked="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">
+                </div-->
+            </div>
         </div>
     </div>
-    <div class="col s2">
-        <div class="switch valign" ng-if="game.showAttended">
-            <label>
-                <input type="checkbox" ng-model="game.attended">
-                <span class="lever"></span>
-            </label>
-        </div>
-        <!--div ng-if="game.showAttended">
-            <input
-                    id="attended-{{game.idx}}" name="attended-{{game.idx}}"
-                    value="attended-{{game.idx}}" title="attended" type="checkbox"
-                    ng-checked="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">
-        </div-->
+    <div class="card-action">
+        <a class="right" ng-if="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
+            Tickets
+        </a>
+        <a class="right" ng-if="game.matchReport" ng-href="{{game.matchReport | jsonDecode}}" target="_blank">
+            Match
+        </a>
+        <a class="right" ng-if="game.locationUrl" ng-href="{{game.locationUrl | jsonDecode}}" target="_blank">
+            Map
+        </a>
+        <a href="#"></a>
     </div>
 </div>
