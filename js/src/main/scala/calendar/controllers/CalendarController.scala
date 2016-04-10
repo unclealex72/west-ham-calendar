@@ -1,8 +1,7 @@
 package calendar.controllers
 
-import calendar.views.{GameView, JsTicketType, MonthView}
-import calendar.Dropdown
 import calendar.services.AjaxService
+import calendar.views.{GameView, JsTicketType, MonthView}
 import com.greencatsoft.angularjs.core.Scope
 import com.greencatsoft.angularjs.{AbstractController, FilterService, injectable}
 import models.EntryRel.{LOGIN, LOGOUT, SEASONS}
@@ -24,8 +23,8 @@ import scalaz.Scalaz._
   * Created by alex on 01/04/16.
   */
 @JSExport
-@injectable("AppController")
-class AppController($scope: AppScope, filterService: FilterService, ajax: AjaxService) extends AbstractController[AppScope]($scope) {
+@injectable("CalendarController")
+class CalendarController($scope: CalendarScope, filterService: FilterService, ajax: AjaxService) extends AbstractController[CalendarScope]($scope) {
 
   for {
     entry <- FL <~ ajax.get[Entry]("/entry")
@@ -50,7 +49,7 @@ class AppController($scope: AppScope, filterService: FilterService, ajax: AjaxSe
 }
 
 @js.native
-trait AppScope extends Scope {
+trait CalendarScope extends Scope {
 
   var months: js.Array[MonthView] = js.native
   var games: js.Array[GameView] = js.native
@@ -58,8 +57,6 @@ trait AppScope extends Scope {
   var user: js.UndefOr[String] = js.native
   var authenticationLink: js.UndefOr[String] = js.native
   var alterAttendance: js.Function2[MonthView, Int, Future[Unit]]
-  var seasonsDropdown: js.Array[Dropdown] = js.native
-  var ticketTypesDropdown: js.Array[Dropdown] = js.native
   var ticketType: JsTicketType = js.native
   var scrollTo: js.Function1[String, Unit]
 }

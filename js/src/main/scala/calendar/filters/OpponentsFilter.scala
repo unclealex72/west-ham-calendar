@@ -1,6 +1,6 @@
 package calendar.filters
 
-import calendar.HasOpponents
+import calendar.views.HasOpponents
 import com.greencatsoft.angularjs.{Filter, injectable}
 
 import scala.scalajs.js

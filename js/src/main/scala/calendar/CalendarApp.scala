@@ -4,12 +4,12 @@ package calendar
   * Created by alex on 07/02/16.
   */
 
-import calendar.controllers.AppController
+import calendar.controllers.CalendarController
 import calendar.directives._
 import calendar.filters.{CustomDateFilter, JsonDecodeFilter, OpponentsFilter}
 import calendar.services.{AjaxServiceFactory, AttendanceServiceFactory, WatcherServiceFactory}
+import com.greencatsoft.angularjs.core.LocationProvider
 import com.greencatsoft.angularjs.{Angular, Config}
-import com.greencatsoft.angularjs.core.{LocationProvider, Route, RouteProvider}
 
 import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
@@ -30,11 +30,9 @@ object CalendarApp extends JSApp {
       .directive[ResultDirective]
       // Controllers
       .controller[CalendarController]
-      .controller[AppController]
       // Services
       .factory[AjaxServiceFactory]
       .factory[AttendanceServiceFactory]
-      .factory[DropdownProviderFactory]
       .factory[WatcherServiceFactory]
       // Filters
       .filter[CustomDateFilter]
