@@ -18,7 +18,7 @@ import scala.concurrent.Future
   */
 class SSLFilter @Inject() (requireSSL: RequireSSL, implicit val mat: Materializer) extends Filter {
 
-  def apply(nextFilter: RequestHeader => Future[Result])
+  override def apply(nextFilter: RequestHeader => Future[Result])
            (requestHeader: RequestHeader): Future[Result] = {
     val isSecure = requestHeader.secure || requireSSL() || requestHeader.headers.get("X-Forwarded-Proto").contains("https")
     val wrappedRequestHeader = new RequestHeader {
