@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")"/>
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.min.css")"/>
         <link rel="stylesheet" href="@routes.Sprites.teamCss()"/>
         <link rel="stylesheet" href="@routes.Sprites.competitionCss()"/>
     </head>
@@ -17,10 +17,7 @@
 
         <hc-app></hc-app>
 
-        <script src="@routes.Assets.at("bower_components/jquery/dist/jquery.js")"></script>
-        <script src="@routes.Assets.at("bower_components/angular/angular.js")"></script>
-        <script src="@routes.Assets.at("bower_components/materialize/dist/js/materialize.js")"></script>
-        <script src="@routes.Assets.at("bower_components/angular-materialize/src/angular-materialize.js")"></script>
+        <script src="@routes.Assets.at("javascripts/libs.js")"></script>
 
         @playscalajs.html.scripts("js", "/assets")
     </body>
