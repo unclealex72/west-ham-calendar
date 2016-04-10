@@ -24,7 +24,6 @@ object CalendarApp extends JSApp {
       .directive[AppDirective]
       .directive[NavDirective]
       .directive[ContentDirective]
-      .directive[MonthDirective]
       .directive[GameDirective]
       .directive[TeamNameDirective]
       .directive[TeamLogoDirective]

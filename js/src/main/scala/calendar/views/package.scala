@@ -39,14 +39,16 @@ package object views {
   object MonthView {
     def apply(idFactory: Date => String, ticketType: TicketType)(month: Month): MonthView = {
       val date = new js.Date(month.date.year - 1900, month.date.month - 1, 1)
-      val gameViews = month.games.toSeq.zipWithIndex.map { gameRowAndIndex => GameView(ticketType)(gameRowAndIndex._1, gameRowAndIndex._2) }
-      new MonthView(idFactory(date), date, gameViews.toJSArray)
+      val monthId = idFactory(date)
+      val gameViews = month.games.toSeq.zipWithIndex.map {
+        gameRowAndIndex => GameView(ticketType)(gameRowAndIndex._1, Some(monthId).filter(_ => gameRowAndIndex._2 == 0)) }
+      new MonthView(monthId, date, gameViews.toJSArray)
     }
   }
 
   @ScalaJSDefined
   class GameView(
-                  var idx: Int,
+                  var monthId: js.UndefOr[String],
                   var datePlayed: js.Date,
                   var competition: String,
                   var competitionLogo: js.UndefOr[String],
@@ -68,7 +70,7 @@ package object views {
   }
 
   object GameView {
-    def apply(ticketType: TicketType)(gameRow: GameRow, idx: Int): GameView = {
+    def apply(ticketType: TicketType)(gameRow: GameRow, monthId: Option[String]): GameView = {
       val attendUrl = gameRow.links(ATTEND)
       val unattendUrl = gameRow.links(UNATTEND)
       val ticketingInfo = gameRow.tickets.get(ticketType).map { ticketingInformation =>
@@ -76,7 +78,7 @@ package object views {
       }
       def sharedDateToJsDate(sd: SharedDate): js.Date = new js.Date(js.Date.parse(sd.toString))
       new GameView(
-        idx,
+        monthId.orUndefined,
         sharedDateToJsDate(gameRow.at),
         gameRow.competition.name,
         gameRow.competitionLogoClass.orUndefined,

@@ -1,40 +1,48 @@
+<div ng-if="game.monthId" id="{{game.monthId}}"></div>
 <div class="card game-small show-on-small hide-on-med-and-up" ng-class="{'home' : game.homeTeam.isWestHam, 'away' : game.awayTeam.isWestHam}">
-    <div class="card-title">
-        {{game.opponents}} ({{game.competition}})
+    <div class="card-title center-align">
+        {{game.opponents}}
     </div>
     <div class="card-content">
         <div class="row">
-            <div class="col s2 small-game-label">
-                Date
+            <div class="col s4 small-game-label">
+                Competition
             </div>
-            <div class="col s4">
-                {{game.datePlayed | customDate:'EEE dth, h:mm!a'}}
-            </div>
-            <div class="col s2 small-game-label">
-                <div ng-if="game.ticketsDate">
-                    Tickets
-                </div>
-            </div>
-            <div class="col s4">
-                <div ng-if="game.ticketsDate">
-                    {{game.ticketsDate | customDate:'EEE dth MMM'}}
-                    <a ng-if="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
-                        {{game.ticketsDate | customDate:'EEE dth MMM'}}
-                    </a>
-                </div>
+            <div class="col s8">
+                {{game.competition}}
             </div>
         </div>
         <div class="row">
-            <div class="col s2 small-game-label" ng-if="game.hasResult">
+            <div class="col s4 small-game-label">
+                Date
+            </div>
+            <div class="col s8">
+                {{game.datePlayed | customDate:'EEE dth MMM, h:mm!a'}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s4 small-game-label">
+                <div>
+                    Tickets
+                </div>
+            </div>
+            <div class="col s8">
+                {{game.ticketsDate | customDate:'EEE dth MMM'}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s4 small-game-label">
                 Result
             </div>
-            <div class="col s4" ng-if="game.hasResult">
+            <div class="col s8">
                 {{game.homeTeam.score}} - {{game.awayTeam.score}}
             </div>
-            <div class="col s2 small-game-label" ng-class="{'offset-s6' : !game.hasResult}">
+        </div>
+        <div class="row" ng-if="game.showAttended">
+            <div class="col s4 small-game-label">
                 Attended
             </div>
-            <div class="col s4">
+            <div class="col s8">
                 <div class="switch valign" ng-if="game.showAttended">
                     <label>
                         <input type="checkbox" ng-model="game.attended">
@@ -63,7 +71,7 @@
         <div class="game row valign-wrapper">
             <div class="col s2">
                 <div class="valign">
-                    <div>{{game.datePlayed | customDate:'EEE dth, h:mm!a'}}</div>
+                    <div>{{game.datePlayed | customDate:'EEE dth MMM, h:mm!a'}}</div>
                     <div ng-if="game.ticketsDate">
                         ({{game.ticketsDate | customDate:'EEE dth MMM'}})
                     </div>

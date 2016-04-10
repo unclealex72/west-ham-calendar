@@ -1,6 +1,6 @@
 package calendar.controllers
 
-import calendar.views.{JsTicketType, MonthView}
+import calendar.views.{GameView, JsTicketType, MonthView}
 import calendar.Dropdown
 import calendar.services.AjaxService
 import com.greencatsoft.angularjs.core.Scope
@@ -25,7 +25,7 @@ import scalaz.Scalaz._
   */
 @JSExport
 @injectable("AppController")
-class AppController(scope: AppScope, filterService: FilterService, ajax: AjaxService) extends AbstractController[AppScope](scope) {
+class AppController($scope: AppScope, filterService: FilterService, ajax: AjaxService) extends AbstractController[AppScope]($scope) {
 
   for {
     entry <- FL <~ ajax.get[Entry]("/entry")
@@ -36,14 +36,15 @@ class AppController(scope: AppScope, filterService: FilterService, ajax: AjaxSer
     months <- FL <~ ajax.get[Months](monthsUrl)
   } yield {
     def monthIdFactory(date: Date): String = {
-      s"Month${filterService("date").call(scope, date, "MMMM")}"
+      s"Month${filterService("date").call($scope, date, "MMMM")}"
     }
     val monthViews = months.toSeq.map(MonthView.apply(monthIdFactory, PriorityPointTicketType)).toJSArray
-    scope.$apply {
-      scope.user = entry.user.orUndefined
-      scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
-      scope.season = selectedSeason.season
-      scope.months = monthViews.toJSArray
+    $scope.$apply {
+      $scope.user = entry.user.orUndefined
+      $scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
+      $scope.season = selectedSeason.season
+      $scope.months = monthViews
+      $scope.games = monthViews.flatMap(monthView => monthView.games)
     }
   }
 }
@@ -52,6 +53,7 @@ class AppController(scope: AppScope, filterService: FilterService, ajax: AjaxSer
 trait AppScope extends Scope {
 
   var months: js.Array[MonthView] = js.native
+  var games: js.Array[GameView] = js.native
   var season: Int = js.native
   var user: js.UndefOr[String] = js.native
   var authenticationLink: js.UndefOr[String] = js.native
