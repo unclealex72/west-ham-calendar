@@ -36,7 +36,7 @@ class AppController(scope: AppScope, filterService: FilterService, ajax: AjaxSer
     months <- FL <~ ajax.get[Months](monthsUrl)
   } yield {
     def monthIdFactory(date: Date): String = {
-      filterService("date").call(scope, date, "MMMM").toString
+      s"Month${filterService("date").call(scope, date, "MMMM")}"
     }
     val monthViews = months.toSeq.map(MonthView.apply(monthIdFactory, PriorityPointTicketType)).toJSArray
     scope.$apply {
