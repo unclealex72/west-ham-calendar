@@ -36,8 +36,8 @@
 <ul id="nav-mobile" class="side-nav fixed">
     <!--Maybe a logo?-->
     <li class="logo hide-on-med-and-down" style="margin-left: -15px;">
-        <a id="logo-container" href="http://materializecss.com/" class="brand-logo">
-            <h3>Logo</h3>
+        <a id="logo-container" href="#" class="brand-logo">
+            <i class="material-icons mdi-action-alarm large"></i>
         </a>
     </li>
 
@@ -55,7 +55,10 @@
         </form>
     </li>
     <li ng-repeat="month in months | opponents:search" class="bold">
-        <a ng-click="scrollToMonth('topnav', month)" class="waves-effect waves-teal">{{month.date | customDate:'MMMM'}}</a>
+        <a ng-click="scrollToMonth('topnav', month)" class="waves-effect waves-teal">
+            {{month.date | customDate:'MMMM'}}
+            <span class="badge">{{month.games.length}}</span>
+        </a>
     </li>
 
 

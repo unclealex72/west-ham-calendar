@@ -30,11 +30,7 @@ class Application @Inject() (val gameDao: GameDao,
    * Redirect to the  homepage.
    */
   def index = Action {
-    Ok(views.html.proto())
-  }
-
-  def proto = Action {
-    Ok(views.html.proto())
+    Ok(views.html.index())
   }
 
   def months(season: Int) = silhouette.UserAwareAction.async { implicit request =>

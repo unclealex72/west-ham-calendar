@@ -5,7 +5,9 @@ import monads.FO
 import pdf.{Client, PriorityPointsPdfFactory}
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Enumerator
+import play.api.mvc.Action
 import security.Definitions._
+
 import scalaz._
 import Scalaz._
 import scala.concurrent.ExecutionContext
@@ -37,7 +39,7 @@ class PriorityPointsPdf @javax.inject.Inject() (val gameDao: GameDao,
             out =>
               priorityPointsPdfFactory.generate(priorityPointsConfiguration, game.opponents, game.competition.isLeague, clientFilter, out)
           }}.
-          as("application/pdf")
+          as("application/pdf").withHeaders("Content-Disposition" -> s"attachment; filename=${game.opponents}-${game.competition.name}.pdf".toLowerCase)
       }
     }
     pp.map { _.getOrElse(NotFound) }
