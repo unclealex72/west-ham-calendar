@@ -19,6 +19,7 @@ dist
 .target
 bin
 .scalastyle
+node_modules
 
 # Secure files that should not be uploaded to github
 play/conf/secure
