@@ -1,10 +1,13 @@
-/*** Fonts ***/
-$roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
-$icons-font-path: "/assets/bower_components/materialize/fonts/material-design-icons/";
-
+// Overridden colours
 @import "colours";
+
+// Materialise CSS
+$roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
 @import "../../../public/bower_components/materialize/sass/materialize";
 @import "custom";
+
+// Material icons
+@import "/assets/bower_components/material-design-icons/iconfont/material-icons.css";
 
 .game {
   font-size: 16px;
