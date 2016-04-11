@@ -1,8 +1,9 @@
 # General ignores
-
+.sass-cache
 logs
 project/project
 project/target
+play/public/bower_components
 target
 tmp
 .history
@@ -19,6 +20,7 @@ dist
 .target
 bin
 .scalastyle
+node_modules
 
 # Secure files that should not be uploaded to github
 play/conf/secure

@@ -34,6 +34,7 @@ import play.api.libs.iteratee.Concurrent
 import play.api.mvc.Action
 import security.Definitions._
 import services.GameRowFactory
+import sprites.SpriteHolder
 import update.MainUpdateService
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,6 +52,7 @@ class Update @javax.inject.Inject() (val secret: SecretToken,
                                      val messagesApi: MessagesApi,
                                      val silhouette: DefaultSilhouette,
                                      val fatal: Fatal,
+                                     val spritHolder: SpriteHolder,
                                      implicit val nowService: NowService,
                                      implicit val ec: ExecutionContext
                                     ) extends Secure with Secret with LinkFactories with JsonResults with StrictLogging {
@@ -78,6 +80,9 @@ class Update @javax.inject.Inject() (val secret: SecretToken,
           fatal.fail("Updating all games failed", t, linkBuilder)
           logger.error("Updating all games failed.", t)
           remoteStream.log("Updating all games failed.", Some(t))
+      }.flatMap { _ =>
+          remoteStream.log("Updating CSS sprites")
+          spritHolder.update
       }.andThen {
         case _ => channel.eofAndEnd()
       }

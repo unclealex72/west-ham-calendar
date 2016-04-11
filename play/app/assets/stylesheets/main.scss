@@ -1,8 +1,8 @@
-/*** Fonts ***/
-$roboto-font-path: "/assets/bower_components/materialize/font/roboto/";
-$icons-font-path: "/assets/bower_components/materialize/font/material-design-icons/";
-
+// Overridden colours
 @import "colours";
+
+// Materialise CSS
+$roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
 @import "../../../public/bower_components/materialize/sass/materialize";
 @import "custom";
 

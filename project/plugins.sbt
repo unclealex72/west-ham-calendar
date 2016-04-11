@@ -1,7 +1,9 @@
 logLevel := Level.Warn
 
 // Resolvers
-resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+resolvers ++= Seq(
+  "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/",
+  "Madoushi sbt-plugins" at "https://dl.bintray.com/madoushi/sbt-plugins/")
 
 //resolvers += "Sonatype snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
@@ -18,4 +20,4 @@ addSbtPlugin("com.vmunier" % "sbt-play-scalajs" % "0.3.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
 
-addSbtPlugin("org.irundaia.sbt" % "sbt-sassify" % "1.4.2")
+addSbtPlugin("org.madoushi.sbt" % "sbt-sass" % "0.9.3")

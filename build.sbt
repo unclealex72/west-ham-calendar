@@ -1,5 +1,4 @@
 import sbt.Project.projectToRef
-//import play.PlayImport.PlayKeys._
 
 name := "west-ham-calendar"
 
@@ -12,7 +11,6 @@ lazy val scalaV = "2.11.7"
 
 lazy val play = (project in file("play")).settings(
   scalaVersion := scalaV,
-  //routesImport += "config.Routes._",
   scalaJSProjects := clients,
   pipelineStages := Seq(scalaJSProd, gzip),
   resolvers ++= Seq(
