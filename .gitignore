@@ -3,6 +3,7 @@
 logs
 project/project
 project/target
+play/public/bower_components
 target
 tmp
 .history
