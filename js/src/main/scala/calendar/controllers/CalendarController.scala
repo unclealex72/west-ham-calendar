@@ -2,12 +2,11 @@ package calendar.controllers
 
 import calendar.services.{AjaxService, WatcherService}
 import calendar.views.{GameView, JsTicketType, MonthView}
-import com.greencatsoft.angularjs.core.{Location, Scope}
+import com.greencatsoft.angularjs.core.Scope
 import com.greencatsoft.angularjs.{AbstractController, FilterService, injectable}
-import models.EntryRel.{LOGIN, LOGOUT, SEASONS}
-import models.SeasonRel.MONTHS
+import models.EntryRel.{LOGIN, LOGOUT}
 import models.TicketType.PriorityPointTicketType
-import models.{Entry, Months, Seasons, TicketType}
+import models.{Entry, TicketType}
 import monads.FL
 import upickle.default._
 
@@ -32,12 +31,10 @@ class CalendarController(
 
   for {
     entry <- FL <~ ajax.get[Entry]("/entry")
-    seasonsLink <- FL <~? entry.links(SEASONS)
-    seasons <- FL <~ ajax.get[Seasons](seasonsLink)
-    selectedSeason <- FL <~? seasons.lastOption
-    monthsUrl <- FL <~? selectedSeason.links(MONTHS)
-    months <- FL <~ ajax.get[Months](monthsUrl)
+    seasons <- FL <~ entry.seasons
+    season <- FL <~ seasons.lastOption.toList
   } yield {
+    val months = season.months
     def monthIdFactory(date: Date): String = {
       s"Month${filterService("date").call($scope, date, "MMMM")}"
     }
@@ -45,7 +42,7 @@ class CalendarController(
     $scope.$apply {
       $scope.user = entry.user.orUndefined
       $scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
-      $scope.currentSeason = selectedSeason.season
+      $scope.currentSeason = season.season
       $scope.seasons = seasons.map(_.season).toJSArray
       val ticketTypes = TicketType.values.map(JsTicketType(_))
       $scope.currentTicketType = ticketTypes.filter(_.is(PriorityPointTicketType)).head

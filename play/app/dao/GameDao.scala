@@ -114,6 +114,9 @@ trait GameDao {
    */
   def getAll: Future[List[Game]]
 
+  //Coming soon!
+  //def getAllModifiedSince(lastModified: DateTime): Future[List[Game]]
+
   /**
     * Get all home and away logos.
     * @return
