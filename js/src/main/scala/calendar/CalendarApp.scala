@@ -28,6 +28,7 @@ object CalendarApp extends JSApp {
       .directive[TeamNameDirective]
       .directive[TeamLogoDirective]
       .directive[ResultDirective]
+      .directive[NavDropdownDirective]
       // Controllers
       .controller[CalendarController]
       // Services

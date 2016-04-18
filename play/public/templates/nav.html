@@ -7,6 +7,26 @@
                 <a href="#!" class="page-title show-on-small hide-on-med-and-up">WHU Cal</a>
                 <ul class="right hide-on-med-and-down">
                     <li>
+                        <a class="dropdown-button" href="#!" data-activates="season-dropdown" hc-nav-dropdown>
+                            {{currentSeason}} / {{currentSeason + 1}} <i class="material-icons right">arrow_drop_down</i>
+                        </a>
+                        <ul id="season-dropdown" class="dropdown-content">
+                            <li ng-repeat="season in seasons | orderBy:'-'">
+                                <a ng-click="alterSeason(season)">{{season}} / {{season + 1}}</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a class="dropdown-button" href="#!" data-activates="tickettype-dropdown" hc-nav-dropdown>
+                            {{currentTicketType.label}} sale date<i class="material-icons right">arrow_drop_down</i>
+                        </a>
+                        <ul id="tickettype-dropdown" class="dropdown-content">
+                            <li ng-repeat="ticketType in ticketTypes">
+                                <a ng-click="alterTicketType(ticketType)">{{ticketType.label}} sale date</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
                         <form>
                             <div class="input-field">
                                 <input id="search" type="search" placeholder="Search" ng-model="search" ng-trim="true">
@@ -48,18 +68,26 @@
     <li class="hide-on-large-only">
         <form>
             <div class="input-field">
-                <input id="search-side" type="search" placeholder="Search" ng-model="search" ng-trim="true">
+                <input id="search-side" type="search" ng-model="search" ng-trim="true">
                 <label for="search-side"><i class="material-icons">search</i></label>
                 <i class="material-icons">close</i>
             </div>
         </form>
     </li>
+    <li class="hide-on-large-only">
+        <select class="browser-default"
+                ng-options="season as season for season in seasons | orderBy:'-' track by season" ng-model="currentSeason">
+        </select>
+    </li>
+    <li class="hide-on-large-only">
+        <select class="browser-default"
+                ng-options="ticketType as ticketType.label for ticketType in ticketTypes track by ticketType.key" ng-model="currentTicketType">
+        </select>
+    </li>
     <li ng-repeat="month in months | opponents:search" class="bold">
         <a ng-click="scrollToMonth('topnav', month)" class="waves-effect waves-teal">
             {{month.date | customDate:'MMMM'}}
-            <span class="badge">{{month.games.length}}</span>
+            <span class="badge">{{(month.games | opponents:search).length}}</span>
         </a>
     </li>
-
-
 </ul>

@@ -23,7 +23,7 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
   )
 
   override def link($scope: ScopeType, elems: Seq[Element], attrs: Attributes): Unit = {
-    $scope.$watch("game.attended", watcher { (newAttended: Boolean) => (oldAttended: Boolean) =>
+    watcher.on($scope)(_.game.attended) { newAttended => oldAttended =>
       attendance.updateAttendance($scope.game) onSuccess {
         case Some(newAttendance) =>
           if ($scope.game.attended != newAttendance) {
@@ -33,7 +33,7 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
           }
         case None =>
       }
-    })
+    }
   }
 }
 

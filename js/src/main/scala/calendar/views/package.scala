@@ -20,6 +20,12 @@ package object views {
 
   object JsTicketType {
     def apply(tt: TicketType): JsTicketType = new JsTicketType(TicketType.indexOf(tt), tt.label, tt.entryName)
+
+    implicit class JsTicketTypeImplicits(jsTicketType: JsTicketType) {
+      def is(ticketType: TicketType): Boolean = {
+        jsTicketType.key == ticketType.entryName
+      }
+    }
   }
 
   @ScalaJSDefined
@@ -29,8 +35,8 @@ package object views {
 
   @ScalaJSDefined
   class MonthView(
-                   var id: String,
-                   var date: js.Date,
+                   val id: String,
+                   val date: js.Date,
                    var games: js.Array[GameView]) extends js.Object with HasOpponents {
 
     def hasOpponents(prefix: String): Boolean = games.exists(_.hasOpponents(prefix))
@@ -48,23 +54,23 @@ package object views {
 
   @ScalaJSDefined
   class GameView(
-                  var monthId: js.UndefOr[String],
-                  var datePlayed: js.Date,
-                  var competition: String,
-                  var competitionLogo: js.UndefOr[String],
-                  var opponents: String,
-                  var hasResult: Boolean,
-                  var hasShootout: Boolean,
-                  var homeTeam: TeamView,
-                  var awayTeam: TeamView,
+                  val monthId: js.UndefOr[String],
+                  val datePlayed: js.Date,
+                  val competition: String,
+                  val competitionLogo: js.UndefOr[String],
+                  val opponents: String,
+                  val hasResult: Boolean,
+                  val hasShootout: Boolean,
+                  val homeTeam: TeamView,
+                  val awayTeam: TeamView,
                   var attended: Boolean,
-                  var showAttended: Boolean,
-                  var attendUrl: js.UndefOr[String],
-                  var unattendUrl: js.UndefOr[String],
-                  var ticketsDate: js.UndefOr[js.Date],
-                  var ticketsUrl: js.UndefOr[String],
-                  var matchReport: js.UndefOr[String],
-                  var locationUrl: js.UndefOr[String]) extends js.Object with HasOpponents {
+                  val showAttended: Boolean,
+                  val attendUrl: js.UndefOr[String],
+                  val unattendUrl: js.UndefOr[String],
+                  val ticketsDate: js.UndefOr[js.Date],
+                  val ticketsUrl: js.UndefOr[String],
+                  val matchReport: js.UndefOr[String],
+                  val locationUrl: js.UndefOr[String]) extends js.Object with HasOpponents {
 
     def hasOpponents(prefix: String): Boolean = opponents.toLowerCase.startsWith(prefix.toLowerCase)
   }
@@ -99,10 +105,10 @@ package object views {
   }
 
   @ScalaJSDefined
-  class TeamView(var name: js.UndefOr[String],
-                 var logo: js.UndefOr[String],
-                 var score: js.UndefOr[Int],
-                 var shootout: js.UndefOr[Int]) extends js.Object {
+  class TeamView(val name: js.UndefOr[String],
+                 val logo: js.UndefOr[String],
+                 val score: js.UndefOr[Int],
+                 val shootout: js.UndefOr[Int]) extends js.Object {
     val isWestHam: Boolean = name.isEmpty
   }
 

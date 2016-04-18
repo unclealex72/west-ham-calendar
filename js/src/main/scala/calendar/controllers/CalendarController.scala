@@ -1,13 +1,13 @@
 package calendar.controllers
 
-import calendar.services.AjaxService
+import calendar.services.{AjaxService, WatcherService}
 import calendar.views.{GameView, JsTicketType, MonthView}
-import com.greencatsoft.angularjs.core.Scope
+import com.greencatsoft.angularjs.core.{Location, Scope}
 import com.greencatsoft.angularjs.{AbstractController, FilterService, injectable}
 import models.EntryRel.{LOGIN, LOGOUT, SEASONS}
 import models.SeasonRel.MONTHS
 import models.TicketType.PriorityPointTicketType
-import models.{Entry, Months, Seasons}
+import models.{Entry, Months, Seasons, TicketType}
 import monads.FL
 import upickle.default._
 
@@ -24,7 +24,11 @@ import scalaz.Scalaz._
   */
 @JSExport
 @injectable("CalendarController")
-class CalendarController($scope: CalendarScope, filterService: FilterService, ajax: AjaxService) extends AbstractController[CalendarScope]($scope) {
+class CalendarController(
+                          $scope: CalendarScope,
+                          filterService: FilterService,
+                          ajax: AjaxService,
+                          watcher: WatcherService) extends AbstractController[CalendarScope]($scope) {
 
   for {
     entry <- FL <~ ajax.get[Entry]("/entry")
@@ -41,9 +45,24 @@ class CalendarController($scope: CalendarScope, filterService: FilterService, aj
     $scope.$apply {
       $scope.user = entry.user.orUndefined
       $scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
-      $scope.season = selectedSeason.season
+      $scope.currentSeason = selectedSeason.season
+      $scope.seasons = seasons.map(_.season).toJSArray
+      val ticketTypes = TicketType.values.map(JsTicketType(_))
+      $scope.currentTicketType = ticketTypes.filter(_.is(PriorityPointTicketType)).head
+      $scope.ticketTypes = ticketTypes.toJSArray
       $scope.months = monthViews
       $scope.games = monthViews.flatMap(monthView => monthView.games)
+      $scope.alterSeason = (season: Int) => {
+        $scope.currentSeason = season
+      }
+      $scope.alterTicketType = (ticketType: JsTicketType) => {
+        $scope.currentTicketType = ticketType
+      }
+      watcher.onEach($scope).listen(_.currentSeason).fire { newSeason => oldSeason =>
+        println(s"$newSeason $oldSeason")
+      }.listen(_.currentTicketType).fire { newTicketType => oldTicketType =>
+        println(s"${newTicketType.key} ${oldTicketType.key}")
+      }.go()
     }
   }
 }
@@ -53,10 +72,13 @@ trait CalendarScope extends Scope {
 
   var months: js.Array[MonthView] = js.native
   var games: js.Array[GameView] = js.native
-  var season: Int = js.native
+  var seasons: js.Array[Int] = js.native
+  var currentSeason: Int = js.native
   var user: js.UndefOr[String] = js.native
   var authenticationLink: js.UndefOr[String] = js.native
-  var alterAttendance: js.Function2[MonthView, Int, Future[Unit]]
-  var ticketType: JsTicketType = js.native
-  var scrollTo: js.Function1[String, Unit]
+  var alterAttendance: js.Function2[MonthView, Int, Future[Unit]] = js.native
+  var alterSeason: js.Function1[Int, Unit] = js.native
+  var alterTicketType: js.Function1[JsTicketType, Unit] = js.native
+  var ticketTypes: js.Array[JsTicketType] = js.native
+  var currentTicketType: JsTicketType = js.native
 }
