@@ -109,7 +109,7 @@ class CalendarModule() extends AbstractModule with ScalaModule {
 
   @Provides
   def provideCredentialsStorage(cache: CacheApi)(implicit ec: ExecutionContext): CredentialsStorage = {
-    new PlayCacheCredentialsStorage(cache, 15.minutes)
+    new PlayCacheCredentialsStorage(cache, Duration.Inf)
   }
 
   @Provides
