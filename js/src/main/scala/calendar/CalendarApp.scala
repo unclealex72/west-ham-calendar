@@ -18,7 +18,7 @@ import scala.scalajs.js.annotation.JSExport
 object CalendarApp extends JSApp {
 
   override def main() {
-    val module = Angular.module("hammersCalendar", Seq("ui.materialize"))
+    val module = Angular.module("hammersCalendar", Seq("ui.materialize", "vs-repeat"))
     module
       // Directives
       .directive[AppDirective]
