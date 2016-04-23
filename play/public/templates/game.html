@@ -27,7 +27,9 @@
                 </div>
             </div>
             <div class="col s8">
-                {{game.ticketsDate | customDate:'EEE dth MMM'}}
+                <span ng-if="game.tickets[currentTicketType.key] && game.tickets[currentTicketType.key].date">
+                    {{game.tickets[currentTicketType.key].date | customDate:'EEE dth MMM'}}
+                </span>
             </div>
         </div>
         <div class="row">
@@ -53,7 +55,9 @@
         </div>
     </div>
     <div class="card-action">
-        <a class="right" ng-if="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
+        <a class="right"
+           ng-if="game.tickets[currentTicketType.key] && game.tickets[currentTicketType.key].url"
+           ng-href="{{game.tickets[currentTicketType.key].url | jsonDecode}}" target="_blank">
             Tickets
         </a>
         <a class="right" ng-if="game.matchReport" ng-href="{{game.matchReport | jsonDecode}}" target="_blank">
@@ -72,8 +76,8 @@
             <div class="col s2">
                 <div class="valign">
                     <div>{{game.datePlayed | customDate:'EEE dth MMM, h:mm!a'}}</div>
-                    <div ng-if="game.ticketsDate">
-                        ({{game.ticketsDate | customDate:'EEE dth MMM'}})
+                    <div ng-if="game.tickets[currentTicketType.key] && game.tickets[currentTicketType.key].date">
+                        {{game.tickets[currentTicketType.key].date | customDate:'EEE dth MMM'}}
                     </div>
                 </div>
             </div>
@@ -116,17 +120,13 @@
                         <span class="lever"></span>
                     </label>
                 </div>
-                <!--div ng-if="game.showAttended">
-                    <input
-                            id="attended-{{game.idx}}" name="attended-{{game.idx}}"
-                            value="attended-{{game.idx}}" title="attended" type="checkbox"
-                            ng-checked="{{game.attended}}" ng-click="alterAttendance(month, game.idx)">
-                </div-->
             </div>
         </div>
     </div>
     <div class="card-action">
-        <a class="right" ng-if="game.ticketsUrl" ng-href="{{game.ticketsUrl | jsonDecode}}" target="_blank">
+        <a class="right"
+           ng-if="game.tickets[currentTicketType.key] && game.tickets[currentTicketType.key].url"
+           ng-href="{{game.tickets[currentTicketType.key].url | jsonDecode}}" target="_blank">
             Tickets
         </a>
         <a class="right" ng-if="game.matchReport" ng-href="{{game.matchReport | jsonDecode}}" target="_blank">

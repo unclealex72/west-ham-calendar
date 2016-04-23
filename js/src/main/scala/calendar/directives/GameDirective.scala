@@ -1,7 +1,7 @@
 package calendar.directives
 
 import calendar.services.{AttendanceService, WatcherService}
-import calendar.views.GameView
+import calendar.views.{GameView, JsTicketType}
 import com.greencatsoft.angularjs._
 import com.greencatsoft.angularjs.core.Scope
 import org.scalajs.dom.Element
@@ -21,7 +21,8 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
   case class OneWayBinding(name: String, attribute: String = "") extends ScopeBinding("<")
 
   bindings ++= Seq(
-    OneWayBinding("game")
+    OneWayBinding("game"),
+    "currentTicketType" := ""
     //"game" := ""
   )
 
@@ -43,4 +44,5 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
 @js.native
 trait GameDirectiveScope extends Scope {
   var game: GameView = js.native
+  var currentTicketType: JsTicketType = js.native
 }

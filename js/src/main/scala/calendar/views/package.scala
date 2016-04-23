@@ -86,7 +86,7 @@ package object views {
       val unattendUrl = gameRow.links(UNATTEND)
       val tickets = TicketType.values.foldLeft(Dictionary.empty[TicketsView]) { (dict, ticketType) =>
         gameRow.tickets.get(ticketType).foreach { ticketingInformation =>
-          dict.update(ticketType.name, TicketsView(ticketingInformation))
+          dict.update(ticketType.entryName, TicketsView(ticketingInformation))
         }
         dict
       }
@@ -134,7 +134,9 @@ package object views {
   class TicketsView(val date: js.Date, val url: js.UndefOr[String]) extends js.Object
   object TicketsView {
     def apply(ticketingInformation: TicketingInformation): TicketsView = {
-      new TicketsView(sharedDateToJsDate(ticketingInformation.at), ticketingInformation.links(TicketingInformationRel.FORM).orUndefined)
+      new TicketsView(
+        sharedDateToJsDate(ticketingInformation.at),
+        ticketingInformation.links(TicketingInformationRel.FORM).map(JSON.stringify(_)).orUndefined)
     }
   }
 }
