@@ -1,22 +1,18 @@
 package calendar.controllers
 
 import calendar.services.{AjaxService, WatcherService}
-import calendar.views.{GameView, JsTicketType, MonthView}
-import com.greencatsoft.angularjs.core.Scope
+import calendar.views.{GameView, JsTicketType, MonthView, SeasonView}
+import com.greencatsoft.angularjs.core.{Scope, Timeout}
 import com.greencatsoft.angularjs.{AbstractController, FilterService, injectable}
 import models.EntryRel.{LOGIN, LOGOUT}
 import models.TicketType.PriorityPointTicketType
 import models.{Entry, TicketType}
-import monads.FL
 import upickle.default._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.scalajs.js
-import scala.scalajs.js.Date
 import scala.scalajs.js.JSConverters._
 import scala.scalajs.js.annotation.JSExport
-import scalaz.Scalaz._
 
 /**
   * Created by alex on 01/04/16.
@@ -27,39 +23,72 @@ class CalendarController(
                           $scope: CalendarScope,
                           filterService: FilterService,
                           ajax: AjaxService,
+                          timeout: Timeout,
                           watcher: WatcherService) extends AbstractController[CalendarScope]($scope) {
 
   for {
-    entry <- FL <~ ajax.get[Entry]("/entry")
-    seasons <- FL <~ entry.seasons
-    season <- FL <~ seasons.lastOption.toList
+    entry <- ajax.get[Entry]("/entry")
   } yield {
-    val months = season.months
-    def monthIdFactory(date: Date): String = {
-      s"Month${filterService("date").call($scope, date, "MMMM")}"
-    }
-    val monthViews = months.toSeq.map(MonthView.apply(monthIdFactory, PriorityPointTicketType)).toJSArray
+    val seasonViews = entry.seasons.toSeq.reverse.map(SeasonView(_))
     $scope.$apply {
       $scope.user = entry.user.orUndefined
-      $scope.authenticationLink = entry.links(LOGIN).orElse(entry.links(LOGOUT)).orUndefined
-      $scope.currentSeason = season.season
-      $scope.seasons = seasons.map(_.season).toJSArray
+      $scope.authenticationLink = entry.links(if (entry.user.isDefined) LOGOUT else LOGIN).orUndefined
       val ticketTypes = TicketType.values.map(JsTicketType(_))
       $scope.currentTicketType = ticketTypes.filter(_.is(PriorityPointTicketType)).head
       $scope.ticketTypes = ticketTypes.toJSArray
-      $scope.months = monthViews
-      $scope.games = monthViews.flatMap(monthView => monthView.games)
-      $scope.alterSeason = (season: Int) => {
+      $scope.seasons = seasonViews.toJSArray
+      $scope.currentSeason = seasonViews.head
+      $scope.currentMonth = $scope.currentSeason.months.headOption.orUndefined
+      $scope.currentOpponents = None.orUndefined
+      populateOpponents($scope)
+      populateGames($scope)
+      $scope.alterMonth = (month: MonthView) => {
+        $scope.currentMonth = month
+        $scope.currentMonth.foreach { month =>
+          $scope.currentOpponents = None.orUndefined
+          populateGames($scope)
+        }
+      }
+      $scope.alterOpponents = (opponents: String) => {
+        $scope.currentOpponents = opponents
+        $scope.currentOpponents.foreach { opponents =>
+          $scope.currentMonth = None.orUndefined
+        }
+        populateGames($scope)
+
+      }
+      $scope.alterSeason = (season: SeasonView) => {
         $scope.currentSeason = season
+        populateOpponents($scope)
+        $scope.alterMonth($scope.currentSeason.months.head)
       }
       $scope.alterTicketType = (ticketType: JsTicketType) => {
         $scope.currentTicketType = ticketType
       }
-      watcher.onEach($scope).listen(_.currentSeason).fire { newSeason => oldSeason =>
-        println(s"$newSeason $oldSeason")
-      }.listen(_.currentTicketType).fire { newTicketType => oldTicketType =>
-        println(s"${newTicketType.key} ${oldTicketType.key}")
-      }.go()
+    }
+  }
+
+  def populateOpponents($scope: CalendarScope): Unit = {
+    val possibleOpponents = for {
+      month <- $scope.currentSeason.months.toSet[MonthView]
+      game <- month.games.toSet[GameView]
+    } yield {
+      game.opponents
+    }
+    $scope.possibleOpponents = possibleOpponents.toJSArray
+  }
+
+  def populateGames($scope: CalendarScope): Unit = {
+    $scope.currentMonth.foreach { currentMonth =>
+      $scope.currentGames = currentMonth.games
+    }
+    $scope.currentOpponents.foreach { currentOpponents =>
+      $scope.currentGames = for {
+        month <- $scope.currentSeason.months
+        game <- month.games if game.opponents == currentOpponents
+      } yield {
+        game
+      }
     }
   }
 }
@@ -67,15 +96,21 @@ class CalendarController(
 @js.native
 trait CalendarScope extends Scope {
 
-  var months: js.Array[MonthView] = js.native
-  var games: js.Array[GameView] = js.native
-  var seasons: js.Array[Int] = js.native
-  var currentSeason: Int = js.native
-  var user: js.UndefOr[String] = js.native
-  var authenticationLink: js.UndefOr[String] = js.native
-  var alterAttendance: js.Function2[MonthView, Int, Future[Unit]] = js.native
-  var alterSeason: js.Function1[Int, Unit] = js.native
-  var alterTicketType: js.Function1[JsTicketType, Unit] = js.native
+  var seasons: js.Array[SeasonView] = js.native
+  var possibleOpponents: js.Array[String] = js.native
   var ticketTypes: js.Array[JsTicketType] = js.native
+  var currentMonth: js.UndefOr[MonthView] = js.native
+  var currentSeason: SeasonView = js.native
+  var currentGames: js.Array[GameView] = js.native
+  var currentOpponents: js.UndefOr[String] = js.native
   var currentTicketType: JsTicketType = js.native
+
+  var user: js.UndefOr[String] = js.native
+
+  var authenticationLink: js.UndefOr[String] = js.native
+
+  var alterSeason: js.Function1[SeasonView, Unit] = js.native
+  var alterMonth: js.Function1[MonthView, Unit] = js.native
+  var alterOpponents: js.Function1[String, Unit] = js.native
+  var alterTicketType: js.Function1[JsTicketType, Unit] = js.native
 }

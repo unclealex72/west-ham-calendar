@@ -6,7 +6,7 @@ import models.TicketingInformationRel.FORM
 import models._
 
 import scala.scalajs.js
-import scala.scalajs.js.{Date, JSON}
+import scala.scalajs.js.{Date, Dictionary, JSON}
 import scala.scalajs.js.annotation.ScalaJSDefined
 import scala.scalajs.js.JSConverters._
 
@@ -14,6 +14,8 @@ import scala.scalajs.js.JSConverters._
   * Created by alex on 01/04/16.
   */
 package object views {
+
+  private def sharedDateToJsDate(sd: SharedDate): js.Date = new js.Date(js.Date.parse(sd.toString))
 
   @ScalaJSDefined
   class JsTicketType(val ordering: Int, val label: String, val key: String) extends js.Object
@@ -29,32 +31,39 @@ package object views {
   }
 
   @ScalaJSDefined
-  trait HasOpponents extends js.Object {
-    def hasOpponents(prefix: String): Boolean
+  abstract class Identifiable extends js.Object {
+    val id: Long
   }
 
   @ScalaJSDefined
-  class MonthView(
-                   val id: String,
-                   val date: js.Date,
-                   var games: js.Array[GameView]) extends js.Object with HasOpponents {
+  class SeasonView(val season: Int, val months: js.Array[MonthView]) extends Identifiable {
+    val id = season.toLong
+  }
+  object SeasonView {
+    def apply(season: Season): SeasonView = {
+      new SeasonView(season.season, season.months.toSeq.zipWithIndex.map { mi => MonthView(mi._1, mi._2) }.toJSArray)
+    }
+  }
 
-    def hasOpponents(prefix: String): Boolean = games.exists(_.hasOpponents(prefix))
+
+  @ScalaJSDefined
+  class MonthView(
+                   val idx: Int,
+                   val date: js.Date,
+                   var games: js.Array[GameView]) extends Identifiable {
+    val id = idx.toLong
   }
 
   object MonthView {
-    def apply(idFactory: Date => String, ticketType: TicketType)(month: Month): MonthView = {
+    def apply(month: Month, idx: Int): MonthView = {
       val date = new js.Date(month.date.year - 1900, month.date.month - 1, 1)
-      val monthId = idFactory(date)
-      val gameViews = month.games.toSeq.zipWithIndex.map {
-        gameRowAndIndex => GameView(ticketType)(gameRowAndIndex._1, Some(monthId).filter(_ => gameRowAndIndex._2 == 0)) }
-      new MonthView(monthId, date, gameViews.toJSArray)
+      new MonthView(idx, date, month.games.map(GameView(_)).toJSArray)
     }
   }
 
   @ScalaJSDefined
   class GameView(
-                  val monthId: js.UndefOr[String],
+                  val id: Long,
                   val datePlayed: js.Date,
                   val competition: String,
                   val competitionLogo: js.UndefOr[String],
@@ -67,24 +76,22 @@ package object views {
                   val showAttended: Boolean,
                   val attendUrl: js.UndefOr[String],
                   val unattendUrl: js.UndefOr[String],
-                  val ticketsDate: js.UndefOr[js.Date],
-                  val ticketsUrl: js.UndefOr[String],
+                  val tickets: js.Dictionary[TicketsView],
                   val matchReport: js.UndefOr[String],
-                  val locationUrl: js.UndefOr[String]) extends js.Object with HasOpponents {
-
-    def hasOpponents(prefix: String): Boolean = opponents.toLowerCase.startsWith(prefix.toLowerCase)
-  }
+                  val locationUrl: js.UndefOr[String]) extends Identifiable
 
   object GameView {
-    def apply(ticketType: TicketType)(gameRow: GameRow, monthId: Option[String]): GameView = {
+    def apply(gameRow: GameRow): GameView = {
       val attendUrl = gameRow.links(ATTEND)
       val unattendUrl = gameRow.links(UNATTEND)
-      val ticketingInfo = gameRow.tickets.get(ticketType).map { ticketingInformation =>
-        (ticketingInformation.at, ticketingInformation.links(FORM))
+      val tickets = TicketType.values.foldLeft(Dictionary.empty[TicketsView]) { (dict, ticketType) =>
+        gameRow.tickets.get(ticketType).foreach { ticketingInformation =>
+          dict.update(ticketType.name, TicketsView(ticketingInformation))
+        }
+        dict
       }
-      def sharedDateToJsDate(sd: SharedDate): js.Date = new js.Date(js.Date.parse(sd.toString))
       new GameView(
-        monthId.orUndefined,
+        gameRow.id,
         sharedDateToJsDate(gameRow.at),
         gameRow.competition.name,
         gameRow.competitionLogoClass.orUndefined,
@@ -97,8 +104,7 @@ package object views {
         attendUrl.isDefined && unattendUrl.isDefined,
         attendUrl.orUndefined,
         unattendUrl.orUndefined,
-        ticketingInfo.map(_._1).map(sharedDateToJsDate).orUndefined,
-        ticketingInfo.flatMap(_._2).map(JSON.stringify(_)).orUndefined,
+        tickets,
         gameRow.links(MATCH_REPORT).map(JSON.stringify(_)).orUndefined,
         gameRow.links(LOCATION).map(JSON.stringify(_)).orUndefined)
     }
@@ -121,6 +127,14 @@ package object views {
         logo.orUndefined,
         optionalScore.orUndefined,
         optionalShootoutScore.orUndefined)
+    }
+  }
+
+  @ScalaJSDefined
+  class TicketsView(val date: js.Date, val url: js.UndefOr[String]) extends js.Object
+  object TicketsView {
+    def apply(ticketingInformation: TicketingInformation): TicketsView = {
+      new TicketsView(sharedDateToJsDate(ticketingInformation.at), ticketingInformation.links(TicketingInformationRel.FORM).orUndefined)
     }
   }
 }

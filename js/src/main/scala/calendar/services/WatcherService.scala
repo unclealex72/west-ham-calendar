@@ -5,7 +5,10 @@ import com.greencatsoft.angularjs.{Factory, Service, injectable}
 
 import scala.language.implicitConversions
 import scala.scalajs.js
+import scala.scalajs.js.Array
 import scala.scalajs.js.JSConverters._
+import scalaz._
+import Scalaz._
 
 /**
   * Created by alex on 09/04/16.
@@ -67,11 +70,12 @@ class WatcherService extends Service {
     }
     def go(): Unit = {
       val watcher: js.Array[Any] => js.Array[Any] => Unit = newValues => oldValues => {
-        newValues.zip(oldValues).zip(onChanges).foreach {
+        val newAndOldValues: Array[(Any, Any)] = newValues.zip(oldValues)
+        newAndOldValues.zip(onChanges).foreach {
           case ((newValue, oldValue), onChange) if newValue != oldValue =>
             onChange(newValue)(oldValue)
-            false
-          case _ => false
+            true
+          case _ => true
         }
       }
       $scope.$watchGroup(createExprs(exprs), createListener(watcher))
@@ -79,8 +83,10 @@ class WatcherService extends Service {
   }
 
   class WatcherBuilderFire[S <: Scope, A]($scope: S, exprs: Seq[S => Any], onChanges: Seq[Any => Any => Unit]) {
-    def fire(onChange: A => A => Unit): WatcherBuilderListen[S] = {
-      val anyOnChange: Any => Any => Unit = a1 => a2 => onChange(a1.asInstanceOf[A])(a2.asInstanceOf[A])
+    def fire(onChange: S => Unit): WatcherBuilderListen[S] = {
+      val anyOnChange: Any => Any => Unit = newValue => oldValue => {
+        onChange($scope)
+      }
       val newOnChanges = onChanges :+ anyOnChange
       new WatcherBuilderListen[S]($scope, exprs, newOnChanges)
     }

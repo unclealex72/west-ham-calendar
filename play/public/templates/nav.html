@@ -8,11 +8,12 @@
                 <ul class="right hide-on-med-and-down">
                     <li>
                         <a class="dropdown-button" href="#!" data-activates="season-dropdown" hc-nav-dropdown>
-                            {{currentSeason}} / {{currentSeason + 1}} <i class="material-icons right">arrow_drop_down</i>
+                            {{currentSeason.season}} / {{currentSeason.season + 1}}
+                            <i class="material-icons right">arrow_drop_down</i>
                         </a>
                         <ul id="season-dropdown" class="dropdown-content">
-                            <li ng-repeat="season in seasons | orderBy:'-'">
-                                <a ng-click="alterSeason(season)">{{season}} / {{season + 1}}</a>
+                            <li ng-repeat="season in seasons track by season.season">
+                                <a ng-click="alterSeason(season)">{{season.season}} / {{season.season + 1}}</a>
                             </li>
                         </ul>
                     </li>
@@ -27,13 +28,14 @@
                         </ul>
                     </li>
                     <li>
-                        <form>
-                            <div class="input-field">
-                                <input id="search" type="search" placeholder="Search" ng-model="search" ng-trim="true">
-                                <label for="search"><i class="material-icons">search</i></label>
-                                <i class="material-icons">close</i>
-                            </div>
-                        </form>
+                        <a class="dropdown-button" href="#!" data-activates="opponents-dropdown" hc-nav-dropdown>
+                            <span ng-if="currentOpponents">{{currentOpponents}}</span><span ng-if="!currentOpponents">Opponents</span> <i class="material-icons right">arrow_drop_down</i>
+                        </a>
+                        <ul id="opponents-dropdown" class="dropdown-content">
+                            <li ng-repeat="opponents in possibleOpponents | orderBy:'+'">
+                                <a ng-click="alterOpponents(opponents)">{{opponents}}</a>
+                            </li>
+                        </ul>
                     </li>
                     <li ng-if="authenticationLink">
                         <a ng-if="user" ng-href="{{authenticationLink}}">Logout {{user}}</a>
@@ -66,28 +68,24 @@
         <a ng-if="!user" ng-href="{{authenticationLink}}">Login</a>
     </li>
     <li class="hide-on-large-only">
-        <form>
-            <div class="input-field">
-                <input id="search-side" type="search" ng-model="search" ng-trim="true">
-                <label for="search-side"><i class="material-icons">search</i></label>
-                <i class="material-icons">close</i>
-            </div>
-        </form>
+        <a ng-click="" class="waves-effect">
+            {{currentSeason.season}} <i class="material-icons right">arrow_drop_down</i>
+        </a>
     </li>
     <li class="hide-on-large-only">
-        <select class="browser-default"
-                ng-options="season as season for season in seasons | orderBy:'-' track by season" ng-model="currentSeason">
-        </select>
+        <a ng-click="" class="waves-effect">
+            {{currentTicketType.label}} <i class="material-icons right">arrow_drop_down</i>
+        </a>
     </li>
     <li class="hide-on-large-only">
-        <select class="browser-default"
-                ng-options="ticketType as ticketType.label for ticketType in ticketTypes track by ticketType.key" ng-model="currentTicketType">
-        </select>
+        <a ng-click="" class="waves-effect">
+            <span ng-if="currentOpponents">{{currentOpponents}}</span><span ng-if="!currentOpponents">Opponents</span> <i class="material-icons right">arrow_drop_down</i>
+        </a>
     </li>
-    <li ng-repeat="month in months | opponents:search" class="bold">
-        <a ng-click="scrollToMonth('topnav', month)" class="waves-effect waves-teal">
+    <li ng-repeat="month in currentSeason.months track by month.id" class="bold">
+        <a ng-click="alterMonth(month)" class="waves-effect">
             {{month.date | customDate:'MMMM'}}
-            <span class="badge">{{(month.games | opponents:search).length}}</span>
+            <span class="badge">{{month.games.length}}</span>
         </a>
     </li>
 </ul>

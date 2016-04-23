@@ -18,8 +18,11 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
   override type ScopeType = GameDirectiveScope
   override val templateUrl = at("game.html")
 
+  case class OneWayBinding(name: String, attribute: String = "") extends ScopeBinding("<")
+
   bindings ++= Seq(
-    "game" := ""
+    OneWayBinding("game")
+    //"game" := ""
   )
 
   override def link($scope: ScopeType, elems: Seq[Element], attrs: Attributes): Unit = {
