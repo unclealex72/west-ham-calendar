@@ -68,19 +68,26 @@
         <a ng-if="!user" ng-href="{{authenticationLink}}">Login</a>
     </li>
     <li class="hide-on-large-only">
-        <a ng-click="" class="waves-effect">
-            {{currentSeason.season}} <i class="material-icons right">arrow_drop_down</i>
-        </a>
+        <select class="browser-default"
+                ng-options="season as season.season for season in seasons | orderBy:'-season' track by season.season"
+                ng-model="currentSeason"
+                ng-change="alterSeason(currentSeason)">
+        </select>
     </li>
     <li class="hide-on-large-only">
-        <a ng-click="" class="waves-effect">
-            {{currentTicketType.label}} <i class="material-icons right">arrow_drop_down</i>
-        </a>
+        <select class="browser-default"
+                ng-options="ticketType as ticketType.label for ticketType in ticketTypes track by ticketType.key"
+                ng-model="currentTicketType"
+                ng-change="alterTicketType(currentTicketType)">
+        </select>
     </li>
     <li class="hide-on-large-only">
-        <a ng-click="" class="waves-effect">
-            <span ng-if="currentOpponents">{{currentOpponents}}</span><span ng-if="!currentOpponents">Opponents</span> <i class="material-icons right">arrow_drop_down</i>
-        </a>
+        <select class="browser-default"
+                ng-options="opponents as opponents for opponents in possibleOpponents"
+                ng-model="currentOpponents"
+                ng-change="alterOpponents(currentOpponents)">
+            <option value="" disabled>Opponents</option>
+        </select>
     </li>
     <li ng-repeat="month in currentSeason.months track by month.id" class="bold">
         <a ng-click="alterMonth(month)" class="waves-effect">
