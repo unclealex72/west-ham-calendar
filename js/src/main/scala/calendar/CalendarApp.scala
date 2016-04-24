@@ -6,7 +6,7 @@ package calendar
 
 import calendar.controllers.CalendarController
 import calendar.directives._
-import calendar.filters.{CustomDateFilter, JsonDecodeFilter, OpponentsFilter}
+import calendar.filters.{CustomDateFilter, JsonDecodeFilter}
 import calendar.services.{AjaxServiceFactory, AttendanceServiceFactory, WatcherServiceFactory}
 import com.greencatsoft.angularjs.core.LocationProvider
 import com.greencatsoft.angularjs.{Angular, Config}
@@ -28,6 +28,7 @@ object CalendarApp extends JSApp {
       .directive[TeamNameDirective]
       .directive[TeamLogoDirective]
       .directive[ResultDirective]
+      .directive[NavDropdownDirective]
       // Controllers
       .controller[CalendarController]
       // Services
@@ -36,7 +37,6 @@ object CalendarApp extends JSApp {
       .factory[WatcherServiceFactory]
       // Filters
       .filter[CustomDateFilter]
-      .filter[OpponentsFilter]
       .filter[JsonDecodeFilter]
       // Config
       .config[CalendarConfig]

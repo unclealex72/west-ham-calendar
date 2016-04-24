@@ -1,7 +1,7 @@
 package calendar.directives
 
 import calendar.services.{AttendanceService, WatcherService}
-import calendar.views.GameView
+import calendar.views.{GameView, JsTicketType}
 import com.greencatsoft.angularjs._
 import com.greencatsoft.angularjs.core.Scope
 import org.scalajs.dom.Element
@@ -18,12 +18,16 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
   override type ScopeType = GameDirectiveScope
   override val templateUrl = at("game.html")
 
+  case class OneWayBinding(name: String, attribute: String = "") extends ScopeBinding("<")
+
   bindings ++= Seq(
-    "game" := ""
+    OneWayBinding("game"),
+    "currentTicketType" := ""
+    //"game" := ""
   )
 
   override def link($scope: ScopeType, elems: Seq[Element], attrs: Attributes): Unit = {
-    $scope.$watch("game.attended", watcher { (newAttended: Boolean) => (oldAttended: Boolean) =>
+    watcher.on($scope)(_.game.attended) { newAttended => oldAttended =>
       attendance.updateAttendance($scope.game) onSuccess {
         case Some(newAttendance) =>
           if ($scope.game.attended != newAttendance) {
@@ -33,11 +37,12 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
           }
         case None =>
       }
-    })
+    }
   }
 }
 
 @js.native
 trait GameDirectiveScope extends Scope {
   var game: GameView = js.native
+  var currentTicketType: JsTicketType = js.native
 }

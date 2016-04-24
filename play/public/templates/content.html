@@ -1,3 +1,3 @@
-<div vs-repeat="1">
-    <hc-game ng-repeat="game in games | opponents:search" game="game"></hc-game>
+<div>
+    <hc-game ng-repeat="game in currentGames | orderBy:'datePlayed' track by game.id" game="game" current-ticket-type="currentTicketType"></hc-game>
 </div>

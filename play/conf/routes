@@ -13,8 +13,6 @@ GET     /entry                                 controllers.Application.entry
 
 # Seasons
 
-GET     /seasons                               controllers.Application.seasons
-GET     /seasons/:season/months                controllers.Application.months(season: Int)
 GET     /games/:gameId                         controllers.Application.game(gameId: Long)
 
 # Game attendence

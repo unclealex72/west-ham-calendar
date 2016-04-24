@@ -15,7 +15,8 @@ lazy val play = (project in file("play")).settings(
   pipelineStages := Seq(scalaJSProd, gzip),
   resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
-    "releases" at "http://oss.sonatype.org/content/repositories/releases"
+    "releases" at "http://oss.sonatype.org/content/repositories/releases",
+    Resolver.jcenterRepo
   ),
   routesGenerator := InjectedRoutesGenerator,
   scalacOptions in Test ++= Seq("-Yrangepos"),
