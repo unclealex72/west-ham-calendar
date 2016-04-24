@@ -32,12 +32,12 @@ package object views {
 
   @ScalaJSDefined
   abstract class Identifiable extends js.Object {
-    val id: Long
+    val id: Int
   }
 
   @ScalaJSDefined
   class SeasonView(val season: Int, val months: js.Array[MonthView]) extends Identifiable {
-    val id = season.toLong
+    val id = season
   }
   object SeasonView {
     def apply(season: Season): SeasonView = {
@@ -51,7 +51,7 @@ package object views {
                    val idx: Int,
                    val date: js.Date,
                    var games: js.Array[GameView]) extends Identifiable {
-    val id = idx.toLong
+    val id = idx
   }
 
   object MonthView {
@@ -63,7 +63,7 @@ package object views {
 
   @ScalaJSDefined
   class GameView(
-                  val id: Long,
+                  val id: Int,
                   val datePlayed: js.Date,
                   val competition: String,
                   val competitionLogo: js.UndefOr[String],
@@ -91,7 +91,7 @@ package object views {
         dict
       }
       new GameView(
-        gameRow.id,
+        gameRow.id.toInt,
         sharedDateToJsDate(gameRow.at),
         gameRow.competition.name,
         gameRow.competitionLogoClass.orUndefined,

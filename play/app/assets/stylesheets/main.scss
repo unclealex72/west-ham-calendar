@@ -4,44 +4,13 @@
 // Materialise CSS
 $roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
 @import "../../../public/bower_components/materialize/sass/materialize";
+
 @import "custom";
-
-.game {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.game.row {
-  margin-bottom: 0;
-}
-
-.game-details {
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-
-.game .competition-logo {
-    margin: auto;
-}
-
-.game .team-logo {
-  margin-left: 5px;
-  margin-right: 5px;
-}
-.team {
-  flex: 1;
-}
+@import "game";
+@import "small-game";
 
 .no-flex {
   flex: none;
-}
-
-.versus {
-  text-align: center;
-  font-size: 18px;
-  flex: none;
-  min-width: 10%;
 }
 
 .west-ham {
@@ -58,29 +27,4 @@ $roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
   @media #{$large-and-up} {
     margin-left: 15px;
   }
-}
-
-.game-small {
-  color: white;
-  &.home {
-    background-color: $primary-color;
-    .card-action {
-      a:not(.btn):not(.btn-large):not(.btn-floating) {
-        color: $secondary-color;
-        &:hover {
-          color: lighten($secondary-color, 20%);
-        }
-      }
-    }
-  }
-  &.away {
-    background-color: $secondary-color;
-    .switch label input[type=checkbox]:checked + .lever:after {
-      background-color: $primary-color;
-    }
-  }
-}
-
-.small-game-label {
-  text-align: right;
 }
