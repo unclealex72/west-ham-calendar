@@ -6,8 +6,11 @@ package filters
 import javax.inject.Inject
 
 import play.api.http.HttpFilters
+import play.filters.csrf.CSRFFilter
+import play.filters.gzip.GzipFilter
+import play.filters.headers.SecurityHeadersFilter
 
-class Filters @Inject() (ssl: SSLFilter) extends HttpFilters {
+class Filters @Inject() (ssl: SSLFilter, csrfFilter: CSRFFilter, securityHeadersFilter: SecurityHeadersFilter, gzipFilter: GzipFilter) extends HttpFilters {
 
-  val filters = Seq(ssl)
+  val filters = Seq(ssl, csrfFilter, securityHeadersFilter, gzipFilter)
 }
