@@ -3,13 +3,18 @@
     <a href="#game-modal-{{game.id}}" class="waves-effect" modal open="open">
         <div class="card-content">
             <div class="row valign-wrapper">
-                <div class="col s4">
+                <div class="col s3">
                     <div class="team-logo {{game.homeTeam.logo}}"></div>
                 </div>
-                <div class="col s8">
+                <div class="col s7">
                     <div class="valign">
                         <div>{{game.opponents}}</div>
                         <div>{{game.datePlayed | customDate:'EEE dth MMM, h:mm!a'}}</div>
+                    </div>
+                </div>
+                <div class="col s2">
+                    <div class="valign" ng-if="game.hasResult">
+                        {{game.homeTeam.score}} - {{game.awayTeam.score}}
                     </div>
                 </div>
             </div>
