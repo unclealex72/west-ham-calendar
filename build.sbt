@@ -101,6 +101,8 @@ lazy val sharedJs = shared.js
 // loads the jvm project at sbt startup
 onLoad in Global := (Command.process("project play", _: State)) compose (onLoad in Global).value
 
+scalaJSStage in Global := FullOptStage
+
 // for Eclipse users
 EclipseKeys.skipParents in ThisBuild := false
 // Compile the project before generating Eclipse files, so that generated .scala or .class files for views and routes are present

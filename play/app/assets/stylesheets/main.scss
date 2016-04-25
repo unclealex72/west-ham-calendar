@@ -28,3 +28,8 @@ $roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
     margin-left: 15px;
   }
 }
+
+// Angular cloak
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}

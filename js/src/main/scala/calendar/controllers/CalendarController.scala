@@ -25,12 +25,13 @@ class CalendarController(
                           ajax: AjaxService,
                           timeout: Timeout,
                           watcher: WatcherService) extends AbstractController[CalendarScope]($scope) {
-
+  $scope.loading = true
   for {
     entry <- ajax.get[Entry]("/entry")
   } yield {
     val seasonViews = entry.seasons.toSeq.reverse.map(SeasonView(_))
     $scope.$apply {
+      $scope.loading = false
       $scope.user = entry.user.orUndefined
       $scope.authenticationLink = entry.links(if (entry.user.isDefined) LOGOUT else LOGIN).orUndefined
       val ticketTypes = TicketType.values.map(JsTicketType(_))
@@ -113,4 +114,5 @@ trait CalendarScope extends Scope {
   var alterMonth: js.Function1[MonthView, Unit] = js.native
   var alterOpponents: js.Function1[String, Unit] = js.native
   var alterTicketType: js.Function1[JsTicketType, Unit] = js.native
+  var loading: Boolean = js.native
 }
