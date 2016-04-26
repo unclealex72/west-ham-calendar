@@ -6,8 +6,8 @@ import com.greencatsoft.angularjs._
 import com.greencatsoft.angularjs.core.Scope
 import org.scalajs.dom.Element
 
-import scala.scalajs.js
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.scalajs.js
 
 /**
   * Created by alex on 01/04/16.
@@ -18,12 +18,11 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
   override type ScopeType = GameDirectiveScope
   override val templateUrl = at("game.html")
 
-  case class OneWayBinding(name: String, attribute: String = "") extends ScopeBinding("<")
+  import ExtraScopeImplicits._
 
   bindings ++= Seq(
-    OneWayBinding("game"),
-    "currentTicketType" := ""
-    //"game" := ""
+    "currentTicketType" := "",
+    "game" := ""
   )
 
   override def link($scope: ScopeType, elems: Seq[Element], attrs: Attributes): Unit = {
@@ -39,6 +38,18 @@ class GameDirective(watcher: WatcherService, attendance: AttendanceService) exte
       }
     }
   }
+
+
+  // Add support for one way Angular bindings using :<
+  object ExtraScopeImplicits {
+
+    case class OneWayBinding(name: String, attribute: String = "") extends ScopeBinding("<")
+
+    implicit class ExtraBindingBuilder(name: String) {
+      def :<(attribute: String = ""): ScopeBinding = OneWayBinding(name, attribute)
+    }
+  }
+
 }
 
 @js.native

@@ -5,6 +5,7 @@
 $roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
 @import "../../../public/bower_components/materialize/sass/materialize";
 
+@import "loading";
 @import "custom";
 @import "game";
 @import "small-game";

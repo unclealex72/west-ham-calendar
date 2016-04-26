@@ -1,5 +1,5 @@
-<div ng-if="game.monthId" id="{{game.monthId}}"></div>
-<div class="card game-small show-on-small hide-on-med-and-up" ng-class="{'home' : game.homeTeam.isWestHam, 'away' : game.awayTeam.isWestHam}">
+<div class="card game-small show-on-small hide-on-med-and-up"
+     ng-class="{'home' : game.homeTeam.isWestHam, 'away' : game.awayTeam.isWestHam}">
     <a href="#game-modal-{{game.id}}" class="waves-effect" modal open="open">
         <div class="card-content">
             <div class="row valign-wrapper">
@@ -13,8 +13,8 @@
                     </div>
                 </div>
                 <div class="col s2">
-                    <div class="valign" ng-if="game.hasResult">
-                        {{game.homeTeam.score}} - {{game.awayTeam.score}}
+                    <div class="valign">
+                        {{game.hasResult ? game.homeTeam.score + ' - ' + game.awayTeam.score : 'v'}}
                     </div>
                 </div>
             </div>
@@ -28,7 +28,8 @@
         <div class="container">
             <div class="row valign-wrapper">
                 <div class="col s6 valign left-align">
-                    <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}" title="{{game.competition}}"></div>
+                    <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}"
+                         title="{{game.competition}}"></div>
                     <span ng-if="!game.competitionLogo">{{game.competition}}</span>
                 </div>
                 <div class="com s6 valign right-align">
@@ -56,7 +57,8 @@
         <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">
             <i class="material-icons">clear</i>
         </a>
-        <a class="waves-effect waves-green btn-flat " ng-if="game.locationUrl" ng-href="{{game.locationUrl | jsonDecode}}" target="_blank">
+        <a class="waves-effect waves-green btn-flat " ng-if="game.locationUrl"
+           ng-href="{{game.locationUrl | jsonDecode}}" target="_blank">
             Map
         </a>
         <a class="waves-effect waves-green btn-flat "
@@ -66,22 +68,6 @@
         </a>
     </div>
 </div>
-<!--
-<div class="card-action">
-    <a class="right"
-       ng-if="game.tickets[currentTicketType.key] && game.tickets[currentTicketType.key].url"
-       ng-href="{{game.tickets[currentTicketType.key].url | jsonDecode}}" target="_blank">
-        Tickets
-    </a>
-    <a class="right" ng-if="game.matchReport" ng-href="{{game.matchReport | jsonDecode}}" target="_blank">
-        Match
-    </a>
-    <a class="right" ng-if="game.locationUrl" ng-href="{{game.locationUrl | jsonDecode}}" target="_blank">
-        Map
-    </a>
-    <a href="#"></a>
-</div>
--->
 
 <div class="card hide-on-small-only">
     <div class="card-content">
@@ -95,7 +81,8 @@
                 </div>
             </div>
             <div class="col s1 center-align">
-                <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}" title="{{game.competition}}"></div>
+                <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}"
+                     title="{{game.competition}}"></div>
                 <span ng-if="!game.competitionLogo">{{game.competition}}</span>
             </div>
             <div class="col s7">
@@ -104,21 +91,21 @@
                     <div class="team-logo {{game.homeTeam.logo}} no-flex" ng-if="game.homeTeam.logo"></div>
                     <!-- Result -->
                     <div ng-if="game.hasResult" class="versus" ng-class="{'withShoot': game.hasShootout}">
-                <span class="home">
-                    <span ng-class="{'west-ham': game.homeTeam.isWestHam}">{{game.homeTeam.score}}</span>
-                </span>
+                        <span class="home">
+                            <span ng-class="{'west-ham': game.homeTeam.isWestHam}">{{game.homeTeam.score}}</span>
+                        </span>
                         <span class="hyphen">-</span>
-                <span class="away">
-                    <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.score}}</span>
-                </span>
+                        <span class="away">
+                            <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.score}}</span>
+                        </span>
                         <div ng-if="game.hasShootout" class="shoot">
-                    <span class="home">
-                        <span ng-class="{'west-ham': game.homeTeam.isWestHam}">({{game.homeTeam.shootout}}</span>
-                    </span>
+                            <span class="home">
+                                <span ng-class="{'west-ham': game.homeTeam.isWestHam}">({{game.homeTeam.shootout}}</span>
+                            </span>
                             <span class="hyphen">-</span>
-                    <span class="away">
-                        <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.shootout}})</span>
-                    </span>
+                            <span class="away">
+                                <span ng-class="{'west-ham': game.awayTeam.isWestHam}">{{game.awayTeam.shootout}})</span>
+                            </span>
                         </div>
                     </div>
                     <div ng-if="!game.hasResult" class="versus">v</div>
