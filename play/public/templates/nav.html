@@ -90,7 +90,7 @@
         </select>
     </li>
     <li ng-repeat="month in currentSeason.months track by month.id" class="bold">
-        <a ng-click="alterMonth(month)" class="waves-effect">
+        <a ng-click="alterMonth(month)" class="waves-effect waves-custom">
             {{month.date | customDate:'MMMM'}}
             <span class="badge">{{month.games.length}}</span>
         </a>

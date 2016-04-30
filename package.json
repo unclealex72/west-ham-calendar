@@ -4,5 +4,26 @@
   },
   "scripts": {
     "postinstall": "./node_modules/bower/bin/bower cache clean && ./node_modules/bower/bin/bower install"
-  }
+  },
+  "name": "west-ham-calendar",
+  "description": "## Overview",
+  "version": "1.0.0",
+  "main": "index.html",
+  "devDependencies": {
+    "angular-materialize": "^0.1.4",
+    "materialize": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/unclealex72/west-ham-calendar.git"
+  },
+  "keywords": [
+    "Hammers"
+  ],
+  "author": "Alex Jones",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/unclealex72/west-ham-calendar/issues"
+  },
+  "homepage": "https://github.com/unclealex72/west-ham-calendar#readme"
 }
