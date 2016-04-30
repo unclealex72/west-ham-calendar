@@ -72,6 +72,7 @@ lazy val js = (project in file("js")).settings(
   persistLauncher in Test := false,
   emitSourceMaps := true,
   libraryDependencies ++= Seq(
+    "org.scala-js" %%% "scalajs-dom" % "0.9.0",
     "com.greencatsoft" %%% "scalajs-angular" % "0.6",
     "org.querki" %%% "jquery-facade" % "1.0-RC3",
     "com.lihaoyi" %%% "upickle" % "0.3.8",
