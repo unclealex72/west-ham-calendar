@@ -2,8 +2,6 @@ import com.typesafe.sbt.web.PathMapping
 import com.typesafe.sbt.web.pipeline.Pipeline
 import sbt.Project.projectToRef
 
-import scala.io.Source
-
 name := "west-ham-calendar"
 
 version := "1.0-SNAPSHOT"
@@ -66,16 +64,24 @@ lazy val play = (project in file("play")).settings(
       "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test"),
   jsDepsTask := { mappings: Seq[PathMapping] =>
     // pretend to combine all .js files into one .min.js file
-    val targetDir = WebKeys.webTarget.value / "myPipelineTask" / "target"
+    val targetDir = WebKeys.webTarget.value / "jsdeps"
     val (jsdeps, other) = mappings partition (_._2.endsWith(".jsdeps"))
     val dependencies = jsdeps.map(_._1).flatMap(IO.readLines(_)).map(_.trim).filterNot(_.isEmpty)
-    val js = dependencies.map { filename =>
+    val js = dependencies.flatMap { filename =>
       val file = new File(filename).getAbsoluteFile
       println(s"reading dependency $file")
-      IO.read(file)
+      if (file.canRead) {
+        Some(IO.read(file))
+      }
+      else {
+        println(s"Cannot read file $file")
+        None
+      }
     }.mkString("\n")
     val libsFile = targetDir / "javascripts" / "libs.js"
+    println(s"Writing to $libsFile")
     IO.write(libsFile, js)
+    IO.touch(libsFile)
     val newMappings = Seq(libsFile) pair relativeTo(targetDir)
     newMappings ++ other
   }
