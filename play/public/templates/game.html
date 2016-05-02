@@ -1,6 +1,6 @@
 <div class="card game-small show-on-small hide-on-med-and-up"
      ng-class="{'home' : game.homeTeam.isWestHam, 'away' : game.awayTeam.isWestHam}">
-    <a href="#game-modal-{{game.id}}" class="waves-effect" modal open="open">
+    <a href="#game-modal-{{game.id}}" class="waves-effect waves-custom" modal open="open">
         <div class="card-content">
             <div class="row valign-wrapper">
                 <div class="col s3">
@@ -28,11 +28,11 @@
         <div class="container">
             <div class="row valign-wrapper">
                 <div class="col s6 valign left-align">
-                    <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}"
+                    <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}} left-align"
                          title="{{game.competition}}"></div>
-                    <span ng-if="!game.competitionLogo">{{game.competition}}</span>
+                    <span ng-if="!game.competitionLogo" class="left-align">{{game.competition}}</span>
                 </div>
-                <div class="com s6 valign right-align">
+                <div class="col s6 valign right-align">
                     <span ng-if="game.homeTeam.isWestHam">Home</span>
                     <span ng-if="game.awayTeam.isWestHam">Away</span>
                 </div>
@@ -54,14 +54,14 @@
         </div>
     </div>
     <div class="modal-footer">
-        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat ">
+        <a href="#!" class="modal-action modal-close waves-effect waves-custom btn-flat ">
             <i class="material-icons">clear</i>
         </a>
-        <a class="waves-effect waves-green btn-flat " ng-if="game.locationUrl"
+        <a class="waves-effect waves-custom btn-flat " ng-if="game.locationUrl"
            ng-href="{{game.locationUrl | jsonDecode}}" target="_blank">
             Map
         </a>
-        <a class="waves-effect waves-green btn-flat "
+        <a class="waves-effect waves-custom btn-flat "
            ng-if="game.tickets[currentTicketType.key] && game.tickets[currentTicketType.key].url"
            ng-href="{{game.tickets[currentTicketType.key].url | jsonDecode}}" target="_blank">
             Tickets

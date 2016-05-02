@@ -2,13 +2,19 @@
 @import "colours";
 
 // Materialise CSS
-$roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
-@import "../../../public/bower_components/materialize/sass/materialize";
+$roboto-font-path: "/assets/lib/roboto-fontface/fonts/";
+@import "../../../../node_modules/materialize-css/sass/materialize";
 
 @import "loading";
 @import "custom";
 @import "game";
 @import "small-game";
+
+.waves-effect.waves-custom .waves-ripple {
+  /* The alpha value allows the text and background color
+  of the button to still show through. */
+  background-color: fade_out($secondary-color, 0.65) //rgba(121, 85, 72, 0.65);
+}
 
 .no-flex {
   flex: none;

@@ -1,3 +1,5 @@
+import com.typesafe.sbt.web.PathMapping
+import com.typesafe.sbt.web.pipeline.Pipeline
 import sbt.Project.projectToRef
 
 name := "west-ham-calendar"
@@ -9,10 +11,33 @@ lazy val scalaV = "2.11.7"
 
 //resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
+lazy val jsDepsTask = taskKey[Seq[File]]("Concatenate javascript libraries")
+
 lazy val play = (project in file("play")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := clients,
   pipelineStages := Seq(scalaJSProd, gzip),
+  pipelineStages in Assets := Seq(gzip),
+  //managedResourceDirectories += (resourceManaged in jsDepsTask in Assets).value,
+  resourceManaged in jsDepsTask in Assets := WebKeys.webTarget.value / "jsdeps",
+  resourceGenerators in Assets <+= jsDepsTask in Assets,
+  jsDepsTask := {
+    val sourceDir = (sourceDirectory in Assets).value / "jsdeps"
+    println(s"Searching for dependency files in $sourceDir")
+    val targetDir = WebKeys.webTarget.value / "jsdeps"
+    val sources = sourceDir ** "*.jsdeps"
+    val js = sources.get.map { source =>
+      println(s"Reading dependency file $source")
+      IO.readLines(source).map(_.trim).filterNot(_.isEmpty).map { line =>
+		println(line)
+		IO.read(new File(line))
+      }.mkString("\n")
+    }.mkString("\n")
+    val targetFile = targetDir / "javascripts" / "libs.js"
+    println(s"Concatenating libraries to $targetFile")
+    IO.write(targetFile, js)
+    Seq(targetFile)
+  },
   resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases",
@@ -50,19 +75,14 @@ lazy val play = (project in file("play")).settings(
       "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
       "org.imgscalr" % "imgscalr-lib" % "4.2",
       // webjars
-      "org.webjars.bower" % "bootstrap" % "3.3.6",
-      "org.webjars" % "jquery" % "2.1.3",
-      "org.webjars" % "angularjs" % "1.4.7",
-      "org.webjars" % "angular-strap" % "2.3.4",
-      "org.webjars" % "angular-ui-bootstrap" % "1.1.1-1",
-      "org.webjars.bower" % "fontawesome" % "4.5.0",
+      "org.webjars.bower" % "roboto-fontface" % "0.4.5",
       // test
       "org.hsqldb" % "hsqldb" % "2.3.3" % "test",
       "org.specs2" %% "specs2-core" % "3.7" % "test",
       "org.specs2" %% "specs2-mock" % "3.7" % "test",
       "org.specs2" %% "specs2-junit" % "3.7" % "test",
       "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test")
- ).enablePlugins(PlayScala).
+ ).enablePlugins(PlayScala, SbtWeb).
   aggregate(clients.map(projectToRef): _*).
   dependsOn(sharedJvm)
 
