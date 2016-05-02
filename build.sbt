@@ -72,7 +72,6 @@ lazy val play = (project in file("play")).settings(
       println(s"reading dependency $file")
       if (file.canRead) {
         val js = IO.read(file)
-        println(js)
         Some(js)
       }
       else {
@@ -83,7 +82,7 @@ lazy val play = (project in file("play")).settings(
     val libsFile = targetDir / "javascripts" / "libs.js"
     println(s"Writing to $libsFile")
     IO.write(libsFile, js)
-    IO.touch(libsFile)
+    println(IO.read(libsFile))
     val newMappings = Seq(libsFile) pair relativeTo(targetDir)
     newMappings ++ other
   }
