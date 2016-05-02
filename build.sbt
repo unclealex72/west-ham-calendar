@@ -83,7 +83,7 @@ lazy val play = (project in file("play")).settings(
     libsFile.getParentFile.mkdirs()
     println(s"Writing to $libsFile")
     IO.write(libsFile, js)
-    println(IO.read(libsFile))
+    println(s"Wrote ${libsFile.length()} characters.")
     val newMappings = Seq(libsFile) pair relativeTo(targetDir)
     newMappings ++ other
   }
