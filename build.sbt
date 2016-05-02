@@ -18,19 +18,26 @@ lazy val play = (project in file("play")).settings(
   scalaJSProjects := clients,
   pipelineStages := Seq(scalaJSProd, gzip),
   pipelineStages in Assets := Seq(gzip),
-  //managedResourceDirectories += (resourceManaged in jsDepsTask in Assets).value,
   resourceManaged in jsDepsTask in Assets := WebKeys.webTarget.value / "jsdeps",
   resourceGenerators in Assets <+= jsDepsTask in Assets,
   jsDepsTask := {
+    val log = streams.value.log
     val sourceDir = (sourceDirectory in Assets).value / "jsdeps"
-    println(s"Searching for dependency files in $sourceDir")
+    log.info(s"Searching for dependency files in $sourceDir")
     val targetDir = WebKeys.webTarget.value / "jsdeps"
     val sources = sourceDir ** "*.jsdeps"
     val js = sources.get.map { source =>
-      println(s"Reading dependency file $source")
-      IO.readLines(source).map(_.trim).filterNot(_.isEmpty).map { line =>
-		println(line)
-		IO.read(new File(line))
+      log.info(s"Reading dependency file $source")
+      IO.readLines(source).map(_.trim).filterNot(_.isEmpty).flatMap { line =>
+        val file = new File(line)
+        if (file.canRead) {
+          log.info(s"Including javascript from $file")
+          Some(IO.read(file))
+        }
+        else {
+          log.warn(s"Cannot read javascript from file $file")
+          None
+        }
       }.mkString("\n")
     }.mkString("\n")
     val targetFile = targetDir / "javascripts" / "libs.js"
