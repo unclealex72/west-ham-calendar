@@ -17,7 +17,7 @@ lazy val play = (project in file("play")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := clients,
   pipelineStages := Seq(jsDepsTask, scalaJSProd, gzip),
-  pipelineStages in Assets := Seq(jsDepsTask),
+  pipelineStages in Assets := Seq(jsDepsTask, gzip),
     resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases",
@@ -80,6 +80,7 @@ lazy val play = (project in file("play")).settings(
       }
     }.mkString("\n")
     val libsFile = targetDir / "javascripts" / "libs.js"
+    libsFile.getParentFile.mkdirs()
     println(s"Writing to $libsFile")
     IO.write(libsFile, js)
     println(IO.read(libsFile))
