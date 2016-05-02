@@ -1,18 +1,8 @@
 {
-  "dependencies": {
-    "bower": "1.7.9"
-  },
-  "scripts": {
-    "postinstall": "./node_modules/bower/bin/bower cache clean && ./node_modules/bower/bin/bower install"
-  },
   "name": "west-ham-calendar",
   "description": "## Overview",
   "version": "1.0.0",
   "main": "index.html",
-  "devDependencies": {
-    "angular-materialize": "^0.1.4",
-    "materialize": "^1.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/unclealex72/west-ham-calendar.git"
@@ -25,5 +15,14 @@
   "bugs": {
     "url": "https://github.com/unclealex72/west-ham-calendar/issues"
   },
-  "homepage": "https://github.com/unclealex72/west-ham-calendar#readme"
+  "homepage": "https://github.com/unclealex72/west-ham-calendar#readme",
+  "dependencies": {
+    "angular": "^1.5.5",
+    "angular-materialize": "^0.1.4",
+    "font-roboto": "0.0.2",
+    "materialize-css": "^0.97.6"
+  },
+  "devDependencies": {
+    "browserify": "^13.0.0"
+  }
 }

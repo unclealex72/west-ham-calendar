@@ -2,8 +2,8 @@
 @import "colours";
 
 // Materialise CSS
-$roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
-@import "../../../public/bower_components/materialize/sass/materialize";
+$roboto-font-path: "/assets/lib/roboto-fontface/fonts/";
+@import "../../../../node_modules/materialize-css/sass/materialize";
 
 @import "loading";
 @import "custom";

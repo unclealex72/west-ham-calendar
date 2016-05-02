@@ -1,0 +1,4 @@
+node_modules/jquery/dist/jquery.min.js
+node_modules/angular/angular.min.js
+node_modules/materialize-css/dist/js/materialize.min.js
+node_modules/angular-materialize/src/angular-materialize.js
