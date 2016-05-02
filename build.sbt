@@ -71,7 +71,9 @@ lazy val play = (project in file("play")).settings(
       val file = new File(filename).getAbsoluteFile
       println(s"reading dependency $file")
       if (file.canRead) {
-        Some(IO.read(file))
+        val js = IO.read(file)
+        println(js)
+        Some(js)
       }
       else {
         println(s"Cannot read file $file")
