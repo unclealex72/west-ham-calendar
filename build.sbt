@@ -11,14 +11,34 @@ lazy val scalaV = "2.11.7"
 
 //resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
-lazy val jsDepsTask = taskKey[Pipeline.Stage]("Concatenate javascript libraries")
+lazy val jsDepsTask = taskKey[Seq[File]]("Concatenate javascript libraries")
 
 lazy val play = (project in file("play")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := clients,
-  pipelineStages := Seq(jsDepsTask, scalaJSProd, gzip),
-  pipelineStages in Assets := Seq(jsDepsTask, gzip),
-    resolvers ++= Seq(
+  pipelineStages := Seq(scalaJSProd, gzip),
+  pipelineStages in Assets := Seq(gzip),
+  //managedResourceDirectories += (resourceManaged in jsDepsTask in Assets).value,
+  resourceManaged in jsDepsTask in Assets := WebKeys.webTarget.value / "jsdeps",
+  resourceGenerators in Assets <+= jsDepsTask in Assets,
+  jsDepsTask := {
+    val sourceDir = (sourceDirectory in Assets).value / "jsdeps"
+    println(s"Searching for dependency files in $sourceDir")
+    val targetDir = WebKeys.webTarget.value / "jsdeps"
+    val sources = sourceDir ** "*.jsdeps"
+    val js = sources.get.map { source =>
+      println(s"Reading dependency file $source")
+      IO.readLines(source).map(_.trim).filterNot(_.isEmpty).map { line =>
+		println(line)
+		IO.read(new File(line))
+      }.mkString("\n")
+    }.mkString("\n")
+    val targetFile = targetDir / "javascripts" / "libs.js"
+    println(s"Concatenating libraries to $targetFile")
+    IO.write(targetFile, js)
+    Seq(targetFile)
+  },
+  resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases",
     Resolver.jcenterRepo
@@ -61,32 +81,7 @@ lazy val play = (project in file("play")).settings(
       "org.specs2" %% "specs2-core" % "3.7" % "test",
       "org.specs2" %% "specs2-mock" % "3.7" % "test",
       "org.specs2" %% "specs2-junit" % "3.7" % "test",
-      "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test"),
-  jsDepsTask := { mappings: Seq[PathMapping] =>
-    // pretend to combine all .js files into one .min.js file
-    val targetDir = WebKeys.webTarget.value / "jsdeps"
-    val (jsdeps, other) = mappings partition (_._2.endsWith(".jsdeps"))
-    val dependencies = jsdeps.map(_._1).flatMap(IO.readLines(_)).map(_.trim).filterNot(_.isEmpty)
-    val js = dependencies.flatMap { filename =>
-      val file = new File(filename).getAbsoluteFile
-      println(s"reading dependency $file")
-      if (file.canRead) {
-        val js = IO.read(file)
-        Some(js)
-      }
-      else {
-        println(s"Cannot read file $file")
-        None
-      }
-    }.mkString("\n")
-    val libsFile = targetDir / "javascripts" / "libs.js"
-    libsFile.getParentFile.mkdirs()
-    println(s"Writing to $libsFile")
-    IO.write(libsFile, js)
-    println(s"Wrote ${libsFile.length()} characters.")
-    val newMappings = Seq(libsFile) pair relativeTo(targetDir)
-    newMappings ++ other
-  }
+      "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test")
  ).enablePlugins(PlayScala, SbtWeb).
   aggregate(clients.map(projectToRef): _*).
   dependsOn(sharedJvm)
