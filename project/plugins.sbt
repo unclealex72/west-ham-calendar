@@ -20,6 +20,4 @@ addSbtPlugin("com.vmunier" % "sbt-play-scalajs" % "0.3.0")
 
 // sbt web plugins
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-gzip" % "1.0.0")
-
-addSbtPlugin("org.madoushi.sbt" % "sbt-sass" % "0.9.3")
+addSbtPlugin("com.github.mmizutani" % "sbt-play-gulp" % "0.1.1")

@@ -17,8 +17,5 @@
   },
   "homepage": "https://github.com/unclealex72/west-ham-calendar#readme",
   "dependencies": {
-    "angular": "^1.5.5",
-    "angular-materialize": "^0.1.4",
-    "materialize-css": "^0.97.6"
   }
 }

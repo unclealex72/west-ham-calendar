@@ -11,6 +11,7 @@ import calendar.services.{AjaxServiceFactory, AttendanceServiceFactory, WatcherS
 import com.greencatsoft.angularjs.core.LocationProvider
 import com.greencatsoft.angularjs.{Angular, Config}
 
+import scala.scalajs.js
 import scala.scalajs.js.JSApp
 import scala.scalajs.js.annotation.JSExport
 
@@ -18,6 +19,7 @@ import scala.scalajs.js.annotation.JSExport
 object CalendarApp extends JSApp {
 
   override def main() {
+
     val module = Angular.module("hammersCalendar", Seq("ui.materialize"))
     module
       // Directives

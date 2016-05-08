@@ -2,11 +2,6 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /index.html                            controllers.Application.index
-GET     /                                      controllers.Application.index
-# Json
-
 # Initial entry point
 
 GET     /entry                                 controllers.Application.entry
@@ -42,9 +37,6 @@ GET     /calendars/$mask<(free|busy)>/:location/:ty/calendar.ics   controllers.C
 GET     /:secretPayload/fatal/:id/message      controllers.Errors.message(secretPayload, id: Long)
 GET     /:secretPayload/fatal                  controllers.Errors.fatalErrors(secretPayload)
 
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
-
 # FavIcon
 
 GET	/favicon.ico		    controllers.Assets.at(path="/public", file="favicon.ico")
@@ -60,3 +52,10 @@ GET /sprites/competition.png        controllers.Sprites.competitionImage
 
 GET         /authenticate/:provider          controllers.SocialAuthController.authenticate(provider)
 GET         /logout                          controllers.SocialAuthController.signOut
+
+# Front end resources
+
+GET     /service-worker.js  com.github.mmizutani.playgulp.GulpAssets.at(file = "service-worker.js")
+GET     /           com.github.mmizutani.playgulp.GulpAssets.redirectRoot(base = "/ui/")
+GET     /ui         com.github.mmizutani.playgulp.GulpAssets.index
+->      /ui/        gulp.Routes

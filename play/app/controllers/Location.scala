@@ -14,12 +14,4 @@ class Location @Inject() (val locationService: LocationService) extends Controll
       case _ => NotFound
     }
   }
-
-  /**
-   * Redirect to the  homepage.
-   */
-  def index = Action {
-    Ok(views.html.index())
-  }
-
 }

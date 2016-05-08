@@ -8,7 +8,7 @@ import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.impl.providers._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, Call, Controller}
 import security.Definitions.DefaultSilhouette
 import security.models.services.UserService
 
@@ -23,6 +23,8 @@ class SocialAuthController @Inject() (val messagesApi: MessagesApi,
                                       val userService: UserService,
                                       val authInfoRepository: AuthInfoRepository,
                                       val socialProviderRegistry: SocialProviderRegistry) extends Controller with I18nSupport with Logger {
+
+  private val index: Call = com.github.mmizutani.playgulp.routes.GulpAssets.index()
 
   /**
     * Authenticates a user against a social provider.
@@ -41,7 +43,7 @@ class SocialAuthController @Inject() (val messagesApi: MessagesApi,
             authInfo <- authInfoRepository.save(profile.loginInfo, authInfo)
             authenticator <- silhouette.env.authenticatorService.create(profile.loginInfo)
             value <- silhouette.env.authenticatorService.init(authenticator)
-            result <- silhouette.env.authenticatorService.embed(value, Redirect(routes.Application.index()))
+            result <- silhouette.env.authenticatorService.embed(value, Redirect(index))
           } yield {
             silhouette.env.eventBus.publish(LoginEvent(user, request))
             result
@@ -51,7 +53,7 @@ class SocialAuthController @Inject() (val messagesApi: MessagesApi,
     }).recover {
       case e: ProviderException =>
         logger.error("Unexpected provider error", e)
-        Redirect(routes.Application.index()).flashing("error" -> Messages("could.not.authenticate"))
+        Redirect(index).flashing("error" -> Messages("could.not.authenticate"))
     }
   }
 
@@ -61,7 +63,7 @@ class SocialAuthController @Inject() (val messagesApi: MessagesApi,
     * @return The result to display.
     */
   def signOut = silhouette.SecuredAction.async { implicit request =>
-    val result = Redirect(routes.Application.index())
+    val result = Redirect(index)
     silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
 
     silhouette.env.authenticatorService.discard(request.authenticator, result)

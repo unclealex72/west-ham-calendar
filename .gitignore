@@ -3,11 +3,11 @@
 logs
 project/project
 project/target
-play/public/bower_components
+play/ui/bower_components
 target
 tmp
 .history
-dist
+play/ui/dist
 .idea
 *.iml
 /out

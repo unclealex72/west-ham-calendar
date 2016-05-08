@@ -25,13 +25,6 @@ class Application @Inject() (val gameDao: GameDao,
                              val silhouette: DefaultSilhouette,
                              implicit val ec: ExecutionContext) extends Secure with LinkFactories with JsonResults {
 
-  /**
-   * Redirect to the  homepage.
-   */
-  def index = Action {
-    Ok(views.html.index())
-  }
-
   def game(id: Long) = silhouette.UserAwareAction.async { implicit request =>
     jsonFo(gameDao.findById(id)) { game =>
       val includeAttended = request.identity.isDefined

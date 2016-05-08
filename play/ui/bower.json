@@ -1,0 +1,16 @@
+{
+  "name": "ui",
+  "version": "0.0.0",
+  "dependencies": {
+    "angular-materialize": "^0.1.4",
+    "roboto-googlefont": "*",
+    "materialize": "materialize#^0.97.6",
+    "material-design-icons": "^2.2.3",
+    "angular": "^1.5.5"
+  },
+  "devDependencies": {},
+  "resolutions": {
+    "jquery": "~2.1.4",
+    "angular": "~1.5.3"
+  }
+}

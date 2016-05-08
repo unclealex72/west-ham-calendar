@@ -1,6 +1,5 @@
-import com.typesafe.sbt.web.PathMapping
-import com.typesafe.sbt.web.pipeline.Pipeline
 import sbt.Project.projectToRef
+import com.github.mmizutani.sbt.gulp.PlayGulpPlugin
 
 name := "west-ham-calendar"
 
@@ -11,40 +10,10 @@ lazy val scalaV = "2.11.7"
 
 //resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
-lazy val jsDepsTask = taskKey[Seq[File]]("Concatenate javascript libraries")
-
 lazy val play = (project in file("play")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := clients,
-  pipelineStages := Seq(scalaJSProd, gzip),
-  pipelineStages in Assets := Seq(gzip),
-  resourceManaged in jsDepsTask in Assets := WebKeys.webTarget.value / "jsdeps",
-  resourceGenerators in Assets <+= jsDepsTask in Assets,
-  jsDepsTask := {
-    val log = streams.value.log
-    val sourceDir = (sourceDirectory in Assets).value / "jsdeps"
-    log.info(s"Searching for dependency files in $sourceDir")
-    val targetDir = WebKeys.webTarget.value / "jsdeps"
-    val sources = sourceDir ** "*.jsdeps"
-    val js = sources.get.map { source =>
-      log.info(s"Reading dependency file $source")
-      IO.readLines(source).map(_.trim).filterNot(_.isEmpty).flatMap { line =>
-        val file = new File(line)
-        if (file.canRead) {
-          log.info(s"Including javascript from $file")
-          Some(IO.read(file))
-        }
-        else {
-          log.warn(s"Cannot read javascript from file $file")
-          None
-        }
-      }.mkString("\n")
-    }.mkString("\n")
-    val targetFile = targetDir / "javascripts" / "libs.js"
-    println(s"Concatenating libraries to $targetFile")
-    IO.write(targetFile, js)
-    Seq(targetFile)
-  },
+  pipelineStages := Seq(scalaJSProd),
   resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases",
@@ -90,6 +59,7 @@ lazy val play = (project in file("play")).settings(
       "org.specs2" %% "specs2-junit" % "3.7" % "test",
       "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test")
  ).enablePlugins(PlayScala, SbtWeb).
+  settings(PlayGulpPlugin.playGulpSettings ++ PlayGulpPlugin.withTemplates).
   aggregate(clients.map(projectToRef): _*).
   dependsOn(sharedJvm)
 

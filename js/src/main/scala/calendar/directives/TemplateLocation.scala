@@ -6,5 +6,5 @@ package calendar.directives
   */
 trait TemplateLocation {
 
-  def at(location: String) = s"/assets/templates/$location"
+  def at(location: String) = location
 }
