@@ -1,0 +1,13 @@
+{
+  "short_name": "Hammers Calendar",
+  "name": "West Ham Calendar",
+  "icons": [
+    {
+      "src": "../images/launcher-icon.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/ui/index.html",
+  "display": "standalone"
+}

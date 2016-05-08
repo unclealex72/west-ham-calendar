@@ -22,13 +22,21 @@ gulp.task('sass', ["fonts"], function() {
 
 // Concatenate vendor files
 gulp.task("vendor", function() {
-    var sources = _(bowerFiles()).concat(["src/vendor/*.js", "!bower_components/**/index.js"]).filter(function(name) { return name.endsWith(".js")}).value();
+    var sources = _(bowerFiles())
+        .concat(["src/vendor/*.js", "!bower_components/**/index.js"])
+        .filter(function(name) { return name.endsWith(".js")})
+        .value();
     return gulp.src(sources)    // Read the files
         .pipe(print())
         .pipe(concat("vendor.js"))          // Combine into 1 file
         .pipe(uglify())
         .pipe(rename({extname: ".min.js"})) // Rename to ng-quick-date.min.js
         .pipe(gulp.dest("dist"));           // Write minified to disk
+});
+
+gulp.task("assets", function() {
+    return gulp.src("src/assets/**/*.*")
+        .pipe(gulp.dest("dist/assets"));
 });
 
 // Concatenate and publish the scalajs files
@@ -84,13 +92,13 @@ gulp.task("default", function() {
     console.log(bowerFiles());
 });
 
-gulp.task("service-worker", ["inject"], function(callback) {
+gulp.task("service-worker", ["assets", "inject"], function(callback) {
     var path = require('path');
     var swPrecache = require('sw-precache');
     var rootDir = 'dist';
 
     swPrecache.write(path.join(rootDir, 'service-worker.js'), {
-        staticFileGlobs: [rootDir + '/*', rootDir + '/fonts/*'],
+        staticFileGlobs: [rootDir + '/**'],
         verbose: true,
         stripPrefix: rootDir,
         replacePrefix: '/ui',
