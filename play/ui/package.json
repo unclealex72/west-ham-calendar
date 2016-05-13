@@ -4,7 +4,7 @@
   "description": "West Ham Calendar",
   "main": "/ui/index.html",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "gulp info"
   },
   "author": "Alex Jones",
   "license": "MIT",
