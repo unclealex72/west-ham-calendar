@@ -119,8 +119,3 @@ gulp.task("fonts", function() {
         .concat("bower_components/material-design-icons/iconfont/MaterialIcons-Regular.*").value();
     return gulp.src(src).pipe(gulp.dest("dist/fonts"));
 });
-
-gulp.task("info", function() {
-    console.log("PATH: " + process.env.PATH);
-    console.log("files: " + require("fs").readdirSync("."))
-});

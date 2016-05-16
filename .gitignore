@@ -3,7 +3,7 @@
 logs
 project/project
 project/target
-play/ui/bower_components
+bower_components
 target
 tmp
 .history
@@ -23,5 +23,5 @@ bin
 node_modules
 
 # Secure files that should not be uploaded to github
-play/conf/secure
+conf/secure
 env-activator.sh

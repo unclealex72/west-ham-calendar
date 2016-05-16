@@ -10,7 +10,7 @@ lazy val scalaV = "2.11.7"
 
 //resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
-lazy val play = (project in file("play")).settings(
+lazy val play = (project in file(".")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := clients,
   pipelineStages := Seq(scalaJSProd),
@@ -76,7 +76,7 @@ lazy val js = (project in file("js")).settings(
     "com.github.japgolly.fork.scalaz" %%% "scalaz-core" % "7.2.0",
     "com.github.japgolly.fork.scalaz" %%% "scalaz-scalacheck-binding" % "7.2.0"
   )
-).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
+).enablePlugins(ScalaJSPlugin, ScalaJSPlay, HerokuPlugin).
   dependsOn(sharedJs)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
@@ -97,9 +97,9 @@ lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
 // loads the jvm project at sbt startup
-onLoad in Global := (Command.process("project play", _: State)) compose (onLoad in Global).value
 
 scalaJSStage in Global := FullOptStage
+herokuSkipSubProjects in Compile := false
 
 // for Eclipse users
 EclipseKeys.skipParents in ThisBuild := false

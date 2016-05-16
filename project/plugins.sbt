@@ -21,3 +21,7 @@ addSbtPlugin("com.vmunier" % "sbt-play-scalajs" % "0.3.0")
 // sbt web plugins
 
 addSbtPlugin("com.github.mmizutani" % "sbt-play-gulp" % "0.1.1")
+
+// heroku
+
+addSbtPlugin("com.heroku" % "sbt-heroku" % "1.0.0")

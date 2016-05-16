@@ -1,0 +1,30 @@
+<!doctype html>
+<html ng-app="hammersCalendar">
+  <head>
+    <meta charset="utf-8">
+    <title>West Ham Calendar</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <!-- inject:style:css --><link rel="stylesheet" href="main.css"><!-- endinject -->
+    <link rel="manifest" href="/ui/assets/config/manifest.json">
+    <link rel="stylesheet" href="/sprites/teams.css">
+    <link rel="stylesheet" href="/sprites/competition.css">
+
+  </head>
+  <body ng-controller="CalendarController">
+
+  <div ng-if="loading" class="load">
+    <div class="dot"></div>
+    <div class="outline"><span></span></div>
+  </div>
+
+  <hc-app ng-cloak ng-if="!loading"></hc-app>
+
+  <!-- inject:vendor:js --><script src="vendor.min.js"></script><!-- endinject -->
+  <!-- inject:app:js --><!-- endinject -->
+  <!-- inject:templates:js --><script src="templates.min.js"></script><!-- endinject -->
+
+  </body>
+</html>
