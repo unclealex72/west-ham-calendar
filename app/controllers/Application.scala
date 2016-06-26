@@ -25,6 +25,10 @@ class Application @Inject() (val gameDao: GameDao,
                              val silhouette: DefaultSilhouette,
                              implicit val ec: ExecutionContext) extends Secure with LinkFactories with JsonResults {
 
+  def index = silhouette.UserAwareAction {
+    Ok(views.html.index())
+  }
+
   def game(id: Long) = silhouette.UserAwareAction.async { implicit request =>
     jsonFo(gameDao.findById(id)) { game =>
       val includeAttended = request.identity.isDefined

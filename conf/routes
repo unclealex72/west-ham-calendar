@@ -55,8 +55,11 @@ GET         /logout                          controllers.SocialAuthController.si
 
 # Front end resources
 
-GET     /service-worker.js    com.github.mmizutani.playgulp.GulpAssets.at(file = "service-worker.js")
-GET     /manifest.json        com.github.mmizutani.playgulp.GulpAssets.at(file = "manifest.json")
-GET     /           com.github.mmizutani.playgulp.GulpAssets.redirectRoot(base = "/ui/")
-GET     /ui         com.github.mmizutani.playgulp.GulpAssets.index
-->      /ui/        gulp.Routes
+GET         /                               controllers.Application.index
+GET         /assets/*file               controllers.Assets.at(path="/public", file)
+
+#GET     /service-worker.js    com.github.mmizutani.playgulp.GulpAssets.at(file = "service-worker.js")
+#GET     /manifest.json        com.github.mmizutani.playgulp.GulpAssets.at(file = "manifest.json")
+#GET     /           com.github.mmizutani.playgulp.GulpAssets.redirectRoot(base = "/ui/")
+#GET     /ui         com.github.mmizutani.playgulp.GulpAssets.index
+#->      /ui/        gulp.Routes

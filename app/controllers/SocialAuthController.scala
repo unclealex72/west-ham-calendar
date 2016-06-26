@@ -24,7 +24,7 @@ class SocialAuthController @Inject() (val messagesApi: MessagesApi,
                                       val authInfoRepository: AuthInfoRepository,
                                       val socialProviderRegistry: SocialProviderRegistry) extends Controller with I18nSupport with Logger {
 
-  private val index: Call = com.github.mmizutani.playgulp.routes.GulpAssets.index()
+  private val index: Call = routes.Application.index()
 
   /**
     * Authenticates a user against a social provider.

@@ -1,6 +1,4 @@
 import sbt.Project.projectToRef
-import com.github.mmizutani.sbt.gulp.PlayGulpPlugin
-import com.github.mmizutani.sbt.gulp.Import.PlayGulpKeys._
 
 name := "west-ham-calendar"
 
@@ -14,7 +12,7 @@ lazy val scalaV = "2.11.7"
 lazy val play = (project in file(".")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := clients,
-  pipelineStages := Seq(scalaJSProd),
+  pipelineStages := Seq(scalaJSProd, rjs, digest),
   resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases",
@@ -46,24 +44,23 @@ lazy val play = (project in file(".")).settings(
       cache,
       filters,
       ws,
-      "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
       "org.mnode.ical4j" % "ical4j" % "1.0.4",
       "org.postgresql" % "postgresql" % "9.4.1207",
       "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
       "org.imgscalr" % "imgscalr-lib" % "4.2",
-      // webjars
-      "org.webjars.bower" % "roboto-fontface" % "0.4.5",
+      // webjars & frontend
+    "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
+    "org.webjars.bower" % "roboto-fontface" % "0.4.5",
+    "org.webjars.bower" % "angular-materialize" % "0.1.5",
+    "org.webjars.bower" % "materialize" % "0.97.6",
+    "org.webjars.bower" % "angular" % "1.5.7",
       // test
       "org.hsqldb" % "hsqldb" % "2.3.3" % "test",
       "org.specs2" %% "specs2-core" % "3.7" % "test",
       "org.specs2" %% "specs2-mock" % "3.7" % "test",
       "org.specs2" %% "specs2-junit" % "3.7" % "test",
       "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test")
- ).enablePlugins(PlayScala, SbtWeb, HerokuPlugin).
-  settings(PlayGulpPlugin.playGulpSettings ++ PlayGulpPlugin.withTemplates).
-  //settings(
-  //  gulpBuild <<= gulpBuild dependsOn (Keys.`package` in Compile)
-  //).
+ ).enablePlugins(PlayScala, SbtWeb).
   aggregate(clients.map(projectToRef): _*).
   dependsOn(sharedJvm, js)
 

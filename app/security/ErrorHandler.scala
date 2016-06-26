@@ -16,7 +16,7 @@ import scala.concurrent.Future
   */
 class ErrorHandler @Inject() (val messagesApi: MessagesApi) extends SecuredErrorHandler with I18nSupport {
 
-  private val index: Call = com.github.mmizutani.playgulp.routes.GulpAssets.index()
+  private val index: Call = controllers.routes.Application.index()
 
   /**
     * Called when a user is not authenticated.

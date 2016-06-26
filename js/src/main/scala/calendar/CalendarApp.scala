@@ -42,7 +42,13 @@ object CalendarApp extends JSApp {
       .filter[JsonDecodeFilter]
       // Config
       .config[CalendarConfig]
+      DOMGlobalScope.module = module.module
   }
+}
+
+@js.native
+object DOMGlobalScope extends js.GlobalScope {
+  var module: js.Object = js.native
 }
 
 class CalendarConfig(locationProvider: LocationProvider) extends Config {
