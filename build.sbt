@@ -1,5 +1,6 @@
 import sbt.Project.projectToRef
 import com.github.mmizutani.sbt.gulp.PlayGulpPlugin
+import com.github.mmizutani.sbt.gulp.Import.PlayGulpKeys._
 
 name := "west-ham-calendar"
 
@@ -58,10 +59,13 @@ lazy val play = (project in file(".")).settings(
       "org.specs2" %% "specs2-mock" % "3.7" % "test",
       "org.specs2" %% "specs2-junit" % "3.7" % "test",
       "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test")
- ).enablePlugins(PlayScala, SbtWeb).
+ ).enablePlugins(PlayScala, SbtWeb, HerokuPlugin).
   settings(PlayGulpPlugin.playGulpSettings ++ PlayGulpPlugin.withTemplates).
+  //settings(
+  //  gulpBuild <<= gulpBuild dependsOn (Keys.`package` in Compile)
+  //).
   aggregate(clients.map(projectToRef): _*).
-  dependsOn(sharedJvm)
+  dependsOn(sharedJvm, js)
 
 lazy val js = (project in file("js")).settings(
   scalaVersion := scalaV,
@@ -76,7 +80,7 @@ lazy val js = (project in file("js")).settings(
     "com.github.japgolly.fork.scalaz" %%% "scalaz-core" % "7.2.0",
     "com.github.japgolly.fork.scalaz" %%% "scalaz-scalacheck-binding" % "7.2.0"
   )
-).enablePlugins(ScalaJSPlugin, ScalaJSPlay, HerokuPlugin).
+).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
   dependsOn(sharedJs)
 
 lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
@@ -96,10 +100,7 @@ lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
 lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
-// loads the jvm project at sbt startup
-
 scalaJSStage in Global := FullOptStage
-herokuSkipSubProjects in Compile := false
 
 // for Eclipse users
 EclipseKeys.skipParents in ThisBuild := false

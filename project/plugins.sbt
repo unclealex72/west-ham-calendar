@@ -12,7 +12,7 @@ resolvers += Resolver.sonatypeRepo("releases")
 //addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.7.0-SNAPSHOT")
 
 // Sbt plugins
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.2")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.5.3")
 
 addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.8")
 

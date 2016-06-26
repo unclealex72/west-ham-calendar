@@ -14,9 +14,8 @@ class Filters @Inject() (
                           ssl: SSLFilter,
                           csrfFilter: CSRFFilter,
                           securityHeadersFilter: SecurityHeadersFilter,
-                          gzipFilter: GzipFilter,
-                          contentDispositionFilter: ContentDispositionFilter) extends HttpFilters {
+                          gzipFilter: GzipFilter) extends HttpFilters {
 
-  val filters = Seq.empty //Seq(ssl, csrfFilter, securityHeadersFilter, gzipFilter)
+  val filters = Seq(ssl, csrfFilter, securityHeadersFilter, gzipFilter)
 }
 

@@ -41,17 +41,20 @@ gulp.task("assets", function() {
 
 // Concatenate and publish the scalajs files
 gulp.task("scalajs", function() {
-    var jsfiles = ["js-jsdeps.js", "js-fastopt.js", "js-opt.js", "js-launcher.js"];
+    var jsfiles = ["js-jsdeps.js", "js-jsdeps.min.js", "js-fastopt.js", "js-opt.js", "js-launcher.js"];
     var fileIndex = function(file) {
         var path = file.path;
-        var name = path.substring(path.lastIndexOf("/"));
+        var name = path.substring(path.lastIndexOf("/") + 1);
         return jsfiles.indexOf(name);
     };
     var comparator = function(file1, file2) {
-        return fileIndex(file1) - fileIndex(file2);
+		var fi1 = fileIndex(file1);
+        var fi2 = fileIndex(file2);
+        return fi1 - fi2;
     };
-    return gulp.src(["../../js/target/scala-2.11/*.js"])
+    return gulp.src(["../js/target/scala-2.11/*.js"])
         .pipe(sort(comparator))
+        .pipe(print())
         .pipe(concat("app.js"))
         .pipe(gulp.dest("dist"));
 });

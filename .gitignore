@@ -7,7 +7,7 @@ bower_components
 target
 tmp
 .history
-play/ui/dist
+ui/dist
 .idea
 *.iml
 /out
