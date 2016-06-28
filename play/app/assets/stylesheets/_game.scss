@@ -1,0 +1,37 @@
+// Overridden colours
+@import "colours";
+
+.game {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.game.row {
+  margin-bottom: 0;
+}
+
+.game-details {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.game .competition-logo {
+  margin: auto;
+}
+
+.game .team-logo {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.team {
+  flex: 1;
+}
+
+.versus {
+  text-align: center;
+  font-size: 18px;
+  flex: none;
+  min-width: 10%;
+}
+

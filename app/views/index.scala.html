@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.min.css")">
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
-        <link rel="manifest" href="/ui/assets/config/manifest.json">
+        <link rel="manifest" href="@routes.Assets.at("config/manifest.json")">
         <link rel="stylesheet" href="@routes.Sprites.teamCss()">
         <link rel="stylesheet" href="@routes.Sprites.competitionCss()">
 
@@ -30,9 +30,5 @@
         <script src="@routes.Assets.at("lib/angular-materialize/src/angular-materialize.js")"></script>
         @playscalajs.html.scripts("js", "/assets")
         <script src="@routes.Assets.at("templates.js")"></script>
-            <!-- inject:vendor:js --><!-- endinject -->
-            <!-- inject:app:js --><!-- endinject -->
-            <!-- inject:templates:js --><!-- endinject -->
-
     </body>
 </html>

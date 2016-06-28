@@ -56,6 +56,8 @@ GET         /logout                          controllers.SocialAuthController.si
 # Front end resources
 
 GET         /                               controllers.Application.index
+GET         /index.html                     controllers.Application.index
+
 GET         /assets/*file               controllers.Assets.at(path="/public", file)
 
 #GET     /service-worker.js    com.github.mmizutani.playgulp.GulpAssets.at(file = "service-worker.js")

@@ -2,15 +2,14 @@
 @import "colours";
 
 // Materialise CSS
-$roboto-font-path: "./fonts/";
+$roboto-font-path: "/assets/bower_components/materialize/fonts/roboto/";
+@import "../../../public/bower_components/materialize/sass/materialize";
 
-@import "materialize";
 @import "loading";
 @import "custom";
 @import "game";
 @import "small-game";
-@import "material-icons";
-g
+
 .waves-effect.waves-custom .waves-ripple {
   /* The alpha value allows the text and background color
   of the button to still show through. */

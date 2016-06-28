@@ -20,3 +20,5 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.8")
 addSbtPlugin("org.databrary" % "sbt-angular-templates" % "0.2")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.0")
+
+addSbtPlugin("org.madoushi.sbt" % "sbt-sass" % "0.9.3")
