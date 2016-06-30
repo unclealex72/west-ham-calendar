@@ -1,9 +1,11 @@
 package controllers
 
-import com.mohiva.play.silhouette.api.actions.{SecuredRequest, UserAwareRequest}
+import com.mohiva.play.silhouette.api.actions.{SecuredActionBuilder, SecuredRequest, UserAwareRequest}
 import play.api.mvc.{AnyContent, Controller, Request}
 import security.Definitions
 import security.Definitions._
+
+import scala.concurrent.Future
 
 /**
   * A trait to make using Silhouette a bit easier by providing default type parameters and methods to get a user's name
@@ -11,6 +13,9 @@ import security.Definitions._
   * Created by alex on 17/01/16.
   */
 trait Secure extends Controller {
+
+  val silhouette: DefaultSilhouette
+  val auth: Auth
 
   case class EmailAndUsername(email: String, name: String)
 
@@ -26,4 +31,9 @@ trait Secure extends Controller {
       name <- user.fullName
     } yield EmailAndUsername(email, name)
   }
+
+  //def SecuredAction: SecuredActionBuilder[DefaultEnv] = silhouette.SecuredAction(auth)
+
+  def SecuredAction: SecuredActionBuilder[DefaultEnv] = silhouette.SecuredAction(auth)
+
 }

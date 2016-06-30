@@ -9,7 +9,7 @@ import com.mohiva.play.silhouette.impl.providers._
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.mvc.{Action, Call, Controller}
-import security.Definitions.DefaultSilhouette
+import security.Definitions._
 import security.models.services.UserService
 
 import scala.concurrent.Future
@@ -20,9 +20,10 @@ import scala.concurrent.Future
   */
 class SocialAuthController @Inject() (val messagesApi: MessagesApi,
                                       val silhouette: DefaultSilhouette,
+                                      val auth: Auth,
                                       val userService: UserService,
                                       val authInfoRepository: AuthInfoRepository,
-                                      val socialProviderRegistry: SocialProviderRegistry) extends Controller with I18nSupport with Logger {
+                                      val socialProviderRegistry: SocialProviderRegistry) extends Secure with I18nSupport with Logger {
 
   private val index: Call = routes.Application.index()
 
@@ -62,7 +63,7 @@ class SocialAuthController @Inject() (val messagesApi: MessagesApi,
     *
     * @return The result to display.
     */
-  def signOut = silhouette.SecuredAction.async { implicit request =>
+  def signOut = SecuredAction.async { implicit request =>
     val result = Redirect(index)
     silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
 

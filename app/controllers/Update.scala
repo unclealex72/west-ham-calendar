@@ -51,6 +51,7 @@ class Update @javax.inject.Inject() (val secret: SecretToken,
                                      val gameRowFactory: GameRowFactory,
                                      val messagesApi: MessagesApi,
                                      val silhouette: DefaultSilhouette,
+                                     val auth: Auth,
                                      val fatal: Fatal,
                                      val spritHolder: SpriteHolder,
                                      implicit val nowService: NowService,
@@ -94,7 +95,7 @@ class Update @javax.inject.Inject() (val secret: SecretToken,
    * Attend or unattend a game.
    */
   def attendOrUnattend(gameUpdater: Long => Future[Option[Game]], gameId: Long) =
-    silhouette.SecuredAction.async { implicit request =>
+    SecuredAction.async { implicit request =>
       gameUpdater(gameId).map {
         case Some(game) => json {
           gameRowFactory.toRow(includeAttended = true, gameRowLinksFactory(includeUpdates = true), ticketLinksFactory)(game)

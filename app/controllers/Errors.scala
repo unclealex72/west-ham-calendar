@@ -19,6 +19,8 @@ class Errors @javax.inject.Inject() (val secret: SecretToken,
              val fatalErrorDao: FatalErrorDao,
              val messagesApi: MessagesApi,
              val env: DefaultEnvironment,
+             val silhouette: DefaultSilhouette,
+             val auth: Auth,
              implicit val ec: ExecutionContext) extends Secret with JsonResults with LinkFactories {
 
   def quickFail = {

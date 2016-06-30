@@ -19,9 +19,10 @@ class PriorityPointsPdf @javax.inject.Inject() (val gameDao: GameDao,
                                                 val priorityPointsConfigurationDao: PriorityPointsConfigurationDao,
                                                 val messagesApi: MessagesApi,
                                                 val silhouette: DefaultSilhouette,
+                                                val auth: Auth,
                                                 implicit val ec: ExecutionContext) extends Secure {
 
-  def priorityPoints(gameId: Long) = silhouette.SecuredAction.async { implicit request =>
+  def priorityPoints(gameId: Long) = SecuredAction.async { implicit request =>
     val pp = FO {
       for {
         priorityPointsConfiguration <- FO <~ priorityPointsConfigurationDao.get

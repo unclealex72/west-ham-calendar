@@ -12,10 +12,9 @@ import play.filters.headers.SecurityHeadersFilter
 
 class Filters @Inject() (
                           ssl: SSLFilter,
-                          csrfFilter: CSRFFilter,
                           securityHeadersFilter: SecurityHeadersFilter,
                           gzipFilter: GzipFilter) extends HttpFilters {
 
-  val filters = Seq(ssl, csrfFilter, securityHeadersFilter, gzipFilter)
+  val filters = Seq(ssl, securityHeadersFilter, gzipFilter)
 }
 

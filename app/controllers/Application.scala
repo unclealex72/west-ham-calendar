@@ -23,6 +23,7 @@ class Application @Inject() (val gameDao: GameDao,
                              val secret: SecretToken,
                              val messagesApi: MessagesApi,
                              val silhouette: DefaultSilhouette,
+                             val auth: Auth,
                              implicit val ec: ExecutionContext) extends Secure with LinkFactories with JsonResults {
 
   def index = silhouette.UserAwareAction {

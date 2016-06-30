@@ -1,7 +1,6 @@
 package security
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import security.Definitions._
 
@@ -29,7 +28,9 @@ case class Authorised(
             logger warn s"Unauthorised user $email has attempted to log in."
           }
           authorized
-        case None => false
+        case None =>
+          logger warn s"No user was currently logged in."
+          false
       }
   }
 }

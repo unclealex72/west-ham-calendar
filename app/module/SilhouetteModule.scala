@@ -1,6 +1,7 @@
 package module
 
 import com.google.inject.{AbstractModule, Provides}
+import com.mohiva.play.silhouette.api.crypto._
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.api.services._
 import com.mohiva.play.silhouette.api.util._
@@ -19,9 +20,12 @@ import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import play.api.libs.concurrent.Execution.Implicits._
 import play.api.libs.ws.WSClient
-import security.Definitions.DefaultEnv
+import security.Authorised
+import security.Definitions.{Auth, DefaultEnv}
 import security.models.daos._
 import security.models.services.{UserService, UserServiceImpl}
+
+import scala.util.Try
 
 /**
   * The Guice module which wires all Silhouette dependencies.
@@ -42,6 +46,29 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     bind[FingerprintGenerator].toInstance(new DefaultFingerprintGenerator(false))
     bind[EventBus].toInstance(EventBus())
     bind[Clock].toInstance(Clock())
+    bind[Auth].to[Authorised]
+    bind[AuthenticatorEncoder].to[Base64AuthenticatorEncoder]
+  }
+
+  @Provides
+  def providePasswordHasherRegistry(passwordHasher: PasswordHasher): PasswordHasherRegistry = {
+    new PasswordHasherRegistry(passwordHasher)
+  }
+
+  @Provides
+  def provideCrypter: Crypter = new Crypter {
+    override def decrypt(value: String): String = Base64.decode(value)
+
+    override def encrypt(value: String): String = Base64.encode(value)
+  }
+
+  @Provides
+  def provideCookieSigner: CookieSigner = new CookieSigner {
+    override def sign(data: String): String = Base64.encode(data)
+
+    override def extract(message: String): Try[String] = Try {
+      Base64.decode(message)
+    }
   }
 
   /**
@@ -100,10 +127,12 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
                                    fingerprintGenerator: FingerprintGenerator,
                                    idGenerator: IDGenerator,
                                    configuration: Configuration,
+                                   cookieSigner: CookieSigner,
+                                   authenticatorEncoder: AuthenticatorEncoder,
                                    clock: Clock): AuthenticatorService[CookieAuthenticator] = {
 
     val config = configuration.underlying.as[CookieAuthenticatorSettings]("silhouette.authenticator")
-    new CookieAuthenticatorService(config, None, fingerprintGenerator, idGenerator, clock)
+    new CookieAuthenticatorService(config, None, cookieSigner, authenticatorEncoder, fingerprintGenerator, idGenerator, clock)
   }
 
   /**
@@ -123,9 +152,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     * @return The OAuth1 token secret provider implementation.
     */
   @Provides
-  def provideOAuth1TokenSecretProvider(configuration: Configuration, clock: Clock): OAuth1TokenSecretProvider = {
+  def provideOAuth1TokenSecretProvider(configuration: Configuration, cookieSigner: CookieSigner, crypter: Crypter, clock: Clock): OAuth1TokenSecretProvider = {
     val settings = configuration.underlying.as[CookieSecretSettings]("silhouette.oauth1TokenSecretProvider")
-    new CookieSecretProvider(settings, clock)
+    new CookieSecretProvider(settings, cookieSigner, crypter, clock)
   }
 
   /**
@@ -137,9 +166,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
     * @return The OAuth2 state provider implementation.
     */
   @Provides
-  def provideOAuth2StateProvider(idGenerator: IDGenerator, configuration: Configuration, clock: Clock): OAuth2StateProvider = {
+  def provideOAuth2StateProvider(idGenerator: IDGenerator, configuration: Configuration, cookieSigner: CookieSigner, clock: Clock): OAuth2StateProvider = {
     val settings = configuration.underlying.as[CookieStateSettings]("silhouette.oauth2StateProvider")
-    new CookieStateProvider(settings, idGenerator, clock)
+    new CookieStateProvider(settings, idGenerator, cookieSigner, clock)
   }
 
   /**
@@ -152,9 +181,9 @@ class SilhouetteModule extends AbstractModule with ScalaModule {
   @Provides
   def provideCredentialsProvider(
                                   authInfoRepository: AuthInfoRepository,
-                                  passwordHasher: PasswordHasher): CredentialsProvider = {
+                                  passwordHasherRegistry: PasswordHasherRegistry): CredentialsProvider = {
 
-    new CredentialsProvider(authInfoRepository, passwordHasher, Seq(passwordHasher))
+    new CredentialsProvider(authInfoRepository, passwordHasherRegistry)
   }
 
   /**

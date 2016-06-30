@@ -24,9 +24,8 @@ lazy val play = (project in file(".")).settings(
       //pdf
       "org.apache.pdfbox" % "pdfbox" % "2.0.0-RC3",
       //security
-      "com.mohiva" %% "play-silhouette" % "4.0.0-BETA1",
-      "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0-BETA1",
-      "com.mohiva" %% "play-silhouette-testkit" % "4.0.0-BETA1" % "test",
+      "com.mohiva" %% "play-silhouette" % "4.0.0-RC1",
+      "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0-RC1",
       //backend libraries
       "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
       "org.mozilla" % "rhino" % "1.7R3",
