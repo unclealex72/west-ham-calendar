@@ -12,7 +12,7 @@ lazy val scalaV = "2.11.7"
 lazy val play = (project in file(".")).settings(
   scalaVersion := scalaV,
   scalaJSProjects := clients,
-  pipelineStages := Seq(scalaJSProd, rjs, digest),
+  pipelineStages := Seq(scalaJSProd, digest),
   resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases",

@@ -15,7 +15,7 @@ addSbtPlugin("org.scala-js" % "sbt-scalajs" % "0.6.8")
 
 addSbtPlugin("com.vmunier" % "sbt-play-scalajs" % "0.3.0")
 
-addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.8")
+//addSbtPlugin("com.typesafe.sbt" % "sbt-rjs" % "1.0.8")
 
 addSbtPlugin("org.databrary" % "sbt-angular-templates" % "0.2")
 
