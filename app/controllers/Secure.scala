@@ -20,8 +20,8 @@ trait Secure extends Controller {
   case class EmailAndUsername(email: String, name: String)
 
   def emailAndUsername(implicit request: Request[_ <: AnyContent]): Option[EmailAndUsername] = request match {
-    case securedRequest: SecuredRequest[DefaultEnv, _] => toEmailAndUsername(securedRequest.identity)
-    case userAwareRequest: UserAwareRequest[DefaultEnv, _] => userAwareRequest.identity.flatMap(toEmailAndUsername)
+    case securedRequest: SecuredRequest[DefaultEnv @unchecked, _] => toEmailAndUsername(securedRequest.identity)
+    case userAwareRequest: UserAwareRequest[DefaultEnv @unchecked, _] => userAwareRequest.identity.flatMap(toEmailAndUsername)
     case _ => None
   }
 
