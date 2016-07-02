@@ -181,7 +181,7 @@ object GeoLocation extends JsonEnum[GeoLocation] {
   case object WALSALL extends GeoLocation("Walsall", "Bescot Stadium", "ChIJ8UKUCQyicEgRsrIABoP_Bqk")
   case object WATFORD extends GeoLocation("Watford", "Vicarage Road", "ChIJK85fQt1qdkgRYzX5AxgaePk")
   case object WEST_BROMWICH_ALBION extends GeoLocation("West Bromwich Albion", "The Hawthorns", "ChIJH3kSWkm9cEgR7xDiT10vVCU", "WBA")
-  case object WEST_HAM extends GeoLocation("West Ham", "The Boleyn Ground", "ChIJ8-luJ8qn2EcRz6EB2AHQdQg")
+  case object WEST_HAM extends GeoLocation("West Ham", "The Olympic Stadium", "ChIJWbXodWkddkgRlM62BUak_Oc")
   case object WIGAN_ATHLETIC extends GeoLocation("Wigan Athletic", "DW Stadium", "ChIJO52GEIUPe0gRFsVW3H4CFT8")
   case object WOLVERHAMPTON_WANDERERS extends GeoLocation("Wolverhampton Wanderers", "Molineux", "ChIJmyKap4WbcEgRRDifnXygVFM", "Wolves")
   case object WYCOMBE_WANDERERS extends GeoLocation("Wycombe Wanderers", "Adams Park", "ChIJi1k781CKdkgR3Ii21vnJNs8")
