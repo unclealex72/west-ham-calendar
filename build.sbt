@@ -1,8 +1,13 @@
 import sbt.Project.projectToRef
 
-name := "west-ham-calendar"
+import com.servicerocket.sbt.release.git.flow.Steps._
 
-version := "1.0-SNAPSHOT"
+import sbt._
+import sbtrelease._
+import sbtrelease.ReleaseStateTransformations._
+import sbtrelease.ReleasePlugin.autoImport.{ReleaseStep, releaseProcess}
+
+name := "west-ham-calendar"
 
 lazy val clients = Seq(js)
 lazy val scalaV = "2.11.7"
@@ -97,6 +102,22 @@ lazy val sharedJvm = shared.jvm
 lazy val sharedJs = shared.js
 
 scalaJSStage in Global := FullOptStage
+
+releaseProcess := Seq[ReleaseStep](
+  checkSnapshotDependencies,
+  //checkGitFlowExists, Does not work on Linux
+  inquireVersions,
+  runTest,
+  gitFlowReleaseStart,
+  setReleaseVersion,
+  commitReleaseVersion,
+  //publishArtifacts, No artifacts to publish
+  gitFlowReleaseFinish,
+  pushMaster,
+  setNextVersion,
+  commitNextVersion,
+  pushChanges
+)
 
 // for Eclipse users
 EclipseKeys.skipParents in ThisBuild := false
