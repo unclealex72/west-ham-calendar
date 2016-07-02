@@ -187,4 +187,9 @@ object GeoLocation extends JsonEnum[GeoLocation] {
   case object WYCOMBE_WANDERERS extends GeoLocation("Wycombe Wanderers", "Adams Park", "ChIJi1k781CKdkgR3Ii21vnJNs8")
   case object YEOVIL_TOWN extends GeoLocation("Yeovil Town", "Huish Park", "ChIJIVEfefJqckgR3xhdhIehZZc")
   case object YORK_CITY extends GeoLocation("York City", "Bootham Crescent", "ChIJ15UZdwoxeUgRLFcqfriUEWU")
+
+  // Further abroad
+
+  case object SEATTLE_SOUNDERS extends GeoLocation("Seattle Sounders", "CenturyLink Field", "ChIJzTgVyaRqkFQRDpxCPU5KehY")
+  case object CAROLINA_RAILHAWKS extends GeoLocation("Carolina RailHawks", "WakeMed Soccer Park", "ChIJHeOExIXzrIkRjVTSBqd5_rg")
 }
