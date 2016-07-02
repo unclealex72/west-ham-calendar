@@ -1,7 +1,7 @@
 import sbt.Project.projectToRef
 
 import com.servicerocket.sbt.release.git.flow.Steps._
-
+import com.servicerocket.sbt.release.git.flow.Util._
 import sbt._
 import sbtrelease._
 import sbtrelease.ReleaseStateTransformations._
@@ -105,15 +105,21 @@ scalaJSStage in Global := FullOptStage
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
-  //checkGitFlowExists, Does not work on Linux
+  //Does not work on Linux
+  //checkGitFlowExists
   inquireVersions,
   runTest,
   gitFlowReleaseStart,
   setReleaseVersion,
   commitReleaseVersion,
-  //publishArtifacts, No artifacts to publish
+  //No artifacts to publish
+  //publishArtifacts
   gitFlowReleaseFinish,
   pushMaster,
+  //Push to Heroku
+  execStep { _ =>
+    "git push heroku master"
+  },
   setNextVersion,
   commitNextVersion,
   pushChanges
