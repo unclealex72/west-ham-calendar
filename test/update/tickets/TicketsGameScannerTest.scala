@@ -18,14 +18,14 @@ import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.specification._
 import play.api.libs.ws.ahc.AhcWSClient
+import util.Materialisers
 
 import scala.io.Source
-import scala.language.postfixOps
 
 /**
  * Created by alex on 28/03/15.
  */
-class TicketsGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging with Mockito with SimpleRemoteStream {
+class TicketsGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging with Mockito with SimpleRemoteStream with Materialisers {
 
 
   "The tickets game scanner" should {

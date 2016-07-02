@@ -1,7 +1,7 @@
 import sbt.Project.projectToRef
-
 import com.servicerocket.sbt.release.git.flow.Steps._
 import com.servicerocket.sbt.release.git.flow.Util._
+import sbt.Keys._
 import sbt._
 import sbtrelease._
 import sbtrelease.ReleaseStateTransformations._
@@ -63,8 +63,10 @@ lazy val play = (project in file(".")).settings(
       "org.specs2" %% "specs2-core" % "3.7" % "test",
       "org.specs2" %% "specs2-mock" % "3.7" % "test",
       "org.specs2" %% "specs2-junit" % "3.7" % "test",
-      "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test")
- ).enablePlugins(PlayScala, SbtWeb).
+      "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test"),
+    scalacOptions in Test ++= Seq("-Yrangepos"),
+    fork in Test := false
+).enablePlugins(PlayScala, SbtWeb).
   aggregate(clients.map(projectToRef): _*).
   dependsOn(sharedJvm, js)
 

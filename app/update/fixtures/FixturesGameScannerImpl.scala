@@ -24,7 +24,7 @@ import Scalaz._
 /**
  * Created by alex on 08/03/15.
  */
-class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient, implicit val ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging with WsBody with NodeExtensions {
+class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient)(implicit val ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging with WsBody with NodeExtensions {
 
   override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = {
     val fixturesUri = rootUri.resolve("/Fixtures/First-Team/Fixture-and-Results")
