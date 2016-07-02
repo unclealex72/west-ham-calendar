@@ -20,7 +20,7 @@ import Scalaz._
 /**
  * Created by alex on 28/03/15.
  */
-class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSClient, implicit val ec: ExecutionContext) extends TicketsGameScanner with RemoteLogging with WsBody with NodeExtensions {
+class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSClient)(implicit val ec: ExecutionContext) extends TicketsGameScanner with RemoteLogging with WsBody with NodeExtensions {
 
   override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = FE {
     latestSeason match {

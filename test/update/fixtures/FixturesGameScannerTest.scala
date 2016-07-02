@@ -22,6 +22,7 @@ import org.specs2.mutable.Specification
 import org.specs2.specification._
 import play.api.libs.ws.ahc.AhcWSClient
 import upickle.default._
+import util.Materialisers
 
 import scala.io.Source
 import scalaz._
@@ -29,7 +30,7 @@ import scalaz._
 /**
  * Created by alex on 28/03/15.
  */
-class FixturesGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging {
+class FixturesGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging with Materialisers {
 
 
   "The fixtures game scanner" should {

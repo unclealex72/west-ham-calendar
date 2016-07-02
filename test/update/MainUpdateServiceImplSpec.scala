@@ -238,7 +238,7 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
 
       s.gameDao.getAllForSeasonAndLocation(2013, HOME) returns Future.successful(unattendedGames)
       attendedGames foreach (attendedGame => s.gameDao.store(attendedGame) returns Future.successful(attendedGame))
-      s.mainUpdateService.attendAllHomeGamesForSeason(2013).map(_.map(_.attended)) must be_==(List(Some(true), Some(true))).await
+      s.mainUpdateService.attendAllHomeGamesForSeason(2013).map(_.map(_.attended)) must be_==(List(true, true)).await
     }
   }
 

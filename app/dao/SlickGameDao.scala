@@ -14,7 +14,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by alex on 19/01/16.
   */
-class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory, implicit val ec: ExecutionContext) extends GameDao with Slick {
+class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implicit val ec: ExecutionContext) extends GameDao with Slick {
 
   import dbConfig.driver.api._
 
