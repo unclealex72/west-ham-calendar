@@ -4,6 +4,7 @@ import java.awt.Dimension
 import java.io.ByteArrayInputStream
 import javax.inject.Inject
 
+import akka.stream.scaladsl.{Source, StreamConverters}
 import org.joda.time.format.ISODateTimeFormat
 import play.api.libs.iteratee.Enumerator
 import play.api.mvc._
@@ -33,7 +34,7 @@ class Sprites @Inject() (val spriteHolder: SpriteHolder,
 
   def image(f: SpriteHolder => Option[Sprite]) = spriteAndLastUpdated(f) { sprite =>
       Action { implicit request =>
-        Ok.chunked(Enumerator.fromStream(new ByteArrayInputStream(sprite.image))).as("image/png")
+        Ok.chunked(StreamConverters.fromInputStream(() => new ByteArrayInputStream(sprite.image))).as("image/png")
       }
   }
 

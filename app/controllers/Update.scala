@@ -31,6 +31,7 @@ import models.GameRow._
 import models.{Competition, FatalErrorReportRel}
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Concurrent
+import play.api.libs.streams.Streams
 import play.api.mvc.Action
 import security.Definitions._
 import services.GameRowFactory
@@ -41,6 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Failure
 import scalaz._
 
+import akka.stream.scaladsl.{Source => AkkaSource}
 /**
  * @author alex
  *
@@ -87,7 +89,7 @@ class Update @javax.inject.Inject() (val secret: SecretToken,
       }.andThen {
         case _ => channel.eofAndEnd()
       }
-      Ok.chunked(enumerator)
+      Ok.chunked(AkkaSource.fromPublisher(Streams.enumeratorToPublisher(enumerator)))
     }
   }
 

@@ -1,15 +1,17 @@
 package controllers
 
+import akka.stream.scaladsl.{Source => AkkaSource}
 import dao.{GameDao, PriorityPointsConfigurationDao}
 import monads.FO
 import pdf.{Client, PriorityPointsPdfFactory}
 import play.api.i18n.MessagesApi
 import play.api.libs.iteratee.Enumerator
-import play.api.mvc.Action
+import play.api.libs.streams.Streams
 import security.Definitions._
 
 import scalaz._
 import Scalaz._
+
 import scala.concurrent.ExecutionContext
 /**
  * Created by alex on 12/02/15.
@@ -19,8 +21,7 @@ class PriorityPointsPdf @javax.inject.Inject() (val gameDao: GameDao,
                                                 val priorityPointsConfigurationDao: PriorityPointsConfigurationDao,
                                                 val messagesApi: MessagesApi,
                                                 val silhouette: DefaultSilhouette,
-                                                val auth: Auth,
-                                                implicit val ec: ExecutionContext) extends Secure {
+                                                val auth: Auth)(implicit val ec: ExecutionContext) extends Secure {
 
   def priorityPoints(gameId: Long) = SecuredAction.async { implicit request =>
     val pp = FO {
@@ -36,10 +37,12 @@ class PriorityPointsPdf @javax.inject.Inject() (val gameDao: GameDao,
           case None => _ => true
         }
         Ok.chunked {
-          Enumerator.outputStream {
+          val enumerator = Enumerator.outputStream {
             out =>
               priorityPointsPdfFactory.generate(priorityPointsConfiguration, game.opponents, game.competition.isLeague, clientFilter, out)
-          }}.
+          }
+          AkkaSource.fromPublisher(Streams.enumeratorToPublisher(enumerator))
+        }.
           as("application/pdf").withHeaders("Content-Disposition" -> s"attachment; filename=${game.opponents}-${game.competition.name}.pdf".toLowerCase)
       }
     }
