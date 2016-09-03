@@ -64,16 +64,20 @@ object TicketType extends JsonEnum[TicketType] {
   val values = findValues
 
   case object PriorityPointTicketType extends AbstractTicketType(
-    "PriorityPoint", "Priority point", true, "Priority Point Applications")
+    "PriorityPoint", "Priority point", true, "Priority Point Applications", "ST Holders with")
   case object BondholderTicketType extends AbstractTicketType(
     "Bondholder", "Bond holder", false, "Bondholders")
   case object SeasonTicketType extends AbstractTicketType(
-    "Season", "Season", false, "Season Ticket Holder General Sale", "Season Ticket Holder Additional")
+    "Season", "Season", false, "Season Ticket Holder")
   case object AcademyTicketType extends AbstractTicketType(
-    "Academy", "Academy member", false, "Members")
+    "Academy", "Academy member", false, "Members", "Claret")
   case object GeneralSaleTicketType extends AbstractTicketType(
     "GeneralSale", "General sale", false, "General Sale")
 
-  def apply(token: String): Either[String, TicketType] =
-    values.find(ticketType => ticketType.tokens.contains(token)).toRight(s"$token is not a valid ticket type")
+  def apply(text: String): Either[String, TicketType] = {
+    val maybeTicketType = values.find{ ticketType =>
+      ticketType.tokens.exists(token => text.contains(token))
+    }
+    maybeTicketType.toRight(s"'$text' does not contain a valid ticket type")
+  }
 }
