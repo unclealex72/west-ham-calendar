@@ -40,6 +40,11 @@ sealed abstract class GameUpdateCommand(
    */
   val gameLocator: GameLocator) {
 
+  val name = this.getClass.getName
+
+  // For testing only
+  val value: Any
+
   /**
    * Update a game. No check is made to see if the correct game is being
    * updated.
@@ -103,6 +108,8 @@ sealed abstract class BaseGameUpdateCommand[V](
    * The new date played value.
    */
   val newValue: V) extends GameUpdateCommand(gameLocator) with StrictLogging {
+
+  override val value = newValue
 
   override def update(game: Game): Option[Game] = {
     if (!currentValue(game).contains(newValue)) {

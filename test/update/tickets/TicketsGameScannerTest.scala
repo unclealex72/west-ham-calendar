@@ -5,7 +5,7 @@ import java.net.URI
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
-import dates.{April, February, March}
+import dates._
 import html._
 import logging.SimpleRemoteStream
 import org.asynchttpclient.DefaultAsyncHttpClientConfig
@@ -19,6 +19,7 @@ import org.specs2.mutable.Specification
 import org.specs2.specification._
 import play.api.libs.ws.ahc.AhcWSClient
 import util.Materialisers
+import scala.concurrent.duration._
 
 import scala.io.Source
 
@@ -34,31 +35,31 @@ class TicketsGameScannerTest extends Specification with DisjunctionMatchers with
       val wsClient = new AhcWSClient(new DefaultAsyncHttpClientConfig.Builder().build())
 
       val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
-      val gameUpdateCommands = ticketsGameScanner.scan(Some(2014))
-      val arsenal = DatePlayedLocator(March(14, 2015) at 3 pm)
-      val sunderland = DatePlayedLocator(March(21, 2015) at (17, 30))
-      val leicester = DatePlayedLocator(April(4, 2015) at 3 pm)
-      var stoke = DatePlayedLocator(April(11, 2015) at 3 pm)
-      gameUpdateCommands must be_\/-(containTheSameElementsAs(Seq[GameUpdateCommand](
-        BondHolderTicketsUpdateCommand(arsenal, February(12, 2015) at 9 am),
-        PriorityPointTicketsUpdateCommand(arsenal, February(11, 2015) at 9 am),
-        SeasonTicketsUpdateCommand(arsenal, February(14, 2015) at 9 am),
-        AcademyTicketsUpdateCommand(arsenal, February(16, 2015) at 9 am),
-        GeneralSaleTicketsUpdateCommand(arsenal, February(17, 2015) at 9 am),
+      val gameUpdateCommands = ticketsGameScanner.scan(Some(2016))
+      val watford = DatePlayedLocator(September(10, 2016) at 3 pm)
+      val westbrom = DatePlayedLocator(September(17, 2016) at 3 pm)
+      val accrington = DatePlayedLocator(September(21, 2016) at (19, 45))
+      def format(gameUpdateCommands: Seq[GameUpdateCommand]): Seq[String] = {
+        def locatorFormatter(gameLocator: GameLocator): String = {
+          if (gameLocator == westbrom) "West_Brom" else
+          if (gameLocator == accrington) "Accrington" else
+          if (gameLocator == watford) "Watford" else
+            "Unknown"
+        }
+        gameUpdateCommands.map { gameUpdateCommand =>
+          s"${locatorFormatter(gameUpdateCommand.gameLocator)}:${gameUpdateCommand.name}@${gameUpdateCommand.value}"
+        }
+      }
+      gameUpdateCommands.map(_.map(format(_))) must be_\/-(containTheSameElementsAs(format(Seq[GameUpdateCommand](
 
-        SeasonTicketsUpdateCommand(sunderland, February(9, 2015) at 9 am),
-        AcademyTicketsUpdateCommand(sunderland, February(3, 2015) at 9 am),
-        GeneralSaleTicketsUpdateCommand(sunderland, February(10, 2015) at 9 am),
+        AcademyTicketsUpdateCommand(accrington, September(6, 2016) at 9 am),
+        GeneralSaleTicketsUpdateCommand(accrington, September(8, 2016) at 9 am),
 
-        BondHolderTicketsUpdateCommand(leicester, February(26, 2015) at 9 am),
-        PriorityPointTicketsUpdateCommand(leicester, February(26, 2015) at 9 am),
-        SeasonTicketsUpdateCommand(leicester, February(28, 2015) at 9 am),
-        AcademyTicketsUpdateCommand(leicester, March(2, 2015) at 9 am),
-        GeneralSaleTicketsUpdateCommand(leicester, March(3, 2015) at 9 am),
-
-        SeasonTicketsUpdateCommand(stoke, March(2, 2015) at 9 am),
-        AcademyTicketsUpdateCommand(stoke, February(24, 2015) at 9 am),
-        GeneralSaleTicketsUpdateCommand(stoke, March(3, 2015) at 9 am)))).await
+        BondHolderTicketsUpdateCommand(westbrom, September(3, 2016) at 9 am),
+        PriorityPointTicketsUpdateCommand(westbrom, September(5, 2016) at 9 am),
+        SeasonTicketsUpdateCommand(westbrom, September(6, 2016) at 9 am),
+        AcademyTicketsUpdateCommand(westbrom, September(7, 2016) at 9 am),
+        GeneralSaleTicketsUpdateCommand(westbrom, September(8, 2016) at 9 am))))).awaitFor(10.seconds)
     }
   } 
   
