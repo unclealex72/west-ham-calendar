@@ -85,45 +85,28 @@ class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSCli
     }
 
     def generateGameUpdateCommands(divChildren: Seq[Node], dateTime: DateTime): Seq[GameUpdateCommand] = {
-      val textsAndIndices = divChildren.map(_.text).zipWithIndex
-      // Only look for the first time a ticket type is matched
-      val ticketTypesByIndex = textsAndIndices.foldLeft(Map.empty[TicketType, Int]) { (map, ti) =>
-        val (text, index) = ti
-        TicketType(text) match {
-          case Right(tt) if !map.contains(tt) => map + (tt -> index)
-          case _ => map
-        }
-      }.toSeq.map(_.swap).toMap
-      val ticketTypeIndices = ticketTypesByIndex.keys.toSeq
-      val datesByIndex = (for {
-        textAndIndex <- textsAndIndices if !ticketTypeIndices.contains(textAndIndex._2)
-        dateTime <- PossiblyYearlessDateParser.forSeason(latestSeason)("d MMMM", "dd MMMM").find(textAndIndex._1)
-      } yield (textAndIndex._2, dateTime.withMillisOfDay(0).withHourOfDay(9))).toMap
-
-      val ticketTypesAndDatesByIndex =
-        SortedMap.empty[Int, \/[TicketType, DateTime]] ++
-        ticketTypesByIndex.mapValues(-\/(_)) ++
-        datesByIndex.mapValues(\/-(_))
-
-      case class State(currentTicketType: Option[TicketType] = None, gameUpdateCommands: Seq[GameUpdateCommand] = Seq.empty) {
-        def withTicketType(ticketType: TicketType) = this.copy(currentTicketType = Some(ticketType))
-        def withGameUpdateCommand(gameUpdateCommand: GameUpdateCommand) = State(None, gameUpdateCommands :+ gameUpdateCommand)
-      }
       val gameLocator = DatePlayedLocator(dateTime)
-      // now that the ticket selling types and dates are in order we can match each selling date to the ticket type above it.
-
-      val state = ticketTypesAndDatesByIndex.values.foldLeft(State()) { (state, ttord) =>
-        (ttord, state.currentTicketType) match {
-          case (-\/(ticketType), _) =>
-            state.withTicketType(ticketType)
-          case (\/-(dt), Some(ticketType)) =>
-            logger info s"Found ticket type $ticketType on sale on $dt"
-            state.withGameUpdateCommand(createGameUpdateCommand(gameLocator, ticketType, dt))
-          case _ => state
-        }
-
+      case class State(currentTicketType: Option[TicketType] = None, gameUpdateCommands: Map[TicketType, GameUpdateCommand] = Map.empty) {
+        def withTicketType(ticketType: TicketType) =
+          this.copy(currentTicketType = Some(ticketType).filterNot(gameUpdateCommands.get(_).isDefined))
+        def withSellingDateTime(dt: DateTime) =
+          State(None, gameUpdateCommands ++ currentTicketType.map { tt =>
+            logger info s"Found ticket type $tt on sale on $dt"
+            tt -> createGameUpdateCommand(gameLocator, tt, dt)
+          })
       }
-      state.gameUpdateCommands
+      val finalState = divChildren.map(_.text).foldLeft(State()) { (state, text) =>
+        TicketType(text) match {
+          case Right(tt) => state.withTicketType(tt)
+          case _ =>
+            PossiblyYearlessDateParser.forSeason(latestSeason)("d MMMM", "dd MMMM").find(text) match {
+              case Some(dt) =>
+                state.withSellingDateTime(dt.withMillisOfDay(0).withHourOfDay(9))
+              case _ => state
+            }
+        }
+      }
+      finalState.gameUpdateCommands.values.toSeq
     }
 
     def createGameUpdateCommand(gameLocator: GameLocator, ticketType: TicketType, dateTime: DateTime): GameUpdateCommand = {
