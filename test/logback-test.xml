@@ -25,6 +25,8 @@
     </appender>
 
     <logger name="org.eclipse.jetty" level="info" />
+    <logger name="io.netty" level="info" />
+    <logger name="org.asynchttpclient.netty" level="info" />
 
     <root level="debug">
         <appender-ref ref="STDOUT" />
