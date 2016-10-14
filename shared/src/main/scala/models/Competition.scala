@@ -66,12 +66,12 @@ object Competition extends JsonEnum[Competition] {
   /**
    * The FA Premiership.
    */
-  case object PREM extends LeagueCompetition("Premiership", "Barclays Premier League")
+  case object PREM extends LeagueCompetition("Premiership", "Barclays Premier League", "Premier League")
 
   /**
    * The League Cup.
    */
-  case object LGCP extends CupCompetition("League Cup", "English Capital One Cup")
+  case object LGCP extends CupCompetition("League Cup", "English Capital One Cup", "EFL Cup")
 
   /**
    * The FA Cup.
