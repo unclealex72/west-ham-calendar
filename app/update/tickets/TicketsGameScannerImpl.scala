@@ -77,36 +77,27 @@ class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSCli
     }
 
     def scanTicketDates(dateTime: DateTime): Seq[GameUpdateCommand] = {
-      for {
-        htmlContent <- pageXml \\ "div" if htmlContent.hasClass("htmlContent")
-        subTitle <- htmlContent \\ "div" if subTitle.hasClass("subTitle") && subTitle.text == "Match Event Information"
-        gameUpdateCommand <- generateGameUpdateCommands(htmlContent.nonEmptyChildren, dateTime)
-      } yield gameUpdateCommand
-    }
-
-    def generateGameUpdateCommands(divChildren: Seq[Node], dateTime: DateTime): Seq[GameUpdateCommand] = {
-      val gameLocator = DatePlayedLocator(dateTime)
-      case class State(currentTicketType: Option[TicketType] = None, gameUpdateCommands: Map[TicketType, GameUpdateCommand] = Map.empty) {
-        def withTicketType(ticketType: TicketType) =
-          this.copy(currentTicketType = Some(ticketType).filterNot(gameUpdateCommands.get(_).isDefined))
-        def withSellingDateTime(dt: DateTime) =
-          State(None, gameUpdateCommands ++ currentTicketType.map { tt =>
-            logger info s"Found ticket type $tt on sale on $dt"
-            tt -> createGameUpdateCommand(gameLocator, tt, dt)
-          })
-      }
-      val finalState = divChildren.map(_.text).foldLeft(State()) { (state, text) =>
-        TicketType(text) match {
-          case Right(tt) => state.withTicketType(tt)
-          case _ =>
-            PossiblyYearlessDateParser.forSeason(latestSeason)("d MMMM", "dd MMMM").find(text) match {
-              case Some(dt) =>
-                state.withSellingDateTime(dt.withMillisOfDay(0).withHourOfDay(9))
-              case _ => state
-            }
+      val texts = pageXml.text.split('\n').dropWhile(!_.contains("Sale Dates"))
+      val localDate = dateTime.toLocalDate
+      val datePlayedLocator = DatePlayedLocator(dateTime)
+      case class State(remainingTicketTypes: Set[TicketType] = TicketType.values.toSet, gameUpdateCommands: Seq[GameUpdateCommand] = Seq.empty) {
+        def parseLine(text: String): State = {
+          val maybeNewState = for {
+            ticketType <- TicketType.within(text).toOption if remainingTicketTypes.contains(ticketType)
+            sellingDate <- PossiblyYearlessDateParser.forSeason(latestSeason)("d MMMM", "dd MMMM").find(text) if sellingDate.toLocalDate != localDate
+          } yield {
+            val sellingDateTime = sellingDate.withMillisOfDay(0).withHourOfDay(9)
+            logger info s"Found ticket type $ticketType on sale at $sellingDateTime"
+            val gameUpdateCommand = createGameUpdateCommand(datePlayedLocator, ticketType, sellingDateTime)
+            State(
+              remainingTicketTypes = remainingTicketTypes - ticketType,
+              gameUpdateCommands = gameUpdateCommands :+ gameUpdateCommand)
+          }
+          maybeNewState.getOrElse(this)
         }
       }
-      finalState.gameUpdateCommands.values.toSeq
+      val finalState = texts.foldLeft(State())((state, text) => state.parseLine(text))
+      finalState.gameUpdateCommands
     }
 
     def createGameUpdateCommand(gameLocator: GameLocator, ticketType: TicketType, dateTime: DateTime): GameUpdateCommand = {
