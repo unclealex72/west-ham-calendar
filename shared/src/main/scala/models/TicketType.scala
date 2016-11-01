@@ -18,6 +18,8 @@ package models
 
 import enumeratum.EnumEntry
 import json.JsonEnum
+import scalaz._
+import Scalaz._
 
 /**
  * The different types of tickets available from the website.
@@ -74,10 +76,10 @@ object TicketType extends JsonEnum[TicketType] {
   case object GeneralSaleTicketType extends AbstractTicketType(
     "GeneralSale", "General sale", false, "General Sale")
 
-  def apply(text: String): Either[String, TicketType] = {
+  def within(text: String): \/[String, TicketType] = {
     val maybeTicketType = values.find{ ticketType =>
       ticketType.tokens.exists(token => text.contains(token))
     }
-    maybeTicketType.toRight(s"'$text' does not contain a valid ticket type")
+    maybeTicketType.toRightDisjunction(s"'$text' does not contain a valid ticket type")
   }
 }

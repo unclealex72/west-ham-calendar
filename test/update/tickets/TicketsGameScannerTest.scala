@@ -1,11 +1,14 @@
 package update.tickets
 
+import scalaz._
+import Scalaz._
 import java.io.PrintWriter
 import java.net.URI
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dates._
+import enumeratum.EnumEntry
 import html._
 import logging.SimpleRemoteStream
 import org.asynchttpclient.DefaultAsyncHttpClientConfig
@@ -19,84 +22,139 @@ import org.specs2.mutable.Specification
 import org.specs2.specification._
 import play.api.libs.ws.ahc.AhcWSClient
 import util.Materialisers
-import scala.concurrent.duration._
 
+import scala.concurrent.duration._
 import scala.io.Source
+import enumeratum.Enum
+import org.joda.time.DateTime
+import org.specs2.specification.core.Fragment
+
+import scala.concurrent.Await
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Created by alex on 28/03/15.
  */
 class TicketsGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging with Mockito with SimpleRemoteStream with Materialisers {
 
+  val (server, port): (Server, Int) = {
+    val server = new Server(0)
+    val handler: Handler = new AbstractHandler {
+      override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Unit = {
+        if ("GET" == request.getMethod) {
+          val pathInfo = request.getPathInfo
+          val path = if (pathInfo.startsWith("/html")) s"${request.getPathInfo}.html".substring(1) else s"html${request.getPathInfo}.html"
+          Option(classOf[TicketsGameScannerTest].getClassLoader.getResourceAsStream(path)) match {
+            case Some(in) =>
+              logger.info(s"Loading $path")
+              val htmlResponse = Source.fromInputStream(in).mkString
+              val writer: PrintWriter = response.getWriter
+              writer.println(htmlResponse)
+              writer.close()
+            case _ =>
+              logger.error(s"Cound not find a resource at $path")
+              response.sendError(HttpStatus.NOT_FOUND_404)
+          }
+        }
+        else {
+          response.sendError(HttpStatus.METHOD_NOT_ALLOWED_405)
+        }
+      }
+    }
+    server.setHandler(handler)
+    server.start()
+    (server, server.getConnectors()(0).asInstanceOf[ServerConnector].getLocalPort)
+  }
+
+  val wsClient = new AhcWSClient(new DefaultAsyncHttpClientConfig.Builder().build())
+
+  val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
+  val gameUpdateCommandsValidation: \/[NonEmptyList[String], Seq[GameUpdateCommand]] = Await.result(ticketsGameScanner.scan(Some(2016)), 10.seconds)
+
+  server.stop()
 
   "The tickets game scanner" should {
-    "find all the known tickets" in new ServerContext {
-      implicit val ee: ExecutionEnv = ExecutionEnv.fromGlobalExecutionContext
-      val wsClient = new AhcWSClient(new DefaultAsyncHttpClientConfig.Builder().build())
+    Fragment.foreach(GameAndTickets.values) { gameAndTickets =>
+      s"find all the tickets for ${gameAndTickets.entryName}" in {
+        val expectedGameUpdateCommands: Seq[GameUpdateCommand] = gameAndTickets.gameUpdateCommands
+        val actualGameUpdateComamndsValidation = gameUpdateCommandsValidation.map(_.filter(gud => gameAndTickets.gameLocator == gud.gameLocator))
 
-      val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
-      val gameUpdateCommands = ticketsGameScanner.scan(Some(2016))
-      val watford = DatePlayedLocator(September(10, 2016) at 3 pm)
-      val westbrom = DatePlayedLocator(September(17, 2016) at 3 pm)
-      val accrington = DatePlayedLocator(September(21, 2016) at (19, 45))
-      def format(gameUpdateCommands: Seq[GameUpdateCommand]): Seq[String] = {
-        def locatorFormatter(gameLocator: GameLocator): String = {
-          if (gameLocator == westbrom) "West_Brom" else
-          if (gameLocator == accrington) "Accrington" else
-          if (gameLocator == watford) "Watford" else
-            "Unknown"
-        }
-        gameUpdateCommands.map { gameUpdateCommand =>
-          s"${locatorFormatter(gameUpdateCommand.gameLocator)}:${gameUpdateCommand.name}@${gameUpdateCommand.value}"
-        }
-      }
-      gameUpdateCommands.map(_.map(format(_))) must be_\/-(containTheSameElementsAs(format(Seq[GameUpdateCommand](
-
-        AcademyTicketsUpdateCommand(accrington, September(6, 2016) at 9 am),
-        GeneralSaleTicketsUpdateCommand(accrington, September(8, 2016) at 9 am),
-
-        BondHolderTicketsUpdateCommand(westbrom, September(3, 2016) at 9 am),
-        PriorityPointTicketsUpdateCommand(westbrom, September(5, 2016) at 9 am),
-        SeasonTicketsUpdateCommand(westbrom, September(6, 2016) at 9 am),
-        AcademyTicketsUpdateCommand(westbrom, September(7, 2016) at 9 am),
-        GeneralSaleTicketsUpdateCommand(westbrom, September(8, 2016) at 9 am))))).awaitFor(10.seconds)
-    }
-  } 
-  
-  
-  trait ServerContext extends After with SimpleRemoteStream {
-
-    val (server, port): (Server, Int) = {
-      val server = new Server(0)
-      val handler: Handler = new AbstractHandler {
-        override def handle(target: String, baseRequest: Request, request: HttpServletRequest, response: HttpServletResponse): Unit = {
-          if ("GET" == request.getMethod) {
-            val pathInfo = request.getPathInfo
-            val path = if (pathInfo.startsWith("/html")) s"${request.getPathInfo}.html".substring(1) else s"html${request.getPathInfo}.html"
-            Option(classOf[ServerContext].getClassLoader.getResourceAsStream(path)) match {
-              case Some(in) =>
-                logger.info(s"Loading $path")
-                val htmlResponse = Source.fromInputStream(in).mkString
-                val writer: PrintWriter = response.getWriter
-                writer.println(htmlResponse)
-                writer.close()
-              case _ =>
-                logger.error(s"Cound not find a resource at $path")
-                response.sendError(HttpStatus.NOT_FOUND_404)
-            }
+        def format(gameUpdateCommands: Seq[GameUpdateCommand]): Seq[String] = {
+          def locatorFormatter(gameLocator: GameLocator): String = {
+            GameAndTickets.values.find(gat => gat.gameLocator == gameLocator).map(_.entryName).getOrElse("Unknown")
           }
-          else {
-            response.sendError(HttpStatus.METHOD_NOT_ALLOWED_405)
+          gameUpdateCommands.map { gameUpdateCommand =>
+            s"${locatorFormatter(gameUpdateCommand.gameLocator)}:${gameUpdateCommand.name}@${gameUpdateCommand.value}"
           }
         }
+        actualGameUpdateComamndsValidation.map(format) must be_\/-(containTheSameElementsAs(format(expectedGameUpdateCommands)))
       }
-      server.setHandler(handler)
-      server.start()
-      (server, server.getConnectors()(0).asInstanceOf[ServerConnector].getLocalPort)
-    }
-
-    override def after: Any = {
-      server.stop()
     }
   }
 }
+
+sealed trait GameAndTickets extends EnumEntry {
+  val gameLocator: GameLocator
+  val gameUpdateCommands: Seq[GameUpdateCommand]
+}
+
+object GameAndTickets extends Enum[GameAndTickets] {
+  val values = findValues
+
+  abstract class GameAndTicketsImpl(override val entryName: String, dateTimePlayed: DateTime, gameUpdateCommandsFactories: (GameLocator => GameUpdateCommand)*) extends GameAndTickets {
+
+    override val gameLocator = DatePlayedLocator(dateTimePlayed)
+    override val gameUpdateCommands = gameUpdateCommandsFactories.map(_(gameLocator))
+  }
+
+  // Home - currently no ticket info
+  object STOKE extends GameAndTicketsImpl("Stoke", November(5, 2016) at 3 pm)
+  object ARSENAL extends GameAndTicketsImpl("Arsenal", December(3, 2016) at (17, 30))
+  object BURNLEY extends GameAndTicketsImpl("Burnley", December(14, 2016) at (19, 45))
+  object HULL extends GameAndTicketsImpl("Hull", December(17, 2016) at 3 pm)
+
+  //Away
+  object TOTTENHAM extends GameAndTicketsImpl(
+    "Tottingham",
+    November(19, 2016) at (17, 30),
+    BondHolderTicketsUpdateCommand(_, November(2, 2016) at 9 am),
+    PriorityPointTicketsUpdateCommand(_, November(3, 2016) at 9 am)
+  )
+
+  object MANURE_LEAGUE extends GameAndTicketsImpl(
+    "ManUre_League",
+    November(27, 2016) at (16,30),
+    BondHolderTicketsUpdateCommand(_, November(5, 2016) at 9 am),
+    PriorityPointTicketsUpdateCommand(_, November(7, 2016) at 9 am),
+    AcademyTicketsUpdateCommand(_, November(9, 2016) at 9 am),
+    GeneralSaleTicketsUpdateCommand(_, November(10, 2016) at 9 am)
+  )
+
+  object MANURE_EFL extends GameAndTicketsImpl(
+    "ManUre_EFL",
+    November(30, 2016) at 8 pm,
+    BondHolderTicketsUpdateCommand(_, November(9, 2016) at 9 am),
+    PriorityPointTicketsUpdateCommand(_, November(10, 2016) at 9 am),
+    AcademyTicketsUpdateCommand(_, November(12, 2016) at 9 am),
+    GeneralSaleTicketsUpdateCommand(_, November(14, 2016) at 9 am)
+  )
+
+  object LIVERPOOL extends GameAndTicketsImpl(
+    "Liverpool",
+    December(11, 2016) at (16, 30),
+    BondHolderTicketsUpdateCommand(_, November(16, 2016) at 9 am),
+    PriorityPointTicketsUpdateCommand(_, November(17, 2016) at 9 am),
+    AcademyTicketsUpdateCommand(_, November(19, 2016) at 9 am),
+    GeneralSaleTicketsUpdateCommand(_, November(21, 2016) at 9 am)
+  )
+
+  object LEICESTER extends GameAndTicketsImpl(
+    "Leicester",
+    December(31, 2016) at 3 pm,
+    BondHolderTicketsUpdateCommand(_, November(30, 2016) at 9 am),
+    PriorityPointTicketsUpdateCommand(_, December(1, 2016) at 9 am),
+    AcademyTicketsUpdateCommand(_, December(3, 2016) at 9 am),
+    GeneralSaleTicketsUpdateCommand(_, December(5, 2016) at 9 am)
+  )
+}
+
