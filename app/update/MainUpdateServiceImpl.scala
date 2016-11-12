@@ -144,13 +144,7 @@ class MainUpdateServiceImpl @javax.inject.Inject() (
    * Find a game from its game locator.
    */
   def findGame(allGames: List[Game], gameLocator: GameLocator): Option[Game] = {
-    def gameFinder: Game => Boolean = { (game: Game) =>
-      gameLocator match {
-        case GameKeyLocator(gameKey) => game.gameKey == gameKey
-        case DatePlayedLocator(datePlayed) => game.at.contains(datePlayed)
-      }
-    }
-    allGames find gameFinder
+    allGames.find(gameLocator.matches)
   }
 
   /**
