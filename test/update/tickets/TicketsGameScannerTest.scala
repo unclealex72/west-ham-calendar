@@ -69,7 +69,7 @@ class TicketsGameScannerTest extends Specification with DisjunctionMatchers with
   val wsClient = new AhcWSClient(new DefaultAsyncHttpClientConfig.Builder().build())
 
   val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
-  val gameUpdateCommandsValidation: \/[NonEmptyList[String], Seq[GameUpdateCommand]] = Await.result(ticketsGameScanner.scan(Some(2016)), 10.seconds)
+  val gameUpdateCommandsValidation: \/[NonEmptyList[String], Seq[GameUpdateCommand]] = Await.result(ticketsGameScanner.scan(Some(2016)), 10.minutes)
 
   server.stop()
 
@@ -107,20 +107,6 @@ object GameAndTickets extends Enum[GameAndTickets] {
     override val gameUpdateCommands = gameUpdateCommandsFactories.map(_(gameLocator))
   }
 
-  // Home - currently no ticket info
-  object STOKE extends GameAndTicketsImpl("Stoke", November(5, 2016) at 3 pm)
-  object ARSENAL extends GameAndTicketsImpl("Arsenal", December(3, 2016) at (17, 30))
-  object BURNLEY extends GameAndTicketsImpl("Burnley", December(14, 2016) at (19, 45))
-  object HULL extends GameAndTicketsImpl("Hull", December(17, 2016) at 3 pm)
-
-  //Away
-  object TOTTENHAM extends GameAndTicketsImpl(
-    "Tottingham",
-    November(19, 2016) at (17, 30),
-    BondHolderTicketsUpdateCommand(_, November(2, 2016) at 9 am),
-    PriorityPointTicketsUpdateCommand(_, November(3, 2016) at 9 am)
-  )
-
   object MANURE_LEAGUE extends GameAndTicketsImpl(
     "ManUre_League",
     November(27, 2016) at (16,30),
@@ -148,6 +134,15 @@ object GameAndTickets extends Enum[GameAndTickets] {
     GeneralSaleTicketsUpdateCommand(_, November(21, 2016) at 9 am)
   )
 
+  object SWANSEA extends GameAndTicketsImpl(
+    "Swansea",
+    December(26, 2016) at 4 pm,
+    BondHolderTicketsUpdateCommand(_, November(23, 2016) at 9 am),
+    PriorityPointTicketsUpdateCommand(_, November(24, 2016) at 9 am),
+    AcademyTicketsUpdateCommand(_, November(26, 2016) at 9 am),
+    GeneralSaleTicketsUpdateCommand(_, November(28, 2016) at 9 am)
+  )
+
   object LEICESTER extends GameAndTicketsImpl(
     "Leicester",
     December(31, 2016) at 3 pm,
@@ -156,5 +151,6 @@ object GameAndTickets extends Enum[GameAndTickets] {
     AcademyTicketsUpdateCommand(_, December(3, 2016) at 9 am),
     GeneralSaleTicketsUpdateCommand(_, December(5, 2016) at 9 am)
   )
+
 }
 

@@ -22,11 +22,10 @@
 
 package html
 
-import org.joda.time.DateTime
 
-import model.GameKey
+import org.joda.time.{DateTime, LocalDate}
+import model.{Game, GameKey}
 import dates.DateTimeImplicits._
-
 import enumeratum._
 
 import scala.reflect.ClassTag
@@ -52,7 +51,9 @@ import scala.reflect.ClassTag
  *
  *
  */
-sealed trait GameLocator extends Ordered[GameLocator]
+sealed trait GameLocator extends Ordered[GameLocator] {
+  def matches(game: Game): Boolean
+}
 
 sealed trait LocatorType extends EnumEntry
 object LocatorType extends Enum[LocatorType] {
@@ -60,7 +61,7 @@ object LocatorType extends Enum[LocatorType] {
   val values = findValues
 
   object PRIMARY_KEY extends LocatorType
-  object DATETIME_PLAYED extends LocatorType
+  object DAY_PLAYED extends LocatorType
 
   implicit val ordering: Ordering[LocatorType] = Ordering.by(values.indexOf)
 }
@@ -89,7 +90,9 @@ sealed abstract class AbstractGameLocator[E](
  * @author alex
  *
  */
-case class GameKeyLocator(val gameKey: GameKey) extends AbstractGameLocator[GameKey](LocatorType.PRIMARY_KEY, gameKey)
+case class GameKeyLocator(gameKey: GameKey) extends AbstractGameLocator[GameKey](LocatorType.PRIMARY_KEY, gameKey) {
+  override def matches(game: Game): Boolean = game.gameKey == gameKey
+}
 
 /**
  * A {@link GameLocator} that locates games using the date they were played.
@@ -97,5 +100,10 @@ case class GameKeyLocator(val gameKey: GameKey) extends AbstractGameLocator[Game
  * @author alex
  *
  */
-case class DatePlayedLocator(val datePlayed: DateTime) extends AbstractGameLocator[DateTime](
-  LocatorType.DATETIME_PLAYED, datePlayed)
+case class DatePlayedLocator(datePlayed: LocalDate) extends AbstractGameLocator[LocalDate](
+  LocatorType.DAY_PLAYED, datePlayed)(Ordering.by(d => (d.getYear, d.getMonthOfYear, d.getDayOfMonth))) {
+  override def matches(game: Game): Boolean = game.at.map(_.toLocalDate).contains(datePlayed)
+}
+object DatePlayedLocator {
+  def apply(dateTime: DateTime): DatePlayedLocator = DatePlayedLocator(dateTime.toLocalDate)
+}
