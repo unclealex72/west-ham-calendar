@@ -39,7 +39,7 @@ class GameLocatorSpec extends Specification {
   "The two different types of game locators" should {
     val gameKeyLocator: GameLocator =
       new GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012))
-    val datePlayedLocator: GameLocator = new DatePlayedLocator(new DateTime())
+    val datePlayedLocator: GameLocator = DatePlayedLocator(new DateTime())
     "order GameKeyLocators before DatePlayedLocators" in {
       gameKeyLocator must be_<(datePlayedLocator)
     }
