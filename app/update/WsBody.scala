@@ -32,11 +32,15 @@ trait WsBody {
     for {
       body <- FE <~ bodyText(uri)(responseBuilder)
     } yield {
-      val cleaner = new HtmlCleaner()
-      val rootNode = cleaner.clean(body)
-      val page = new SimpleXmlSerializer(cleaner.getProperties).getAsString(rootNode)
-      XML.loadString(page)
+      cleanHtml(body)
     }
+  }
+
+  def cleanHtml(html: String): Elem = {
+    val cleaner = new HtmlCleaner()
+    val rootNode = cleaner.clean(html)
+    val page = new SimpleXmlSerializer(cleaner.getProperties).getAsString(rootNode)
+    XML.loadString(page)
   }
 
   def bodyJson[R](uri: URI)(responseBuilder: String => Future[WSResponse])(implicit reader: UReader[\/[NonEmptyList[String], R]], ec: ExecutionContext): Future[\/[NonEmptyList[String], R]] = FE {

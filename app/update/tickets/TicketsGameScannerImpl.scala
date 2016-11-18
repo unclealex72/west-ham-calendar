@@ -24,7 +24,7 @@ import scala.language.postfixOps
  */
 class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSClient)(implicit val ec: ExecutionContext) extends TicketsGameScanner with RemoteLogging with WsBody with NodeExtensions {
 
-  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = FE {
+  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = FE {
     latestSeason match {
       case Some(ls) =>
         val ticketsUri = rootUri.resolve("/tickets/match-tickets")
@@ -34,16 +34,16 @@ class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSCli
         } yield gameUpdateCommands
       case _ =>
         logger info "There are currently no games so tickets will not be searched for."
-        FE <~ List.empty
+        FE <~ Seq.empty
     }
   }
 
-  def createUpdateCommandsForAllTicketsPage(latestSeason: Int, page: Elem)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = {
+  def createUpdateCommandsForAllTicketsPage(latestSeason: Int, page: Elem)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
     val ticketPageUrls = for {
       a <- (page \\ "a").toList if a.hasClass("tickets-more-info")
       href <- a.attributes.asAttrMap.get("href").toList if href.contains("away-matches")
     } yield rootUri.resolve(new URI(href))
-    val empty: Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = Future.successful(List.empty.right)
+    val empty: Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = Future.successful(Seq.empty.right)
     ticketPageUrls.foldLeft(empty) {(existingGameUpdateCommands, ticketPageUrl) =>
       FE {
         for {
@@ -54,7 +54,7 @@ class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSCli
     }
   }
 
-  def createUpdateCommandsForSinglePage(latestSeason: Int, uri: URI)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]] = FE {
+  def createUpdateCommandsForSinglePage(latestSeason: Int, uri: URI)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = FE {
     logger info s"Found tickets page $uri"
     for {
       page <- FE <~ bodyXml(uri)(ws.url(_).get())
