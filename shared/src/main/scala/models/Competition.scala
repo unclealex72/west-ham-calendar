@@ -66,17 +66,17 @@ object Competition extends JsonEnum[Competition] {
   /**
    * The FA Premiership.
    */
-  case object PREM extends LeagueCompetition("Premiership", "Barclays Premier League", "Premier League")
+  case object PREM extends LeagueCompetition("Premiership", "Barclays Premier League", "Premier League", "premier-league")
 
   /**
    * The League Cup.
    */
-  case object LGCP extends CupCompetition("League Cup", "English Capital One Cup", "EFL Cup")
+  case object LGCP extends CupCompetition("League Cup", "English Capital One Cup", "EFL Cup", "capital-one-cup", "efl-cup")
 
   /**
    * The FA Cup.
    */
-  case object FACP extends CupCompetition("FA Cup", "English FA Cup")
+  case object FACP extends CupCompetition("FA Cup", "English FA Cup", "fa-cup")
 
   /**
    * The Championship.
@@ -91,15 +91,17 @@ object Competition extends JsonEnum[Competition] {
   /**
    * Friendly matches.
    */
-  case object FRIENDLY extends CupCompetition("Friendly", "Pre-Season Match", "Betway Cup", "Mark Noble Testimonial")
+  case object FRIENDLY extends CupCompetition("Friendly")
 
   /**
    * The EUROPA League.
    */
-  case object EUROPA extends CupCompetition("UEFA Europa League", "UEFA Europa League", "UEFA Europa League Qualifying")
+  case object EUROPA extends CupCompetition("UEFA Europa League", "UEFA Europa League", "UEFA Europa League Qualifying", "europaleague")
 
-  def apply(token: String): Either[String, Competition] = {
-    values.find(_.tokens.contains(token)).toRight(s"$token is not a valid competition token.")
+  def apply(token: String): Competition = {
+    values.find { competition =>
+      competition.tokens.exists(competitionToken => token.contains(competitionToken))
+    }.getOrElse(FRIENDLY)
   }
 
 }

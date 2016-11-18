@@ -99,7 +99,7 @@ class MainUpdateServiceImpl @javax.inject.Inject() (
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
-  def processUpdates(updatesType: String, scanner: GameScanner, latestSeason: Option[Int], allGames: List[Game])(implicit remoteStream: RemoteStream):
+  def processUpdates(updatesType: String, scanner: GameScanner, latestSeason: Option[Int], allGames: Seq[Game])(implicit remoteStream: RemoteStream):
   Future[\/[NonEmptyList[String], List[Game]]] = {
     logger info s"Scanning for $updatesType changes."
     FE {
@@ -112,7 +112,7 @@ class MainUpdateServiceImpl @javax.inject.Inject() (
     }
   }
 
-  def updateAndStoreGames(allGames: List[Game], allGameUpdateCommands: List[GameUpdateCommand]) = {
+  def updateAndStoreGames(allGames: Seq[Game], allGameUpdateCommands: Seq[GameUpdateCommand]) = {
     val updatesByGameLocator = allGameUpdateCommands.groupBy(_.gameLocator)
     updatesByGameLocator.foldRight(Future.successful(List.empty[Game])) { (gl, fGames) =>
       val (gameLocator, updates) = gl
@@ -125,7 +125,7 @@ class MainUpdateServiceImpl @javax.inject.Inject() (
     }
   }
 
-  def updateAndStoreGame(allGames: List[Game], gameLocator: GameLocator, updates: List[GameUpdateCommand]): Future[Option[Game]] = {
+  def updateAndStoreGame(allGames: Seq[Game], gameLocator: GameLocator, updates: Seq[GameUpdateCommand]): Future[Option[Game]] = {
     val (isNew, oGame) = findGame(allGames, gameLocator) match {
       case Some(game) => (false, Some(game))
       case _ => (true, createNewGame(gameLocator))
@@ -143,7 +143,7 @@ class MainUpdateServiceImpl @javax.inject.Inject() (
   /**
    * Find a game from its game locator.
    */
-  def findGame(allGames: List[Game], gameLocator: GameLocator): Option[Game] = {
+  def findGame(allGames: Seq[Game], gameLocator: GameLocator): Option[Game] = {
     allGames.find(gameLocator.matches)
   }
 
