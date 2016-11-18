@@ -15,5 +15,5 @@ import scalaz.{NonEmptyList, \/, ValidationNel}
  */
 trait GameScanner {
 
-  def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], List[GameUpdateCommand]]]
+  def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]]
 }
