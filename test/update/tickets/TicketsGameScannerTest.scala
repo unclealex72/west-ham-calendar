@@ -138,7 +138,7 @@ object GameAndTickets extends Enum[GameAndTickets] {
     "Swansea",
     December(26, 2016) at 4 pm,
     BondHolderTicketsUpdateCommand(_, November(23, 2016) at 9 am),
-    PriorityPointTicketsUpdateCommand(_, November(24, 2016) at 9 am),
+    PriorityPointTicketsUpdateCommand(_, November(23, 2016) at 5 pm),
     AcademyTicketsUpdateCommand(_, November(26, 2016) at 9 am),
     GeneralSaleTicketsUpdateCommand(_, November(28, 2016) at 9 am)
   )
