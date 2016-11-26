@@ -97,9 +97,9 @@ class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSCli
             case _ =>
               val maybeNewState = for {
                 ticketType <- maybeCurrentTicketType
-                sellingDate <- PossiblyYearlessDateParser.forSeason(latestSeason)("d MMMM", "dd MMMM").find(text) if sellingDate.toLocalDate != localDate
+                sellingDate <- PossiblyYearlessDateParser.forSeason(latestSeason)("ha, EEEE d MMMM").find(text) if sellingDate.toLocalDate != localDate
               } yield {
-                val sellingDateTime = sellingDate.withMillisOfDay(0).withHourOfDay(9)
+                val sellingDateTime = sellingDate.withMinuteOfHour(0).withMillisOfSecond(0)
                 logger info s"Found ticket type $ticketType on sale at $sellingDateTime"
                 val gameUpdateCommand = createGameUpdateCommand(datePlayedLocator, ticketType, sellingDateTime)
                 State(
