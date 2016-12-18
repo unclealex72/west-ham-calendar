@@ -112,7 +112,7 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
     eventualResponse.map(toGameUpdateCommands(season.year)).flatMap { e => e match {
       case -\/(messages) => Future.successful(-\/(messages))
       case \/-(newGameUpdateCommands) =>
-        if (newGameUpdateCommands.isEmpty) {
+        if (newGameUpdateCommands.diff(previousGameUpdateCommands).isEmpty) {
           Future.successful(\/-(previousGameUpdateCommands))
         }
         else {
