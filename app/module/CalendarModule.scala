@@ -100,7 +100,7 @@ class CalendarModule() extends AbstractModule with ScalaModule {
     // Sprites
     bind[SpriteService].to[SpriteServiceImpl]
 
-    bind[SpriteHolder].to[PlayCacheSpriteHolder]
+    bind[SpriteHolder].to[NoOpSpriteHolder]
 
     // filters.Filters
     //bind[SSLFilter].to[SSLFilter]

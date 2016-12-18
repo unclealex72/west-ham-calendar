@@ -15,5 +15,5 @@ trait SpriteService {
     * @param maxSize The maximum size of each image
     * @return The combined image and a map of the URLs to their position in the new image.
     */
-  def generate(imageURLs: Set[String], maxSize: Dimension): (BufferedImage, Map[String, Point])
+  def generate(imageURLs: Set[String], maxSize: Dimension): Option[(BufferedImage, Map[String, Point])]
 }
