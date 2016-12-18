@@ -22,7 +22,7 @@ class SpriteServiceImpl @Inject() extends SpriteService with StrictLogging {
     * @param maxSize  The maximum size of each image
     * @return The combined image and a map of the URLs to their position in the new image.
     */
-  override def generate(imageURLs: Set[String], maxSize: Dimension): (BufferedImage, Map[String, Point]) = {
+  override def generate(imageURLs: Set[String], maxSize: Dimension): Option[(BufferedImage, Map[String, Point])] = {
     val image = new BufferedImage(maxSize.width * imageURLs.size, maxSize.height, BufferedImage.TYPE_INT_ARGB)
     val graphics = image.getGraphics.asInstanceOf[Graphics2D]
     val coordinatesByUrl = imageURLs.zipWithIndex.foldLeft(Map.empty[String, Point]) { (coordinatesByUrl, indexedUrl) =>
@@ -33,7 +33,7 @@ class SpriteServiceImpl @Inject() extends SpriteService with StrictLogging {
     }
     graphics.dispose()
     image.flush()
-    (image, coordinatesByUrl)
+    Some((image, coordinatesByUrl))
   }
 
   def drawTo(graphics: Graphics2D, url: String, coordinate: Point, maxSize: Dimension): Unit = {

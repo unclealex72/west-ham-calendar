@@ -52,14 +52,17 @@ class PlayCacheSpriteHolder @Inject() (val cacheApi: CacheApi, val logoSizes: Lo
 
   def update(key: Key[Sprite], size: Dimension, urls: Future[Set[String]])(implicit ec: ExecutionContext): Future[Unit] = urls.map { urls =>
     logger.info(s"Updating logo cache ${key.name}")
-    val (image, coordinatesByUrl) = spriteService.generate(urls, size)
-    val out = new ByteArrayOutputStream
-    ImageIO.write(image, "png", out)
-    def positionToClassName(coordinate: Point): String = s"sprite-${key.name}-${coordinate.x}-${coordinate.y}"
-    val classNamesByUrl = coordinatesByUrl.mapValues(positionToClassName)
-    val positionsByClassName = coordinatesByUrl.values.foldLeft(Map.empty[String, Point]) { (positionsByClassName, coordinate) =>
-      positionsByClassName + (positionToClassName(coordinate) -> coordinate)
+    spriteService.generate(urls, size).foreach {
+      case (image, coordinatesByUrl) =>
+        val out = new ByteArrayOutputStream
+        ImageIO.write(image, "png", out)
+        def positionToClassName(coordinate: Point): String = s"sprite-${key.name}-${coordinate.x}-${coordinate.y}"
+        val classNamesByUrl = coordinatesByUrl.mapValues(positionToClassName)
+        val positionsByClassName = coordinatesByUrl.values.foldLeft(Map.empty[String, Point]) { (positionsByClassName, coordinate) =>
+          positionsByClassName + (positionToClassName(coordinate) -> coordinate)
+        }
+        key.put(Sprite(out.toByteArray, positionsByClassName, classNamesByUrl))
+
     }
-    key.put(Sprite(out.toByteArray, positionsByClassName, classNamesByUrl))
   }
 }
