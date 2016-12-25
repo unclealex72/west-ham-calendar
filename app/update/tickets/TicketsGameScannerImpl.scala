@@ -83,7 +83,7 @@ class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSCli
           case child => extractTexts(child)
         }
       }
-      val texts = extractTexts(pageXml).dropWhile(!_.contains("Sale Dates"))
+      val texts = extractTexts(pageXml).dropWhile(!_.contains("Accessibility")).map(_.trim)
       val localDate = dateTime.toLocalDate
       val datePlayedLocator = DatePlayedLocator(localDate)
       case class State(

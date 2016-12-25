@@ -24,6 +24,7 @@
 
 package dates
 
+import com.typesafe.scalalogging.slf4j.StrictLogging
 import dates.JodaDateTime._
 import org.joda.time.{DateTime, DayOfWeekIgnoringChronology}
 import org.joda.time.format.DateTimeFormat
@@ -32,7 +33,7 @@ import org.joda.time.format.DateTimeFormat
  * @author alex
  *
  */
-class JodaDateParser(dateFormat: String) extends DateParser {
+class JodaDateParser(dateFormat: String) extends DateParser with StrictLogging {
 
   val dateTimeFormatter =
     DateTimeFormat.forPattern(dateFormat).withZone(EUROPE_LONDON).withChronology(
@@ -58,7 +59,11 @@ class JodaDateParser(dateFormat: String) extends DateParser {
           dateTimes.find(_.isDefined).getOrElse(findInternal(str.substring(1), maxLength))
       }
     }
-    findInternal(str, dateTimeFormatter.getParser.estimateParsedLength)
+    val maybeResult = findInternal(str, dateTimeFormatter.getParser.estimateParsedLength)
+    if (maybeResult.isEmpty) {
+      logger.debug(s"Could not find a date time in string '$str' using date format '$dateFormat'")
+    }
+    maybeResult
   }
 
 }
