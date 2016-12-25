@@ -66,7 +66,7 @@ object TicketType extends JsonEnum[TicketType] {
   val values = findValues
 
   case object PriorityPointTicketType extends AbstractTicketType(
-    "PriorityPoint", "Priority point", true, "Priority Point Applications", "ST Holders with")
+    "PriorityPoint", "Priority point", true, "Priority Point Applications", "ST Holders with", "Season Ticket Holders with")
   case object BondholderTicketType extends AbstractTicketType(
     "Bondholder", "Bond holder", false, "Bondholders")
   case object SeasonTicketType extends AbstractTicketType(

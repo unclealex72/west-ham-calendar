@@ -152,5 +152,14 @@ object GameAndTickets extends Enum[GameAndTickets] {
     GeneralSaleTicketsUpdateCommand(_, December(5, 2016) at 9 am)
   )
 
+  object MIDDLESBROUGH extends GameAndTicketsImpl(
+    "Middlesbrough",
+    January(21, 2017) at 3 pm,
+    BondHolderTicketsUpdateCommand(_, December(27, 2016) at 3 pm),
+    PriorityPointTicketsUpdateCommand(_, December(28, 2016) at 3 pm),
+    SeasonTicketsUpdateCommand(_, December(30, 2016) at 3 pm),
+    AcademyTicketsUpdateCommand(_, January(2, 2017) at 9 am),
+    GeneralSaleTicketsUpdateCommand(_, January(4, 2017) at 9 am)
+  )
 }
 
