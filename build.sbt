@@ -55,8 +55,8 @@ lazy val play = (project in file(".")).settings(
       // webjars & frontend
     "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
     "org.webjars.bower" % "roboto-fontface" % "0.4.5",
-    "org.webjars.bower" % "angular-materialize" % "0.1.5",
-    "org.webjars.bower" % "materialize" % "0.97.6",
+    "org.webjars.bower" % "angular-materialize" % "0.2.2",
+    "org.webjars.bower" % "materialize" % "0.97.8",
     "org.webjars.bower" % "angular" % "1.5.7",
       // test
       "org.hsqldb" % "hsqldb" % "2.3.3" % "test",
