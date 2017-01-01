@@ -14,9 +14,6 @@ trait LinkFactories extends Secure with Secret with FutureResults {
   def ticketLinksFactory(implicit request: Request[_ <: AnyContent]): Game => TicketType => Links[TicketingInformationRel] = game => ticketType => {
     secureLinks(game, Links[TicketingInformationRel]()) { links =>
       ticketType match {
-        case PriorityPointTicketType =>
-          val url = controllers.routes.PriorityPointsPdf.priorityPoints(game.id).absoluteURL()
-          links.withLink(TicketingInformationRel.FORM, url)
         case _ => links
       }
     }

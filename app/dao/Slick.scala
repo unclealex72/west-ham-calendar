@@ -5,7 +5,6 @@ import java.sql.Timestamp
 import dates.JodaDateTime
 import models.{Competition, GameResult, Location}
 import org.joda.time.DateTime
-import pdf.ClientType
 import slick.backend.DatabaseConfig
 import slick.driver.JdbcProfile
 
@@ -29,8 +28,6 @@ trait Slick {
   implicit val competitionColumnType = MappedColumnType.base[Competition, String](_.entryName, Competition.withName)
 
   implicit val locationColumnType = MappedColumnType.base[Location, String](_.entryName, Location.withName)
-
-  implicit val clientTypeColumnType = MappedColumnType.base[ClientType, String](_.entryName, ClientType.withName)
 
   implicit val gameResultColumnType = MappedColumnType.base[GameResult, String](_.serialise, GameResult.apply)
 }
