@@ -7,103 +7,71 @@ import sbtrelease._
 import sbtrelease.ReleaseStateTransformations._
 import sbtrelease.ReleasePlugin.autoImport.{ReleaseStep, releaseProcess}
 
-name := "west-ham-calendar"
+// a special crossProject for configuring a JS/JVM/shared structure
+lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared"))
+  .settings(
+    version := (version in ThisBuild).value,
+    scalaVersion := Settings.versions.scala,
+    libraryDependencies ++= Settings.sharedDependencies.value
+  )
+  // set up settings specific to the JS project
+  .jsConfigure(_ enablePlugins ScalaJSWeb)
 
+lazy val sharedJVM = shared.jvm.settings(name := "sharedJVM")
+
+lazy val sharedJS = shared.js.settings(name := "sharedJS")
+
+// instantiate the JS project for SBT with some additional settings
+lazy val js: Project = (project in file("js"))
+  .settings(
+    name := "js",
+    version := (version in ThisBuild).value,
+    scalaVersion := Settings.versions.scala,
+    scalacOptions ++= Settings.scalacOptions,
+    libraryDependencies ++= Settings.scalajsDependencies.value,
+    jsDependencies ++= Settings.jsDependencies.value,
+    // RuntimeDOM is needed for tests
+    jsDependencies += RuntimeDOM % "test",
+    // yes, we want to package JS dependencies
+    skip in packageJSDependencies := false,
+    // use Scala.js provided launcher code to start the client app
+    persistLauncher := true,
+    persistLauncher in Test := false,
+    // use uTest framework for tests
+    testFrameworks += new TestFramework("utest.runner.Framework")
+  )
+  .enablePlugins(ScalaJSPlugin, ScalaJSWeb)
+  .dependsOn(sharedJS)
+
+// Client projects (just one in this case)
 lazy val clients = Seq(js)
-lazy val scalaV = "2.11.7"
-
-//resolvers += "bintray/non" at "http://dl.bintray.com/non/maven"
 
 lazy val play = (project in file(".")).settings(
-  scalaVersion := scalaV,
-  scalaJSProjects := clients,
-  pipelineStages := Seq(scalaJSProd, digest),
+  name := "play",
   resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases",
     Resolver.jcenterRepo
   ),
+  version := (version in ThisBuild).value,
+  scalaVersion := Settings.versions.scala,
+  scalacOptions ++= Settings.scalacOptions,
+  libraryDependencies ++= Settings.jvmDependencies.value,
+  // triggers scalaJSPipeline when using compile or continuous compilation
+  compile in Compile <<= (compile in Compile) dependsOn scalaJSPipeline,
+  // connect to the client project
+  scalaJSProjects := clients,
+  pipelineStages in Assets := Seq(scalaJSPipeline),
+  pipelineStages := Seq(digest, gzip),
+  // compress CSS
+  LessKeys.compress in Assets := true,
+
   routesGenerator := InjectedRoutesGenerator,
   scalacOptions in Test ++= Seq("-Yrangepos"),
-  libraryDependencies ++= Seq(
-      //pdf
-      "org.apache.pdfbox" % "pdfbox" % "2.0.0-RC3",
-      //security
-      "com.mohiva" %% "play-silhouette" % "4.0.0-RC1",
-      "com.mohiva" %% "play-silhouette-password-bcrypt" % "4.0.0-RC1",
-      //backend libraries
-      "com.typesafe.scala-logging" %% "scala-logging-slf4j" % "2.1.2",
-      "org.mozilla" % "rhino" % "1.7R3",
-      "joda-time" % "joda-time" % "2.2",
-      "org.joda" % "joda-convert" % "1.3.1",
-      "net.sourceforge.htmlcleaner" % "htmlcleaner" % "2.2",
-      "com.iheart" %% "ficus" % "1.2.2",
-      "org.scalaz" %% "scalaz-core" % "7.2.0",
-      // Dependency Injection
-      "net.codingwell" %% "scala-guice" % "4.0.1",
-      // Database
-      "com.typesafe.play" %% "play-slick" % "1.1.1",
-      "com.typesafe.play" %% "play-slick-evolutions" % "1.1.1",
-      "com.typesafe.slick" %% "slick-codegen" % "3.1.1",
-      cache,
-      filters,
-      ws,
-      "org.mnode.ical4j" % "ical4j" % "1.0.4",
-      "org.postgresql" % "postgresql" % "9.4.1207",
-      "com.rockymadden.stringmetric" % "stringmetric-core" % "0.25.3",
-      "org.imgscalr" % "imgscalr-lib" % "4.2",
-      // webjars & frontend
-    "com.vmunier" %% "play-scalajs-scripts" % "0.3.0",
-    "org.webjars.bower" % "roboto-fontface" % "0.4.5",
-    "org.webjars.bower" % "angular-materialize" % "0.2.2",
-    "org.webjars.bower" % "materialize" % "0.97.8",
-    "org.webjars.bower" % "angular" % "1.5.7",
-      // test
-      "org.hsqldb" % "hsqldb" % "2.3.3" % "test",
-      "org.specs2" %% "specs2-core" % "3.7" % "test",
-      "org.specs2" %% "specs2-mock" % "3.7" % "test",
-      "org.specs2" %% "specs2-junit" % "3.7" % "test",
-      "org.eclipse.jetty" % "jetty-server" % "9.2.10.v20150310" % "test"),
-    scalacOptions in Test ++= Seq("-Yrangepos"),
-    fork in Test := false
+  fork in Test := false
 ).enablePlugins(PlayScala, SbtWeb).
   aggregate(clients.map(projectToRef): _*).
-  dependsOn(sharedJvm, js)
-
-lazy val js = (project in file("js")).settings(
-  scalaVersion := scalaV,
-  persistLauncher := true,
-  persistLauncher in Test := false,
-  emitSourceMaps := true,
-  libraryDependencies ++= Seq(
-    "org.scala-js" %%% "scalajs-dom" % "0.9.0",
-    "com.greencatsoft" %%% "scalajs-angular" % "0.6",
-    "org.querki" %%% "jquery-facade" % "1.0-RC3",
-    "com.lihaoyi" %%% "upickle" % "0.3.8",
-    "com.github.japgolly.fork.scalaz" %%% "scalaz-core" % "7.2.0",
-    "com.github.japgolly.fork.scalaz" %%% "scalaz-scalacheck-binding" % "7.2.0"
-  )
-).enablePlugins(ScalaJSPlugin, ScalaJSPlay).
-  dependsOn(sharedJs)
-
-lazy val shared = (crossProject.crossType(CrossType.Pure) in file("shared")).
-  settings(
-    scalaVersion := scalaV,
-    emitSourceMaps := true,
-    libraryDependencies ++= Seq(
-      "com.beachape" %% "enumeratum" % "1.3.6",
-      "com.lihaoyi" %% "upickle" % "0.3.8",
-      "org.scalaz" %% "scalaz-core" % "7.2.0",
-      "org.specs2" %% "specs2-core" % "3.7" % "test",
-      "org.specs2" %% "specs2-mock" % "3.7" % "test",
-      "org.specs2" %% "specs2-junit" % "3.7" % "test"
-    )).
-  jsConfigure(_ enablePlugins ScalaJSPlay)
-
-lazy val sharedJvm = shared.jvm
-lazy val sharedJs = shared.js
-
-scalaJSStage in Global := FullOptStage
+  dependsOn(sharedJVM)
 
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
@@ -126,8 +94,3 @@ releaseProcess := Seq[ReleaseStep](
   commitNextVersion,
   pushChanges
 )
-
-// for Eclipse users
-EclipseKeys.skipParents in ThisBuild := false
-// Compile the project before generating Eclipse files, so that generated .scala or .class files for views and routes are present
-EclipseKeys.preTasks := Seq(compile in (play, Compile))

@@ -54,7 +54,7 @@ GET         /logout                          controllers.SocialAuthController.si
 GET         /                               controllers.Application.index
 GET         /index.html                     controllers.Application.index
 
-GET         /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                   controllers.Assets.versioned(path="/public", file: Asset)
 
 #GET     /service-worker.js    com.github.mmizutani.playgulp.GulpAssets.at(file = "service-worker.js")
 #GET     /manifest.json        com.github.mmizutani.playgulp.GulpAssets.at(file = "manifest.json")

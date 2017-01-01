@@ -25,7 +25,7 @@ trait NodeExtensions {
 
   implicit class NodeSeqClassFilter(nodeSeq: NodeSeq) {
 
-    def \\~(nameAndClass: (String, String)): NodeSeq = (nodeSeq \\ nameAndClass._1).filter(_.hasClass(nameAndClass._2))
-    def \~(nameAndClass: (String, String)): NodeSeq = (nodeSeq \ nameAndClass._1).filter(_.hasClass(nameAndClass._2))
+    def \\~(name: String, `class`: String): NodeSeq = (nodeSeq \\ name).filter(_.hasClass(`class`))
+    def \~(name: String, `class`: String): NodeSeq = (nodeSeq \ name).filter(_.hasClass(`class`))
   }
 }

@@ -151,14 +151,12 @@ class IcalCalendarWriter @Inject() (
    * Create a SUMMARY property
    */
   def SUMMARY: Event => Property = { event =>
-    val swapOnAway: ((String, String)) => (String, String) = { p =>
-      event.location match {
-        case HOME => p
-        case AWAY => p.swap
-      }
+    val teams = ("West Ham", event.opponents)
+    val (homeTeam, awayTeam) = event.location match {
+      case HOME => teams
+      case AWAY => teams.swap
     }
-    val teams = swapOnAway("West Ham", event.opponents)
-    new Summary(s"${teams._1} vs ${teams._2} (${event.competition.name})")
+    new Summary(s"$homeTeam vs $awayTeam (${event.competition.name})")
   }
 
   /**
