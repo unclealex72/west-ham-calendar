@@ -19,10 +19,6 @@ PUT     /games/:gameId/unattend                controllers.Update.unattend(gameI
 POST     /:secretPayload/update                controllers.Update.update(secretPayload)
 POST     /:secretPayload/updateLogos           controllers.Update.updateLogos(secretPayload)
 
-# Priority points form
-
-GET     /games/:gameId/prioritypoints.pdf      controllers.PriorityPointsPdf.priorityPoints(gameId: Long)
-
 # Game location
 
 GET     /games/:gameId/location.html           controllers.Location.location(gameId: Long)

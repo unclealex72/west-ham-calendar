@@ -36,7 +36,6 @@ import logging.{Fatal, FatalImpl}
 import net.ceedubs.ficus.Ficus._
 import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.codingwell.scalaguice.ScalaModule
-import pdf.{PdfBoxPriorityPointsPdfFactory, PdfPositioning, PriorityPointsPdfFactory}
 import play.api.Configuration
 import play.api.cache.CacheApi
 import play.api.http.HttpFilters
@@ -88,10 +87,6 @@ class CalendarModule() extends AbstractModule with ScalaModule {
     //MVC
     bind[GameRowFactory].to[GameRowFactoryImpl]
 
-    // PDF
-    bind[PriorityPointsPdfFactory].to[PdfBoxPriorityPointsPdfFactory]
-    bind[PriorityPointsConfigurationDao].to[SlickPriorityPointsConfigurationDao]
-
     // Logging
     bind[Fatal].to[FatalImpl]
     bind[FatalErrorDao].to[SlickFatalErrorDao]
@@ -116,11 +111,6 @@ class CalendarModule() extends AbstractModule with ScalaModule {
   def provideLogoSizes(config: Configuration): LogoSizes = {
     def dimension(ty: String): Dimension = new Dimension(config.underlying.getInt(s"sprites.$ty.x"), config.underlying.getInt(s"sprites.$ty.y"))
     LogoSizes(dimension("teams"), dimension("competitions"))
-  }
-
-  @Provides
-  def providePdfPositioning(config: Configuration): PdfPositioning = {
-    config.underlying.as[PdfPositioning]("pdf")
   }
 
   @Provides
