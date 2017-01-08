@@ -18,10 +18,7 @@ trait JsonSerialiser {
 
   def jsArr[A](f: A => Js.Value)(as: Seq[A]): Js.Value = Js.Arr(as.map(f): _*)
 
-  def jsSorted[A](f: A => Js.Value)(as: SortedSet[A]): Js.Value = {
-    val seq = as.foldLeft(Seq.empty[A])(_ :+ _)
-    jsArr(f)(seq)
-  }
+  def jsBool(value: Boolean): Js.Value = if (value) Js.True else Js.False
 }
 
 trait JsonDeserialiser {
@@ -37,14 +34,12 @@ trait JsonDeserialiser {
     }
 
     def optional[E](name: String)(f: Js.Value => ValidationNel[String, E]): ValidationNel[String, Option[E]] = {
-      val onSome = fields.get(name).map(f).map { e =>
-        e match {
-          case Success(value) => {
-            val success: Option[E] = Some(value)
-            success.successNel[String]
-          }
-          case Failure(msg) => msg.failure[Option[E]]
+      val onSome = fields.get(name).map(f).map {
+        case Success(value) => {
+          val success: Option[E] = Some(value)
+          success.successNel[String]
         }
+        case Failure(msg) => msg.failure[Option[E]]
       }
       onSome.getOrElse {
         val none: Option[E] = None
@@ -100,9 +95,6 @@ trait JsonDeserialiser {
         }
       case _ => "Did not find a JSON array when one was required.".failureNel
     }
-
-    def jsSorted[E: SOrdering](f: Js.Value => ValidationNel[String, E]): ValidationNel[String, SortedSet[E]] =
-      jsArr(f).map(_.foldLeft(SortedSet.empty[E])(_ + _))
 
     def jsLong: ValidationNel[String, Long] = {
       value match {

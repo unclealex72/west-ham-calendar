@@ -1,13 +1,17 @@
 package dates
 
+import java.util.Date
+
 import scalaz.Ordering._
 import scalaz.Scalaz._
 import scalaz._
 import scala.math.{Ordering => SOrdering}
+
 /**
   * A class to allow dates to be shared between Javascript and Scala
   * Created by alex on 20/02/16.
   */
+
 case class SharedDate(year: Int, month: Int, day: Int, hours: Int, minutes: Int, seconds: Int, offsetHours: Int, offsetMinutes: Int) {
 
   override def toString: String = {
@@ -17,6 +21,16 @@ case class SharedDate(year: Int, month: Int, day: Int, hours: Int, minutes: Int,
       case GT => f"+$offsetHours%02d:$offsetMinutes%02d"
     }
     f"$year%04d-$month%02d-$day%02dT$hours%02d:$minutes%02d:$seconds%02d" + offset
+  }
+
+  def toSharedDay: SharedDay = SharedDay(year, month, day)
+}
+
+case class SharedDay(year: Int, month: Int, day: Int)
+object SharedDay {
+  def apply(date: Date): SharedDay = {
+    //noinspection ScalaDeprecation
+    SharedDay(date.getYear + 1900, date.getMonth + 1, date.getDate)
   }
 }
 
@@ -36,7 +50,7 @@ object SharedDate {
     }
     
     case class RegexParser(sign: String, multiplier: Int) extends TimezoneParser {
-      val r = s"(.+)$sign([0-9]{2}):([0-9]{2})".r
+      private val r = s"(.+)$sign([0-9]{2}):([0-9]{2})".r
       
       override def parse(str: String): Option[(Int, String)] = str match {
         case r(dateTime, hours, minutes) => Some((hours.toInt * 60 + minutes.toInt) * multiplier, dateTime)
@@ -55,7 +69,7 @@ object SharedDate {
     
     //2016-02-20T13:14:10+00:00
 
-    val dateTimeRegex = "([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})".r
+    private val dateTimeRegex = "([0-9]{4})-([0-9]{2})-([0-9]{2})T([0-9]{2}):([0-9]{2}):([0-9]{2})".r
     
     def parseDateTime(timezoneOffset: Int, str: String): \/[String, SharedDate] = str match {
       case dateTimeRegex(year, month, day, hours, minutes, seconds) =>

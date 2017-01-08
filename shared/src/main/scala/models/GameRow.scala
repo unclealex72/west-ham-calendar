@@ -21,15 +21,13 @@
  */
 package models
 
-import java.util.Date
-
 import dates.SharedDate
 import json.JsonConverters
 import upickle.Js
 
+import scala.math.{Ordering => SOrdering}
 import scalaz.Scalaz._
 import scalaz._
-import scala.math.{Ordering => SOrdering}
 
 /**
  * @author alex
@@ -60,7 +58,10 @@ case class GameRow(
   homeTeamLogoClass: Option[String],
   awayTeamLogoClass: Option[String],
   competitionLogoClass: Option[String],
-  links: Links[GameRowRel])
+  links: Links[GameRowRel]) {
+
+  def updateAttendance(newAttendance: Boolean): GameRow = this.copy(attended = Some(newAttendance))
+}
 
 sealed trait GameRowRel extends Rel
 object GameRowRel extends RelEnum[GameRowRel] {

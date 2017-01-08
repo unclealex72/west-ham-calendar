@@ -4,11 +4,13 @@ import enumeratum.{Enum, EnumEntry}
 import json.{JsonDeserialiser, JsonSerialiser}
 import upickle.Js
 
+import scala.collection.Map
+import scala.collection.immutable.MapLike
 import scalaz.Scalaz._
 import scalaz._
 
 /**
-  * Type safe links object
+  * Type safe links object.
   * Created by alex on 14/02/16.
   */
 case class Links[R <: Rel](private val links: Map[R, String] = Map.empty[R, String], private val _self: Option[String] = None) {
@@ -23,10 +25,19 @@ case class Links[R <: Rel](private val links: Map[R, String] = Map.empty[R, Stri
 
   def self: Option[String] = _self
 
-  def apply(rel: R): Option[String] = links.get(rel)
+  def required(rel: R): String = get(rel).get
 
-  def required(rel: R): String = apply(rel).get
+  def get(rel: R): Option[String] = links.get(rel)
+
+  def render(textByRel: Map[R, String]): Seq[Href] = for {
+    (rel, text) <- textByRel.toSeq
+    url <- get(rel)
+  } yield {
+    Href(text, url)
+  }
 }
+
+case class Href(text: String, url: String)
 
 trait Rel extends EnumEntry {
   val rel: String

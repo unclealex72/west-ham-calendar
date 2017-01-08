@@ -47,7 +47,7 @@ lazy val js: Project = (project in file("js"))
 lazy val clients = Seq(js)
 
 lazy val play = (project in file(".")).settings(
-  name := "play",
+  name := Settings.name,
   resolvers ++= Seq(
     "Atlassian Releases" at "https://maven.atlassian.com/public/",
     "releases" at "http://oss.sonatype.org/content/repositories/releases",

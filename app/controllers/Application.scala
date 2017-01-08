@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import dao.GameDao
 import dates.SharedDate
-import models.EntryRel.{LOGIN, LOGOUT}
+import models.RootRel.{LOGIN, LOGOUT}
 import models.GameRow._
 import models._
 import play.api.i18n.MessagesApi
@@ -12,7 +12,7 @@ import play.api.mvc._
 import security.Definitions._
 import services.GameRowFactory
 import upickle.default._
-import models.Entry
+import models.Root
 import models.Season
 
 import scala.collection.SortedSet
@@ -41,26 +41,32 @@ class Application @Inject() (val gameDao: GameDao,
     jsonF(gameDao.getAll) { games =>
       val includeAttended = request.identity.isDefined
       val gamesBySeason = games.groupBy(_.season)
-      val seasons = gamesBySeason.map {
-        case (year, gamesForSeason) =>
-          val gamesByMonth = gamesForSeason.groupBy { game =>
-            game.at.map { dt => (dt.getMonthOfYear, dt.getYear) }
-          }.toSeq.flatMap(monthGame => monthGame._1.map(monthYear => (monthYear._1, monthYear._2, monthGame._2)))
-          val months = gamesByMonth.map { mygs =>
-            val (month, year, games) = mygs
-            val gameRows = games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory))
-            val firstDayInMonth = SharedDate(year, month, 2, 0, 0, 0, 0, 0)
-            Month(firstDayInMonth, SortedSet.empty[GameRow] ++ gameRows)
-          }
-          Season(year, SortedSet.empty[Month] ++ months)
+      val maybeLatestSeason = if (gamesBySeason.isEmpty) None else Some(gamesBySeason.keys.max)
+      val seasons = for {
+        latestSeason <- maybeLatestSeason.toSeq
+        (season, gamesForSeason) <- gamesBySeason.toSeq
+      } yield {
+        val gamesByMonth = gamesForSeason.groupBy { game =>
+          game.at.map { dt => (dt.getMonthOfYear, dt.getYear) }
+        }.toSeq.flatMap(monthGame => monthGame._1.map(monthYear => (monthYear._1, monthYear._2, monthGame._2)))
+        val months = gamesByMonth.map { mygs =>
+          val (month, year, games) = mygs
+          val gameRows = games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory))
+          val firstDayInMonth = SharedDate(year, month, 2, 0, 0, 0, 0, 0)
+          Month(firstDayInMonth, gameRows.sorted)
+        }
+        Season(season, season == latestSeason, months.sorted)
       }
 
       val fullName: Option[String] = request.identity.flatMap(_.fullName)
+      val authLinks: Map[RootRel, Call] = fullName match {
+        case Some(_) => Map(LOGOUT -> routes.SocialAuthController.signOut())
+        case _ => Map(LOGIN -> routes.SocialAuthController.authenticate("google"))
+      }
       val links = Links.
-        withLink(LOGOUT.asInstanceOf[EntryRel], routes.SocialAuthController.signOut().absoluteURL()).
-        withLink(LOGIN, routes.SocialAuthController.authenticate("google").absoluteURL()).
+        withLinks(authLinks.mapValues(_.absoluteURL())).
         withSelf(routes.Application.entry().absoluteURL())
-      Entry(fullName, SortedSet.empty[Season] ++ seasons, links)
+      Root(fullName, seasons.toSeq.sorted, links)
     }
   }
 }

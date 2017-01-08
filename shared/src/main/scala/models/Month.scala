@@ -12,7 +12,15 @@ import scalaz.{ValidationNel, _}
 /**
   * Created by alex on 20/02/16.
   */
-case class Month(date: SharedDate, games: SortedSet[GameRow])
+case class Month(date: SharedDate, games: Seq[GameRow]) {
+
+  def alterAttendance(gameRow: GameRow, newAttendance: Boolean): Month = {
+    games.zipWithIndex.find(gi => gi._1.id == gameRow.id).map(_._2) match {
+      case Some(idx) => this.copy(games = games.updated(idx, gameRow.updateAttendance(newAttendance)))
+      case _ => this
+    }
+  }
+}
 
 object Month extends JsonConverters[Month] {
 
@@ -20,12 +28,12 @@ object Month extends JsonConverters[Month] {
 
   def deserialise(value: Js.Value): ValidationNel[String, Month] = value.jsObj("Month") { fields =>
     val date = fields.mandatory("date")(_.jsDate)
-    val games = fields.mandatory("games")(_.jsSorted(GameRow.deserialise))
+    val games = fields.mandatory("games")(_.jsArr(GameRow.deserialise))
     (date |@| games)(Month.apply)
   }
 
   def serialise(m: Month): Js.Value = Js.Obj (
     "date" -> dateToJson(m.date),
-    "games" -> jsSorted(GameRow.serialise)(m.games)
+    "games" -> jsArr(GameRow.serialise)(m.games)
   )
 }
