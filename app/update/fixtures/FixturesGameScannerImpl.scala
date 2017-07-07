@@ -69,21 +69,6 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
 
   def downloadFixturesForSeason(season: FixturesSeason)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
     downloadFixturesForSeason(season, 0, Seq.empty)
-    /*
-    val fixturesRequest = FixturesRequest(season.yearFromHtml)
-    val fixturesUri: URI = rootUri.resolve("/API/Fixture/Fixtures-and-Result-Listing-API.aspx")
-    FE {
-      for {
-        fixturesResponse <- FE <~ bodyJson[FixturesResponse](fixturesUri) {
-          ws.url(_).
-            withQueryString("t" -> Math.random.toString).
-            withHeaders("Content-Type" -> "application/x-www-form-encoded").
-            post(write(fixturesRequest))
-        }.map(_.ensure(NonEmptyList(s"Did not get a valid fixtures response for season ${season.actualYear}"))(_.isSuccess))
-
-      } yield fixturesResponse.fixtures.flatMap(fx => toGameUpdateCommands(fx, rootUri, season.actualYear)).toList
-    }
-    */
   }
 
   def downloadFixturesForSeason(season: FixturesSeason, page: Int, previousGameUpdateCommands: Seq[GameUpdateCommand])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
@@ -130,15 +115,15 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
       try {
         val fullJson = Json.parse(response.body)
         val dataElements: Seq[JsValue] = fullJson \\ "data"
-        dataElements.headOption.flatMap(_.asOpt[String]) match {
-          case Some(data) =>
-            val gameUpdateCommands = parseHtml(season, data)
-            gameUpdateCommands.foreach { gameUpdateCommand =>
-              logger debug s"Found game update command $gameUpdateCommand"
-            }
-            \/-(gameUpdateCommands)
-          case None => -\/(NonEmptyList("Cannot find a data element in a returned JSON string."))
+        val gameUpdateCommands = for {
+          dataElement <- dataElements
+          data <- dataElement.asOpt[String].toSeq
+          gameUpdateCommand <- parseHtml(season, data)
+        } yield gameUpdateCommand
+        gameUpdateCommands.foreach { gameUpdateCommand =>
+          logger debug s"Found game update command $gameUpdateCommand"
         }
+        \/-(gameUpdateCommands)
       }
       catch {
         case t: Throwable =>
