@@ -68,8 +68,9 @@ class TicketsGameScannerImpl @javax.inject.Inject() (val rootUri: URI, ws: WSCli
     // look for <div class='matchDate'>Saturday 4 April 15:00</div>
     def findWhen: Option[DateTime] = {
       val dateTimes = for {
-        node <- pageXml \\ "div" if node.hasClass("matchDate")
-        dateTime <- PossiblyYearlessDateParser.forSeason(latestSeason)("d MMMM HH:mm", "dd MMMM HH:mm").find(node.text)
+        node <- pageXml \\ "div"
+        attr <- node.attr("data-iso-match-date")
+        dateTime <- PossiblyYearlessDateParser.forSeason(latestSeason)("yyyy-MM-dd'T'HH:mm:ss").find(attr)
       } yield dateTime
       dateTimes.headOption
     }
