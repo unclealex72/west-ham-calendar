@@ -1,19 +1,20 @@
 package controllers
 
+import java.time.{LocalDate, ZonedDateTime}
 import javax.inject.Inject
 
+import com.mohiva.play.silhouette.api.actions.UserAwareRequest
 import dao.GameDao
-import dates.SharedDate
+import dates.ZonedDateTimeExtensions._
+import dates.ZonedDateTimeFactory
 import models.EntryRel.{LOGIN, LOGOUT}
 import models.GameRow._
-import models._
+import models.{EntryTemplate, SeasonTemplate, _}
+import monads.FO
 import play.api.i18n.MessagesApi
-import play.api.mvc._
+import play.api.mvc.{AnyContent, ControllerComponents}
 import security.Definitions._
 import services.GameRowFactory
-import upickle.default._
-import models.Entry
-import models.Season
 
 import scala.collection.SortedSet
 import scala.concurrent.ExecutionContext
@@ -21,38 +22,41 @@ import scala.concurrent.ExecutionContext
 class Application @Inject() (val gameDao: GameDao,
                              val gameRowFactory: GameRowFactory,
                              val secret: SecretToken,
-                             val messagesApi: MessagesApi,
+                             override val messagesApi: MessagesApi,
+                             override val controllerComponents: ControllerComponents,
                              val silhouette: DefaultSilhouette,
                              val auth: Auth,
-                             implicit val ec: ExecutionContext) extends Secure with LinkFactories with JsonResults {
+                             override val zonedDateTimeFactory: ZonedDateTimeFactory,
+                             override implicit val ec: ExecutionContext) extends AbstractController(
+  controllerComponents, zonedDateTimeFactory, ec) with Secure with LinkFactories {
 
   def index = silhouette.UserAwareAction {
     Ok(views.html.index())
   }
 
-  def game(id: Long) = silhouette.UserAwareAction.async { implicit request =>
-    jsonFo(gameDao.findById(id)) { game =>
+  def game(id: Long) = silhouette.UserAwareAction.async { implicit request: UserAwareRequest[DefaultEnv, AnyContent] =>
+    json(gameDao.findById(id)) { game =>
       val includeAttended = request.identity.isDefined
-      gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory)(game)
+      gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended))(game)
     }
   }
 
-  def entry() = silhouette.UserAwareAction.async { implicit request =>
-    jsonF(gameDao.getAll) { games =>
+  def entry() = silhouette.UserAwareAction.async { implicit request: UserAwareRequest[DefaultEnv, AnyContent] =>
+    json(FO(gameDao.getAll)) { games =>
       val includeAttended = request.identity.isDefined
       val gamesBySeason = games.groupBy(_.season)
       val seasons = gamesBySeason.map {
         case (year, gamesForSeason) =>
           val gamesByMonth = gamesForSeason.groupBy { game =>
-            game.at.map { dt => (dt.getMonthOfYear, dt.getYear) }
+            game.at.map { dt => (dt.getMonth, dt.getYear) }
           }.toSeq.flatMap(monthGame => monthGame._1.map(monthYear => (monthYear._1, monthYear._2, monthGame._2)))
           val months = gamesByMonth.map { mygs =>
             val (month, year, games) = mygs
-            val gameRows = games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended), ticketLinksFactory))
-            val firstDayInMonth = SharedDate(year, month, 2, 0, 0, 0, 0, 0)
-            Month(firstDayInMonth, SortedSet.empty[GameRow] ++ gameRows)
+            val gameRows = games.map(gameRowFactory.toRow(includeAttended, gameRowLinksFactory(includeAttended)))
+            val firstDayInMonth = LocalDate.of(year, month, 1).atStartOfDay(zonedDateTimeFactory.zoneId)
+            MonthTemplate(firstDayInMonth, SortedSet.empty[GameRow[ZonedDateTime]] ++ gameRows)
           }
-          Season(year, SortedSet.empty[Month] ++ months)
+          SeasonTemplate(year, SortedSet.empty[MonthTemplate[ZonedDateTime]] ++ months)
       }
 
       val fullName: Option[String] = request.identity.flatMap(_.fullName)
@@ -60,7 +64,7 @@ class Application @Inject() (val gameDao: GameDao,
         withLink(LOGOUT.asInstanceOf[EntryRel], routes.SocialAuthController.signOut().absoluteURL()).
         withLink(LOGIN, routes.SocialAuthController.authenticate("google").absoluteURL()).
         withSelf(routes.Application.entry().absoluteURL())
-      Entry(fullName, SortedSet.empty[Season] ++ seasons, links)
+      EntryTemplate(fullName, SortedSet.empty[SeasonTemplate[ZonedDateTime]] ++ seasons, links)
     }
   }
 }

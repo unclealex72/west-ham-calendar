@@ -7,12 +7,6 @@
         <meta name="viewport" content="width=device-width">
             <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.min.css")">
-        <!--link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"-->
-
-        <link rel="manifest" href="@routes.Assets.at("config/manifest.json")">
-        <link rel="stylesheet" href="@routes.Sprites.teamCss()">
-        <link rel="stylesheet" href="@routes.Sprites.competitionCss()">
 
     </head>
     <body ng-controller="CalendarController">
@@ -22,11 +16,5 @@
 
         <hc-app ng-cloak ng-if="!loading"></hc-app>
 
-        <script src="@routes.Assets.at("lib/jquery/dist/jquery.js")"></script>
-        <script src="@routes.Assets.at("lib/materialize/dist/js/materialize.js")"></script>
-        <script src="@routes.Assets.at("lib/angular/angular.js")"></script>
-        <script src="@routes.Assets.at("lib/angular-materialize/src/angular-materialize.js")"></script>
-        @playscalajs.html.scripts("js", "/assets")
-        <script src="@routes.Assets.at("templates.js")"></script>
     </body>
 </html>

@@ -1,41 +1,38 @@
 package update.tickets
 
-import scalaz._
-import Scalaz._
 import java.io.PrintWriter
 import java.net.URI
+import java.time.ZonedDateTime
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import cats.data.NonEmptyList
+import com.typesafe.scalalogging.StrictLogging
 import dates._
-import enumeratum.EnumEntry
+import enumeratum.{Enum, EnumEntry}
 import html._
-import logging.SimpleRemoteStream
-import org.asynchttpclient.DefaultAsyncHttpClientConfig
+import logging.{RemoteStream, SimpleRemoteStream}
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
-import org.specs2.concurrent.ExecutionEnv
 import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
-import org.specs2.specification._
-import play.api.libs.ws.ahc.AhcWSClient
-import util.Materialisers
-
-import scala.concurrent.duration._
-import scala.io.Source
-import enumeratum.Enum
-import org.joda.time.DateTime
 import org.specs2.specification.core.Fragment
+import play.api.libs.ws.ahc.{AhcWSClient, StandaloneAhcWSClient}
+import play.shaded.ahc.org.asynchttpclient.DefaultAsyncHttpClient
+import util.Materialisers
 
 import scala.concurrent.Await
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
+import scala.io.Source
 
 /**
  * Created by alex on 28/03/15.
  */
-class TicketsGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging with Mockito with SimpleRemoteStream with Materialisers {
+class TicketsGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging with Mockito with Materialisers {
+
+  implicit val remoteStream: RemoteStream = new SimpleRemoteStream
 
   val (server, port): (Server, Int) = {
     val server = new Server(0)
@@ -66,10 +63,12 @@ class TicketsGameScannerTest extends Specification with DisjunctionMatchers with
     (server, server.getConnectors()(0).asInstanceOf[ServerConnector].getLocalPort)
   }
 
-  val wsClient = new AhcWSClient(new DefaultAsyncHttpClientConfig.Builder().build())
-
-  val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
-  val gameUpdateCommandsValidation: \/[NonEmptyList[String], Seq[GameUpdateCommand]] = Await.result(ticketsGameScanner.scan(Some(2016)), 10.minutes)
+  val wsClient = new AhcWSClient(new StandaloneAhcWSClient(new DefaultAsyncHttpClient()))
+  implicit val zonedDateTimeFactory = new ZonedDateTimeFactoryImpl()
+  val dateParserFactory = new DateParserFactoryImpl()
+  val ticketsGameScanner = new TicketsGameScannerImpl(new URI(s"http://localhost:$port"), wsClient, dateParserFactory)
+  val gameUpdateCommandsValidation: Either[NonEmptyList[String], Seq[GameUpdateCommand]] =
+    Await.result(ticketsGameScanner.scan(Some(2016)).value, 10.minutes)
 
   server.stop()
 
@@ -77,7 +76,7 @@ class TicketsGameScannerTest extends Specification with DisjunctionMatchers with
     Fragment.foreach(GameAndTickets.values) { gameAndTickets =>
       s"find all the tickets for ${gameAndTickets.entryName}" in {
         val expectedGameUpdateCommands: Seq[GameUpdateCommand] = gameAndTickets.gameUpdateCommands
-        val actualGameUpdateComamndsValidation = gameUpdateCommandsValidation.map(_.filter(gud => gameAndTickets.gameLocator == gud.gameLocator))
+        val actualGameUpdateCommandsValidation = gameUpdateCommandsValidation.map(_.filter(gud => gameAndTickets.gameLocator == gud.gameLocator))
 
         def format(gameUpdateCommands: Seq[GameUpdateCommand]): Seq[String] = {
           def locatorFormatter(gameLocator: GameLocator): String = {
@@ -87,7 +86,9 @@ class TicketsGameScannerTest extends Specification with DisjunctionMatchers with
             s"${locatorFormatter(gameUpdateCommand.gameLocator)}:${gameUpdateCommand.name}@${gameUpdateCommand.value}"
           }
         }
-        actualGameUpdateComamndsValidation.map(format) must be_\/-(containTheSameElementsAs(format(expectedGameUpdateCommands)))
+        actualGameUpdateCommandsValidation.map(format) must beRight { updateCommands: Seq[String] =>
+          updateCommands must containTheSameElementsAs(format(expectedGameUpdateCommands))
+        }
       }
     }
   }
@@ -101,9 +102,9 @@ sealed trait GameAndTickets extends EnumEntry {
 object GameAndTickets extends Enum[GameAndTickets] {
   val values = findValues
 
-  abstract class GameAndTicketsImpl(override val entryName: String, dateTimePlayed: DateTime, gameUpdateCommandsFactories: (GameLocator => GameUpdateCommand)*) extends GameAndTickets {
+  abstract class GameAndTicketsImpl(override val entryName: String, zonedDateTimePlayed: ZonedDateTime, gameUpdateCommandsFactories: (GameLocator => GameUpdateCommand)*) extends GameAndTickets {
 
-    override val gameLocator = DatePlayedLocator(dateTimePlayed)
+    override val gameLocator = DatePlayedLocator(zonedDateTimePlayed)
     override val gameUpdateCommands = gameUpdateCommandsFactories.map(_(gameLocator))
   }
 

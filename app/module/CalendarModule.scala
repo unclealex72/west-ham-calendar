@@ -29,8 +29,7 @@ import com.google.inject.{AbstractModule, Provides}
 import controllers.SecretToken
 import dao._
 import dates.geo.{GeoLocationFactory, GeoLocationFactoryImpl}
-import dates.{DateService, DateServiceImpl, NowService, SystemNowService}
-import filters.{Filters, SSLFilter}
+import dates.{DateParserFactory, DateParserFactoryImpl, ZonedDateTimeFactory, ZonedDateTimeFactoryImpl}
 import location._
 import logging.{Fatal, FatalImpl}
 import net.ceedubs.ficus.Ficus._
@@ -38,12 +37,10 @@ import net.ceedubs.ficus.readers.ArbitraryTypeReader._
 import net.codingwell.scalaguice.ScalaModule
 import play.api.Configuration
 import play.api.cache.CacheApi
-import play.api.http.HttpFilters
 import security.models.daos.{CredentialsStorage, PlayCacheCredentialsStorage}
 import security.{Authorised, RequireSSL}
 import services.{GameRowFactory, GameRowFactoryImpl}
 import sms.{ClickatellSmsService, SmsConfiguration, SmsService}
-import sprites._
 import update._
 import update.fixtures.{FixturesGameScanner, FixturesGameScannerImpl}
 import update.tickets.{TicketsGameScanner, TicketsGameScannerImpl}
@@ -62,12 +59,12 @@ class CalendarModule() extends AbstractModule with ScalaModule {
 
     // Persistence
     bind[DatabaseConfigFactory].to[PlayDatabaseConfigFactory]
-    bind[NowService].toInstance(new SystemNowService())
+    bind[ZonedDateTimeFactory].to[ZonedDateTimeFactoryImpl]
     bind[GameDao].to[SlickGameDao]
 
     bind[GeoLocationFactory].to[GeoLocationFactoryImpl]
     // Dates
-    bind[DateService].to[DateServiceImpl]
+    bind[DateParserFactory].to[DateParserFactoryImpl]
     bind[LastUpdated].to[PlayCacheLastUpdated]
 
     // Game harvesting and update services
@@ -92,11 +89,6 @@ class CalendarModule() extends AbstractModule with ScalaModule {
     bind[FatalErrorDao].to[SlickFatalErrorDao]
     bind[SmsService].to[ClickatellSmsService]
 
-    // Sprites
-    bind[SpriteService].to[SpriteServiceImpl]
-
-    bind[SpriteHolder].to[PlayCacheSpriteHolder]
-
     // filters.Filters
     //bind[SSLFilter].to[SSLFilter]
 
@@ -105,12 +97,6 @@ class CalendarModule() extends AbstractModule with ScalaModule {
   @Provides
   def provideCredentialsStorage(cache: CacheApi)(implicit ec: ExecutionContext): CredentialsStorage = {
     new PlayCacheCredentialsStorage(cache, Duration.Inf)
-  }
-
-  @Provides
-  def provideLogoSizes(config: Configuration): LogoSizes = {
-    def dimension(ty: String): Dimension = new Dimension(config.underlying.getInt(s"sprites.$ty.x"), config.underlying.getInt(s"sprites.$ty.y"))
-    LogoSizes(dimension("teams"), dimension("competitions"))
   }
 
   @Provides

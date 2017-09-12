@@ -24,7 +24,7 @@
 
 package dates
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 
 /**
  * A date parser that will chain through a set of given date parsers until a date can be parsed or found.
@@ -44,7 +44,7 @@ class ChainingDateParser(
   /**
    * Traverse through each date parser until a non-None result is found.
    */
-  protected def traverse(f: DateParser => Traversable[DateTime]): Option[DateTime] = {
+  protected def traverse(f: DateParser => Traversable[ZonedDateTime]): Option[ZonedDateTime] = {
     dateParsers.toStream.flatMap(f).headOption
   }
 }

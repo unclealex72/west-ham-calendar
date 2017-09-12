@@ -22,12 +22,12 @@
 
 package update
 
-import java.io.IOException
 import logging.RemoteStream
 import model.Game
+import monads.FE.FutureEitherNel
+import monads.FO.FutureOption
 
 import scala.concurrent.Future
-import scalaz.{NonEmptyList, \/, ValidationNel}
 
 /**
  * The service used to combine reading game information from the web and
@@ -43,34 +43,22 @@ trait MainUpdateService {
    *
    * @param gameId
    *          The the id of the game to move.
-   * @throws GoogleAuthenticationFailedException
-   *           Thrown if authentication with the Google servers fails.
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
    */
-  def attendGame(gameId: Long): Future[Option[Game]]
+  def attendGame(gameId: Long): FutureOption[Game]
 
   /**
    * Move a game to the unattendend calendar.
    *
    * @param gameId
    *          The id of the game to move.
-   * @throws GoogleAuthenticationFailedException
-   *           Thrown if authentication with the Google servers fails.
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
    */
-  def unattendGame(gameId: Long): Future[Option[Game]]
+  def unattendGame(gameId: Long): FutureOption[Game]
 
   /**
    * Attend all home games in a season.
    *
    * @param season
    *          the season
-   * @throws GoogleAuthenticationFailedException
-   *           Thrown if authentication with the Google servers fails.
-   * @throws IOException
-   *           Signals that an I/O exception has occurred.
    */
   def attendAllHomeGamesForSeason(season: Int): Future[List[Game]]
 
@@ -79,5 +67,5 @@ trait MainUpdateService {
     *
     * @return The number of games processed.
    */
-  def processDatabaseUpdates(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Int]]
+  def processDatabaseUpdates(remoteStream: RemoteStream): FutureEitherNel[String, Int]
 }

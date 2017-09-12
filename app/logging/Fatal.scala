@@ -1,8 +1,7 @@
 package logging
 
+import cats.data.NonEmptyList
 import model.FatalError
-
-import scalaz.NonEmptyList
 
 /**
   * A service for logging fatal errors.
@@ -12,7 +11,7 @@ trait Fatal {
   def fail(errors: NonEmptyList[String], optionalException: Option[Throwable], optionalLinkBuilder: Option[FatalError => String])(implicit remoteStream: RemoteStream): Unit
 
   def fail(error: String, optionalException: Option[Throwable], optionalLinkBuilder: Option[FatalError => String])(implicit remoteStream: RemoteStream): Unit =
-    fail(NonEmptyList(error), optionalException, optionalLinkBuilder)
+    fail(NonEmptyList.of(error), optionalException, optionalLinkBuilder)
 
   def fail(errors: NonEmptyList[String], exception: Throwable)(implicit remoteStream: RemoteStream): Unit = fail(errors, Some(exception), None)
 

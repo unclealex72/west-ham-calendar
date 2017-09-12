@@ -21,6 +21,9 @@
  */
 package services
 
+import java.time.ZonedDateTime
+
+import dates.JvmGameRow
 import models._
 import model.Game
 
@@ -38,6 +41,5 @@ trait GameRowFactory {
     * @param includeAttended True if the attended flag should be included, false otherwise.
    */
   def toRow(includeAttended: Boolean,
-            gameRowLinksFactory: Game => Links[GameRowRel],
-            ticketsLinkFactory: Game => TicketType => Links[TicketingInformationRel]): Game => GameRow
+            gameRowLinksFactory: Game => Links[GameRowRel]): Game => JvmGameRow
 }

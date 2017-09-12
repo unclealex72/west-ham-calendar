@@ -24,6 +24,8 @@ package models
 import enumeratum._
 import json.JsonEnum
 
+import scala.collection.immutable
+
 sealed abstract class GeoLocation(
   /**
    * The name of the team who play at the ground.
@@ -45,7 +47,7 @@ sealed abstract class GeoLocation(
 
 object GeoLocation extends JsonEnum[GeoLocation] {
 
-  val values = findValues
+  val values: immutable.IndexedSeq[GeoLocation] = findValues
   
   case object ABERDEEN extends GeoLocation("Aberdeen", "Pittodrie", "ChIJtWz9OhMOhEgR5fclLEJJdqA")
   case object ACCRINGTON_STANLEY extends GeoLocation("Accrington Stanley", "Crown Ground", "ChIJfdvsWiKZe0gRYjBQvlMNkes")

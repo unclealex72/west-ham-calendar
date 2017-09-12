@@ -26,9 +26,9 @@ package cal
 
 import java.io.Writer
 import java.net.URI
+import java.time.Clock
 import javax.inject.Inject
 
-import dates.NowService
 import models.Location
 import Location._
 import net.fortuna.ical4j.data.CalendarOutputter
@@ -37,7 +37,9 @@ import net.fortuna.ical4j.model.property.Status._
 import net.fortuna.ical4j.model.property.Transp._
 import net.fortuna.ical4j.model.property.{Attach, CalScale, Created, Description, DtEnd, DtStamp, DtStart, LastModified, Method, ProdId, Sequence, Summary, Uid, Version, XProperty, Location => ILocation}
 import net.fortuna.ical4j.model.{Property, PropertyList, Calendar => ICalendar, DateTime => IDateTime}
-import org.joda.time.{DateTime => JodaDateTime}
+import java.time.{ZonedDateTime => jtZonedDateTime}
+
+import dates.ZonedDateTimeFactory
 
 import scala.language.implicitConversions
 
@@ -50,7 +52,7 @@ class IcalCalendarWriter @Inject() (
   /**
    * The service used to get the curent time for DTSTAMP properties.
    */
-  nowService: NowService) extends CalendarWriter {
+  zonedDateTimeFactory: ZonedDateTimeFactory) extends CalendarWriter {
 
   /**
    * The calendar outputter that acutally outputs the calendar.
@@ -67,7 +69,7 @@ class IcalCalendarWriter @Inject() (
       Method.PUBLISH,
       new XProperty("X-WR-CALNAME", calendar.title),
       new XProperty("X-WR-CALDESC", calendar.title),
-      new XProperty("X-WR-TIMEZONE", "Europe/London"),
+      new XProperty("X-WR-TIMEZONE", zonedDateTimeFactory.timeZoneName),
       CalScale.GREGORIAN) foreach ical.getProperties().add
     val vEvents: Seq[VEvent] = calendar.events.map(toVEvent(linkFactory))
     vEvents.foreach(ical.getComponents().add)
@@ -86,17 +88,17 @@ class IcalCalendarWriter @Inject() (
   /**
    * Create a DTSTART property
    */
-  def DTSTART: Event => Property = event => new DtStart(event.dateTime)
+  def DTSTART: Event => Property = event => new DtStart(event.zonedDateTime)
 
   /**
    * Create a DTEND property
    */
-  def DTEND: Event => Property = event => new DtEnd(event.dateTime.plus(event.duration))
+  def DTEND: Event => Property = event => new DtEnd(event.zonedDateTime.plus(event.duration))
 
   /**
    * Create a DTSAMP property
    */
-  def DTSTAMP: Event => Property = event => new DtStamp(nowService.now)
+  def DTSTAMP: Event => Property = _ => new DtStamp(zonedDateTimeFactory.now)
 
   /**
    * Create a UID property
@@ -117,7 +119,7 @@ class IcalCalendarWriter @Inject() (
     }
     val descriptions = Seq(
       "Result" -> event.result,
-      "Attendence" -> event.attendence,
+      "Attendence" -> event.attendance,
       "Match Report" -> event.matchReport) map descriptionLine
     if (descriptions.isEmpty) None else Some(new Description(descriptions.flatten.mkString("\n")))
   }
@@ -180,10 +182,10 @@ class IcalCalendarWriter @Inject() (
   // Implicits
 
   /**
-   * An implicit used to create a Ical DateTime from a Joda DateTime
+   * An implicit used to create a Ical ZonedDateTime from a Joda ZonedDateTime
    */
-  implicit def ical(dateTime: JodaDateTime): IDateTime = {
-    fluent(new IDateTime(dateTime.getMillis)) { dt =>
+  implicit def ical(zonedDateTime: jtZonedDateTime): IDateTime = {
+    fluent(new IDateTime(zonedDateTime.toInstant.toEpochMilli)) { dt =>
       dt.setUtc(true)
     }
   }

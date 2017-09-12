@@ -18,8 +18,8 @@ package models
 
 import enumeratum.EnumEntry
 import json.JsonEnum
-import scalaz._
-import Scalaz._
+
+import scala.collection.immutable
 
 /**
  * The different types of tickets available from the website.
@@ -43,10 +43,6 @@ sealed trait TicketType extends EnumEntry {
 
   /**
    * HTML strings that match this ticket type
-    *
-    * @param gameLocator
-   * @param dateTime
-   * @return
    */
   val tokens: Seq[String]
 }
@@ -55,7 +51,7 @@ sealed abstract class AbstractTicketType(
                                    val name: String, val label: String,
                                    val default: Boolean, firstToken: String, extraTokens: String*) extends TicketType {
 
-  val tokens = Seq(firstToken) ++ extraTokens
+  val tokens: Seq[String] = Seq(firstToken) ++ extraTokens
   override def entryName: String = name.toLowerCase
 
 }
@@ -63,7 +59,7 @@ sealed abstract class AbstractTicketType(
 
 object TicketType extends JsonEnum[TicketType] {
 
-  val values = findValues
+  val values: immutable.IndexedSeq[TicketType] = findValues
 
   case object PriorityPointTicketType extends AbstractTicketType(
     "PriorityPoint", "Priority point", true, "Priority Point Applications", "ST Holders with", "Season Ticket Holders with")
@@ -76,10 +72,10 @@ object TicketType extends JsonEnum[TicketType] {
   case object GeneralSaleTicketType extends AbstractTicketType(
     "GeneralSale", "General sale", false, "General Sale")
 
-  def within(text: String): \/[String, TicketType] = {
+  def within(text: String): Either[String, TicketType] = {
     val maybeTicketType = values.find{ ticketType =>
       ticketType.tokens.exists(token => text.contains(token))
     }
-    maybeTicketType.toRightDisjunction(s"'$text' does not contain a valid ticket type")
+    maybeTicketType.toRight(s"'$text' does not contain a valid ticket type")
   }
 }

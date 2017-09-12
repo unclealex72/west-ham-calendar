@@ -1,29 +1,20 @@
 package json
 
-import upickle.{default, Js}
-import upickle.default.{Reader, Writer}
 import enumeratum._
-
-import scalaz.{Failure, Success, ValidationNel}
+import io.circe.{Decoder, Encoder, KeyDecoder, KeyEncoder}
 
 /**
-  * Upickle custom serialiser and deserialiser to enums.
+  * Circe custom serialiser and deserialiser for enums.
   *
   * Created by alex on 11/02/16.
   */
-trait JsonEnum[E <: EnumEntry] extends Enum[E] with JsonConverters[E] {
+trait JsonEnum[E <: EnumEntry] extends Enum[E] {
 
-  def enumToJson(e: E): Js.Value = Js.Str(e.entryName)
-
-  override def serialise(e: E) = enumToJson(e)
-
-  def jsonToEnum(js: Js.Value): ValidationNel[String, E] = {
-    val enum = js match {
-      case Js.Str(str) => withNameOption(str).map(Success(_)).getOrElse(Failure(s"$str is not a valid ${getClass.getName}"))
-      case _ => Failure(s"Expected a string when trying to parse a ${getClass.getName}")
-    }
-    enum.toValidationNel
+  implicit val entryEncoder: Encoder[E] = Encoder.encodeString.contramap(_.entryName)
+  implicit val entryDecoder: Decoder[E] = Decoder.decodeString.emap { en =>
+    values.find(_.entryName == en).toRight(s"$en is not a valid ${getClass.getName}")
   }
 
-  override def deserialise(js: Js.Value) = deserialise(js)
+  implicit val entryKeyEncoder: KeyEncoder[E] = KeyEncoder.encodeKeyString.contramap(_.entryName)
+  implicit val entryKeyDecoder: KeyDecoder[E] = (key: String) => values.find(_.entryName == key)
 }

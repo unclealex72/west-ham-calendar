@@ -1,6 +1,6 @@
 package security
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import play.api.mvc.Request
 import security.Definitions._
 

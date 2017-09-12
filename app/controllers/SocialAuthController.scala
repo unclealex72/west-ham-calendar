@@ -3,27 +3,30 @@ package controllers
 import javax.inject.Inject
 
 import com.mohiva.play.silhouette.api._
+import com.mohiva.play.silhouette.api.actions.SecuredRequest
 import com.mohiva.play.silhouette.api.exceptions.ProviderException
 import com.mohiva.play.silhouette.api.repositories.AuthInfoRepository
 import com.mohiva.play.silhouette.impl.providers._
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.{Action, Call, Controller}
+import dates.ZonedDateTimeFactory
+import play.api.i18n.{I18nSupport, Messages}
+import play.api.mvc.{AnyContent, Call, ControllerComponents, Request}
 import security.Definitions._
 import security.models.services.UserService
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * The social auth controller.
   *
   */
-class SocialAuthController @Inject() (val messagesApi: MessagesApi,
-                                      val silhouette: DefaultSilhouette,
+class SocialAuthController @Inject() (val silhouette: DefaultSilhouette,
                                       val auth: Auth,
                                       val userService: UserService,
+                                      override val controllerComponents: ControllerComponents,
+                                      override val zonedDateTimeFactory: ZonedDateTimeFactory,
                                       val authInfoRepository: AuthInfoRepository,
-                                      val socialProviderRegistry: SocialProviderRegistry) extends Secure with I18nSupport with Logger {
+                                      val socialProviderRegistry: SocialProviderRegistry,
+                                      override implicit val ec: ExecutionContext) extends AbstractController(controllerComponents, zonedDateTimeFactory, ec) with Secure with I18nSupport with Logger {
 
   private val index: Call = routes.Application.index()
 
@@ -33,7 +36,7 @@ class SocialAuthController @Inject() (val messagesApi: MessagesApi,
     * @param provider The ID of the provider to authenticate against.
     * @return The result to display.
     */
-  def authenticate(provider: String) = Action.async { implicit request =>
+  def authenticate(provider: String) = Action.async { implicit request: Request[AnyContent] =>
     (socialProviderRegistry.get[SocialProvider](provider) match {
       case Some(p: SocialProvider with CommonSocialProfileBuilder) =>
         p.authenticate().flatMap {
@@ -63,7 +66,7 @@ class SocialAuthController @Inject() (val messagesApi: MessagesApi,
     *
     * @return The result to display.
     */
-  def signOut = SecuredAction.async { implicit request =>
+  def signOut = silhouette.SecuredAction.async { implicit request: SecuredRequest[DefaultEnv, AnyContent] =>
     val result = Redirect(index)
     silhouette.env.eventBus.publish(LogoutEvent(request.identity, request))
 

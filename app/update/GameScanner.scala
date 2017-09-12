@@ -2,9 +2,7 @@ package update
 
 import html.GameUpdateCommand
 import logging.RemoteStream
-
-import scala.concurrent.Future
-import scalaz.{NonEmptyList, \/, ValidationNel}
+import monads.FE.FutureEitherNel
 
 /**
  * The common interface for services that scan the web for details on West Ham games. Such details can either
@@ -15,5 +13,5 @@ import scalaz.{NonEmptyList, \/, ValidationNel}
  */
 trait GameScanner {
 
-  def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]]
+  def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): FutureEitherNel[String, Seq[GameUpdateCommand]]
 }

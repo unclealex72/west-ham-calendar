@@ -22,7 +22,7 @@
 
 package dates
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import org.specs2.mutable.Specification
 
 /**
@@ -65,6 +65,7 @@ class PossiblyYearlessDateParserSpec extends Specification {
   }
 
   implicit class DateFormatImplicits(dateFormat: String) {
+    implicit val zonedDateTimeFactory: ZonedDateTimeFactory = new ZonedDateTimeFactoryImpl()
     /**
      * Test that a year aware format is correctly converted to a yearless format.
      *
@@ -77,7 +78,7 @@ class PossiblyYearlessDateParserSpec extends Specification {
      */
     def mustProduce(expectedFormats: NeedsYear*) = {
       dateFormat in {
-        val possiblyYearlessDateParser = new PossiblyYearlessDateParser(new DateTime(), false, dateFormat)
+        val possiblyYearlessDateParser = new PossiblyYearlessDateParser(ZonedDateTime.now(), false, dateFormat)
         possiblyYearlessDateParser.dateFormats.toList mustEqual expectedFormats.toList
       }
     }

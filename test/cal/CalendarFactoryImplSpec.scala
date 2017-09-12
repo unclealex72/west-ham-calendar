@@ -21,12 +21,12 @@
  */
 package cal
 
-import dao.GameDao
+import java.time.{Duration, ZonedDateTime}
+
 import dates.geo.GeoLocationFactoryImpl
 import dates.{August, July, September}
-import model.{Game, GameKey}
+import model.Game
 import models._
-import org.joda.time.{DateTime, Duration}
 import org.specs2.mock.Mockito
 import org.specs2.mutable.Specification
 import org.specs2.specification.core.Fragments
@@ -103,10 +103,10 @@ class CalendarFactoryImplSpec extends Specification with Mockito {
         location = Location.HOME,
         geoLocation = Some(GeoLocation.WEST_HAM),
         opponents = "Them",
-        dateTime = expectedPeriod._1,
+        zonedDateTime = expectedPeriod._1,
         duration = expectedPeriod._2,
         result = Some("4 - 0"),
-        attendence = Some(100),
+        attendance = Some(100),
         matchReport = Some("report"),
         televisionChannel = Some("TV"),
         busy = busy,
@@ -125,7 +125,7 @@ class CalendarFactoryImplSpec extends Specification with Mockito {
     }
   }
 
-  implicit class InstantImplicits(i: DateTime) {
-    def lasting(hours: Int): (DateTime, Duration) = (i, Duration.standardHours(hours))
+  implicit class ZonedDateTimeImplicits(i: ZonedDateTime) {
+    def lasting(hours: Int): (ZonedDateTime, Duration) = (i, Duration.ofHours(hours))
   }
 }

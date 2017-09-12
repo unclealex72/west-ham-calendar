@@ -1,6 +1,6 @@
 package logging
 
-import com.typesafe.scalalogging.slf4j.Logger
+import org.slf4j.Logger
 
 
 class RemoteLogger(logger: Logger) {

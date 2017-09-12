@@ -24,7 +24,9 @@
 
 package dates
 
-import org.joda.time.{DateTime, DateTimeZone}
+import java.time.{Instant, LocalDateTime, ZoneId, ZonedDateTime}
+
+import dates.Date.asZonedDateTime
 
 /**
  * Helper classes used to make dates and times more readable in tests.
@@ -32,61 +34,66 @@ import org.joda.time.{DateTime, DateTimeZone}
  *
  */
 sealed class Month(val name: String, val month: Int) {
-  override def toString = name
+  override def toString: String = name
   def apply(day: Int): MonthAndDay = MonthAndDay(day, this)
   def apply(day: Int, year: Int): Date = Date(apply(day), year)
 }
 
-case class MonthAndDay(val day: Int, val month: Month) {
+case class MonthAndDay(day: Int, month: Month) {
   override def toString = s"$month $day"
 
-  def toDateTime = Date(this, 1970).toDateTime
+  def toZonedDateTime: ZonedDateTime = Date(this, 1970).toZonedDateTime
 }
 
-case class Date(val monthAndDay: MonthAndDay, val year: Int) {
+case class Date(monthAndDay: MonthAndDay, year: Int) {
   override def toString = s"$monthAndDay, $year"
-  def at(hours: Int, minutes: Int) = Instant(this, hours, minutes).toDateTime
-  def at(hours: Int) = Hour(this, hours)
-  def toDateTime = at(0, 0) toDateTime
+  def at(hours: Int, minutes: Int): ZonedDateTime = TimeOfDay(this, hours, minutes).toZonedDateTime
+  def at(hours: Int): Hour = Hour(this, hours)
+  def toZonedDateTime: ZonedDateTime = at(0, 0)
 }
 
-case class Hour(val date: Date, val hours: Int) {
+case class Hour(date: Date, hours: Int) {
 
-  def am = toInstant(0)
-  def pm = toInstant(12)
+  def am: ZonedDateTime = toZonedDateTime(0)
+  def pm: ZonedDateTime = toZonedDateTime(12)
 
-  private def toInstant(hourModifier: Int) = Instant(date, hours + hourModifier, 0).toDateTime
+  private def toZonedDateTime(hourModifier: Int) = TimeOfDay(date, hours + hourModifier, 0).toZonedDateTime
 }
 object Date {
-  def apply(dateTime: DateTime): Date = Instant(dateTime).date
+  def apply(zonedDateTime: ZonedDateTime): Date = TimeOfDay(zonedDateTime).date
 
-  implicit def asDateTime(date: Date) = date.toDateTime
+  implicit def asZonedDateTime(date: Date): ZonedDateTime = date.toZonedDateTime
+  implicit def asInstant(date: Date): Instant = asZonedDateTime(date).toInstant
 }
 
-case class Instant(val date: Date, val hours: Int, val minutes: Int) {
-  override def toString = {
+case class TimeOfDay(date: Date, hours: Int, minutes: Int) {
+  override def toString: String = {
     def pad(i: Int) = (if (i < 10) "0" else "") + i
     s"$date ${pad(hours)}:${pad(minutes)}"
   }
 
-  def toDateTime =
-    new DateTime(date.year, date.monthAndDay.month.month, date.monthAndDay.day, hours, minutes, 0, 0, DateTimeZone.forID("Europe/London"))
+  def toZonedDateTime: ZonedDateTime = {
+    val monthAndDay = date.monthAndDay
+    LocalDateTime.of(
+      date.year, monthAndDay.month.month, monthAndDay.day, hours, minutes).atZone(ZoneId.of("Europe/London"))
+  }
 }
 
-object Instant {
+object TimeOfDay {
   val months: List[Month] =
     List(January, February, March, April, May, June, July, August, September, October, November, December)
 
-  def apply(dateTime: DateTime): Instant = {
-    months find (month => month.month == dateTime.getMonthOfYear) match {
-      case Some(month) => Instant(
-        Date(MonthAndDay(dateTime.getDayOfMonth, month), dateTime.getYear),
-        dateTime.getHourOfDay, dateTime.getMinuteOfHour)
-      case None => throw new IllegalArgumentException(s"Cannot find a month for $dateTime")
+  def apply(zonedDateTime: ZonedDateTime): TimeOfDay = {
+    months find (month => month.month == zonedDateTime.getMonthValue) match {
+      case Some(month) => TimeOfDay(
+        Date(MonthAndDay(zonedDateTime.getDayOfMonth, month), zonedDateTime.getYear),
+        zonedDateTime.getHour, zonedDateTime.getMinute)
+      case None => throw new IllegalArgumentException(s"Cannot find a month for $zonedDateTime")
     }
   }
 
-  implicit def asDateTime(instant: Instant) = instant.toDateTime
+  implicit def asZonedDateTime(timeOfDay: TimeOfDay): ZonedDateTime = timeOfDay.toZonedDateTime
+  implicit def asInstant(timeOfDay: TimeOfDay): Instant = asZonedDateTime(timeOfDay).toInstant
 
 }
 

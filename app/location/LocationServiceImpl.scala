@@ -6,12 +6,11 @@ import dao.GameDao
 import dates.geo.GeoLocationFactory
 import models.GeoLocation
 import monads.FO
+import monads.FO.FutureOption
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
-import play.api.libs.ws.{WSResponse, WSClient}
-
+import play.api.libs.ws.{WSClient, WSResponse}
+import cats.instances.future._
 import scala.concurrent._
-import scalaz.Scalaz._
-import scalaz._
 
 /**
  * The default implementation of LocationService.
@@ -23,16 +22,15 @@ class LocationServiceImpl @javax.inject.Inject() (
                            val geoLocationFactory: GeoLocationFactory,
                            val locationClientKey: LocationClientKey, implicit val ec: ExecutionContext) extends LocationService {
 
-  override def location(gameId: Long): Future[Option[URL]] = {
-    val urlT = for {
-      game <- FO <~ gameDao.findById(gameId)
-      geo <- FO <~ geoLocationFactory.forGame(game)
-      url <- FO <~ generateUrl(geo)
+  override def location(gameId: Long): FutureOption[URL] = {
+    for {
+      game <- gameDao.findById(gameId)
+      geo <- FO(geoLocationFactory.forGame(game))
+      url <- generateUrl(geo)
     } yield url
-    urlT.run
   }
 
-  def generateUrl(geoLocation: GeoLocation): Future[Option[URL]] = {
+  def generateUrl(geoLocation: GeoLocation): FutureOption[URL] = {
     val fResponse: Future[WSResponse] =
       wsClient.url("https://maps.googleapis.com/maps/api/place/details/json").withQueryString(
         "placeid" -> geoLocation.placeId, "key" -> locationClientKey.value).get()
@@ -45,15 +43,13 @@ class LocationServiceImpl @javax.inject.Inject() (
       case _ => None
     }
 
-    FO {
-      for {
-        response <- FO <~ fResponse.map(Some(_))
-        json <- FO <~ obj(Json.parse(response.body))
-        resultField <- FO <~ json.value("result")
-        resultObj <- FO <~ obj(resultField)
-        locationField <- FO <~ resultObj.value("url")
-        location <- FO <~ str(locationField)
-      } yield new URL(location)
-    }
+    for {
+      response <- FO(fResponse)
+      json <- FO(obj(Json.parse(response.body)))
+      resultField <- FO(Some(json.value("result")))
+      resultObj <- FO(obj(resultField))
+      locationField <- FO(Some(resultObj.value("url")))
+      location <- FO(Some(locationField))
+    } yield new URL(location.toString())
   }
 }

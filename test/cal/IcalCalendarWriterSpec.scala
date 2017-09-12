@@ -23,14 +23,13 @@ package cal
 
 import java.io.StringWriter
 import java.net.URI
+import java.time.{Clock, Duration}
 
-import dates.{June, NowService, October, September}
-import models.{GeoLocation, Location, Competition}
-import GeoLocation._
-import models.{Location, Competition}
-import Competition._
-import Location._
-import org.joda.time.Duration
+import dates.{June, October, September, ZonedDateTimeFactoryImpl}
+import models.Competition._
+import models.GeoLocation._
+import models.Location._
+import models.{Competition, GeoLocation, Location}
 import org.specs2.mutable.Specification
 
 import scala.collection.SortedSet
@@ -50,16 +49,16 @@ class IcalCalendarWriterSpec extends Specification {
         location = HOME,
         geoLocation = Some(WEST_HAM),
         opponents = "Tottingham",
-        dateTime = September(5, 2013) at (15, 0),
+        zonedDateTime = September(5, 2013) at (15, 0),
         duration = 2 hours,
         result = None,
-        attendence = None,
+        attendance = None,
         matchReport = None,
         televisionChannel = None,
         busy = true,
         dateCreated = September(4, 2013) at (10, 0),
         lastUpdated = September(5, 2013) at (11, 0))
-      print(tottinghamHome) must be equalTo (expectedTottinghamHome.replace("\n", "\r\n").trim)
+      print(tottinghamHome) must be equalTo expectedTottinghamHome.replace("\n", "\r\n").trim
     }
   }
 
@@ -72,16 +71,16 @@ class IcalCalendarWriterSpec extends Specification {
         location = AWAY,
         geoLocation = Some(SOUTHAMPTON),
         opponents = "Southampton",
-        dateTime = October(5, 2013) at (15, 0),
+        zonedDateTime = October(5, 2013) at (15, 0),
         duration = 2 hours,
         result = None,
-        attendence = None,
+        attendance = None,
         matchReport = None,
         televisionChannel = None,
         busy = false,
         dateCreated = October(4, 2013) at (10, 0),
         lastUpdated = October(5, 2013) at (11, 0))
-      print(southamptonAway) must be equalTo (expectedSouthamptonAway.replace("\n", "\r\n").trim)
+      print(southamptonAway) must be equalTo expectedSouthamptonAway.replace("\n", "\r\n").trim
     }
   }
 
@@ -94,27 +93,27 @@ class IcalCalendarWriterSpec extends Specification {
         location = AWAY,
         geoLocation = Some(LIVERPOOL),
         opponents = "Liverpool",
-        dateTime = October(5, 2013) at (15, 0),
+        zonedDateTime = October(5, 2013) at (15, 0),
         duration = 1 hour,
         result = Some("0-3"),
-        attendence = Some(25000),
+        attendance = Some(25000),
         matchReport = Some("http://awesthammatchreport.com/match/report/westham-vs-liverpool-away"),
         televisionChannel = None,
         busy = false,
         dateCreated = October(4, 2013) at (10, 0),
         lastUpdated = October(5, 2013) at (11, 0))
-      print(liverpoolAway) must be equalTo (expectedLiverpoolAway.replace("\n", "\r\n").trim)
+      print(liverpoolAway) must be equalTo expectedLiverpoolAway.replace("\n", "\r\n").trim
     }
   }
 
   def print(event: Event): String = {
-    val nowService = new NowService() {
-      def now = June(11, 2013) at (19, 3)
+    val zonedDateTimeFactory = new ZonedDateTimeFactoryImpl {
+      override val clock: Clock = Clock.fixed((June(11, 2013) at (19, 3)).toInstant, zoneId)
     }
-    val icalCalendarWriter = new IcalCalendarWriter(nowService)
+    val icalCalendarWriter = new IcalCalendarWriter(zonedDateTimeFactory)
     val writer = new StringWriter
     val linkFactory = new LinkFactory {
-      override def locationLink(gameId: Long): URI = new URI(s"http://location/${gameId}")
+      override def locationLink(gameId: Long): URI = new URI(s"http://location/$gameId")
     }
     icalCalendarWriter.write(Calendar("id", "title", SortedSet(event).toSeq), writer, linkFactory)
     writer.toString.trim
@@ -204,7 +203,7 @@ END:VCALENDAR
 """
 
   implicit class IntegerImplicits(hrs: Int) {
-    def hour = Duration.standardHours(hrs)
-    def hours = Duration.standardHours(hrs)
+    def hour: Duration = Duration.ofHours(hrs)
+    def hours: Duration = Duration.ofHours(hrs)
   }
 }

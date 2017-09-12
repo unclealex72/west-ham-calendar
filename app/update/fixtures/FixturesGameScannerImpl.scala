@@ -3,75 +3,70 @@ package update.fixtures
 import java.io.{PrintWriter, StringWriter}
 import java.net.URI
 
-import dates.{NowService, PossiblyYearlessDateParser}
+import cats.data.NonEmptyList
+import dates.DateParserFactory
 import html._
-import logging.{Fatal, RemoteLogging, RemoteStream}
+import logging.{RemoteLogging, RemoteStream}
 import model.GameKey
-import models.{Competition, GameResult, Location, Score}
 import models.Location.{AWAY, HOME}
+import models.{Competition, GameResult, Score}
 import monads.FE
-import org.joda.time.DateTime
+import monads.FE.FutureEitherNel
 import play.api.libs.json.{JsValue, Json}
 import play.api.libs.ws.{WSClient, WSResponse}
 import update.WsBody
-import upickle.default._
 import xml.NodeExtensions
+import cats.instances.future._
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.xml.{Elem, NodeSeq, Node => XmlNode}
-import scalaz._
-import Scalaz._
 import scala.util.Try
+import scala.xml.{Elem, NodeSeq, Node => XmlNode}
 /**
  * Created by alex on 08/03/15.
  */
-class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient)(implicit val ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging with WsBody with NodeExtensions {
+class FixturesGameScannerImpl @javax.inject.Inject()(rootUri: URI, ws: WSClient, dateParserFactory: DateParserFactory)(implicit val ec: ExecutionContext) extends FixturesGameScanner with RemoteLogging with WsBody with NodeExtensions {
 
-  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
+  override def scan(latestSeason: Option[Int])(implicit remoteStream: RemoteStream): FutureEitherNel[String, Seq[GameUpdateCommand]] = {
     val fixturesUri = rootUri.resolve("/fixtures/first-team/fixtures-and-results")
-    FE {
-      for {
-        page <- FE <~ bodyXml(fixturesUri)(uri => ws.url(uri).get())
-        seasons <- FE <~ listSeasons(page)
-        gameUpdateCommands <- FE <~ downloadFixtures(seasons)
-      } yield gameUpdateCommands.toList
-    }
+    for {
+      page <- bodyXml(fixturesUri)(uri => ws.url(uri).get())
+      seasons <- listSeasons(page)
+      gameUpdateCommands <- downloadFixtures(seasons)
+    } yield gameUpdateCommands
   }
 
-  def listSeasons(page: Elem)(implicit remoteStream: RemoteStream): \/[NonEmptyList[String], Seq[FixturesSeason]] = {
+  def listSeasons(page: Elem)(implicit remoteStream: RemoteStream): FutureEitherNel[String, Seq[FixturesSeason]] = {
     def parseSeasons(select: XmlNode): Seq[FixturesSeason] = {
       for {
         option <- select \\ "option"
         id <- option.attribute("value").toSeq.flatten[XmlNode].headOption.map(_.text.trim)
-        season <- option.text.trim().take(4).parseInt.toOption
+        season <- Try(option.text.trim().take(4).toInt).toOption
       } yield {
         FixturesSeason(id, season)
       }
     }
     val possiblyEmptySeasons = for {
-      div <- (page \\ "select").find(_.hasAttr("name", "field_competition_season")).toRightDisjunction(NonEmptyList("Cannot find a select with name field_competition_season"))
-      seasons <- parseSeasons(div).right
+      div <- (page \\ "select").find(_.hasAttr("name", "field_competition_season")).toRight(NonEmptyList.of("Cannot find a select with name field_competition_season"))
+      seasons <- Right(parseSeasons(div))
     } yield seasons
-    possiblyEmptySeasons.ensure(NonEmptyList("Cannot find any seasons on the fixtures page"))(_.nonEmpty)
+    FE(possiblyEmptySeasons.filterOrElse(_.nonEmpty, NonEmptyList.of("Cannot find any seasons on the fixtures page")))
   }
 
-  def downloadFixtures(seasons: Seq[FixturesSeason])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
-    val empty: Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = Future.successful(Seq.empty.right)
+  def downloadFixtures(seasons: Seq[FixturesSeason])(implicit remoteStream: RemoteStream): FutureEitherNel[String, Seq[GameUpdateCommand]] = {
+    val empty: FutureEitherNel[String, Seq[GameUpdateCommand]] = FE(Future.successful(Seq.empty))
     seasons.foldLeft(empty){ (gameUpdateCommands, season) =>
-      FE {
-        for {
-          existingGameUpdateCommands <- FE <~ gameUpdateCommands
-          newGameUpdateCommands <- FE <~ downloadFixturesForSeason(season)
-        } yield existingGameUpdateCommands ++ newGameUpdateCommands
-      }
+      for {
+        existingGameUpdateCommands <- gameUpdateCommands
+        newGameUpdateCommands <- downloadFixturesForSeason(season)
+      } yield existingGameUpdateCommands ++ newGameUpdateCommands
     }
   }
 
-  def downloadFixturesForSeason(season: FixturesSeason)(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
+  def downloadFixturesForSeason(season: FixturesSeason)(implicit remoteStream: RemoteStream): FutureEitherNel[String, Seq[GameUpdateCommand]] = {
     downloadFixturesForSeason(season, 0, Seq.empty)
   }
 
-  def downloadFixturesForSeason(season: FixturesSeason, page: Int, previousGameUpdateCommands: Seq[GameUpdateCommand])(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Seq[GameUpdateCommand]]] = {
+  def downloadFixturesForSeason(season: FixturesSeason, page: Int, previousGameUpdateCommands: Seq[GameUpdateCommand])(implicit remoteStream: RemoteStream): FutureEitherNel[String, Seq[GameUpdateCommand]] = {
     val form: Map[String, Any] = Map(
         "view_name" -> "fixtures_view",
         "view_display_id" -> "first_team_fixtures_view",
@@ -90,26 +85,24 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
         "ajax_page_state[libraries]" -> "ajax_loader/ajax_loader.throbber,bootstrap/popover,bootstrap/tooltip,core/html5shiv,google_analytics/google_analytics,popup_message/popup_message_style,system/base,views/views.ajax,views/views.module,views_infinite_scroll/views-infinite-scroll,westham/bootstrap-scripts,westham/global-styling")
       
     val eventualResponse: Future[WSResponse] = ws.url(rootUri.resolve("/views/ajax").toString).
-      withQueryString("_wrapper_format" -> "drupal_ajax").
-      withHeaders("accept" -> "application/json",
+      withQueryStringParameters("_wrapper_format" -> "drupal_ajax").
+      withHttpHeaders("accept" -> "application/json",
         "accept-encoding" -> "gzip, deflate",
         "Content-Type" -> "application/x-www-form-urlencoded").post(form.mapValues(v => Seq(v.toString)))
-    eventualResponse.map(toGameUpdateCommands(season.year)).flatMap { e => e match {
-      case -\/(messages) => Future.successful(-\/(messages))
-      case \/-(newGameUpdateCommands) =>
-        if (newGameUpdateCommands.diff(previousGameUpdateCommands).isEmpty) {
-          Future.successful(\/-(previousGameUpdateCommands))
-        }
-        else {
-          downloadFixturesForSeason(season, page + 1, previousGameUpdateCommands ++ newGameUpdateCommands)
-        }
+    val feResponse: FutureEitherNel[String, WSResponse] = FE(eventualResponse)
+    feResponse.flatMap(toGameUpdateCommands(season.year)).flatMap { newGameUpdateCommands =>
+      if (newGameUpdateCommands.diff(previousGameUpdateCommands).isEmpty) {
+        FE(Right(previousGameUpdateCommands))
+      }
+      else {
+        downloadFixturesForSeason(season, page + 1, previousGameUpdateCommands ++ newGameUpdateCommands)
       }
     }
   }
 
-  def toGameUpdateCommands(season: Int)(response: WSResponse)(implicit remoteStream: RemoteStream): \/[NonEmptyList[String], Seq[GameUpdateCommand]] = {
+  def toGameUpdateCommands(season: Int)(response: WSResponse)(implicit remoteStream: RemoteStream): FutureEitherNel[String, Seq[GameUpdateCommand]] = {
     if (response.status != 200) {
-      -\/(NonEmptyList(response.statusText))
+      FE(Left(NonEmptyList.of(response.statusText)))
     }
     else {
       try {
@@ -123,13 +116,13 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
         gameUpdateCommands.foreach { gameUpdateCommand =>
           logger debug s"Found game update command $gameUpdateCommand"
         }
-        \/-(gameUpdateCommands)
+        FE(Right(gameUpdateCommands))
       }
       catch {
         case t: Throwable =>
           val sw = new StringWriter
           t.printStackTrace(new PrintWriter(sw))
-          -\/(NonEmptyList(t.toString))
+          FE(Left(NonEmptyList.of(t.toString)))
       }
     }
   }
@@ -148,7 +141,7 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
   case class CompetitionInfo(competition: Competition, maybeImageUrl: Option[String])
 
   def parseRow(season: Int, div: XmlNode)(implicit remoteStream: RemoteStream): Seq[GameUpdateCommand] = {
-    val datePlayedParser = PossiblyYearlessDateParser.forSeason(season)("d MMMM H:mm", "dd MMMM H:mm", "d MMMM HH:mm", "dd MMMM HH:mm")
+    val datePlayedParser = dateParserFactory.forSeason(season, "d MMMM H:mm", "dd MMMM H:mm", "d MMMM HH:mm", "dd MMMM HH:mm")
     val gameKeysAndMaybeCompetitionImageUrls: Seq[(GameKey, Option[String])] = for {
       homeTeamNameDiv <- div \\~ ("div", "homeTeam")
       awayTeamNameDiv <- div \\~ ("div", "awayTeam")
@@ -202,7 +195,7 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
 
   def parseScore(div: NodeSeq): Option[Score] = {
     def parse(span: XmlNode): Option[Int] = {
-      span.text.filter(ch => Character.isDigit(ch)).parseInt.toOption
+      Try(span.text.filter(ch => Character.isDigit(ch)).toInt).toOption
     }
     val scores = for {
       homeSpan <- div \~ ("span", "home")
@@ -229,7 +222,7 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
     }
   }
 
-  def toGameCommands(fixture: Fixture, rootUrl: URI, opponents: String, location: Location, competition: Competition, matchDate: DateTime, season: Int)(implicit remoteStream: RemoteStream): Seq[GameUpdateCommand] = {
+  def toGameCommands(fixture: Fixture, rootUrl: URI, opponents: String, location: Location, competition: Competition, matchDate: ZonedDateTime, season: Int)(implicit remoteStream: RemoteStream): Seq[GameUpdateCommand] = {
     val locator: GameLocator = GameKeyLocator(GameKey(competition, location, opponents, season))
     val datePlayedUpdateCommand = Some(DatePlayedUpdateCommand(locator, matchDate))
     def isNeitherEmptyNorNull(str: String): Option[String] = Option(str.trim).filterNot(_.isEmpty)

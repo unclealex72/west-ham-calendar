@@ -26,7 +26,7 @@ import dates.Date._
 import dates.{Date, September}
 import model.Game
 import models.{GameResult, Score, Location, Competition}
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import org.specs2.mutable.Specification
 
 import scala.reflect.ClassTag
@@ -59,16 +59,16 @@ class GameUpdateCommandSpec extends Specification {
    * Test date played.
    */
   "Updating the date played" should {
-    testGameUpdateCommand[DateTime](
-      gameLocator => (datePlayed: DateTime) => DatePlayedUpdateCommand(gameLocator, datePlayed),
+    testGameUpdateCommand[ZonedDateTime](
+      gameLocator => (datePlayed: ZonedDateTime) => DatePlayedUpdateCommand(gameLocator, datePlayed),
       _.at,
       DEFAULT_DATE_PLAYED,
       DEFAULT_DATE_PLAYED plusHours 1,
-      _.copy(at = Some(DEFAULT_DATE_PLAYED plusHours 1).map(_.toDateTime)))
+      _.copy(at = Some(DEFAULT_DATE_PLAYED plusHours 1)))
   }
 
   "Updating the result" should {
-    val newResult: GameResult = DEFAULT_RESULT.copy(shootoutScore = Some(Score(2, 0)))
+    val newResult: GameResult = DEFAULT_RESULT.copy(maybeShootoutScore = Some(Score(2, 0)))
     testGameUpdateCommand(
       gameLocator => (result: GameResult) => ResultUpdateCommand(gameLocator, result),
       _.result,
@@ -114,8 +114,8 @@ class GameUpdateCommandSpec extends Specification {
   }
 
   "Updating the bond holder ticket sale date" should {
-    testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: DateTime) => BondHolderTicketsUpdateCommand(gameLocator, saleDate),
+    testGameUpdateCommand[ZonedDateTime](
+      gameLocator => (saleDate: ZonedDateTime) => BondHolderTicketsUpdateCommand(gameLocator, saleDate),
       _.bondholdersAvailable,
       DEFAULT_BONDHOLDERS_AVAILABLE,
       DEFAULT_BONDHOLDERS_AVAILABLE plusDays 1,
@@ -123,8 +123,8 @@ class GameUpdateCommandSpec extends Specification {
   }
 
   "Updating the priority point ticket sale date" should {
-    testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: DateTime) => PriorityPointTicketsUpdateCommand(gameLocator, saleDate),
+    testGameUpdateCommand[ZonedDateTime](
+      gameLocator => (saleDate: ZonedDateTime) => PriorityPointTicketsUpdateCommand(gameLocator, saleDate),
       _.priorityPointAvailable,
       DEFAULT_PRIORITY_POINT_AVAILABLE,
       DEFAULT_PRIORITY_POINT_AVAILABLE plusDays 1,
@@ -132,8 +132,8 @@ class GameUpdateCommandSpec extends Specification {
   }
 
   "Updating the season ticket holders' ticket sale date" should {
-    testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: DateTime) => SeasonTicketsUpdateCommand(gameLocator, saleDate),
+    testGameUpdateCommand[ZonedDateTime](
+      gameLocator => (saleDate: ZonedDateTime) => SeasonTicketsUpdateCommand(gameLocator, saleDate),
       _.seasonTicketsAvailable,
       DEFAULT_SEASON_TICKETS_AVAILABLE,
       DEFAULT_SEASON_TICKETS_AVAILABLE plusDays 1,
@@ -141,8 +141,8 @@ class GameUpdateCommandSpec extends Specification {
   }
 
   "Updating the academy members' ticket sale date" should {
-    testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: DateTime) => AcademyTicketsUpdateCommand(gameLocator, saleDate),
+    testGameUpdateCommand[ZonedDateTime](
+      gameLocator => (saleDate: ZonedDateTime) => AcademyTicketsUpdateCommand(gameLocator, saleDate),
       _.academyMembersAvailable,
       DEFAULT_ACADEMY_TICKETS_AVAILABLE,
       DEFAULT_ACADEMY_TICKETS_AVAILABLE plusDays 1,
@@ -150,26 +150,14 @@ class GameUpdateCommandSpec extends Specification {
   }
 
   "Updating the general ticket sale date" should {
-    testGameUpdateCommand[DateTime](
-      gameLocator => (saleDate: DateTime) => GeneralSaleTicketsUpdateCommand(gameLocator, saleDate),
+    testGameUpdateCommand[ZonedDateTime](
+      gameLocator => (saleDate: ZonedDateTime) => GeneralSaleTicketsUpdateCommand(gameLocator, saleDate),
       _.generalSaleAvailable,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE,
       DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE plusDays 1,
       _.copy(generalSaleAvailable = Some(DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE plusDays 1)))
   }
 
-  /**
-   * Test a game update command.
-   *
-   * @param gameUpdateCommandFactory
-   *          the game update command factory
-   * @param valueFunction
-   *          the value function
-   * @param currentValue
-   *          the current value
-   * @param newValue
-   *          the new value
-   */
   def testGameUpdateCommand[E](
     gameUpdateCommandFactory: GameLocator => E => GameUpdateCommand,
     valueFactory: Game => Option[E],
@@ -202,17 +190,17 @@ class GameUpdateCommandSpec extends Specification {
       season = DEFAULT_SEASON,
       competition = DEFAULT_COMPETITION,
       opponents = DEFAULT_OPPONENTS,
-      at = Some(DEFAULT_DATE_PLAYED.toDateTime),
+      at = Some(DEFAULT_DATE_PLAYED.toZonedDateTime),
       attended = DEFAULT_ATTENDED,
       result = Some(DEFAULT_RESULT),
       attendance = Some(DEFAULT_ATTENDANCE),
       matchReport = Some(DEFAULT_MATCH_REPORT),
       televisionChannel = Some(DEFAULT_TELEVISION_CHANNEL),
-      bondholdersAvailable = Some(DEFAULT_BONDHOLDERS_AVAILABLE.toDateTime),
-      priorityPointAvailable = Some(DEFAULT_PRIORITY_POINT_AVAILABLE.toDateTime),
-      seasonTicketsAvailable = Some(DEFAULT_SEASON_TICKETS_AVAILABLE.toDateTime),
-      academyMembersAvailable = Some(DEFAULT_ACADEMY_TICKETS_AVAILABLE.toDateTime),
-      generalSaleAvailable = Some(DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE.toDateTime),
+      bondholdersAvailable = Some(DEFAULT_BONDHOLDERS_AVAILABLE.toZonedDateTime),
+      priorityPointAvailable = Some(DEFAULT_PRIORITY_POINT_AVAILABLE.toZonedDateTime),
+      seasonTicketsAvailable = Some(DEFAULT_SEASON_TICKETS_AVAILABLE.toZonedDateTime),
+      academyMembersAvailable = Some(DEFAULT_ACADEMY_TICKETS_AVAILABLE.toZonedDateTime),
+      generalSaleAvailable = Some(DEFAULT_GENERAL_SALE_TICKETS_AVAILABLE.toZonedDateTime),
       lastUpdated = DEFAULT_UPDATE_DATE,
       dateCreated = DEFAULT_UPDATE_DATE)
   }

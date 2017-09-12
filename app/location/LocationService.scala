@@ -2,7 +2,7 @@ package location
 
 import java.net.URL
 
-import scala.concurrent.Future
+import monads.FO.FutureOption
 
 /**
  * A trait that can get the URL for a game's google location
@@ -10,5 +10,5 @@ import scala.concurrent.Future
  */
 trait LocationService {
 
-  def location(gameId: Long): Future[Option[URL]]
+  def location(gameId: Long): FutureOption[URL]
 }

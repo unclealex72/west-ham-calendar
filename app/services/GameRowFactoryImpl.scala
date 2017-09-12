@@ -21,79 +21,61 @@
  */
 package services
 
-import java.util.Date
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
-import dates.DateTimeImplicits._
+import dates.JvmGameRow
+import dates.ZonedDateTimeExtensions._
 import dates.geo.GeoLocationFactory
 import model.Game
 import models.GameTimeType._
 import models.TicketType._
 import models._
-import org.joda.time.DateTime
-import sprites.{Sprite, SpriteHolder}
 
 /**
  * @author alex
  *
  */
-class GameRowFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory, val spriteHolder: SpriteHolder) extends GameRowFactory {
+class GameRowFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory) extends GameRowFactory {
 
-  def timeTypeOf(dateTime: DateTime): GameTimeType = {
-    if (dateTime.isThreeOClockOnASaturday) {
-      ThreePmSaturday
-    } else if (dateTime.isWeekday) {
-      Weekday
+  def timeTypeOf(zonedDateTime: ZonedDateTime): GameTimeType = {
+    if (zonedDateTime.isThreeOClockOnASaturday) {
+      THREE_PM_SATURDAY
+    } else if (zonedDateTime.isWeekday) {
+      WEEKDAY
     } else {
-      Weekend
+      WEEKEND
     }
   }
 
   def toRow(
              includeAttended: Boolean,
-             gameLinksFactory: Game => Links[GameRowRel],
-             ticketLinksFactory: Game => TicketType => Links[TicketingInformationRel]): Game => GameRow = { game =>
+             gameLinksFactory: Game => Links[GameRowRel]): Game => JvmGameRow = { game =>
     game.at match {
       case Some(gameAt) =>
-        def toLogoClass(optionalSprite: Option[Sprite], optionalUrl: Option[String]): Option[String] = {
-          for {
-            sprite <- optionalSprite
-            url <- optionalUrl
-            logoClass <- sprite.classNamesByUrl.get(url)
-          } yield logoClass
-        }
-        val optionalTeamSprite: Option[Sprite] = spriteHolder.teams
-        GameRow(
+        GameRow[ZonedDateTime](
           id = game.id,
           at = gameAt,
           season = game.season,
           opponents = game.opponents,
           competition = game.competition,
           location = game.location,
-          result = game.result,
-          tickets = ticketFactory(game, ticketLinksFactory),
-          attended = if (includeAttended) Some(game.attended) else None,
-          toLogoClass(optionalTeamSprite, game.homeTeamImageLink),
-          toLogoClass(optionalTeamSprite, game.awayTeamImageLink),
-          toLogoClass(spriteHolder.competitions, game.competitionImageLink),
+          maybeResult = game.result,
+          tickets = ticketFactory(game),
+          maybeAttended = if (includeAttended) Some(game.attended) else None,
           links = gameLinksFactory(game))
       case None => throw new IllegalStateException(s"Game $game did not have it's date played attribute set.")
     }
   }
 
-  def ticketFactory(game: Game, ticketLinksFactory: Game => TicketType => Links[TicketingInformationRel]): Map[TicketType, TicketingInformation] = {
-    implicit val dt = (date : Date) => new DateTime(date)
-    val ticketsAt: Map[TicketType, Option[DateTime]] = Map(
-      BondholderTicketType -> game.bondholdersAvailable,
-      PriorityPointTicketType -> game.priorityPointAvailable,
-      SeasonTicketType -> game.seasonTicketsAvailable,
-      AcademyTicketType -> game.academyMembersAvailable,
-      GeneralSaleTicketType -> game.generalSaleAvailable)
-    ticketsAt.foldLeft(Map.empty[TicketType, TicketingInformation]) {
-      case (tickets, (ticketType, Some(availableAt))) =>
-        val ticketFormUrl = ticketLinksFactory(game)(ticketType)
-        tickets + (ticketType -> TicketingInformation(availableAt, ticketFormUrl))
-      case (tickets, _) => tickets
+  def ticketFactory(game: Game): Map[TicketType, ZonedDateTime] = {
+    def tickets(ticketType: TicketType, maybeDate: Option[ZonedDateTime]): Map[TicketType, ZonedDateTime] = {
+      Map.empty ++ maybeDate.toSeq.map(date => ticketType -> date)
     }
+    tickets(BondholderTicketType, game.bondholdersAvailable) ++
+      tickets(PriorityPointTicketType, game.priorityPointAvailable) ++
+      tickets(SeasonTicketType, game.seasonTicketsAvailable) ++
+      tickets(AcademyTicketType, game.academyMembersAvailable) ++
+      tickets(GeneralSaleTicketType, game.generalSaleAvailable)
   }
 }

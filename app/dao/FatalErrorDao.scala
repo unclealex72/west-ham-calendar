@@ -22,7 +22,9 @@
 package dao
 
 import model.FatalError
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import monads.FO.FutureOption
 
 import scala.concurrent.Future
 
@@ -41,14 +43,14 @@ trait FatalErrorDao {
   /**
    * Find a game by its ID.
    */
-  def findById(id: Long): Future[Option[FatalError]]
+  def findById(id: Long): FutureOption[FatalError]
 
   /**
     * Find all the errors since a given date.
     * @param since
     * @return
     */
-  def since(since: DateTime): Future[List[FatalError]]
+  def since(since: ZonedDateTime): Future[List[FatalError]]
 
   /**
    * Get all known games.

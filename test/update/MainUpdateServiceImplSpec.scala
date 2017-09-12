@@ -24,14 +24,17 @@ package update
 import java.net.URI
 
 import dao.GameDao
-import dates.{Instant, NowService, September}
+import dates.{September, TimeOfDay, ZonedDateTimeFactory, ZonedDateTimeFactoryImpl}
 import html.{AttendenceUpdateCommand, DatePlayedLocator, DatePlayedUpdateCommand, GameKeyLocator, GameUpdateCommand, SeasonTicketsUpdateCommand}
-import logging.SimpleRemoteStream
-import models.{Location, Competition}
+import logging.{RemoteStream, SimpleRemoteStream}
+import models.{Competition, Location}
 import Competition._
 import Location._
 import model.{Game, GameKey}
-import org.joda.time.DateTime
+import java.time.{Clock, ZoneId, ZonedDateTime}
+
+import monads.FE.FutureEitherNel
+import monads.{FE, FO}
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.mock.Mockito
@@ -39,14 +42,14 @@ import org.specs2.mutable.Specification
 import update.fixtures.FixturesGameScanner
 import update.tickets.TicketsGameScanner
 
-import scala.concurrent.Future
-import scalaz._
-import Scalaz._
+import scala.concurrent.{ExecutionContext, Future}
+import cats.instances.future._
+
 /**
  * @author alex
  *
  */
-class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers with Mockito with SimpleRemoteStream {
+class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers with Mockito {
 
   sequential
 
@@ -54,20 +57,24 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   val FIXTURES_URL = new URI("http://fixtures")
   val SOUTHAMPTON = GameKey(FACP, HOME, "Southampton", 2014)
   val LIVERPOOL = GameKey(FACP, HOME, "Liverpool", 2014)
-  val LATEST_SEASON = Some(2015)
+  val LATEST_SEASON: Option[Int] = Some(2015)
+
+  def updates(gameUpdateCommands: GameUpdateCommand*)(implicit ec: ExecutionContext): FutureEitherNel[String, Seq[GameUpdateCommand]] = {
+    FE(Future.successful(gameUpdateCommands))
+  }
 
   "Adding a completely new game" should {
     "create and update a new game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       s.gameDao.getAll returns Future.successful(List.empty[Game])
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0))).right)
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand].right)
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates(
+        DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0)))
+      s.ticketsGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates()
       val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(at = Some(September(5, 2013) at (15, 0)))
       s.gameDao.store(expectedStoredGame) returns Future.successful(expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates(remoteStream) must be_\/-(1).await
+      s.mainUpdateService.processDatabaseUpdates(s.remoteStream).value must beRight(1).await
       there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
@@ -76,21 +83,20 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Updating an existing game with new information" should {
     "update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       val existingStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0))
       )
       s.gameDao.getAll returns Future.successful(List(existingStoredGame))
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        AttendenceUpdateCommand(SOUTHAMPTON, 34966)).right)
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand].right)
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates(AttendenceUpdateCommand(SOUTHAMPTON, 34966))
+      s.ticketsGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates()
       val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0)),
         attendance = Some(34966)
       )
       s.gameDao.store(expectedStoredGame) returns Future.successful(expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
+      s.mainUpdateService.processDatabaseUpdates(s.remoteStream).value must beRight(1).await
       there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
@@ -99,18 +105,18 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Updating an existing game with no extra information" should {
     "not update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       val existingStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0)),
         attendance = Some(34966)
       )
       s.gameDao.getAll returns Future.successful(List(existingStoredGame))
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        AttendenceUpdateCommand(SOUTHAMPTON, 34966)).right)
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty[GameUpdateCommand].right)
-      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
-      there were no(s.gameDao).store(any[Game])(any[NowService])
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates(
+        AttendenceUpdateCommand(SOUTHAMPTON, 34966))
+      s.ticketsGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates()
+      s.mainUpdateService.processDatabaseUpdates(s.remoteStream).value must beRight(1).await
+      there were no(s.gameDao).store(any[Game]())
       there was one(s.lastUpdated).at(s.now)
     }
   }
@@ -118,21 +124,21 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Updating an existing game with new ticket information" should {
     "update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       val existingStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0))
       )
       s.gameDao.getAll returns Future.successful(List(existingStoredGame))
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty.right)
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))).right)
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates()
+      s.ticketsGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates(
+        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0)))
       val expectedStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0)),
         seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
       )
-      s.gameDao.store(expectedStoredGame)(s.nowService) returns Future.successful(expectedStoredGame)
-      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
+      s.gameDao.store(expectedStoredGame) returns Future.successful(expectedStoredGame)
+      s.mainUpdateService.processDatabaseUpdates(s.remoteStream).value must beRight(1).await
       there was one(s.gameDao).store(expectedStoredGame)
       there was one(s.lastUpdated).at(s.now)
     }
@@ -141,18 +147,17 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Updating an existing game with no new ticket information" should {
     "not update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       val existingStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0)),
         seasonTicketsAvailable = Some(September(3, 2013) at (9, 0))
       )
       s.gameDao.getAll returns Future.successful(List(existingStoredGame))
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty.right)
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))).right)
-      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
-      there were no(s.gameDao).store(any[Game])(any[NowService])
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates()
+      s.ticketsGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates(
+        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0)))
+      s.mainUpdateService.processDatabaseUpdates(s.remoteStream).value must beRight(1).await
       there was one(s.lastUpdated).at(s.now)
     }
   }
@@ -160,13 +165,13 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Creating a new game and also updating its ticket information" should {
     "create and update the game" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       s.gameDao.getAll returns Future.successful(List.empty)
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0))).right)
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))).right)
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
+      s.fixturesGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates(
+        DatePlayedUpdateCommand(SOUTHAMPTON, September(5, 2013) at(15, 0)))
+      s.ticketsGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates(
+        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0)))
       val firstStoredGame = Game.gameKey(SOUTHAMPTON).copy(at = Some(September(5, 2013) at (15, 0)))
       val secondStoredGame = Game.gameKey(SOUTHAMPTON).copy(
         at = Some(September(5, 2013) at (15, 0)),
@@ -175,7 +180,7 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
       List(firstStoredGame, secondStoredGame) foreach { game =>
         s.gameDao.store(game) returns Future.successful(game)
       }
-      s.mainUpdateService.processDatabaseUpdates must be_\/-(1).await
+      s.mainUpdateService.processDatabaseUpdates(s.remoteStream).value must beRight(1).await
       there was one(s.gameDao).store(firstStoredGame)
       there was one(s.gameDao).store(secondStoredGame)
       there was one(s.lastUpdated).at(s.now)
@@ -185,14 +190,14 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Tickets for a non-existing game" should {
     "be ignored" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
       s.gameDao.getAll returns Future.successful(List.empty)
-      s.fixturesGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List.empty.right)
-      s.ticketsGameScanner.scan(LATEST_SEASON)(remoteStream) returns Future.successful(List(
-        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0))).right)
-      s.mainUpdateService.processDatabaseUpdates must be_\/-(0).await
-      there were no(s.gameDao).store(any[Game])(any[NowService])
+      s.fixturesGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates()
+      s.ticketsGameScanner.scan(LATEST_SEASON)(s.remoteStream) returns updates(
+        SeasonTicketsUpdateCommand(DatePlayedLocator(September(5, 2013) at(15, 0)), September(3, 2013) at(9, 0)))
+      s.mainUpdateService.processDatabaseUpdates(s.remoteStream).value must beRight(0).await
+      there were no(s.gameDao).store(any[Game]())
       there was one(s.lastUpdated).at(s.now)
     }
   }
@@ -200,14 +205,14 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Attending a game" should {
     "persist its attended flag to true" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       val unattendedGame = Game.gameKey(SOUTHAMPTON)
       val attendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = true)
 
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.gameDao.findById(1l) returns Future.successful(Some(unattendedGame))
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
+      s.gameDao.findById(1l) returns FO(Some(unattendedGame))
       s.gameDao.store(attendedGame) returns Future.successful(attendedGame)
-      val changedGame = s.mainUpdateService.attendGame(1l)
+      val changedGame = s.mainUpdateService.attendGame(1l).value
       changedGame.map(_.map(_.attended)) must beSome(true).await
       there was one(s.gameDao).store(attendedGame)
     }
@@ -216,14 +221,14 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Unattending a game" should {
     "persist its attended flag to false" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       val unattendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = false)
       val attendedGame = Game.gameKey(SOUTHAMPTON).copy(attended = true)
 
-      s.gameDao.getLatestSeason returns Future.successful(LATEST_SEASON)
-      s.gameDao.findById(1l) returns Future.successful(Some(attendedGame))
+      s.gameDao.getLatestSeason returns FO(LATEST_SEASON)
+      s.gameDao.findById(1l) returns FO(Some(attendedGame))
       s.gameDao.store(unattendedGame) returns Future.successful(unattendedGame)
-      val changedGame = s.mainUpdateService.unattendGame(1l)
+      val changedGame = s.mainUpdateService.unattendGame(1l).value
       changedGame.map(_.map(_.attended)) must beSome(false).await
     }
   }
@@ -231,7 +236,7 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
   "Attending all home games in a season" should {
     "persist all home games attended flag to true" in { implicit ee: ExecutionEnv =>
       val s = new Services()
-      implicit val nowService = s.nowService
+      implicit val zonedDateTimeFactory: ZonedDateTimeFactory = s.zonedDateTimeFactory
       val homeGames2013 = List(SOUTHAMPTON, LIVERPOOL)
       val unattendedGames = homeGames2013.map(Game.gameKey)
       val attendedGames = homeGames2013.map(Game.gameKey(_).copy(attended = true))
@@ -244,7 +249,7 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
 
   // Game locator implicits
 
-  implicit val instantToDatePlayedLocator: Instant => DatePlayedLocator = DatePlayedLocator(_)
+  implicit val zonedDateTimeToDatePlayedLocator: TimeOfDay => DatePlayedLocator = DatePlayedLocator(_)
 
   implicit val gameKeyToGameKeyLocator: GameKey => GameKeyLocator = GameKeyLocator
   /**
@@ -272,13 +277,15 @@ class MainUpdateServiceImplSpec extends Specification with DisjunctionMatchers w
    * A class that holds all the mocked services
    */
   class Services(implicit ee: ExecutionEnv) {
-    val now = new DateTime
-    implicit val nowService = NowService(now)
-    val gameDao = mock[GameDao]
-    val lastUpdated = mock[LastUpdated]
-    val ticketsGameScanner = mock[TicketsGameScanner]
-    val fixturesGameScanner = mock[FixturesGameScanner]
+    private val zoneId = ZoneId.of("Europe/London")
+    implicit val zonedDateTimeFactory: ZonedDateTimeFactory = new ZonedDateTimeFactoryImpl()
+    val now: ZonedDateTime = zonedDateTimeFactory.now
+    val gameDao: GameDao = mock[GameDao]
+    val lastUpdated: LastUpdated = mock[LastUpdated]
+    val ticketsGameScanner: TicketsGameScanner = mock[TicketsGameScanner]
+    val fixturesGameScanner: FixturesGameScanner = mock[FixturesGameScanner]
     val mainUpdateService = new MainUpdateServiceImpl(gameDao, fixturesGameScanner, ticketsGameScanner, lastUpdated)
+    val remoteStream: RemoteStream = new SimpleRemoteStream()
   }
 }
 

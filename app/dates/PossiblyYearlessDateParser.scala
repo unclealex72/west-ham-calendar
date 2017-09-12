@@ -22,8 +22,7 @@
 
 package dates
 
-import org.joda.time.DateTime
-import java.util.regex.Pattern
+import java.time.ZonedDateTime
 
 /**
  * A {@link PossiblyYearlessDateFormat} that contains the optional year defining
@@ -32,11 +31,11 @@ import java.util.regex.Pattern
  * @author alex
  *
  */
-class PossiblyYearlessDateParser(
+private [dates] class PossiblyYearlessDateParser(
   /**
    * The date to used to determine the year.
    */
-  yearDeterminingDate: DateTime,
+  yearDeterminingDate: ZonedDateTime,
   /**
    * True if the date is earlier than the year determining date, false otherwise.
    */
@@ -44,17 +43,17 @@ class PossiblyYearlessDateParser(
   /**
    * The string that will be parsed for a possibly yearless date
    */
-  str: String) extends DelegatingDateParser {
+  str: String)(implicit val zonedDateTimeFactory: ZonedDateTimeFactory) extends DelegatingDateParser {
 
   /**
    * The regular expression to find and remove the year part of format strings.
    */
   private val YEAR_STRIPPING_REGEX = """(.*?)\[(.+)\](.*)""".r
 
-  val dateFormats: Array[NeedsYear] = {
+  val dateFormats: Seq[NeedsYear] = {
     str match {
       case YEAR_STRIPPING_REGEX(preYear, year, postYear) =>
-        Array(DoesNotNeedYear(preYear + year + postYear), DoesNeedYear(preYear + postYear))
+        Seq(DoesNotNeedYear(preYear + year + postYear), DoesNeedYear(preYear + postYear))
       case s if s.contains("y") => Array(DoesNotNeedYear(s))
       case s => Array(DoesNeedYear(s))
     }
@@ -64,26 +63,18 @@ class PossiblyYearlessDateParser(
 
   val delegate: DateParser = {
     val dateParsers = dateFormats map {
-      case DoesNeedYear(dateFormat) => yearSetter(new JodaDateParser(dateFormat))
-      case DoesNotNeedYear(dateFormat) => new JodaDateParser(dateFormat)
+      case DoesNeedYear(dateFormat) => yearSetter(JavaTimeDateParser(dateFormat, yearDeterminingDate.getYear))
+      case DoesNotNeedYear(dateFormat) => JavaTimeDateParser(dateFormat)
     }
     new ChainingDateParser(dateParsers)
   }
 }
 
 /**
- * Classes used in case matches to decide whether a date format requires a year setting or not.
- */
+  * Classes used in case matches to decide whether a date format requires a year setting or not.
+  */
 sealed abstract class NeedsYear(dateFormat: String)
 
 case class DoesNeedYear(dateFormat: String) extends NeedsYear(dateFormat)
 case class DoesNotNeedYear(dateFormat: String) extends NeedsYear(dateFormat)
 
-object PossiblyYearlessDateParser {
-
-  def forSeason(season: Int)(format: String, formats: String*) = {
-    // July 1st
-    val datum = new DateTime(season, 7, 1, 0, 0)
-    new ChainingDateParser((Seq(format) ++ formats).map(format => new PossiblyYearlessDateParser(datum, false, format)))
-  }
-}

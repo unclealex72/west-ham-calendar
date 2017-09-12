@@ -21,16 +21,15 @@
  */
 package dao
 
-import dates.NowService
-import models.{Location, Competition}
-import org.joda.time.DateTime
-import model.Game
-import scala.collection.SortedSet
-import search.SearchOption
-import search.GameOrTicketSearchOption
-import search.AttendedSearchOption
-import search.LocationSearchOption
+import java.time.ZonedDateTime
 
+import dates.ZonedDateTimeFactory
+import model.Game
+import models.{Competition, Location}
+import monads.FO.FutureOption
+import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
+
+import scala.collection.SortedSet
 import scala.concurrent.Future
 
 /**
@@ -43,20 +42,20 @@ trait GameDao {
   /**
    * Update a game
    */
-  def store(game: Game)(implicit nowService: NowService): Future[Game]
+  def store(game: Game): Future[Game]
 
   /**
    * Find a game by its ID.
    */
-  def findById(id: Long): Future[Option[Game]]
+  def findById(id: Long): FutureOption[Game]
 
   /**
-   * Find a game by the {@link DateTime} it was played.
+   * Find a game by the {@link ZonedDateTime} it was played.
     *
-    * @param datePlayed The {@link DateTime} to search for.
-   * @return The {@link Game} played at the given {@link DateTime} or null if one could not be found.
+    * @param datePlayed The {@link ZonedDateTime} to search for.
+   * @return The {@link Game} played at the given {@link ZonedDateTime} or null if one could not be found.
    */
-  def findByDatePlayed(datePlayed: DateTime): Future[Option[Game]]
+  def findByDatePlayed(datePlayed: ZonedDateTime): FutureOption[Game]
 
   /**
    * Get all the {@link Game}s for a given season.
@@ -83,14 +82,14 @@ trait GameDao {
    * @param season The season to search for.
    * @return The uniquely defined {@link Game} if it exists or null otherwise.
    */
-  def findByBusinessKey(competition: Competition, location: Location, opponents: String, season: Int): Future[Option[Game]]
+  def findByBusinessKey(competition: Competition, location: Location, opponents: String, season: Int): FutureOption[Game]
 
   /**
    * Get the latest known season.
     *
     * @return The latest known season.
    */
-  def getLatestSeason: Future[Option[Int]]
+  def getLatestSeason: FutureOption[Int]
 
   /**
    * Get all {@link Game}s for a given season and {@link Location}.
@@ -115,7 +114,7 @@ trait GameDao {
   def getAll: Future[List[Game]]
 
   //Coming soon!
-  //def getAllModifiedSince(lastModified: DateTime): Future[List[Game]]
+  //def getAllModifiedSince(lastModified: ZonedDateTime): Future[List[Game]]
 
   /**
     * Get all home and away logos.

@@ -25,8 +25,8 @@
 package cal
 
 import models.{GeoLocation, Location, Competition}
-import org.joda.time.DateTime
-import org.joda.time.Duration
+import java.time.{ZonedDateTime, Duration}
+
 /**
  * A representation of a game (or event) in a calendar. This is not tied to any implementation.
   *
@@ -34,69 +34,70 @@ import org.joda.time.Duration
  *
  */
 case class Event(
-  /**
-   * The unique (relative to this application) ID of the event.
-   */
-  val id: String,
-  /**
-   * The ID of the game that created this event.
-    */
-  val gameId: Long,
-  /**
-   * The game's {@link Competition}.
-   */
-  val competition: Competition,
-  /**
-   * The game's {@link Location}.
-   */
-  val location: Location,
-  /**
-   * The game's geographic location.
-   */
-  val geoLocation: Option[GeoLocation],
-  /**
-   * The game's opponents.
-   */
-  val opponents: String,
-  /**
-   * The {@link DateTime} of the event.
-   */
-  val dateTime: DateTime,
-  /**
-   * The {@link Duration} of the event.
-   */
-  val duration: Duration,
-  /**
-   * The game's result.
-   */
-  val result: Option[String],
-  /**
-   * The game's attendence.
-   */
-  val attendence: Option[Int],
-  /**
-   * The game's match report.
-   */
-  val matchReport: Option[String],
-  /**
-   * The TV channel that showed the match.
-   */
-  val televisionChannel: Option[String],
-  /**
-   * True if this event should be marked as busy, false otherwise.
-   */
-  val busy: Boolean,
-  /**
-   * The date this event was created.
-   */
-  val dateCreated: DateTime,
-  /**
-   * The date this event was last updated.
-   */
-  val lastUpdated: DateTime) extends Ordered[Event] {
+                  /**
+                   * The unique (relative to this application) ID of the event.
+                   */
+                  id: String,
+                  /**
+                   * The ID of the game that created this event.
+                    */
+                  gameId: Long,
+                  /**
+                   * The game's {@link Competition}.
+                   */
+                  competition: Competition,
+                  /**
+                   * The game's {@link Location}.
+                   */
+                  location: Location,
+                  /**
+                   * The game's geographic location.
+                   */
+                  geoLocation: Option[GeoLocation],
+                  /**
+                   * The game's opponents.
+                   */
+                  opponents: String,
+                  /**
+                   * The {@link ZonedDateTime} of the event.
+                   */
+                  zonedDateTime: ZonedDateTime,
+                  /**
+                   * The {@link Duration} of the event.
+                   */
+                  duration: Duration,
+                  /**
+                   * The game's result.
+                   */
+                  result: Option[String],
+                  /**
+                   * The game's attendance.
+                   */
+                  attendance: Option[Int],
+                  /**
+                   * The game's match report.
+                   */
+                  matchReport: Option[String],
+                  /**
+                   * The TV channel that showed the match.
+                   */
+                  televisionChannel: Option[String],
+                  /**
+                   * True if this event should be marked as busy, false otherwise.
+                   */
+                  busy: Boolean,
+                  /**
+                   * The date this event was created.
+                   */
+                  dateCreated: ZonedDateTime,
+                  /**
+                   * The date this event was last updated.
+                   */
+                  lastUpdated: ZonedDateTime) {
 
-  /**
-   * Compare events chronologically
-   */
-  def compare(that: Event) = Ordering.by((e: Event) => e.dateTime.getMillis).compare(this, that)
+}
+
+object Event {
+
+  implicit val eventOrdering: Ordering[Event] = Ordering.by(e => e.zonedDateTime.toInstant)
 }

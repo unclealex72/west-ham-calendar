@@ -21,10 +21,10 @@
  */
 package controllers
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import play.api.http.HeaderNames
 import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.Action
+import play.api.mvc.{Action, ActionBuilder, ControllerComponents}
 import play.api.mvc.Results.NotModified
 
 import scala.concurrent.Future

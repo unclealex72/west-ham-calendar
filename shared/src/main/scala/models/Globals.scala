@@ -16,6 +16,8 @@
 
 package models
 
+import io.circe.{Decoder, Encoder}
+
 /**
  * A class that encapsulates the global information sent to the client.
  */
@@ -27,6 +29,13 @@ case class Globals(
   /**
    * The name of the currently logged in user.
    */
-  username: Option[String]) {
+  maybeUsername: Option[String]) {
+}
 
+object Globals {
+
+  implicit val globalsEncoder: Encoder[Globals] =
+    Encoder.forProduct2("seasons", "username")(g => (g.seasons, g.maybeUsername))
+  implicit val globalsDecoder: Decoder[Globals] =
+    Decoder.forProduct2("seasons", "username")(Globals.apply)
 }

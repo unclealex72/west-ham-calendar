@@ -25,11 +25,7 @@
 package cal
 
 import model.Game
-import org.joda.time.DateTime
-import org.joda.time.Duration
-import search.AttendedSearchOption
-import search.LocationSearchOption
-import search.GameOrTicketSearchOption
+import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
 
 /**
  * An interface for creating a calendar from a list of games.

@@ -28,15 +28,11 @@ package cal
 
 import javax.inject.Inject
 
-import dates.DateTimeImplicits._
 import dates.geo.GeoLocationFactory
 import model.Game
-import models.GeoLocation
-import org.joda.time.{DateTime, Duration}
+import java.time.{Duration, ZonedDateTime}
 import search.GameOrTicketSearchOption._
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
-
-import scala.collection.SortedSet
 /**
  * The default implementation of the Calendar factory.
  *
@@ -52,7 +48,7 @@ class CalendarFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory)
     locationSearchOption: LocationSearchOption,
     gameOrTicketSearchOption: GameOrTicketSearchOption): Calendar = {
     val (dateFactory, duration) = gamePeriodFactory(gameOrTicketSearchOption)
-    val gameToEvent = convert(dateFactory, busy(busyMask, attendedSearchOption), Duration.standardHours(duration))
+    val gameToEvent = convert(dateFactory, busy(busyMask, attendedSearchOption), Duration.ofHours(duration))
     val events = for {
       game <- games
       event <- gameToEvent(game)
@@ -68,7 +64,7 @@ class CalendarFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory)
     busyMask getOrElse (attendedSearchOption == AttendedSearchOption.ATTENDED)
   }
 
-  def gamePeriodFactory(gameOrTicketSearchOption: GameOrTicketSearchOption): (Game => Option[DateTime], Int) = {
+  def gamePeriodFactory(gameOrTicketSearchOption: GameOrTicketSearchOption): (Game => Option[ZonedDateTime], Int) = {
     gameOrTicketSearchOption match {
       case BONDHOLDERS => (g => g.bondholdersAvailable, 1)
       case PRIORITY_POINT => (g => g.priorityPointAvailable, 1)
@@ -106,7 +102,7 @@ class CalendarFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory)
   /**
    * Convert a game to into an event if the date factory supplies a date.
    */
-  def convert(dateFactory: Game => Option[DateTime], busy: Boolean, duration: Duration): Game => Option[Event] = { game =>
+  def convert(dateFactory: Game => Option[ZonedDateTime], busy: Boolean, duration: Duration): Game => Option[Event] = { game =>
     dateFactory(game) map { date =>
       new Event(
         id = game.id.toString,
@@ -115,10 +111,10 @@ class CalendarFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory)
         location = game.location,
         geoLocation = geoLocationFactory.forGame(game),
         opponents = game.opponents,
-        dateTime = date,
+        zonedDateTime = date,
         duration = duration,
         result = game.result.map(_.format),
-        attendence = game.attendance,
+        attendance = game.attendance,
         matchReport = game.matchReport,
         televisionChannel = game.televisionChannel,
         busy = busy,

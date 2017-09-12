@@ -2,16 +2,21 @@ package controllers
 
 import javax.inject.Inject
 
+import dates.ZonedDateTimeFactory
 import location.LocationService
-import play.api.mvc._
-import play.api.libs.concurrent.Execution.Implicits._
+import play.api.mvc.{AnyContent, ControllerComponents, Request}
 
-class Location @Inject() (val locationService: LocationService) extends Controller {
+import scala.concurrent.ExecutionContext
 
-  def location(gameId: Long) = Action.async {
-    locationService.location(gameId).map {
-      case Some(url) => TemporaryRedirect(url.toString)
-      case _ => NotFound
+class Location @Inject() (
+                           val locationService: LocationService,
+                           override val controllerComponents: ControllerComponents,
+                           override val zonedDateTimeFactory: ZonedDateTimeFactory,
+                           override implicit val ec: ExecutionContext) extends AbstractController(controllerComponents, zonedDateTimeFactory, ec) {
+
+  def location(gameId: Long) = Action.async { implicit request: Request[AnyContent] =>
+    fo(locationService.location(gameId)) { url =>
+      TemporaryRedirect(url.toString)
     }
   }
 }

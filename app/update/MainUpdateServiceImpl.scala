@@ -23,22 +23,23 @@
 package update
 
 import java.io.IOException
+import java.time.Clock
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import com.typesafe.scalalogging.StrictLogging
 import dao.GameDao
-import dates.NowService
 import html.{DatePlayedLocator, GameKeyLocator, GameLocator, GameUpdateCommand}
 import logging.RemoteStream
 import model.Game
-import models.Location
-import Location.HOME
-import monads.FE
+import models.Location.HOME
+import monads.{FE, FO}
+import monads.FE.FutureEitherNel
 import update.fixtures.FixturesGameScanner
 import update.tickets.TicketsGameScanner
 
 import scala.concurrent.{ExecutionContext, Future}
-import scalaz._
-import Scalaz._
+import cats.instances.future._
+import dates.ZonedDateTimeFactory
+import monads.FO.FutureOption
 
 /**
  * The Class MainUpdateServiceImpl.
@@ -64,26 +65,25 @@ class MainUpdateServiceImpl @javax.inject.Inject() (
    */
   lastUpdated: LastUpdated
   /**
-   * The {@link NowService} used to get the current date and time.
+   * The {@link Clock} used to get the current date and time.
    */
-  )(implicit ec: ExecutionContext, nowService: NowService) extends MainUpdateService with StrictLogging {
+  )(implicit ec: ExecutionContext,
+    zonedDateTimeFactory: ZonedDateTimeFactory) extends MainUpdateService with StrictLogging {
 
   /**
    * Process all updates required in the database.
    *
-   * @throws IOException
    */
-  override def processDatabaseUpdates(implicit remoteStream: RemoteStream): Future[\/[NonEmptyList[String], Int]] = {
-    FE {
-      for {
-        allGames <- FE <~ gameDao.getAll
-        latestSeason <- FE <~ gameDao.getLatestSeason
-        newGames <- FE <~ processUpdates("fixture", fixturesGameScanner, latestSeason, allGames)
-        _ <- FE <~ processUpdates("ticket", ticketsGameScanner, latestSeason, allGames ++ newGames)
-      } yield {
-        lastUpdated at nowService.now
-        (allGames ++ newGames).size
-      }
+  override def processDatabaseUpdates(remoteStream: RemoteStream): FutureEitherNel[String, Int] = {
+    implicit val _remoteStream = remoteStream
+    for {
+      allGames <- FE(gameDao.getAll)
+      latestSeason <- FE(gameDao.getLatestSeason.value.map(Right(_))) // Do not short circuit if there is no latest season.
+      newGames <- processUpdates("fixture", fixturesGameScanner, latestSeason, allGames)
+      _ <- processUpdates("ticket", ticketsGameScanner, latestSeason, allGames ++ newGames)
+    } yield {
+      lastUpdated at zonedDateTimeFactory.now
+      (allGames ++ newGames).size
     }
   }
 
@@ -92,23 +92,19 @@ class MainUpdateServiceImpl @javax.inject.Inject() (
    *
    * @param updatesType
    *          the updates type
-   * @param uri
-   *          the uri
    * @param scanner
    *          the scanner
    * @throws IOException
    *           Signals that an I/O exception has occurred.
    */
   def processUpdates(updatesType: String, scanner: GameScanner, latestSeason: Option[Int], allGames: Seq[Game])(implicit remoteStream: RemoteStream):
-  Future[\/[NonEmptyList[String], List[Game]]] = {
+  FutureEitherNel[String, List[Game]] = {
     logger info s"Scanning for $updatesType changes."
-    FE {
-      for {
-        allGameUpdateCommands <- FE <~ scanner.scan(latestSeason)
-        games <- FE <~ updateAndStoreGames(allGames, allGameUpdateCommands)
-      } yield {
-        games
-      }
+    for {
+      allGameUpdateCommands <- scanner.scan(latestSeason)
+      games <- FE(updateAndStoreGames(allGames, allGameUpdateCommands))
+    } yield {
+      games
     }
   }
 
@@ -183,14 +179,15 @@ class MainUpdateServiceImpl @javax.inject.Inject() (
     }
   }
 
-  def attendGame(gameId: Long): Future[Option[Game]] = attendOrUnattendGame(gameId, attend = true)
+  def attendGame(gameId: Long): FutureOption[Game] = attendOrUnattendGame(gameId, attend = true)
 
-  def unattendGame(gameId: Long): Future[Option[Game]] = attendOrUnattendGame(gameId, attend = false)
+  def unattendGame(gameId: Long): FutureOption[Game] = attendOrUnattendGame(gameId, attend = false)
 
-  def attendOrUnattendGame(gameId: Long, attend: Boolean): Future[Option[Game]] =
-    attendOrUnattendGames(gameDao.findById(gameId).map(_.toList), attend).map(_.headOption)
+  def attendOrUnattendGame(gameId: Long, attend: Boolean): FutureOption[Game] = FO {
+    attendOrUnattendGames(gameDao.findById(gameId).value.map(_.toList), attend).map(_.headOption)
+  }
 
-  def attendAllHomeGamesForSeason(season: Int) =
+  def attendAllHomeGamesForSeason(season: Int): Future[List[Game]] =
     attendOrUnattendGames(gameDao.getAllForSeasonAndLocation(season, HOME), attend = true)
 
   def attendOrUnattendGames(fGames: Future[List[Game]], attend: Boolean): Future[List[Game]] = {

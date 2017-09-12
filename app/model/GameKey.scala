@@ -35,19 +35,19 @@ case class GameKey(
   /**
    * The game's competition.
    */
-  val competition: Competition,
+  competition: Competition,
   /**
    * The game's location.
    */
-  val location: Location,
+  location: Location,
   /**
    * The game's opponents.
    */
-  val opponents: String,
+  opponents: String,
   /**
    * The game's season.
    */
-  val season: Int)
+  season: Int)
 
 object GameKey {
 

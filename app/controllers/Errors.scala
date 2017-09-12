@@ -1,42 +1,33 @@
 package controllers
 
-import dao.FatalErrorDao
-import dates.DateTimeImplicits._
-import dates.JodaDateTime
-import logging.{Fatal, RemoteStream}
-import model.FatalError
-import models.{FatalErrorReport, FatalErrorReportRel, FatalErrorReports}
-import play.api.i18n.MessagesApi
-import play.api.mvc._
-import security.Definitions._
+import java.time.ZonedDateTime
 
-import scala.concurrent.{ExecutionContext, Future}
-import scalaz.Scalaz._
-import scalaz._
+import dao.FatalErrorDao
+import dates.ZonedDateTimeFactory
+import logging.Fatal
+import model.FatalError
+import models.{FatalErrorReportTemplate, FatalErrorReports}
+import models.FatalErrorReports._
+import monads.FE
+import monads.FE.FutureEitherNel
+import play.api.i18n.MessagesApi
+import play.api.mvc.ControllerComponents
+import security.Definitions._
+import cats.instances.future._
+import scala.concurrent.ExecutionContext
 
 class Errors @javax.inject.Inject() (val secret: SecretToken,
              val fatal: Fatal,
              val fatalErrorDao: FatalErrorDao,
-             val messagesApi: MessagesApi,
+             override val messagesApi: MessagesApi,
+             override val controllerComponents: ControllerComponents,
              val env: DefaultEnvironment,
-             val silhouette: DefaultSilhouette,
-             val auth: Auth,
-             implicit val ec: ExecutionContext) extends Secret with JsonResults with LinkFactories {
-
-  def quickFail = {
-    Action { implicit request =>
-      implicit val remoteStream: RemoteStream = new RemoteStream {
-        override def logToRemote(message: String): Unit = println(message)
-      }
-      val linkBuilder: FatalError => String = fe => fatalErrorReportLinksFactory(request)(fe).required(FatalErrorReportRel.MESSAGE)
-      fatal.fail("Poo", linkBuilder)
-      Ok
-    }
-  }
+             val silhouette: DefaultSilhouette, override val zonedDateTimeFactory: ZonedDateTimeFactory,
+             val auth: Auth, override implicit val ec: ExecutionContext) extends AbstractController(controllerComponents, zonedDateTimeFactory, ec) with Secret with LinkFactories {
 
   def message(secretPayload: String, id: Long) = Secret(secretPayload) {
     Action.async { implicit request =>
-      FutureResult.fo(fatalErrorDao.findById(id)) { fatalError =>
+      fo(fatalErrorDao.findById(id)) { fatalError =>
         Ok(fatalError.message)
       }
     }
@@ -44,16 +35,20 @@ class Errors @javax.inject.Inject() (val secret: SecretToken,
 
   def fatalErrors(secretPayload: String) = Secret(secretPayload) {
     Action.async { implicit request =>
-      def errors(fErrors: Future[List[FatalError]]) = jsonF(fErrors) { errors =>
-        val fatalErrorReports = errors.map { fatalError =>
-          FatalErrorReport(fatalError.id, fatalError.at, fatalErrorReportLinksFactory.apply(fatalError))
-        }
-        FatalErrorReports(fatalErrorReports)
+      val maybeSinceStr = request.getQueryString("since")
+      val evFatalErrors: FutureEitherNel[String, List[FatalError]] = maybeSinceStr match {
+        case Some(sinceStr) =>
+          zonedDateTimeFactory.parse(sinceStr) match {
+            case Right(since) => FE(fatalErrorDao.since(since))
+            case Left(errors) => FE(Left(errors))
+          }
+        case None => FE(fatalErrorDao.getAll)
       }
-      request.getQueryString("since").map(JodaDateTime(_)) match {
-        case None => errors(fatalErrorDao.getAll)
-        case Some(Success(since)) => errors(fatalErrorDao.since(since))
-        case Some(Failure(msgs)) => Future.successful(BadRequest(msgs.toList.mkString("\n")))
+      json(evFatalErrors) { fatalErrors =>
+        val fatalErrorReports = fatalErrors.map { fatalError =>
+          FatalErrorReportTemplate(fatalError.id, fatalError.at, fatalErrorReportLinksFactory.apply(fatalError))
+        }
+        FatalErrorReports[ZonedDateTime](fatalErrorReports)
       }
     }
   }

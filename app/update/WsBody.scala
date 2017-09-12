@@ -2,35 +2,37 @@ package update
 
 import java.net.URI
 
+import cats.data.NonEmptyList
+import io.circe.Decoder
 import monads.FE
+import monads.FE.FutureEitherNel
 import org.htmlcleaner.{HtmlCleaner, SimpleXmlSerializer}
 import play.api.libs.ws.WSResponse
-import upickle.default.{Reader => UReader, _}
-
+import io.circe.parser._
 import scala.concurrent.{ExecutionContext, Future}
 import scala.xml.{Elem, XML}
-import scalaz.Scalaz._
-import scalaz._
+import cats.instances.future._
+
 /**
   * Created by alex on 04/02/16.
   */
 trait WsBody {
 
-  def bodyText(uri: URI)(responseBuilder: String => Future[WSResponse])(implicit ec: ExecutionContext): Future[\/[NonEmptyList[String], String]] = {
-    responseBuilder(uri.toString).map { wsResponse =>
+  def bodyText(uri: URI)(responseBuilder: String => Future[WSResponse])(implicit ec: ExecutionContext): FutureEitherNel[String, String] = {
+    FE(responseBuilder(uri.toString)).flatMap { wsResponse =>
       val responseStatus = wsResponse.status
       if (responseStatus < 400) {
-        wsResponse.body.right
+        FE(Future.successful(Right(wsResponse.body)))
       }
       else {
-        NonEmptyList(s"Received $responseStatus ${wsResponse.statusText} from $uri").left
+        FE(Future.successful(Left(NonEmptyList.of(s"Received $responseStatus ${wsResponse.statusText} from $uri"))))
       }
     }
   }
 
-  def bodyXml(uri: URI)(responseBuilder: String => Future[WSResponse])(implicit ec: ExecutionContext): Future[\/[NonEmptyList[String], Elem]] = FE {
+  def bodyXml(uri: URI)(responseBuilder: String => Future[WSResponse])(implicit ec: ExecutionContext): FutureEitherNel[String, Elem] = {
     for {
-      body <- FE <~ bodyText(uri)(responseBuilder)
+      body <- bodyText(uri)(responseBuilder)
     } yield {
       cleanHtml(body)
     }
@@ -43,10 +45,10 @@ trait WsBody {
     XML.loadString(page)
   }
 
-  def bodyJson[R](uri: URI)(responseBuilder: String => Future[WSResponse])(implicit reader: UReader[\/[NonEmptyList[String], R]], ec: ExecutionContext): Future[\/[NonEmptyList[String], R]] = FE {
+  def bodyJson[R](uri: URI)(responseBuilder: String => Future[WSResponse])(implicit ev: Decoder[R], ec: ExecutionContext): FutureEitherNel[String, R] = {
     for {
-      body <- FE <~ bodyText(uri)(responseBuilder)
-      json <- FE <~ read[\/[NonEmptyList[String], R]](body)
+      body <- bodyText(uri)(responseBuilder)
+      json <- FE(decodeAccumulating(body).leftMap(_.map(_.getMessage)).toEither)
     } yield json
   }
 

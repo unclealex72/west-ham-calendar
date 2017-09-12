@@ -17,7 +17,6 @@ PUT     /games/:gameId/unattend                controllers.Update.unattend(gameI
 
 # Updates
 POST     /:secretPayload/update                controllers.Update.update(secretPayload)
-POST     /:secretPayload/updateLogos           controllers.Update.updateLogos(secretPayload)
 
 # Game location
 
@@ -39,11 +38,6 @@ GET	/favicon.ico		    controllers.Assets.at(path="/public", file="favicon.ico")
 
 # Sprites
 
-GET /sprites/teams.css              controllers.Sprites.teamCss
-GET /sprites/competition.css        controllers.Sprites.competitionCss
-GET /sprites/teams.png              controllers.Sprites.teamImage
-GET /sprites/competition.png        controllers.Sprites.competitionImage
-
 # Providers entry points
 
 GET         /authenticate/:provider          controllers.SocialAuthController.authenticate(provider)
@@ -53,8 +47,6 @@ GET         /logout                          controllers.SocialAuthController.si
 
 GET         /                               controllers.Application.index
 GET         /index.html                     controllers.Application.index
-
-GET         /assets/*file               controllers.Assets.at(path="/public", file)
 
 #GET     /service-worker.js    com.github.mmizutani.playgulp.GulpAssets.at(file = "service-worker.js")
 #GET     /manifest.json        com.github.mmizutani.playgulp.GulpAssets.at(file = "manifest.json")

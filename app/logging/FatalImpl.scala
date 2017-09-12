@@ -1,21 +1,20 @@
 package logging
 
-import java.io.{StringWriter, PrintWriter}
+import java.io.{PrintWriter, StringWriter}
 
+import cats.data.NonEmptyList
 import dao.FatalErrorDao
-import dates.NowService
+import dates.ZonedDateTimeFactory
 import model.FatalError
 import play.api.libs.ws.WSClient
 import sms.SmsService
 
 import scala.concurrent.{ExecutionContext, Future}
-import scalaz._
-import Scalaz._
 
 /**
   * Created by alex on 28/02/16.
   */
-class FatalImpl @javax.inject.Inject() (val ws: WSClient, val fatalErrorDao: FatalErrorDao, val nowService: NowService, val smsService: SmsService, implicit val ec: ExecutionContext) extends Fatal with RemoteLogging {
+class FatalImpl @javax.inject.Inject() (val ws: WSClient, val fatalErrorDao: FatalErrorDao, val zonedDateTimeFactory: ZonedDateTimeFactory, val smsService: SmsService, implicit val ec: ExecutionContext) extends Fatal with RemoteLogging {
 
   override def fail(errors: NonEmptyList[String], optionalException: Option[Throwable], optionalLinkBuilder: Option[FatalError => String])(implicit remoteStream: RemoteStream): Unit = {
     log(errors, optionalException)
@@ -36,7 +35,7 @@ class FatalImpl @javax.inject.Inject() (val ws: WSClient, val fatalErrorDao: Fat
         }
         logger.error(lastMessage, exception)
       case _ =>
-        errors.foreach(logger.error)
+        errors.toList.foreach(logger.error)
     }
   }
 
@@ -47,7 +46,7 @@ class FatalImpl @javax.inject.Inject() (val ws: WSClient, val fatalErrorDao: Fat
       stringWriter.toString
     }
     val message = (errors.toList ++ exceptionStr).mkString("\n")
-    val fatalError = FatalError(0, nowService.now, message)
+    val fatalError = FatalError(0, zonedDateTimeFactory.now, message)
     fatalErrorDao.store(fatalError)
   }
 

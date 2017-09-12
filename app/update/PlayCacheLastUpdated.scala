@@ -21,11 +21,10 @@
  */
 package update
 
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
-import org.joda.time.DateTime
-import play.api.Application
-import play.api.cache.{Cache, CacheApi}
+import play.api.cache.CacheApi
 
 /**
  * @author alex
@@ -35,9 +34,9 @@ class PlayCacheLastUpdated @Inject() (cacheApi: CacheApi) extends LastUpdated {
 
   val cacheKey = s"$getClass.lastUpdated"
   
-  def at(lastUpdatedTime: DateTime) = {
+  def at(lastUpdatedTime: ZonedDateTime) = {
     cacheApi.set(cacheKey, lastUpdatedTime)
   }
   
-  def when = cacheApi.get[DateTime](cacheKey)
+  def when = cacheApi.get[ZonedDateTime](cacheKey)
 }

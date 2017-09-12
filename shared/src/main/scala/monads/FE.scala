@@ -1,29 +1,22 @@
 package monads
 
+import cats.data.{EitherT, NonEmptyList}
+
 import scala.concurrent.{ExecutionContext, Future}
-import scalaz._
-import Scalaz._
 
 /**
-  * Monad compositions for Futures and Scalaz Eithers.
+  * Monad compositions for Futures and Eithers.
   * Created by alex on 21/01/16.
   */
-trait FE[L] {
+object FE {
 
-  type Result[R] = EitherT[Future, L, R]
+  type FutureEither[L, R] = EitherT[Future, L, R]
+  type FutureEitherNel[L, R] = EitherT[Future, NonEmptyList[L], R]
 
-  def <~[R](v: Future[\/[L, R]]): Result[R] = EitherT(v)
+  def apply[L, R](v: Future[Either[L, R]]): FutureEither[L, R] = EitherT(v)
 
-  def <~[R](v: Future[R])(implicit ec: ExecutionContext): Result[R] = <~(v.map(_.right))
+  def apply[L, R](v: Future[R])(implicit ec: ExecutionContext): FutureEither[L, R] = FE(v.map(Right(_)))
 
-  def <~[R](v: \/[L, R]): Result[R] = EitherT(Future.successful(v))
-
-  def <~[R](v: R)(implicit ev: Applicative[Result]): Result[R] = v.point[Result]
-
-}
-
-object FE extends FE[NonEmptyList[String]] {
-
-  def apply[R](r: Result[R]): Future[\/[NonEmptyList[String], R]] = r.run
+  def apply[L, R](v: Either[L, R]): FutureEither[L, R] = EitherT(Future.successful(v))
 
 }

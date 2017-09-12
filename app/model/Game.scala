@@ -21,15 +21,13 @@
  */
 package model
 
-import dates.NowService
-import models.{GameResult, Location, Competition}
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
+
+import dates.ZonedDateTimeFactory
+import models.{Competition, GameResult, Location}
 
 import scala.language.implicitConversions
 
-/**
- * A persistable unit that represents an advertised West Ham game.
- */
 /** Entity class storing rows of table Game
   *
   *  @param opponents Database column opponents SqlType(varchar), Length(128,true)
@@ -50,30 +48,29 @@ import scala.language.implicitConversions
   *  @param generalSaleAvailable Database column generalsale SqlType(timestamp), Default(None)
   *  @param dateCreated Database column datecreated SqlType(timestamp)
   *  @param lastUpdated Database column lastupdated SqlType(timestamp)
-  *  @param academyMembersPostalAvailable Database column academymemberspostal SqlType(timestamp), Default(None)
-  *  @param generalSalePostalAvailable Database column generalsalepostal SqlType(timestamp), Default(None) */
+  */
 case class Game(
                  id: Long,
                  location: Location,
                  season: Int,
                  opponents: String,
                  competition: Competition,
-                 at: Option[DateTime] = None,
+                 at: Option[ZonedDateTime] = None,
                  attended: Boolean = false,
                  result: Option[GameResult] = None,
                  attendance: Option[Int] = None,
                  matchReport: Option[String] = None,
                  televisionChannel: Option[String] = None,
-                 academyMembersAvailable: Option[DateTime] = None,
-                 bondholdersAvailable: Option[DateTime] = None,
-                 priorityPointAvailable: Option[DateTime] = None,
-                 seasonTicketsAvailable: Option[DateTime] = None,
-                 generalSaleAvailable: Option[DateTime] = None,
+                 academyMembersAvailable: Option[ZonedDateTime] = None,
+                 bondholdersAvailable: Option[ZonedDateTime] = None,
+                 priorityPointAvailable: Option[ZonedDateTime] = None,
+                 seasonTicketsAvailable: Option[ZonedDateTime] = None,
+                 generalSaleAvailable: Option[ZonedDateTime] = None,
                  homeTeamImageLink: Option[String] = None,
                  awayTeamImageLink: Option[String] = None,
                  competitionImageLink: Option[String] = None,
-                 dateCreated: DateTime,
-                 lastUpdated: DateTime) {
+                 dateCreated: ZonedDateTime,
+                 lastUpdated: ZonedDateTime) {
 
   /**
    * Get the unique business key for this game.
@@ -83,10 +80,10 @@ case class Game(
 
 object Game {
 
-  def tupled = (Game.apply _).tupled
+  def tupled: ((Long, Location, Int, String, Competition, Option[ZonedDateTime], Boolean, Option[GameResult], Option[Int], Option[String], Option[String], Option[ZonedDateTime], Option[ZonedDateTime], Option[ZonedDateTime], Option[ZonedDateTime], Option[ZonedDateTime], Option[String], Option[String], Option[String], ZonedDateTime, ZonedDateTime)) => Game = (Game.apply _).tupled
 
-  def gameKey(gameKey: GameKey)(implicit nowService: NowService): Game = {
-    val now = nowService.now
+  def gameKey(gameKey: GameKey)(implicit zonedDateTimeFactory: ZonedDateTimeFactory): Game = {
+    val now = zonedDateTimeFactory.now
     new Game(
       id = 0,
       competition = gameKey.competition,
@@ -95,7 +92,7 @@ object Game {
       season = gameKey.season, dateCreated = now, lastUpdated = now)
   }
 
-  def gameKey(competition: Competition, location: Location, opponents: String, season: Int)(implicit nowService: NowService): Game = {
+  def gameKey(competition: Competition, location: Location, opponents: String, season: Int)(implicit zonedDateTimeFactory: ZonedDateTimeFactory): Game = {
     gameKey(GameKey(competition, location, opponents, season))
   }
 }

@@ -27,8 +27,9 @@ import javax.inject.Inject
 
 import cal.{CalendarFactory, CalendarWriter, LinkFactory}
 import dao.GameDao
+import dates.ZonedDateTimeFactory
 import play.api.i18n.MessagesApi
-import play.api.mvc.Action
+import play.api.mvc.{Action, ControllerComponents}
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption}
 import security.Definitions._
 import update.LastUpdated
@@ -45,9 +46,11 @@ class Calendar @Inject() (val secret: SecretToken,
                           val calendarFactory: CalendarFactory,
                           val gameDao: GameDao,
                           val calendarWriter: CalendarWriter,
-                          val messagesApi: MessagesApi,
+                          override val zonedDateTimeFactory: ZonedDateTimeFactory,
+                          override val messagesApi: MessagesApi,
+                          override val controllerComponents: ControllerComponents,
                           val env:DefaultEnvironment,
-                          implicit val ec: ExecutionContext) extends Secret with Etag {
+                          override implicit val ec: ExecutionContext) extends AbstractController(controllerComponents, zonedDateTimeFactory, ec) with Secret with Etag {
 
   def searchSecure(secretPayload: String, attendedSearchOption: String, locationSearchOption: String, gameOrTicketSearchOption: String) =
     Secret(secretPayload) {

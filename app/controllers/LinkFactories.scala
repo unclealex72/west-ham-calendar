@@ -9,15 +9,7 @@ import play.api.mvc.{AnyContent, Request}
 /**
  * Created by alex on 13/02/15.
  */
-trait LinkFactories extends Secure with Secret with FutureResults {
-
-  def ticketLinksFactory(implicit request: Request[_ <: AnyContent]): Game => TicketType => Links[TicketingInformationRel] = game => ticketType => {
-    secureLinks(game, Links[TicketingInformationRel]()) { links =>
-      ticketType match {
-        case _ => links
-      }
-    }
-  }
+trait LinkFactories extends Secure with Secret {
 
   def gameRowLinksFactory(includeUpdates: Boolean)(implicit request: Request[_ <: AnyContent]): Game => Links[GameRowRel] = game => {
     val links = Links

@@ -25,6 +25,8 @@ import enumeratum.EnumEntry.Uppercase
 import enumeratum._
 import json.JsonEnum
 
+import scala.collection.immutable
+
 /**
  * The location of where a game is played, either home or away. Note that this
  * decided by who is the designated home team for a game.
@@ -33,12 +35,12 @@ import json.JsonEnum
  *
  */
 sealed abstract class Location(val isHome: Boolean) extends EnumEntry with Uppercase {
-  val isAway = !isHome
+  val isAway: Boolean = !isHome
 }
 
 object Location extends JsonEnum[Location] {
 
-  val values = findValues
+  val values: immutable.IndexedSeq[Location] = findValues
 
   case object HOME extends Location(true)
   case object AWAY extends Location(false)

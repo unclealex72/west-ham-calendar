@@ -1,11 +1,13 @@
 package dao
 
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
-import dates.NowService
+import dates.ZonedDateTimeFactory
 import model.Game
 import models.{Competition, GameResult, Location}
-import org.joda.time.DateTime
+import monads.FO
+import monads.FO.FutureOption
 import search.{AttendedSearchOption, GameOrTicketSearchOption, LocationSearchOption, SearchOption}
 
 import scala.collection.SortedSet
@@ -14,9 +16,9 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by alex on 19/01/16.
   */
-class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implicit val ec: ExecutionContext) extends GameDao with Slick {
+class SlickGameDao @Inject()(val dbConfigFactory: DatabaseConfigFactory, val zonedDateTimeFactory: ZonedDateTimeFactory)(implicit val ec: ExecutionContext) extends Slick(dbConfigFactory, zonedDateTimeFactory) with GameDao {
 
-  import dbConfig.driver.api._
+  import dbConfig.profile.api._
 
   val create = games.schema.create
   val drop = games.schema.drop
@@ -49,9 +51,9 @@ class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implic
     /** Database column opponents SqlType(varchar), Length(128,true) */
     val opponents: Rep[String] = column[String]("opponents", O.Length(128,varying=true))
     /** Database column academymembers SqlType(timestamp), Default(None) */
-    val academymembers: Rep[Option[DateTime]] = column[Option[DateTime]]("academymembers", O.Default(None))
+    val academymembers: Rep[Option[ZonedDateTime]] = column[Option[ZonedDateTime]]("academymembers", O.Default(None))
     /** Database column bondholders SqlType(timestamp), Default(None) */
-    val bondholders: Rep[Option[DateTime]] = column[Option[DateTime]]("bondholders", O.Default(None))
+    val bondholders: Rep[Option[ZonedDateTime]] = column[Option[ZonedDateTime]]("bondholders", O.Default(None))
     /** Database column attended SqlType(bool), Default(None) */
     val attended: Rep[Boolean] = column[Boolean]("attended", O.Default(false))
     /** Database column result SqlType(varchar), Length(128,true), Default(None) */
@@ -63,9 +65,9 @@ class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implic
     /** Database column attendence SqlType(int4), Default(None) */
     val attendence: Rep[Option[Int]] = column[Option[Int]]("attendence", O.Default(None))
     /** Database column prioritypoint SqlType(timestamp), Default(None) */
-    val prioritypoint: Rep[Option[DateTime]] = column[Option[DateTime]]("prioritypoint", O.Default(None))
+    val prioritypoint: Rep[Option[ZonedDateTime]] = column[Option[ZonedDateTime]]("prioritypoint", O.Default(None))
     /** Database column at SqlType(timestamp), Default(None) */
-    val at: Rep[Option[DateTime]] = column[Option[DateTime]]("at", O.Default(None))
+    val at: Rep[Option[ZonedDateTime]] = column[Option[ZonedDateTime]]("at", O.Default(None))
     /** Database column id SqlType(int8), PrimaryKey */
     val id: Rep[Long] = column[Long]("id", O.PrimaryKey, O.AutoInc)
     /** Database column location SqlType(varchar), Length(128,true) */
@@ -75,13 +77,13 @@ class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implic
     /** Database column report SqlType(text), Default(None) */
     val report: Rep[Option[String]] = column[Option[String]]("report", O.Default(None))
     /** Database column seasontickets SqlType(timestamp), Default(None) */
-    val seasontickets: Rep[Option[DateTime]] = column[Option[DateTime]]("seasontickets", O.Default(None))
+    val seasontickets: Rep[Option[ZonedDateTime]] = column[Option[ZonedDateTime]]("seasontickets", O.Default(None))
     /** Database column generalsale SqlType(timestamp), Default(None) */
-    val generalsale: Rep[Option[DateTime]] = column[Option[DateTime]]("generalsale", O.Default(None))
+    val generalsale: Rep[Option[ZonedDateTime]] = column[Option[ZonedDateTime]]("generalsale", O.Default(None))
     /** Database column datecreated SqlType(timestamp) */
-    val datecreated: Rep[DateTime] = column[DateTime]("datecreated")
+    val datecreated: Rep[ZonedDateTime] = column[ZonedDateTime]("datecreated")
     /** Database column lastupdated SqlType(timestamp) */
-    val lastupdated: Rep[DateTime] = column[DateTime]("lastupdated")
+    val lastupdated: Rep[ZonedDateTime] = column[ZonedDateTime]("lastupdated")
     /** Database column academymemberspostal SqlType(timestamp), Default(None) */
     val hometeamimageurl: Rep[Option[String]] = column[Option[String]]("hometeamimageurl", O.Default(None))
     val awayteamimageurl: Rep[Option[String]] = column[Option[String]]("awayteamimageurl", O.Default(None))
@@ -102,13 +104,15 @@ class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implic
     * @param season    The season to search for.
     * @return The uniquely defined { @link Game} if it exists or null otherwise.
     */
-  override def findByBusinessKey(competition: Competition, location: Location, opponents: String, season: Int): Future[Option[Game]] = dbConfig.db.run {
-    games.
-      filter(_.location === location).
-      filter(_.opponents === opponents).
-      filter(_.season === season).
-      filter(_.competition === competition).
-      result.headOption
+  override def findByBusinessKey(competition: Competition, location: Location, opponents: String, season: Int): FutureOption[Game] = FO {
+    dbConfig.db.run {
+      games.
+        filter(_.location === location).
+        filter(_.opponents === opponents).
+        filter(_.season === season).
+        filter(_.competition === competition).
+        result.headOption
+    }
   }
 
   /**
@@ -116,15 +120,17 @@ class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implic
     *
     * @return The latest known season.
     */
-  override def getLatestSeason: Future[Option[Int]] = dbConfig.db.run {
-    games.map(_.season).max.result
+  override def getLatestSeason: FutureOption[Int] = FO {
+    dbConfig.db.run {
+      games.map(_.season).max.result
+    }
   }
 
   /**
     * Persist a game
     */
-  override def store(game: Game)(implicit nowService: NowService): Future[Game] = {
-    store_(game.copy(lastUpdated = nowService.now))
+  override def store(game: Game): Future[Game] = {
+    store_(game.copy(lastUpdated = zonedDateTimeFactory.now))
   }
 
   def store_(game: Game): Future[Game] = dbConfig.db.run {
@@ -134,8 +140,10 @@ class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implic
   /**
     * Find a game by its ID.
     */
-  override def findById(id: Long): Future[Option[Game]] = dbConfig.db.run {
-    games.filter(_.id === id).result.headOption
+  override def findById(id: Long): FutureOption[Game] = FO {
+    dbConfig.db.run {
+      games.filter(_.id === id).result.headOption
+    }
   }
 
   /**
@@ -204,13 +212,15 @@ class SlickGameDao @Inject() (val dbConfigFactory: DatabaseConfigFactory)(implic
   }.map(_.toList)
 
   /**
-    * Find a game by the {@link DateTime} it was played.
+    * Find a game by the {@link ZonedDateTime} it was played.
     *
-    * @param datePlayed The { @link DateTime} to search for.
-    * @return The { @link Game} played at the given { @link DateTime} or null if one could not be found.
+    * @param datePlayed The { @link ZonedDateTime} to search for.
+    * @return The { @link Game} played at the given { @link ZonedDateTime} or null if one could not be found.
     */
-  override def findByDatePlayed(datePlayed: DateTime): Future[Option[Game]] = dbConfig.db.run {
-    games.filter(_.at === datePlayed).sortBy(_.at).result.headOption
+  override def findByDatePlayed(datePlayed: ZonedDateTime): FutureOption[Game] = FO {
+    dbConfig.db.run {
+      games.filter(_.at === datePlayed).sortBy(_.at).result.headOption
+    }
   }
 
   /**

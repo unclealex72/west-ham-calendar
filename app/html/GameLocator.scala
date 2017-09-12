@@ -23,42 +23,27 @@
 package html
 
 
-import org.joda.time.{DateTime, LocalDate}
-import model.{Game, GameKey}
-import dates.DateTimeImplicits._
-import enumeratum._
+import java.time.ZonedDateTime
 
-import scala.reflect.ClassTag
+import enumeratum._
+import model.{Game, GameKey}
+
+import scala.collection.immutable
 
 /**
  * The base class for both types of game locator.
  *
- * @param <E>
- *          The type of object that will be used to locate the game.
  * @author alex
  */
-
-/**
- * A game locator is an abstract class that presents a visitor so services can
- * decide how to locate an existing game.
- *
- * @author alex
- *  /**
- * Accept a {@link GameLocatorVisitor}.
- * @param visitor The {@link GameLocatorVisitor} to accept.
- * */
- * public abstract void accept(GameLocatorVisitor visitor);
- *
- *
- */
-sealed trait GameLocator extends Ordered[GameLocator] {
+sealed trait GameLocator {
   def matches(game: Game): Boolean
+  val locatorType: LocatorType
 }
 
 sealed trait LocatorType extends EnumEntry
 object LocatorType extends Enum[LocatorType] {
 
-  val values = findValues
+  val values: immutable.IndexedSeq[LocatorType] = findValues
 
   object PRIMARY_KEY extends LocatorType
   object DAY_PLAYED extends LocatorType
@@ -67,21 +52,14 @@ object LocatorType extends Enum[LocatorType] {
 }
 
 sealed abstract class AbstractGameLocator[E](
-                                              /**
+  /**
    * The unique type of the locator.
    */
   val locatorType: LocatorType,
   /**
    * The object used to locate a game.
    */
-  val locator: E)(implicit ord: Ordering[E]) extends GameLocator {
-
-  private def ordering: Ordering[AbstractGameLocator[E]] = Ordering.by { agl => (agl.locatorType, agl.locator) }
-  override def compare(that: GameLocator): Int = {
-    that match {
-      case tht: AbstractGameLocator[E] => ordering.compare(this, tht)
-    }
-  }
+  val locator: E) extends GameLocator {
 }
 
 /**
@@ -100,10 +78,25 @@ case class GameKeyLocator(gameKey: GameKey) extends AbstractGameLocator[GameKey]
  * @author alex
  *
  */
-case class DatePlayedLocator(datePlayed: LocalDate) extends AbstractGameLocator[LocalDate](
-  LocatorType.DAY_PLAYED, datePlayed)(Ordering.by(d => (d.getYear, d.getMonthOfYear, d.getDayOfMonth))) {
-  override def matches(game: Game): Boolean = game.at.map(_.toLocalDate).contains(datePlayed)
+case class DatePlayedLocator(datePlayed: ZonedDateTime) extends AbstractGameLocator[ZonedDateTime](
+  LocatorType.DAY_PLAYED, datePlayed) {
+  override def matches(game: Game): Boolean = {
+    game.at.contains(datePlayed)
+  }
 }
-object DatePlayedLocator {
-  def apply(dateTime: DateTime): DatePlayedLocator = DatePlayedLocator(dateTime.toLocalDate)
+
+object GameLocator {
+  implicit val gameLocatorOrdering: Ordering[GameLocator] = new Ordering[GameLocator] {
+
+    private val gameKeyLocatorOrdering: Ordering[GameKeyLocator] = Ordering.by(_.gameKey)
+    private val datePlayedLocatorOrdering: Ordering[DatePlayedLocator] = Ordering.by(_.datePlayed.toInstant)
+
+    override def compare(gl1: GameLocator, gl2: GameLocator): Int = {
+      (gl1, gl2) match {
+        case (gkl1: GameKeyLocator, gkl2: GameKeyLocator) => gameKeyLocatorOrdering.compare(gkl1, gkl2)
+        case (dpl1: DatePlayedLocator, dpl2: DatePlayedLocator) => datePlayedLocatorOrdering.compare(dpl1, dpl2)
+        case (_gl1: GameLocator, _gl2: GameLocator) => LocatorType.ordering.compare(_gl1.locatorType, _gl2.locatorType)
+      }
+    }
+  }
 }

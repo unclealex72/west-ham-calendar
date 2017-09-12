@@ -25,7 +25,7 @@ package html
 import dates.May
 import model.GameKey
 import models.{Location, Competition}
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 import org.specs2.mutable.Specification
 
 /**
@@ -39,7 +39,7 @@ class GameLocatorSpec extends Specification {
   "The two different types of game locators" should {
     val gameKeyLocator: GameLocator =
       new GameKeyLocator(new GameKey(Competition.FACP, Location.AWAY, "Opponents", 2012))
-    val datePlayedLocator: GameLocator = DatePlayedLocator(new DateTime())
+    val datePlayedLocator: GameLocator = DatePlayedLocator(ZonedDateTime.now())
     "order GameKeyLocators before DatePlayedLocators" in {
       gameKeyLocator must be_<(datePlayedLocator)
     }
@@ -58,7 +58,8 @@ class GameLocatorSpec extends Specification {
       lowerDatePlayedLocator must be_<(higherDatePlayedLocator)
     }
     "be equal when the dates are equal" in {
-      higherDatePlayedLocator.compare(higherDatePlayedLocator) must be_===(0)
+      higherDatePlayedLocator must be_>=(higherDatePlayedLocator)
+      higherDatePlayedLocator must be_<=(higherDatePlayedLocator)
     }
   }
 
@@ -72,7 +73,8 @@ class GameLocatorSpec extends Specification {
       lowerGameKeyLocator must be_<(higherGameKeyLocator)
     }
     "be equal when the game keys are equal" in {
-      higherGameKeyLocator.compare(higherGameKeyLocator) must be_===(0)
+      higherGameKeyLocator must be_<=(higherGameKeyLocator)
+      higherGameKeyLocator must be_>=(higherGameKeyLocator)
     }
   }
 }

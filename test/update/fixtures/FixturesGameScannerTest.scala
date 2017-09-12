@@ -2,10 +2,11 @@ package update.fixtures
 
 import java.io.PrintWriter
 import java.net.URI
-import java.text.SimpleDateFormat
+import java.time.ZonedDateTime
 import javax.servlet.http.{HttpServletRequest, HttpServletResponse}
 
-import com.typesafe.scalalogging.slf4j.StrictLogging
+import cats.data
+import com.typesafe.scalalogging.StrictLogging
 import dates._
 import html._
 import logging.SimpleRemoteStream
@@ -13,16 +14,14 @@ import model.GameKey
 import models.Competition._
 import models.Location.{AWAY, HOME}
 import models.{GameResult, Score}
-import org.asynchttpclient.DefaultAsyncHttpClientConfig
 import org.eclipse.jetty.http.HttpStatus
 import org.eclipse.jetty.server.handler.AbstractHandler
 import org.eclipse.jetty.server.{Handler, Request, Server, ServerConnector}
-import org.joda.time.DateTime
 import org.specs2.concurrent.ExecutionEnv
 import org.specs2.matcher.DisjunctionMatchers
 import org.specs2.mutable.Specification
 import org.specs2.specification._
-import play.api.libs.ws.ahc.AhcWSClient
+import play.api.libs.ws.ahc.{AhcWSClient, StandaloneAhcWSClient}
 import util.Materialisers
 
 import scala.concurrent.Await
@@ -30,21 +29,26 @@ import scala.concurrent.duration._
 import scala.io.Source
 import scalaz.Scalaz._
 import scalaz._
+import logging.RemoteStream
+import play.shaded.ahc.org.asynchttpclient.DefaultAsyncHttpClient
 
 /**
  * Created by alex on 28/03/15.
  */
 class FixturesGameScannerTest extends Specification with DisjunctionMatchers with StrictLogging with Materialisers {
 
+  implicit val remoteStream: RemoteStream = new SimpleRemoteStream()
 
   "The fixtures game scanner" should {
     "find all the known games" in new ServerContext {
 
-      val nowService: NowService = NowService(December(25, 2016))
       implicit val ee: ExecutionEnv = ExecutionEnv.fromGlobalExecutionContext
-      val wsClient = new AhcWSClient(new DefaultAsyncHttpClientConfig.Builder().build())
-      val fixturesGameScanner = new FixturesGameScannerImpl(new URI(s"http://localhost:$port"), wsClient)
-      val maybeGameCommands = Await.result(fixturesGameScanner.scan(Some(2014))(remoteStream), 10.minutes)
+      val wsClient = new AhcWSClient(new StandaloneAhcWSClient(new DefaultAsyncHttpClient()))
+      implicit val zonedDateTimeFactory = new ZonedDateTimeFactoryImpl()
+      val dateParserFactory = new DateParserFactoryImpl()
+      val fixturesGameScanner = new FixturesGameScannerImpl(new URI(s"http://localhost:$port"), wsClient, dateParserFactory)
+      val maybeGameCommands: Either[data.NonEmptyList[String], Seq[GameUpdateCommand]] =
+        Await.result(fixturesGameScanner.scan(Some(2014))(remoteStream).value, 10.minutes)
 
       val expectedGameUpdateCommands: Seq[GameUpdateCommand] = {
         var maybeGameKey: Option[GameKey] = None
@@ -60,7 +64,7 @@ class FixturesGameScannerTest extends Specification with DisjunctionMatchers wit
 
         def game(gameKey: GameKey) = maybeGameKey = Some(gameKey)
 
-        def datePlayed(dateTime: DateTime) = add(dateTime, DatePlayedUpdateCommand)
+        def datePlayed(zonedDateTime: ZonedDateTime) = add(zonedDateTime, DatePlayedUpdateCommand)
         def competition(url: String) = addUrl(url, CompetitionImageLinkCommand)
         def result(result: GameResult) = add(result, ResultUpdateCommand)
         def homeTeam(url: String) = addUrl(url, HomeTeamImageLinkCommand)
@@ -366,11 +370,13 @@ class FixturesGameScannerTest extends Specification with DisjunctionMatchers wit
 
         gameUpdateCommands
       }
-      maybeGameCommands must be_\/-(containTheSameElementsAs(expectedGameUpdateCommands))
+      maybeGameCommands must beRight { gameCommands: Seq[GameUpdateCommand] =>
+        gameCommands must containTheSameElementsAs(expectedGameUpdateCommands)
+      }
     }
   }
 
-  trait ServerContext extends After with SimpleRemoteStream {
+  trait ServerContext extends After {
 
     val (server, port): (Server, Int) = {
       val server = new Server(0)

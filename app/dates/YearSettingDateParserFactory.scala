@@ -24,7 +24,7 @@
 
 package dates
 
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 
 /**
  * An object that can be used to decorate date parsers so that the year can be explicitly set.
@@ -33,19 +33,19 @@ import org.joda.time.DateTime
  */
 object YearSettingDateParserFactory {
 
-  def setYear(dateTime: DateTime, yearDeterminingDate: DateTime, yearDeterminingDateIsLaterThanTheDate: Boolean) =
-    yearSetter(yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate)(dateTime)
+  def setYear(zonedDateTime: ZonedDateTime, yearDeterminingDate: ZonedDateTime, yearDeterminingDateIsLaterThanTheDate: Boolean) =
+    yearSetter(yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate)(zonedDateTime)
 
-  def yearSetter(yearDeterminingDate: DateTime, yearDeterminingDateIsLaterThanTheDate: Boolean): DateTime => DateTime = {
+  def yearSetter(yearDeterminingDate: ZonedDateTime, yearDeterminingDateIsLaterThanTheDate: Boolean): ZonedDateTime => ZonedDateTime = {
     dtWithoutYear =>
       {
-        val dateTimeWithYear = dtWithoutYear.withYear(yearDeterminingDate.getYear)
-        if (yearDeterminingDateIsLaterThanTheDate && yearDeterminingDate.isBefore(dateTimeWithYear)) {
-          dateTimeWithYear.minusYears(1)
-        } else if (!yearDeterminingDateIsLaterThanTheDate && yearDeterminingDate.isAfter(dateTimeWithYear)) {
-          dateTimeWithYear.plusYears(1)
+        val zonedDateTimeWithYear = dtWithoutYear.withYear(yearDeterminingDate.getYear)
+        if (yearDeterminingDateIsLaterThanTheDate && yearDeterminingDate.isBefore(zonedDateTimeWithYear)) {
+          zonedDateTimeWithYear.minusYears(1)
+        } else if (!yearDeterminingDateIsLaterThanTheDate && yearDeterminingDate.isAfter(zonedDateTimeWithYear)) {
+          zonedDateTimeWithYear.plusYears(1)
         } else {
-          dateTimeWithYear
+          zonedDateTimeWithYear
         }
       }
   }
@@ -54,14 +54,14 @@ object YearSettingDateParserFactory {
    * Decorate a date parser so that it returns a date with a given year.
    *
    * @param yearDeterminingDate
-   *          The {@link DateTime} that should be used to determine the year to
+   *          The {@link ZonedDateTime} that should be used to determine the year to
    *          add.
    * @param yearDeterminingDateIsLaterThanTheDate
    *          True if the year determining date is later than the date the year
    *          needs to be added to, false otherwise.
    * @return A {@link DateParser} decorator.
    */
-  def apply(yearDeterminingDate: DateTime, yearDeterminingDateIsLaterThanTheDate: Boolean): DateParser => DateParser = {
+  def apply(yearDeterminingDate: ZonedDateTime, yearDeterminingDateIsLaterThanTheDate: Boolean): DateParser => DateParser = {
     dateParser =>
       val ys = yearSetter(yearDeterminingDate, yearDeterminingDateIsLaterThanTheDate)
       new DateParser() {

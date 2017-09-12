@@ -23,7 +23,7 @@
 package dates
 
 import logging.{RemoteLogging, RemoteStream}
-import org.joda.time.DateTime
+import java.time.ZonedDateTime
 
 /**
  * An interface for objects that parse dates from strings or find dates embedded within strings.
@@ -34,25 +34,25 @@ trait DateParser {
 
   /**
    * Parse a date from a string.
-   * @return The parsed {@link DateTime} or None if the date could not be parsed.
+   * @return The parsed {@link ZonedDateTime} or None if the date could not be parsed.
    */
-  def parse(str: String): Option[DateTime]
+  def parse(str: String): Option[ZonedDateTime]
 
   /**
    * Find a date within a string.
-   * @return The found {@link DateTime} or None if the date could not be found.
+   * @return The found {@link ZonedDateTime} or None if the date could not be found.
    */
-  def find(str: String): Option[DateTime]
+  def find(str: String): Option[ZonedDateTime]
 
   def logFailures: LoggingDateParser = new LoggingDateParser with RemoteLogging {
 
-    override def parse(str: String)(implicit remoteStream: RemoteStream): Option[DateTime] =
+    override def parse(str: String)(implicit remoteStream: RemoteStream): Option[ZonedDateTime] =
       execute(DateParser.this.parse, str, s"Cannot parse $str as a date")
 
-    override def find(str: String)(implicit remoteStream: RemoteStream): Option[DateTime] =
+    override def find(str: String)(implicit remoteStream: RemoteStream): Option[ZonedDateTime] =
       execute(DateParser.this.find, str, s"Cannot find a date in $str")
 
-    def execute(f: String => Option[DateTime], str: String, failureMessage: String)(implicit remoteStream: RemoteStream): Option[DateTime] = {
+    def execute(f: String => Option[ZonedDateTime], str: String, failureMessage: String)(implicit remoteStream: RemoteStream): Option[ZonedDateTime] = {
       logOnEmpty(f(str).toRight(failureMessage))
     }
   }
@@ -62,14 +62,14 @@ trait LoggingDateParser {
 
   /**
    * Parse a date from a string.
-   * @return The parsed {@link DateTime} or None if the date could not be parsed.
+   * @return The parsed {@link ZonedDateTime} or None if the date could not be parsed.
    */
-  def parse(str: String)(implicit remoteStream: RemoteStream): Option[DateTime]
+  def parse(str: String)(implicit remoteStream: RemoteStream): Option[ZonedDateTime]
 
   /**
    * Find a date within a string.
-   * @return The found {@link DateTime} or None if the date could not be found.
+   * @return The found {@link ZonedDateTime} or None if the date could not be found.
    */
-  def find(str: String)(implicit remoteStream: RemoteStream): Option[DateTime]
+  def find(str: String)(implicit remoteStream: RemoteStream): Option[ZonedDateTime]
 
 }

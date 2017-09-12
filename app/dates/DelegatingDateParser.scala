@@ -24,16 +24,19 @@
 
 package dates
 
+import java.time.ZonedDateTime
+
 /**
  * A date parser trait that delegates to another date parser.
- * @author alex
+  *
+  * @author alex
  *
  */
 trait DelegatingDateParser extends DateParser {
 
   val delegate: DateParser
 
-  override def parse(str: String) = delegate.parse(str)
+  override def parse(str: String): Option[ZonedDateTime] = delegate.parse(str)
 
-  override def find(str: String) = delegate.find(str)
+  override def find(str: String): Option[ZonedDateTime] = delegate.find(str)
 }

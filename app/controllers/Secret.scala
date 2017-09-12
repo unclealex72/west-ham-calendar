@@ -21,24 +21,23 @@
  */
 package controllers
 
-import play.api.libs.concurrent.Execution.Implicits._
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Action, BaseController}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
  * A trait that defines a secret action that is kept secret(ish) by its path containing a random string
  * @author alex
  *
  */
-trait Secret extends Controller {
+trait Secret extends BaseController {
 
   /**
    * The secret part of the path.
    */
   val secret: SecretToken
 
-  def Secret[A](secretPayload: String)(action: Action[A]): Action[A] =
+  def Secret[A](secretPayload: String)(action: Action[A])(implicit ec: ExecutionContext): Action[A] =
     Action.async(action.parser) { request =>
       if (secret.token == secretPayload) {
         action(request)

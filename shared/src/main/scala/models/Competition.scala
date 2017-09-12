@@ -24,6 +24,8 @@ package models
 import enumeratum._
 import json.JsonEnum
 
+import scala.collection.immutable
+
 /**
  * The different competitions that West Ham have taken part in.
  *
@@ -61,7 +63,7 @@ sealed abstract class CupCompetition(override val name: String, override val tok
 
 object Competition extends JsonEnum[Competition] {
 
-  val values = findValues
+  val values: immutable.IndexedSeq[Competition] = findValues
 
   /**
    * The FA Premiership.
