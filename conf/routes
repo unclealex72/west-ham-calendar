@@ -36,8 +36,6 @@ GET     /:secretPayload/fatal                  controllers.Errors.fatalErrors(se
 
 GET	/favicon.ico		    controllers.Assets.at(path="/public", file="favicon.ico")
 
-# Sprites
-
 # Providers entry points
 
 GET         /authenticate/:provider          controllers.SocialAuthController.authenticate(provider)

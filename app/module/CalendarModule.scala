@@ -21,7 +21,6 @@
   */
 package module
 
-import java.awt.Dimension
 import java.net.URI
 
 import cal.{CalendarFactory, CalendarFactoryImpl, CalendarWriter, IcalCalendarWriter}

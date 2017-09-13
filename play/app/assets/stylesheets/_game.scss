@@ -24,6 +24,17 @@
   margin-left: 5px;
   margin-right: 5px;
 }
+
+.team-logo img {
+  max-width: 50px;
+  max-height: 50px;
+}
+
+.competition-logo img {
+  max-width: 80px;
+  max-height: 50px;
+}
+
 .team {
   flex: 1;
 }

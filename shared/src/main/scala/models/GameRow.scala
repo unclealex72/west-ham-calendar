@@ -59,6 +59,9 @@ case class GameRow[D](
   maybeResult: Option[GameResult],
   tickets: Map[TicketType, D],
   maybeAttended: Option[Boolean],
+  homeTeamLogo: Option[String],
+  awayTeamLogo: Option[String],
+  competitionLogo: Option[String],
   links: Links[GameRowRel])
 
 sealed trait GameRowRel extends Rel
