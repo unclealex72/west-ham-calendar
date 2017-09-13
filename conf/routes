@@ -37,13 +37,6 @@ GET     /:secretPayload/fatal                  controllers.Errors.fatalErrors(se
 
 GET	/favicon.ico		    controllers.Assets.at(path="/public", file="favicon.ico")
 
-# Sprites
-
-GET /sprites/teams.css              controllers.Sprites.teamCss
-GET /sprites/competition.css        controllers.Sprites.competitionCss
-GET /sprites/teams.png              controllers.Sprites.teamImage
-GET /sprites/competition.png        controllers.Sprites.competitionImage
-
 # Providers entry points
 
 GET         /authenticate/:provider          controllers.SocialAuthController.authenticate(provider)

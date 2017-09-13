@@ -57,9 +57,9 @@ case class GameRow(
   result: Option[GameResult],
   tickets: Map[TicketType, TicketingInformation],
   attended: Option[Boolean],
-  homeTeamLogoClass: Option[String],
-  awayTeamLogoClass: Option[String],
-  competitionLogoClass: Option[String],
+  homeTeamLogo: Option[String],
+  awayTeamLogo: Option[String],
+  competitionLogo: Option[String],
   links: Links[GameRowRel])
 
 sealed trait GameRowRel extends Rel
@@ -126,9 +126,9 @@ object GameRow extends JsonConverters[GameRow] {
       "tickets" -> Js.Obj(tickets.toSeq :_*),
       "links" -> Links.linksToJson(gr.links)
     ) ++
-      gr.homeTeamLogoClass.map(homeTeamLogoClass => "homeTeamLogoClass" -> Js.Str(homeTeamLogoClass)) ++
-      gr.awayTeamLogoClass.map(awayTeamLogoClass => "awayTeamLogoClass" -> Js.Str(awayTeamLogoClass)) ++
-      gr.competitionLogoClass.map(competitionLogoClass => "competitionLogoClass" -> Js.Str(competitionLogoClass)) ++
+      gr.homeTeamLogo.map(homeTeamLogo => "homeTeamLogo" -> Js.Str(homeTeamLogo)) ++
+      gr.awayTeamLogo.map(awayTeamLogo => "awayTeamLogo" -> Js.Str(awayTeamLogo)) ++
+      gr.competitionLogo.map(competitionLogo => "competitionLogo" -> Js.Str(competitionLogo)) ++
       gr.result.map(result => "result" -> GameResult.serialise(result)) ++
       gr.attended.map(attended => "attended" -> (if (attended) Js.True else Js.False))
     Js.Obj(fields :_*)
@@ -145,14 +145,14 @@ object GameRow extends JsonConverters[GameRow] {
       val result = fields.optional("result")(GameResult.deserialise)
       val tickets = fields.mandatory("tickets")(jsonToTicketingInformationMap)
       val attended = fields.optional("attended")(_.jsBool)
-      val homeTeamLogoClass = fields.optional("homeTeamLogoClass")(_.jsStr)
-      val awayTeamLogoClass = fields.optional("awayTeamLogoClass")(_.jsStr)
-      val competitionLogoClass = fields.optional("competitionLogoClass")(_.jsStr)
+      val homeTeamLogo = fields.optional("homeTeamLogo")(_.jsStr)
+      val awayTeamLogo = fields.optional("awayTeamLogo")(_.jsStr)
+      val competitionLogo = fields.optional("competitionLogo")(_.jsStr)
       val links = fields.mandatory("links")(Links.jsonToLinks(GameRowRel))
 
       // Split the validation into two as Scalaz' applicative builders aren't big enough.
       val left = (id |@| at |@| season |@| opponents |@| competition |@| location |@| result).tupled
-      val right = (tickets |@| attended |@| homeTeamLogoClass |@| awayTeamLogoClass |@| competitionLogoClass |@|  links).tupled
+      val right = (tickets |@| attended |@| homeTeamLogo |@| awayTeamLogo |@| competitionLogo |@|  links).tupled
       (left |@| right)((_, _)).map { case (l, r) =>
           GameRow(l._1, l._2, l._3, l._4, l._5, l._6, l._7, r._1, r._2, r._3, r._4, r._5, r._6)
       }
