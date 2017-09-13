@@ -21,6 +21,7 @@
  */
 package controllers
 
+import akka.stream.scaladsl.{Source => AkkaSource}
 import com.typesafe.scalalogging.slf4j.StrictLogging
 import dao.GameDao
 import dates.NowService
@@ -35,14 +36,11 @@ import play.api.libs.streams.Streams
 import play.api.mvc.Action
 import security.Definitions._
 import services.GameRowFactory
-import sprites.SpriteHolder
 import update.MainUpdateService
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Failure
 import scalaz._
-
-import akka.stream.scaladsl.{Source => AkkaSource}
 /**
  * @author alex
  *
@@ -55,7 +53,6 @@ class Update @javax.inject.Inject() (val secret: SecretToken,
                                      val silhouette: DefaultSilhouette,
                                      val auth: Auth,
                                      val fatal: Fatal,
-                                     val spritHolder: SpriteHolder,
                                      implicit val nowService: NowService,
                                      implicit val ec: ExecutionContext
                                     ) extends Secure with Secret with LinkFactories with JsonResults with StrictLogging {
@@ -83,9 +80,6 @@ class Update @javax.inject.Inject() (val secret: SecretToken,
           fatal.fail("Updating all games failed", t, linkBuilder)
           logger.error("Updating all games failed.", t)
           remoteStream.log("Updating all games failed.", Some(t))
-      }.flatMap { _ =>
-          remoteStream.log("Updating CSS sprites")
-          spritHolder.update
       }.andThen {
         case _ => channel.eofAndEnd()
       }

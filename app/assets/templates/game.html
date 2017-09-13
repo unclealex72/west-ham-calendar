@@ -4,7 +4,9 @@
         <div class="card-content">
             <div class="row valign-wrapper">
                 <div class="col s3">
-                    <div class="team-logo {{game.homeTeam.logo}}"></div>
+                    <div class="team-logo">
+                        <img ng-src="{{game.homeTeam.logo}}"/>
+                    </div>
                 </div>
                 <div class="col s7">
                     <div class="valign">
@@ -28,8 +30,10 @@
         <div class="container">
             <div class="row valign-wrapper">
                 <div class="col s6 valign left-align">
-                    <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}} left-align"
-                         title="{{game.competition}}"></div>
+                    <div ng-if="game.competitionLogo" class="competition competition-logo left-align"
+                         title="{{game.competition}}">
+                        <img ng-src="{{game.competitionLogo}}"/>
+                    </div>
                     <span ng-if="!game.competitionLogo" class="left-align">{{game.competition}}</span>
                 </div>
                 <div class="col s6 valign right-align">
@@ -81,14 +85,18 @@
                 </div>
             </div>
             <div class="col s1 center-align">
-                <div ng-if="game.competitionLogo" class="competition competition-logo {{game.competitionLogo}}"
-                     title="{{game.competition}}"></div>
+                <div ng-if="game.competitionLogo" class="competition competition-logo"
+                     title="{{game.competition}}">
+                    <img ng-src="{{game.competitionLogo}}"/>
+                </div>
                 <span ng-if="!game.competitionLogo">{{game.competition}}</span>
             </div>
             <div class="col s7">
                 <div class="game-details">
                     <div hc-team-name class="team right-align" team="game.homeTeam"></div>
-                    <div class="team-logo {{game.homeTeam.logo}} no-flex" ng-if="game.homeTeam.logo"></div>
+                    <div class="team-logo no-flex" ng-if="game.homeTeam.logo">
+                        <img ng-src="{{game.homeTeam.logo}}"/>
+                    </div>
                     <!-- Result -->
                     <div ng-if="game.hasResult" class="versus" ng-class="{'withShoot': game.hasShootout}">
                         <span class="home">
@@ -109,7 +117,9 @@
                         </div>
                     </div>
                     <div ng-if="!game.hasResult" class="versus">v</div>
-                    <div class="team-logo {{game.awayTeam.logo}} no-flex" ng-if="game.awayTeam.logo"></div>
+                    <div class="team-logo no-flex" ng-if="game.awayTeam.logo">
+                        <img ng-src="{{game.awayTeam.logo}}"/>
+                    </div>
                     <div hc-team-name class="team left-align" team="game.awayTeam"></div>
                 </div>
             </div>

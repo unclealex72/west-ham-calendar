@@ -31,13 +31,12 @@ import models.GameTimeType._
 import models.TicketType._
 import models._
 import org.joda.time.DateTime
-import sprites.{Sprite, SpriteHolder}
 
 /**
  * @author alex
  *
  */
-class GameRowFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory, val spriteHolder: SpriteHolder) extends GameRowFactory {
+class GameRowFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory) extends GameRowFactory {
 
   def timeTypeOf(dateTime: DateTime): GameTimeType = {
     if (dateTime.isThreeOClockOnASaturday) {
@@ -55,14 +54,6 @@ class GameRowFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory, 
              ticketLinksFactory: Game => TicketType => Links[TicketingInformationRel]): Game => GameRow = { game =>
     game.at match {
       case Some(gameAt) =>
-        def toLogoClass(optionalSprite: Option[Sprite], optionalUrl: Option[String]): Option[String] = {
-          for {
-            sprite <- optionalSprite
-            url <- optionalUrl
-            logoClass <- sprite.classNamesByUrl.get(url)
-          } yield logoClass
-        }
-        val optionalTeamSprite: Option[Sprite] = spriteHolder.teams
         GameRow(
           id = game.id,
           at = gameAt,
@@ -73,9 +64,9 @@ class GameRowFactoryImpl @Inject() (val geoLocationFactory: GeoLocationFactory, 
           result = game.result,
           tickets = ticketFactory(game, ticketLinksFactory),
           attended = if (includeAttended) Some(game.attended) else None,
-          toLogoClass(optionalTeamSprite, game.homeTeamImageLink),
-          toLogoClass(optionalTeamSprite, game.awayTeamImageLink),
-          toLogoClass(spriteHolder.competitions, game.competitionImageLink),
+          game.homeTeamImageLink,
+          game.awayTeamImageLink,
+          game.competitionImageLink,
           links = gameLinksFactory(game))
       case None => throw new IllegalStateException(s"Game $game did not have it's date played attribute set.")
     }
