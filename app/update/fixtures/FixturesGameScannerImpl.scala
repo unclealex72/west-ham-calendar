@@ -158,8 +158,11 @@ class FixturesGameScannerImpl @javax.inject.Inject() (rootUri: URI, ws: WSClient
       val homeTeam = homeTeamNameDiv.trimmed
       val awayTeam = awayTeamNameDiv.trimmed
       val competitionInfo = (competitionDiv \\ "img").headOption.flatMap(_.attr("src")) match {
-        case Some(src) => CompetitionInfo(Competition(src), Some(src))
-        case None => CompetitionInfo(Competition(competitionDiv.trimmed), None)
+        case Some(src) =>
+          CompetitionInfo(Competition(src), Some(src))
+        case None =>
+          val competitionToken = competitionDiv.trimmed
+          CompetitionInfo(Competition(competitionToken), None)
       }
       val isHome = "West Ham United" == homeTeam
       (GameKey(competitionInfo.competition, if (isHome) HOME else AWAY, if(isHome) awayTeam else homeTeam, season), competitionInfo.maybeImageUrl)
