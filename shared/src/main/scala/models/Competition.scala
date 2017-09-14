@@ -73,7 +73,8 @@ object Competition extends JsonEnum[Competition] {
   /**
    * The League Cup.
    */
-  case object LGCP extends CupCompetition("League Cup", "English Capital One Cup", "EFL Cup", "capital-one-cup", "efl-cup", "eflcup")
+  case object LGCP extends CupCompetition(
+    "League Cup", "English Capital One Cup", "EFL Cup", "capital-one-cup", "efl-cup", "eflcup", "EFL_CC_STACKED_REG_RGB")
 
   /**
    * The FA Cup.
