@@ -67,7 +67,7 @@ class CalendarModule() extends AbstractModule with ScalaModule {
     bind[LastUpdated].to[PlayCacheLastUpdated]
 
     // Game harvesting and update services
-    bind[URI].toInstance(new URI("http://www.whufc.com"))
+    bind[URI].toInstance(new URI("https://www.whufc.com"))
     bind[FixturesGameScanner].to[FixturesGameScannerImpl]
     bind[TicketsGameScanner].to[TicketsGameScannerImpl]
     bind[MainUpdateService].to[MainUpdateServiceImpl]
