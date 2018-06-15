@@ -1,0 +1,29 @@
+@(games: Seq[model.Game], season: Int, dateFormatter: org.joda.time.DateTime => String, timeFormatter: org.joda.time.DateTime => String)
+<html>
+    <head>
+        <title>Games for season @season - @(season + 1)</title>
+        <style>
+                td {
+                    padding: 10px;
+                }
+        </style>
+    </head>
+    <body>
+        <table>
+            <tbody>
+                @for(game <- games) {
+                    <tr>
+                        @for(at <- game.at) {
+                            <td>@dateFormatter(at)</td>
+                            <td>@timeFormatter(at)</td>
+                        }
+                        <td>@if(game.location == Location.HOME) { West Ham United } else { @game.opponents }</td>
+                        <td>v</td>
+                        <td>@if(game.location == Location.AWAY) { West Ham United } else { @game.opponents }</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </body>
+</html>
+

@@ -49,6 +49,7 @@ GET         /index.html                     controllers.Application.index
 
 GET         /assets/*file               controllers.Assets.at(path="/public", file)
 
+GET         /list.html                      controllers.Application.list
 #GET     /service-worker.js    com.github.mmizutani.playgulp.GulpAssets.at(file = "service-worker.js")
 #GET     /manifest.json        com.github.mmizutani.playgulp.GulpAssets.at(file = "manifest.json")
 #GET     /           com.github.mmizutani.playgulp.GulpAssets.redirectRoot(base = "/ui/")

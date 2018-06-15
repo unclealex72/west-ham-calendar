@@ -1,22 +1,24 @@
 package controllers
 
 import javax.inject.Inject
-
 import dao.GameDao
 import dates.SharedDate
+import model.Game
 import models.EntryRel.{LOGIN, LOGOUT}
 import models.GameRow._
 import models._
 import play.api.i18n.MessagesApi
 import play.api.mvc._
+import org.joda.time.format.DateTimeFormat
 import security.Definitions._
 import services.GameRowFactory
-import upickle.default._
 import models.Entry
 import models.Season
+import org.joda.time.{DateTime, DateTimeZone}
 
 import scala.collection.SortedSet
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success, Try}
 
 class Application @Inject() (val gameDao: GameDao,
                              val gameRowFactory: GameRowFactory,
@@ -61,6 +63,33 @@ class Application @Inject() (val gameDao: GameDao,
         withLink(LOGIN, routes.SocialAuthController.authenticate("google").absoluteURL()).
         withSelf(routes.Application.entry().absoluteURL())
       Entry(fullName, SortedSet.empty[Season] ++ seasons, links)
+    }
+  }
+
+  def list() = Action.async { implicit request =>
+    Try(request.queryString.getOrElse("season", Seq.empty).headOption.map(Integer.parseInt)) match {
+      case Success(maybeSeason) =>
+        val eventualMaybeSeason: Future[Option[Int]] = maybeSeason match {
+          case Some(season) => Future.successful(Some(season))
+          case None => gameDao.getLatestSeason
+        }
+        eventualMaybeSeason.flatMap {
+          case Some(season) =>
+            val eventualGames: Future[List[Game]] = gameDao.getAllForSeason(season)
+            eventualGames.map {
+              case Nil => NotFound("")
+              case games =>
+                def formatter(pattern: String): DateTime => String = {
+                  val dateTimeFormat = DateTimeFormat.forPattern(pattern).withZone(DateTimeZone.forID("Europe/London"))
+                  dt => {
+                    dateTimeFormat.print(dt.toLocalDateTime)
+                  }
+                }
+                Ok(views.html.list(games, season, formatter("EEEE dd MMM yyyy"), formatter("HH:mm")))
+            }
+          case None => Future.successful(NotFound(""))
+        }
+      case Failure(e) => Future.successful(BadRequest(e.getMessage))
     }
   }
 }
